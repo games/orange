@@ -28,6 +28,7 @@ class Mesh extends Transform {
       _material.shader.compile();
       _material.shader.use();
       _material.shader.prepare(this);
+      _material.shader.setupLights(_director.scene.lights);
     }
     
     if(_faceBuffer == null && _faces != null) {

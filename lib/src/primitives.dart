@@ -162,7 +162,7 @@ class Sphere extends Mesh {
     }
     
     _material = new Material();
-    _material.shader = Shader.simpleColorShader;
+    _material.shader = Shader.phongShader;
     
   }
 }

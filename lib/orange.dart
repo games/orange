@@ -16,10 +16,16 @@ part 'src/mesh.dart';
 part 'src/geometry.dart';
 part 'src/material.dart';
 part 'src/renderer.dart';
-part 'src/shader.dart';
 part 'src/scene.dart';
 part 'src/primitives.dart';
 part 'src/parser.dart';
+part 'src/color.dart';
+part 'src/light.dart';
+
+part 'src/shaders/shader.dart';
+part 'src/shaders/phongshader.dart';
+part 'src/shaders/shader_lights_source.dart';
+part 'src/shaders/shader_normal_color.dart';
 
 part 'src/event/eventdispatcher.dart';
 part 'src/event/events.dart';

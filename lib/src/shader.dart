@@ -1,15 +1,95 @@
 part of orange;
 
 
+final simpleColorShader = new SimpleColorShader._internal();
+
+
+
 abstract class Shader {
+  
+  static final simpleColorShader = new SimpleColorShader._internal(); 
+  
   String name;
   String vertexSource;
   String fragmentSource;
   gl.Program program;
   
-  compile();
+  compile() {
+    if(program == null) {
+      var ctx = _director.renderer.ctx;
+      gl.Shader vertexShader = ctx.createShader(gl.VERTEX_SHADER);
+      ctx.shaderSource(vertexShader, vertexSource);
+      ctx.compileShader(vertexShader);
+  
+      gl.Shader fragmentShader = ctx.createShader(gl.FRAGMENT_SHADER);
+      ctx.shaderSource(fragmentShader, fragmentSource);
+      ctx.compileShader(fragmentShader);
+      
+      program = ctx.createProgram();
+      ctx.attachShader(program, vertexShader);
+      ctx.attachShader(program, fragmentShader);
+      ctx.linkProgram(program);
+      
+      _setupAttribs();
+    }
+  }
+  
+  _setupAttribs();
+  
+  use() {
+    _director.renderer.ctx.useProgram(program);
+  }
+  
+  prepare(Mesh mesh);
 }
 
+
+class SimpleColorShader extends Shader {
+  int vertexPositionAttribute;
+  gl.UniformLocation pMatrixUniform;
+  gl.UniformLocation mvMatrixUniform;
+  
+  SimpleColorShader._internal() {
+    name = "simpleColor";
+    vertexSource = """
+        attribute vec3 aVertexPosition;
+
+        uniform mat4 uMVMatrix;
+        uniform mat4 uPMatrix;
+
+        void main(void) {
+          gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        }
+        """;
+    fragmentSource = """
+        precision mediump float;
+        void main(void) {
+          gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+        """;
+  }
+  
+  _setupAttribs() {
+    var ctx = _director.renderer.ctx;
+    vertexPositionAttribute = ctx.getAttribLocation(program, "aVertexPosition");
+    ctx.enableVertexAttribArray(vertexPositionAttribute);
+    pMatrixUniform = ctx.getUniformLocation(program, "uPMatrix");
+    mvMatrixUniform = ctx.getUniformLocation(program, "uMVMatrix");
+  }
+  
+  prepare(Mesh mesh) {
+    var ctx = _director.renderer.ctx;
+    ctx.bindBuffer(gl.ARRAY_BUFFER, mesh._geometry.vertexBuffer);
+    ctx.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    
+    Float32List tmp = new Float32List.fromList(new List.filled(16, 0.0));
+    _director.scene.camera.projectionMatrix.copyIntoArray(tmp);
+    ctx.uniformMatrix4fv(pMatrixUniform, false, tmp);
+    
+    mesh.matrix.copyIntoArray(tmp);
+    ctx.uniformMatrix4fv(mvMatrixUniform, false, tmp);
+  }
+}
 
 
 class DefaultShader extends Shader {
@@ -21,7 +101,6 @@ class DefaultShader extends Shader {
   gl.UniformLocation mvMatrixUniform;
   gl.UniformLocation uNormalMatrix;
   gl.UniformLocation samplerUniform;
-  Matrix4 pMatrix;
   
   DefaultShader._internal() {
     name = "default";
@@ -68,21 +147,8 @@ class DefaultShader extends Shader {
         """;
   }
   
-  compile() {
-    var ctx = _engine.renderer.ctx;
-    gl.Shader vertexShader = ctx.createShader(gl.VERTEX_SHADER);
-    ctx.shaderSource(vertexShader, vertexSource);
-    ctx.compileShader(vertexShader);
-
-    gl.Shader fragmentShader = ctx.createShader(gl.FRAGMENT_SHADER);
-    ctx.shaderSource(fragmentShader, fragmentSource);
-    ctx.compileShader(fragmentShader);
-    
-    program = ctx.createProgram();
-    ctx.attachShader(program, vertexShader);
-    ctx.attachShader(program, fragmentShader);
-    ctx.linkProgram(program);
-    ctx.useProgram(program);
+  _setupAttribs() {
+    var ctx = _director.renderer.ctx;
 
     vertexPositionAttribute = ctx.getAttribLocation(program, "aVertexPosition");
     ctx.enableVertexAttribArray(vertexPositionAttribute);
@@ -97,6 +163,10 @@ class DefaultShader extends Shader {
     mvMatrixUniform = ctx.getUniformLocation(program, "uMVMatrix");
     uNormalMatrix = ctx.getUniformLocation(program, "uNormalMatrix");
     samplerUniform = ctx.getUniformLocation(program, "uSampler");
+  }
+
+  prepare(Mesh mesh) {
+    // TODO implement this method
   }
 }
 

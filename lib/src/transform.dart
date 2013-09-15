@@ -19,6 +19,14 @@ class Transform {
   
   List<Transform> children;
   
+  Transform() {
+    position = new Vector3.zero();
+    rotation = new Vector3.zero();
+    scale = new Vector3(1.0, 1.0, 1.0);
+    children = new List();
+    matrix = new Matrix4.identity();
+  }
+  
   add(Transform child) {
     child.removeFromParent();
     child.parent = this;
@@ -34,6 +42,10 @@ class Transform {
   removeFromParent() {
     if(parent != null)
       parent.remove(this);
+  }
+  
+  render() {
+    children.forEach((e) => e.render());
   }
 }
 

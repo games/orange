@@ -7,4 +7,7 @@ class Material {
   List<double> diffuse;
   List<double> specular;
   List<double> emissive;
+  
+  Shader shader;
+  gl.Texture texture;
 }

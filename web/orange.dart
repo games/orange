@@ -25,17 +25,24 @@ class TestScene extends Scene {
     _stats = new Stats();
     document.body.append(_stats.container);
     
-    cube = new Cube(1, 1, 1);
-    cube.position.setValues(0.0, 0.0, -7.0);
+    cube = new Cube(0.5, 0.5, 0.5);
+    cube.position.setValues(-1.0, 0.0, -5.0);
+    add(cube);
+
+    
+    cube = new Cube(1.0, 1.0, 1.0);
+    cube.position.setValues(1.0, 0.0, -5.0);
     add(cube);
   }
   
   update(double elapsed) {
     _stats.begin();
     
-    cube.rotation.x += 1.0 * elapsed % 3.14;
-    cube.rotation.y += 1.0 * elapsed % 3.14;
-    cube.rotation.z += 1.0 * elapsed % 3.14;
+    children.forEach((e) {
+      e.rotation.x += 1.0 * elapsed % 3.14;
+      e.rotation.y += 1.0 * elapsed % 3.14;
+      e.rotation.z += 1.0 * elapsed % 3.14;
+    });
   }
   
   render() {

@@ -29,6 +29,13 @@ abstract class Shader {
       ctx.attachShader(program, fragmentShader);
       ctx.linkProgram(program);
       
+      var linkedStatus = ctx.getProgramParameter(program, gl.LINK_STATUS);
+      if(!linkedStatus) {
+        print(ctx.getShaderInfoLog(vertexShader));
+        print(ctx.getShaderInfoLog(fragmentShader));
+        print(ctx.getProgramInfoLog(program));
+      }
+      
       _initAttributes();
       _initUniforms();
     }

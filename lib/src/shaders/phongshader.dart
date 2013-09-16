@@ -3,7 +3,7 @@ part of orange;
 
 class PhongShader extends Shader {
   final int MAX_LIGHTS = 4;
-  
+
   int vertexPositionAttribute;
   int vertexNormalAttribute;
   gl.UniformLocation pMatrixUniform;
@@ -22,46 +22,43 @@ class PhongShader extends Shader {
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
     
-//    varying vec3 vNormal;
-//    varying vec4 vPosition;
+    varying vec3 vNormal;
+    varying vec4 vPosition;
     
     void main(void) {
-//      vNormal = uNormalMatrix * aVertexNormal;
-//      vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
-//      gl_Position = uPMatrix * vPosition;
-//      gl_PointSize = 5.0;
-      gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+      vNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+      vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
+      gl_Position = uPMatrix * vPosition;
     }
     """;
     
-    fragmentSource = [
-//                      shader_lights_include_source,
-"""
-//varying vec3 vNormal;
-//varying vec4 vPosition;
-
-void main(void) {
-//  float specularIntensity = 1.0;
-//  float shininess = 1.0;
-//  vec4 tc = vec4(1.0, 0.0, 0.0, 1.0);
-//  //vec3 l = computeLights(vPosition, vNormal, specularIntensity, shininess);
-//  //gl_FragColor = vec4(tc.rgb * l, tc.a);
-//  gl_FragColor = tc;
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-}
-"""
-                      ].join('\n');
+    fragmentSource = 
+        """
+        precision mediump float;
+        $shader_lights_include_source
+        varying vec3 vNormal;
+        varying vec4 vPosition;
+        void main(void) {
+          float specularIntensity = 1.0;
+          float shininess = 1.0;
+          vec4 tc = vec4(1.0, 0.0, 0.0, 1.0);
+          vec3 l = computeLights(vPosition, vNormal, specularIntensity, shininess);
+          gl_FragColor = vec4(tc.rgb * l, tc.a);
+        }
+        """;
     
-    
+//    vertexSource = shader_normal_color_vertex_source;
+    fragmentSource = shader_normal_color_fragment_source;
   }
   
   _initAttributes() {
     var ctx = _director.renderer.ctx;
+    
     vertexPositionAttribute = ctx.getAttribLocation(program, "aVertexPosition");
     ctx.enableVertexAttribArray(vertexPositionAttribute);
     
-//    vertexNormalAttribute = ctx.getAttribLocation(program, "aVertexNormal");
-//    ctx.enableVertexAttribArray(vertexNormalAttribute);
+    vertexNormalAttribute = ctx.getAttribLocation(program, "aVertexNormal");
+    ctx.enableVertexAttribArray(vertexNormalAttribute);
     
     pMatrixUniform = ctx.getUniformLocation(program, "uPMatrix");
     mvMatrixUniform = ctx.getUniformLocation(program, "uMVMatrix");

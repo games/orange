@@ -15,6 +15,8 @@ class Transform {
   Matrix4 _globalMatrix;
   Matrix4 _normalMatrix;
   
+  Quaternion _quaternion;
+  
   Transform parent;
   
   List<Transform> children;
@@ -46,6 +48,15 @@ class Transform {
   
   render() {
     children.forEach((e) => e.render());
+  }
+  
+  updateMatrix() {
+    matrix.setIdentity();
+    matrix.translate(position);
+    matrix.scale(scale);
+    matrix.rotateX(rotation.x);
+    matrix.rotateY(rotation.y);
+    matrix.rotateZ(rotation.z);
   }
 }
 

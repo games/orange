@@ -12,6 +12,6 @@ class Scene extends Transform {
   exit() {
   }
   
-  update(double elapsed) {
+  update(double interval) {
   }
 }

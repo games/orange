@@ -18,7 +18,7 @@ class PhongShader extends Shader {
     attribute vec3 aVertexPosition;
     attribute highp vec3 aVertexNormal;
     
-    uniform mat4 uNormalMatrix;
+    uniform mat3 uNormalMatrix;
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
     
@@ -26,7 +26,7 @@ class PhongShader extends Shader {
     varying vec4 vPosition;
     
     void main(void) {
-      vNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+      vNormal = uNormalMatrix * aVertexNormal;
       vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
       gl_Position = uPMatrix * vPosition;
     }
@@ -48,7 +48,7 @@ class PhongShader extends Shader {
         """;
     
 //    vertexSource = shader_normal_color_vertex_source;
-    fragmentSource = shader_normal_color_fragment_source;
+//    fragmentSource = shader_normal_color_fragment_source;
   }
   
   _initAttributes() {
@@ -125,6 +125,7 @@ class PhongShader extends Shader {
     normalMatrix.copyInverse(mesh.matrix);
     normalMatrix.transpose();
     normalMatrix.copyIntoArray(tmp);
+//    normalMatrix
     ctx.uniformMatrix4fv(uNormalMatrix, false, tmp);
   }
 

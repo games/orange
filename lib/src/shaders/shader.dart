@@ -5,7 +5,7 @@ part of orange;
 
 abstract class Shader {
 
-  static final Shader simpleColorShader = new SimpleColorShader._internal();
+  static final Shader simpleShader = new SimpleShader._internal();
   static final Shader phongShader = new PhongShader._internal();
   
   String name;
@@ -51,64 +51,6 @@ abstract class Shader {
   setupLights(List<Light> lights){}
   setupAttributes(Mesh mesh);
   setupUniforms(Mesh mesh);
-}
-
-
-class SimpleColorShader extends Shader {
-  int vertexPositionAttribute;
-  int vertexNormalAttribute;
-  gl.UniformLocation pMatrixUniform;
-  gl.UniformLocation mvMatrixUniform;
-  gl.UniformLocation uNormalMatrix;
-  
-  SimpleColorShader._internal() {
-    name = "simpleColor";
-    vertexSource = shader_normal_color_vertex_source;
-    fragmentSource = shader_normal_color_fragment_source;
-  }
-  
-  _initAttributes() {
-    var ctx = _director.renderer.ctx;
-    vertexPositionAttribute = ctx.getAttribLocation(program, "aVertexPosition");
-    ctx.enableVertexAttribArray(vertexPositionAttribute);
-    
-    vertexNormalAttribute = ctx.getAttribLocation(program, "aVertexNormal");
-    ctx.enableVertexAttribArray(vertexNormalAttribute);
-  }
-
-  _initUniforms() {
-    var ctx = _director.renderer.ctx;
-    pMatrixUniform = ctx.getUniformLocation(program, "uPMatrix");
-    mvMatrixUniform = ctx.getUniformLocation(program, "uMVMatrix");
-    uNormalMatrix = ctx.getUniformLocation(program, "uNormalMatrix");
-  }
-  
-  setupAttributes(Mesh mesh) {
-    var ctx = _director.renderer.ctx;
-    
-    ctx.bindBuffer(gl.ARRAY_BUFFER, mesh._geometry.vertexBuffer);
-    ctx.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-    
-    ctx.bindBuffer(gl.ARRAY_BUFFER, mesh._geometry.normalBuffer);
-    ctx.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
-  }
-
-  setupUniforms(Mesh mesh) {
-    var ctx = _director.renderer.ctx;
-    
-    Float32List tmp = new Float32List.fromList(new List.filled(16, 0.0));
-    _director.scene.camera.projectionMatrix.copyIntoArray(tmp);
-    ctx.uniformMatrix4fv(pMatrixUniform, false, tmp);
-    
-    mesh.matrix.copyIntoArray(tmp);
-    ctx.uniformMatrix4fv(mvMatrixUniform, false, tmp);
-    
-    var normalMatrix = new Matrix4.zero();
-    normalMatrix.copyInverse(mesh.matrix);
-    normalMatrix.transpose();
-    normalMatrix.copyIntoArray(tmp);
-    ctx.uniformMatrix4fv(uNormalMatrix, false, tmp);
-  }
 }
 
 

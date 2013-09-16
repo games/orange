@@ -11,12 +11,7 @@ class Mesh extends Transform {
   List<Mesh> _subMeshes;
   
   render() {
-    matrix.setIdentity();
-    matrix.translate(position);
-    matrix.scale(scale);
-    matrix.rotateX(rotation.x);
-    matrix.rotateY(rotation.y);
-    matrix.rotateZ(rotation.z);
+    updateMatrix();
     
     Renderer renderer = _director.renderer;
     

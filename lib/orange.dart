@@ -21,11 +21,12 @@ part 'src/primitives.dart';
 part 'src/parser.dart';
 part 'src/color.dart';
 part 'src/light.dart';
+part 'src/keyboard.dart';
 
 part 'src/shaders/shader.dart';
+part 'src/shaders/simpleshader.dart';
 part 'src/shaders/phongshader.dart';
 part 'src/shaders/shader_lights_source.dart';
-part 'src/shaders/shader_normal_color.dart';
 
 part 'src/event/eventdispatcher.dart';
 part 'src/event/events.dart';

@@ -55,7 +55,7 @@ void main(void) {
     
   }
   
-  _setupAttribs() {
+  _initAttributes() {
     var ctx = _director.renderer.ctx;
     vertexPositionAttribute = ctx.getAttribLocation(program, "aVertexPosition");
     ctx.enableVertexAttribArray(vertexPositionAttribute);
@@ -86,6 +86,10 @@ void main(void) {
 //        print(acUni);
 //    }
   }
+
+  _initUniforms() {
+    // TODO implement this method
+  }
   
   setupLights(List<Light> lights) {
 //    var ctx = _director.renderer.ctx;
@@ -105,7 +109,7 @@ void main(void) {
 //    }
   }
   
-  prepare(Mesh mesh) {
+  setupAttributes(Mesh mesh) {
     var ctx = _director.renderer.ctx;
     ctx.bindBuffer(gl.ARRAY_BUFFER, mesh._geometry.vertexBuffer);
     ctx.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
@@ -125,5 +129,9 @@ void main(void) {
     normalMatrix.transpose();
     normalMatrix.copyIntoArray(tmp);
     ctx.uniformMatrix4fv(uNormalMatrix, false, tmp);
+  }
+
+  setupUniforms(Mesh mesh) {
+    // TODO implement this method
   }
 }

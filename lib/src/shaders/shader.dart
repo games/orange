@@ -29,18 +29,21 @@ abstract class Shader {
       ctx.attachShader(program, fragmentShader);
       ctx.linkProgram(program);
       
-      _setupAttribs();
+      _initAttributes();
+      _initUniforms();
     }
   }
   
-  _setupAttribs();
+  _initAttributes();
+  _initUniforms();
   
   use() {
     _director.renderer.ctx.useProgram(program);
   }
   
   setupLights(List<Light> lights){}
-  prepare(Mesh mesh);
+  setupAttributes(Mesh mesh);
+  setupUniforms(Mesh mesh);
 }
 
 
@@ -57,26 +60,34 @@ class SimpleColorShader extends Shader {
     fragmentSource = shader_normal_color_fragment_source;
   }
   
-  _setupAttribs() {
+  _initAttributes() {
     var ctx = _director.renderer.ctx;
     vertexPositionAttribute = ctx.getAttribLocation(program, "aVertexPosition");
     ctx.enableVertexAttribArray(vertexPositionAttribute);
     
     vertexNormalAttribute = ctx.getAttribLocation(program, "aVertexNormal");
     ctx.enableVertexAttribArray(vertexNormalAttribute);
-    
+  }
+
+  _initUniforms() {
+    var ctx = _director.renderer.ctx;
     pMatrixUniform = ctx.getUniformLocation(program, "uPMatrix");
     mvMatrixUniform = ctx.getUniformLocation(program, "uMVMatrix");
     uNormalMatrix = ctx.getUniformLocation(program, "uNormalMatrix");
   }
   
-  prepare(Mesh mesh) {
+  setupAttributes(Mesh mesh) {
     var ctx = _director.renderer.ctx;
+    
     ctx.bindBuffer(gl.ARRAY_BUFFER, mesh._geometry.vertexBuffer);
     ctx.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     
     ctx.bindBuffer(gl.ARRAY_BUFFER, mesh._geometry.normalBuffer);
     ctx.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+  }
+
+  setupUniforms(Mesh mesh) {
+    var ctx = _director.renderer.ctx;
     
     Float32List tmp = new Float32List.fromList(new List.filled(16, 0.0));
     _director.scene.camera.projectionMatrix.copyIntoArray(tmp);

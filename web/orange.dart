@@ -54,15 +54,13 @@ class TestScene extends Scene {
     var s = interval / 1000.0;
 
 //    camera.lookAt(children[0].position);
-    i += 1.0 * s % 3.14;
-    children[0].rotation.setAxisAngle(WORLD_UP, i);
-    children[1].scale.splat(sin(i));
+      i += 1.0 * s % 3.14;
+//    children[0].rotation.setAxisAngle(WORLD_UP, i);
+//    children[1].scale.splat(sin(i));
     
-//    children.forEach((e) {
-//      e.rotation.x += 1.0 * s % 3.14;
-//      e.rotation.y += 1.0 * s % 3.14;
-//      e.rotation.z += 1.0 * s % 3.14;
-//    });
+    children.forEach((e) {
+      e.rotation.setEuler(i, i, i);
+    });
   }
   
   render() {

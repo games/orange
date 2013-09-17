@@ -1,6 +1,7 @@
 part of orange;
 
-final Vector3 UP = new Vector3(0.0, 1.0, 0.0);
+final Vector3 WORLD_UP = new Vector3(0.0, 1.0, 0.0);
+final Vector3 WORLD_DOWN = new Vector3(0.0, -1.0, 0.0);
 
 abstract class Camera extends Transform {
   double near;
@@ -12,10 +13,11 @@ abstract class Camera extends Transform {
 
   lookAt(Vector3 target) {
     _focusPosition = target.clone();
+    rotation = new Quaternion.fromRotation(makeViewMatrix(position, _focusPosition, WORLD_UP).getRotation());
   }
   
   copyViewMatrixIntoArray(Float32List vm) {
-    makeViewMatrix(position, _focusPosition, UP).copyIntoArray(vm);
+    matrix.copyIntoArray(vm);
   }
   
   Vector3 get frontDirection =>  (_focusPosition - position).normalize();
@@ -27,7 +29,7 @@ class PerspectiveCamera extends Camera {
     this.near = near;
     this.far = far;
     this.fov = fov;
-    _focusPosition = new Vector3(0.0, 0.0, -1.0);
+    lookAt(new Vector3(0.0, 0.0, -1.0));
     updateProjection();
   }
   
@@ -39,19 +41,6 @@ class PerspectiveCamera extends Camera {
     super.updateMatrix();
     matrix.invert();
   }
-  
-//  rotate(Quaternion q) {
-//    _quaternion *= q;
-//  }
-//  
-//  rotateByAxis(Vector3 axis, double radian) {
-//    rotate(new Quaternion.axisAngle(axis, radian));
-//  }
-//  
-//  roll(double angle) {
-//    
-//  }
-  
 }
 
 

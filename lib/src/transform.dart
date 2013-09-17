@@ -6,8 +6,8 @@ class Transform {
   String name;
   
   Vector3 position;
-  Vector3 rotation;
   Vector3 scale;
+  Quaternion rotation;
   
   Vector3 _worldPosition;
   
@@ -15,16 +15,14 @@ class Transform {
   Matrix4 _globalMatrix;
   Matrix4 _normalMatrix;
   
-  Quaternion _quaternion;
-  
   Transform parent;
   
   List<Transform> children;
   
   Transform() {
     position = new Vector3.zero();
-    rotation = new Vector3.zero();
     scale = new Vector3(1.0, 1.0, 1.0);
+    rotation = new Quaternion.identity();
     children = new List();
     matrix = new Matrix4.identity();
   }
@@ -51,12 +49,8 @@ class Transform {
   }
   
   updateMatrix() {
-    matrix.setIdentity();
-    matrix.translate(position);
+    matrix.setFromTranslationRotation(position, rotation);
     matrix.scale(scale);
-    matrix.rotateX(rotation.x);
-    matrix.rotateY(rotation.y);
-    matrix.rotateZ(rotation.z);
   }
 }
 

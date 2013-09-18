@@ -14,6 +14,7 @@ abstract class Camera extends Transform {
   lookAt(Vector3 target) {
     _focusPosition = target.clone();
     rotation = new Quaternion.fromRotation(makeViewMatrix(position, _focusPosition, WORLD_UP).getRotation());
+    rotation.inverse();
   }
   
   copyViewMatrixIntoArray(Float32List vm) {

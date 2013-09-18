@@ -34,32 +34,38 @@ class TestScene extends Scene {
     var sphere = new Sphere(1.0, 32, 32);
     sphere.position.setValues(1.0, 0.0, 0.0);
     add(sphere);
+    
+    camera.position = new Vector3(0.0,50.0, 0.0);
+    camera.lookAt(cube.position);
   }
   var i = 0.0;
   update(double interval) {
     _stats.begin();
     
     if(director.keyboard.held(KeyCode.LEFT)){
-//      camera.position += new Vector3(-0.1, 0.0, 0.0);
-      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians + 0.01);
+      camera.position += new Vector3(-0.1, 0.0, 0.0);
+//      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians + 0.01);
     }else if(director.keyboard.held(KeyCode.RIGHT)){
-//      camera.position += new Vector3(0.1, 0.0, 0.0);
-      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians - 0.01);
+      camera.position += new Vector3(0.1, 0.0, 0.0);
+//      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians - 0.01);
     }else if(director.keyboard.held(KeyCode.UP)){
-      camera.position += camera.frontDirection * 0.1;
+//      camera.position += camera.frontDirection * 0.1;
+      camera.position += new Vector3(0.0, 0.1, 0.0);
     }else if(director.keyboard.held(KeyCode.DOWN)){
-      camera.position -= camera.frontDirection * 0.1;
+//      camera.position -= camera.frontDirection * 0.1;
+      camera.position += new Vector3(0.0, -0.1, 0.0);
     }
     
-    var s = interval / 1000.0;
-
-//    camera.lookAt(children[0].position);
-      i += 1.0 * s % 3.14;
+      var s = interval / 1000.0;
+      i += 0.02 ;
+      children[0].position += new Vector3(cos(i), 0.0, sin(i));
+      print(new Vector3(cos(i), 0.0, sin(i)));
+//      camera.lookAt(children[0].position);
 //    children[0].rotation.setAxisAngle(WORLD_UP, i);
 //    children[1].scale.splat(sin(i));
     
     children.forEach((e) {
-      e.rotation.setEuler(i, i, i);
+//      e.rotation.setEuler(i, i, i);
     });
   }
   

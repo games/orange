@@ -33,8 +33,8 @@ class Director {
     html.window.requestAnimationFrame(_animate);
     var interval = elapsed - _lastElapsed;
     _renderer.prepare();
-    _keyboard.update(interval);
     _scene.update(interval);
+    _keyboard.update(interval);
     _scene.camera.updateMatrix();
     _scene.render();
     _lastElapsed = elapsed;

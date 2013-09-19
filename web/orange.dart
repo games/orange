@@ -35,34 +35,36 @@ class TestScene extends Scene {
     sphere.position.setValues(1.0, 0.0, 0.0);
     add(sphere);
     
-    var light = new Light(0x0000ff, Light.AMBIENT);
-    light.position = new Vector3(0.85, 0.8, 0.75);
-    light.angle = 0.2;
-    light.angleFalloff = 0.2;
-    light.intensity = 1.0;
-    lights.add(light);
+    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
+    lights.add(ambientLight);
+    
+    var directLight = new Light(0xcdffff, Light.DIRECT);
+    directLight.position = new Vector3(0.85, 0.8, 0.75);
+    lights.add(directLight);
   }
   var i = 0.0;
   update(double interval) {
     _stats.begin();
     
+    var moveTarget = lights[1];
+    
     if(director.keyboard.held(KeyCode.LEFT)){
-      camera.position += new Vector3(-0.1, 0.0, 0.0);
+      moveTarget.position += new Vector3(-0.1, 0.0, 0.0);
 //      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians + 0.01);
     }else if(director.keyboard.held(KeyCode.RIGHT)){
-      camera.position += new Vector3(0.1, 0.0, 0.0);
+      moveTarget.position += new Vector3(0.1, 0.0, 0.0);
 //      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians - 0.01);
     }else if(director.keyboard.held(KeyCode.UP)){
 //      camera.position += camera.frontDirection * 0.1;
-      camera.position += new Vector3(0.0, 0.1, 0.0);
+      moveTarget.position += new Vector3(0.0, 0.1, 0.0);
     }else if(director.keyboard.held(KeyCode.DOWN)){
 //      camera.position -= camera.frontDirection * 0.1;
-      camera.position += new Vector3(0.0, -0.1, 0.0);
+      moveTarget.position += new Vector3(0.0, -0.1, 0.0);
     }
     
       var s = interval / 1000.0;
       i += 0.02 ;
-//      children[0].position += new Vector3(cos(i), 0.0, sin(i));
+//      lights[1].position += new Vector3(cos(i), 1.0, sin(i));
 //      print(new Vector3(cos(i), 0.0, sin(i)));
 //      camera.lookAt(children[0].position);
 //    children[0].rotation.setAxisAngle(WORLD_UP, i);

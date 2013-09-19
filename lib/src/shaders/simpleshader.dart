@@ -18,7 +18,12 @@ struct lightSource {
 
 final String _shader_lights = """
 uniform lightSource uLight0;
+uniform lightSource uLight1;
+uniform lightSource uLight2;
+uniform lightSource uLight3;
 vec3 computeLight(vec4 position, vec4 normal, float specularIntensity, float shininess, lightSource ls) {
+  if(ls.type == -1)
+    return vec3(0.0, 0.0, 0.0);
   if(ls.type == 0) {
     return ls.color;
   }
@@ -38,31 +43,33 @@ uniform mat4 uProjectionMatrix;
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uNormalMatrix;
-$_shader_light_structure
-$_shader_lights
 
-varying vec3 vLighting;
+varying vec4 vPosition;
+varying vec4 vNormal;
 
 void main(void) {
-  vec4 vPosition = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
+  vPosition = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
   gl_Position = vPosition;
-  //apply lighting effect
-  highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
-  highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
-  highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
-
-  vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-  vLighting = computeLight(vPosition, transformedNormal, 0.0, 0.0, uLight0);
+  vNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
 }
 """;
 
 final String _shader_normal_color_fragment_source = 
 """
 precision mediump float;
-varying vec3 vLighting;
+
+varying vec4 vPosition;
+varying vec4 vNormal;
+
+$_shader_light_structure
+$_shader_lights
 
 void main(void) {
-  gl_FragColor = vec4(vec3(1.0, 0.0, 0.0) * vLighting, 1.0);
+  vec3 lighting = computeLight(vPosition, vNormal, 0.0, 0.0, uLight0) + 
+                  computeLight(vPosition, vNormal, 0.0, 0.0, uLight1) + 
+                  computeLight(vPosition, vNormal, 0.0, 0.0, uLight2) + 
+                  computeLight(vPosition, vNormal, 0.0, 0.0, uLight3);
+  gl_FragColor = vec4(vec3(1.0, 0.0, 0.0) * lighting, 1.0);
 }
 """;
 
@@ -150,25 +157,25 @@ class SimpleShader extends Shader {
   }
   
   setupLights(List<Light> lights) {
-    final MAX_LIGHTS = 1;
     var ctx = _director.renderer.ctx;
     for(var i = 0; i < MAX_LIGHTS; i++) {
       var lightSource = lightsUniform[i];
       if(i < lights.length) {
-        ctx.uniform1i(lightSource["type"], lights[i].type);
-        ctx.uniform3fv(lightSource["direction"], vector3ToFloat32List(lights[i].position));
-        ctx.uniform3fv(lightSource["color"], vector3ToFloat32List(lights[i].color.rgb));
-        ctx.uniform3fv(lightSource["position"], vector3ToFloat32List(lights[i].position));
-        ctx.uniform1f(lightSource["intensity"], lights[i].intensity);
-        ctx.uniform1f(lightSource["angleFalloff"], lights[i].angleFalloff);
-        ctx.uniform1f(lightSource["angle"], lights[i].angle);
+        var light = lights[i];
+        ctx.uniform1i(lightSource["type"], light.type);
+        ctx.uniform3fv(lightSource["direction"], vector3ToFloat32List(light.position));
+        ctx.uniform3fv(lightSource["color"], vector3ToFloat32List(light.color.rgb));
+        ctx.uniform3fv(lightSource["position"], vector3ToFloat32List(light.position));
+        if(light.intensity != null)
+          ctx.uniform1f(lightSource["intensity"], light.intensity);
+        if(light.angleFalloff != null)
+          ctx.uniform1f(lightSource["angleFalloff"], light.angleFalloff);
+        if(light.angle != null)
+          ctx.uniform1f(lightSource["angle"], light.angle);
       }else{
         ctx.uniform1i(lightSource["type"], Light.NONE);
       }
     }
-    
-
-    print([vector3ToFloat32List(lights[0].color.rgb)]);
   }
   
   vector3ToFloat32List(Vector3 vec) {

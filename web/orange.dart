@@ -35,8 +35,12 @@ class TestScene extends Scene {
     sphere.position.setValues(1.0, 0.0, 0.0);
     add(sphere);
     
-    camera.position = new Vector3(0.0,50.0, 0.0);
-    camera.lookAt(cube.position);
+    var light = new Light(0x0000ff, Light.AMBIENT);
+    light.position = new Vector3(0.85, 0.8, 0.75);
+    light.angle = 0.2;
+    light.angleFalloff = 0.2;
+    light.intensity = 1.0;
+    lights.add(light);
   }
   var i = 0.0;
   update(double interval) {
@@ -58,8 +62,8 @@ class TestScene extends Scene {
     
       var s = interval / 1000.0;
       i += 0.02 ;
-      children[0].position += new Vector3(cos(i), 0.0, sin(i));
-      print(new Vector3(cos(i), 0.0, sin(i)));
+//      children[0].position += new Vector3(cos(i), 0.0, sin(i));
+//      print(new Vector3(cos(i), 0.0, sin(i)));
 //      camera.lookAt(children[0].position);
 //    children[0].rotation.setAxisAngle(WORLD_UP, i);
 //    children[1].scale.splat(sin(i));

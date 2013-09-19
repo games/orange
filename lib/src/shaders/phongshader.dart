@@ -48,7 +48,7 @@ class PhongShader extends Shader {
         """;
     
 //    vertexSource = shader_normal_color_vertex_source;
-//    fragmentSource = shader_normal_color_fragment_source;
+//    fragmentSource = _shader_normal_color_fragment_source;
   }
   
   _initAttributes() {

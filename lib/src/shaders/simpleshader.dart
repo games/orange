@@ -8,11 +8,12 @@ struct lightSource {
   vec3 direction;     // used by directional and spotlight (global direction of the transfom)
   vec3 position;      // used by hemisphere, point, spotlight (it's the global position of the transform)
 
-  vec3 color;         // used by d/p/s and hemisphere
-  float intensity;    // used by spherical harmonics & d/p/s
-  float angleFalloff; // used by hemisphere and spotlight (TODO: change to falloff)
-  float angle;        // used by spotlight
-  // float attenuation; // used by point, spot, hemisphere (TODO: implement)
+  vec3 color;    
+
+  vec3 ambient;       // Ambient light intensity
+  vec3 diffuse;       // Diffuse light intensity
+  vec3 specular;      // Specular light intensity
+  float shininess;
 };
 """;
 
@@ -24,12 +25,35 @@ uniform lightSource uLight3;
 vec3 computeLight(vec4 position, vec4 normal, float specularIntensity, float shininess, lightSource ls) {
   if(ls.type == -1)
     return vec3(0.0, 0.0, 0.0);
-  if(ls.type == 0) {
+  if(ls.type == 0) 
     return ls.color;
-  }
   float directional = max(dot(normal.xyz, ls.direction), 0.0);
   return ls.color * directional;
 }
+
+vec3 phong(vec4 position, vec4 normal, lightSource ls) {
+  vec3 eye = -vec3(position.xyz);
+  vec3 l = normalize(ls.direction);
+  vec3 n = normalize(normal);
+  //lambert's cosine law
+  float lambertTerm = dot(n, -l);
+  //ambient term
+  vec3 ia = ls.ambient * uMaterialAmbient;
+  //diffuse term
+  vec3 id = vec3(0.0, 0.0, 0.0);
+  //specular term
+  vec3 is = vec3(0.0, 0.0, 0.0);
+  if(lambertTerm > 0.0){
+    id = ls.diffuse * uMaterialDiffuse * lambertTerm;
+    vec3 e = normalize(eye);
+    vec3 r = reflect(l, n);
+    float specular = pow(max(dot(r, e), 0.0), ls.shininess);
+    is = ls.specular * uMaterialSpecular * specular;
+  }
+  vec3 finalColor = ia + id + is;
+  return finalColor;
+}
+
 """;
 
 
@@ -44,12 +68,16 @@ uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uNormalMatrix;
 
+uniform vec3 uMaterialAmbient;
+uniform vec3 uMaterialDiffuse;
+uniform vec4 uMaterialSpecular
+
 varying vec4 vPosition;
 varying vec4 vNormal;
 
 void main(void) {
-  vPosition = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
-  gl_Position = vPosition;
+  vPosition = uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
+  gl_Position = uProjectionMatrix * vPosition;
   vNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
 }
 """;
@@ -65,10 +93,13 @@ $_shader_light_structure
 $_shader_lights
 
 void main(void) {
+  //vec3 lighting = computeLight(vPosition, vNormal, 0.0, 0.0, uLight0) + 
+  //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight1) + 
+  //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight2) + 
+  //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight3);
   vec3 lighting = computeLight(vPosition, vNormal, 0.0, 0.0, uLight0) + 
-                  computeLight(vPosition, vNormal, 0.0, 0.0, uLight1) + 
-                  computeLight(vPosition, vNormal, 0.0, 0.0, uLight2) + 
-                  computeLight(vPosition, vNormal, 0.0, 0.0, uLight3);
+                  phong(vPosition, vNormal, uLight1);
+
   gl_FragColor = vec4(vec3(1.0, 0.0, 0.0) * lighting, 1.0);
 }
 """;

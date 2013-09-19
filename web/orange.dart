@@ -31,7 +31,7 @@ class TestScene extends Scene {
     add(cube);
 
     
-    var sphere = new Sphere(1.0, 32, 32);
+    var sphere = new Sphere(1.0, 16, 16);
     sphere.position.setValues(1.0, 0.0, 0.0);
     add(sphere);
     
@@ -40,8 +40,12 @@ class TestScene extends Scene {
     
     var directLight = new Light(0xcdffff, Light.DIRECT);
     directLight.position = new Vector3(0.85, 0.8, 0.75);
+    directLight.ambientIntensity = new Vector3(0.03, 0.03, 0.03);
+    directLight.diffuseIntensity = new Vector3(1.0, 1.0, 1.0);
+    directLight.specularIntensity = new Vector3(1.0, 1.0, 1.0);
     lights.add(directLight);
   }
+  
   var i = 0.0;
   update(double interval) {
     _stats.begin();
@@ -80,3 +84,65 @@ class TestScene extends Scene {
     _stats.end();
   }
 }
+
+
+
+class TestLoadMesh extends Scene {
+  Stats _stats;
+  
+  enter() {
+    _stats = new Stats();
+    document.body.append(_stats.container);
+    HttpRequest.getString("hum_f.json").then(addMesh);
+  }
+  
+  addMesh(String responseData) {
+    var mesh = parseMesh(responseData);
+    mesh.position = new Vector3(-2.0 + children.length * 5, 0.0, 0.0);
+    add(mesh);
+  }
+  
+  update(double interval) {
+    _stats.begin();
+    
+    var moveTarget = camera;
+    
+    if(director.keyboard.held(KeyCode.LEFT)){
+      moveTarget.position += new Vector3(-0.1, 0.0, 0.0);
+//      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians + 0.01);
+    }else if(director.keyboard.held(KeyCode.RIGHT)){
+      moveTarget.position += new Vector3(0.1, 0.0, 0.0);
+//      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians - 0.01);
+    }else if(director.keyboard.held(KeyCode.UP)){
+//      camera.position += camera.frontDirection * 0.1;
+      moveTarget.position += new Vector3(0.0, 0.0, 0.1);
+    }else if(director.keyboard.held(KeyCode.DOWN)){
+//      camera.position -= camera.frontDirection * 0.1;
+      moveTarget.position += new Vector3(0.0, 0.0, -0.1);
+    }
+    
+  }
+  
+  render() {
+    super.render();
+    _stats.end();
+  }
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

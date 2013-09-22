@@ -8,7 +8,8 @@ void main() {
 
   initOrange(query('#container'));
   
-  var scene = new TestScene();
+//  var scene = new TestScene();
+  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.z = 10.0;
@@ -27,7 +28,7 @@ class TestScene extends Scene {
     document.body.append(_stats.container);
     
     var cube = new Cube(1.0, 1.0, 1.0);
-    cube.position.setValues(-1.0, 0.0, 0.0);
+    cube.position.setValues(0.0, -1.0, 0.0);
     add(cube);
 
     
@@ -35,14 +36,15 @@ class TestScene extends Scene {
     sphere.position.setValues(1.0, 0.0, 0.0);
     add(sphere);
     
-    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
-    lights.add(ambientLight);
+//    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
+//    lights.add(ambientLight);
     
     var directLight = new Light(0xcdffff, Light.DIRECT);
-    directLight.position = new Vector3(0.85, 0.8, 0.75);
-    directLight.ambientIntensity = new Vector3(0.03, 0.03, 0.03);
-    directLight.diffuseIntensity = new Vector3(1.0, 1.0, 1.0);
-    directLight.specularIntensity = new Vector3(1.0, 1.0, 1.0);
+    directLight.position = new Vector3(50.0, 50.0, -200.0);
+    directLight.ambient = new Vector3(0.0, 0.0, 1.0);
+    directLight.diffuse = new Vector3(1.0, 0.0, 0.0);
+    directLight.specular = new Vector3(0.0, 1.0, 0.0);
+    directLight.shininess = 100.0;
     lights.add(directLight);
   }
   
@@ -50,7 +52,7 @@ class TestScene extends Scene {
   update(double interval) {
     _stats.begin();
     
-    var moveTarget = lights[1];
+    var moveTarget = lights[0];
     
     if(director.keyboard.held(KeyCode.LEFT)){
       moveTarget.position += new Vector3(-0.1, 0.0, 0.0);
@@ -75,7 +77,7 @@ class TestScene extends Scene {
 //    children[1].scale.splat(sin(i));
     
     children.forEach((e) {
-//      e.rotation.setEuler(i, i, i);
+      e.rotation.setEuler(i, i, i);
     });
   }
   
@@ -93,15 +95,32 @@ class TestLoadMesh extends Scene {
   enter() {
     _stats = new Stats();
     document.body.append(_stats.container);
+//    HttpRequest.getString("npc_huf_town_01.json").then(addMesh);
     HttpRequest.getString("hum_f.json").then(addMesh);
+//    HttpRequest.getString("greatsword21.json").then(addMesh);
+    
+    var cube = new Cube(1.0, 1.0, 1.0);
+    cube.position.setValues(-2.0, 0.0, 0.0);
+    add(cube);
+    
+    
+    var directLight = new Light(0xcdffff, Light.DIRECT);
+    directLight.position = new Vector3(1.0,1.0,1.0);
+    directLight.ambient = new Vector3(0.3, 0.0, 0.0);
+    directLight.diffuse = new Vector3(0.5, 0.0, 0.0);
+    directLight.specular = new Vector3(1.0, 1.0, 1.0);
+    directLight.shininess = 100.0;
+    lights.add(directLight);
   }
   
   addMesh(String responseData) {
     var mesh = parseMesh(responseData);
-    mesh.position = new Vector3(-2.0 + children.length * 5, 0.0, 0.0);
+//    mesh.position = new Vector3(-2.0 + children.length * 5, -1.0, 0.0);
+    mesh.position = new Vector3(0.0, -1.0, 5.0);
     add(mesh);
   }
   
+  var i = 0.0;
   update(double interval) {
     _stats.begin();
     
@@ -121,6 +140,12 @@ class TestLoadMesh extends Scene {
       moveTarget.position += new Vector3(0.0, 0.0, -0.1);
     }
     
+    
+    var s = interval / 1000.0;
+    i += 0.02 ;
+    children.forEach((e) {
+      e.rotation.setAxisAngle(WORLD_UP, sin(i));
+    });
   }
   
   render() {

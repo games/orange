@@ -42,7 +42,12 @@ class Mesh extends Transform {
     }
     
     if(_subMeshes != null)
-      _subMeshes.forEach((Mesh e) => e.render());
+      _subMeshes.forEach((Mesh e) {
+        e.position = position.clone();
+        e.rotation = rotation.clone();
+        e.scale = scale.clone();
+        e.render(); 
+      });
   }
 }
 
@@ -68,6 +73,7 @@ Mesh parseMesh(String jsonStr) {
     var material = submesh["material"];
     sub._material = new Material();
     sub._material.textureSource = material["texture"];
+    sub._material.shader = Shader.simpleShader;
     
     var ambient = material["ambient"];
     sub._material.ambient = new List.generate(ambient.length, (i) {

@@ -34,7 +34,6 @@ vec3 computeLight(vec4 position, vec4 normal, lightSource ls) {
 
 vec3 phong2(vec4 position, vec4 normal, lightSource ls) {
 
-
   vec3 eyePosition = normalize(uCameraPosition);
   vec3 lightPosition = normalize(ls.position);
   vec3 P = normalize(position.xyz);
@@ -59,6 +58,26 @@ vec3 phong2(vec4 position, vec4 normal, lightSource ls) {
   }
   vec3 specular = ls.color * specularLight;
 
+  return ambient + diffuse + specular;
+}
+
+vec3 phong3(vec4 position, vec4 normal, lightSource ls) {
+  vec3 N = normalize(normal.xyz);
+  vec3 P = normalize(position.xyz);
+  vec3 L = normalize(ls.position - position.xyz);
+  
+  //ambient term
+  vec3 ambient = ls.ambient;
+  //diffuse term
+  float diffuseAngle = max(dot(N, L), 0.0);
+  vec3 diffuse = ls.color * diffuseAngle;
+  //specular term
+  vec3 specular = vec3(0.0, 0.0, 0.0);
+  if(diffuseAngle > 0.0){
+    vec3 V = normalize(uCameraPosition - position.xyz);
+    vec3 H = 
+    specular = ls.color * pow(max(dot(N, H), 0.0), ls.shininess); 
+  }
   return ambient + diffuse + specular;
 }
 
@@ -108,7 +127,7 @@ void main(void) {
   //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight2) + 
   //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight3);
 
-  vec3 lighting = phong2(vPosition, vNormal, uLight0);
+  vec3 lighting = phong3(vPosition, vNormal, uLight0);
 
   gl_FragColor = vec4(lighting, 1.0);
 }

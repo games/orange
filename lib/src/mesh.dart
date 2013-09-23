@@ -35,22 +35,25 @@ class Mesh extends Transform {
       _faceBuffer = renderer.ctx.createBuffer();
       renderer.ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _faceBuffer);
       renderer.ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, new Uint16List.fromList(_faces), gl.STATIC_DRAW);
-    } 
-    
-    if(!wireframe && _faceBuffer != null) {
-      renderer.ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _faceBuffer);
-      renderer.ctx.drawElements(gl.TRIANGLES, _faces.length, gl.UNSIGNED_SHORT, 0);
-    } else if(wireframe) {
-      renderer.ctx.drawArrays(gl.LINE_STRIP, 0, (_geometry.vertices.length / 3).toInt());
     }
     
-    if(_subMeshes != null)
+    if(_subMeshes != null) {
       _subMeshes.forEach((Mesh e) {
         e.position = position.clone();
         e.rotation = rotation.clone();
         e.scale = scale.clone();
+        if(e.useSharedVertices)
+          e._geometry = _geometry;
         e.render(); 
       });
+    } else {
+      if(!wireframe && _faceBuffer != null) {
+        renderer.ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _faceBuffer);
+        renderer.ctx.drawElements(gl.TRIANGLES, _faces.length, gl.UNSIGNED_SHORT, 0);
+      } else if(wireframe) {
+        renderer.ctx.drawArrays(gl.LINE_STRIP, 0, (_geometry.vertices.length / 3).toInt());
+      }
+    }
   }
 }
 

@@ -23,15 +23,6 @@ uniform lightSource uLight1;
 uniform lightSource uLight2;
 uniform lightSource uLight3;
 
-vec3 computeLight(vec4 position, vec4 normal, lightSource ls) {
-  if(ls.type == -1)
-    return vec3(0.0, 0.0, 0.0);
-  if(ls.type == 0) 
-    return ls.color;
-  float directional = max(dot(normalize(normal.xyz), normalize(ls.direction)), 0.0);
-  return ls.color * directional;
-}
-
 vec3 phong(vec4 position, vec4 normal, lightSource ls) {
   vec3 N = normalize(normal.xyz);
   vec3 P = normalize(position.xyz);
@@ -50,6 +41,14 @@ vec3 phong(vec4 position, vec4 normal, lightSource ls) {
     specular = ls.color * pow(max(dot(N, H), 0.0), ls.shininess); 
   }
   return ambient + diffuse + specular;
+}
+
+vec3 computeLight(vec4 position, vec4 normal, lightSource ls) {
+  if(ls.type == -1)
+    return vec3(0.0, 0.0, 0.0);
+  if(ls.type == 0) 
+    return ls.color;
+  return phong(position, normal, ls);
 }
 
 """;
@@ -92,12 +91,12 @@ $_shader_light_structure
 $_shader_lights
 
 void main(void) {
-  //vec3 lighting = computeLight(vPosition, vNormal, 0.0, 0.0, uLight0) + 
-  //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight1) + 
-  //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight2) + 
-  //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight3);
+  vec3 lighting = computeLight(vPosition, vNormal, uLight0) + 
+                  computeLight(vPosition, vNormal, uLight1) + 
+                  computeLight(vPosition, vNormal, uLight2) + 
+                  computeLight(vPosition, vNormal, uLight3);
 
-  vec3 lighting = phong(vPosition, vNormal, uLight0);
+  //vec3 lighting = phong(vPosition, vNormal, uLight0);
 
   gl_FragColor = vec4(lighting, 1.0);
 }

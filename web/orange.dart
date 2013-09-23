@@ -8,8 +8,8 @@ void main() {
 
   initOrange(query('#container'));
   
-  var scene = new TestScene();
-//  var scene = new TestLoadMesh();
+//  var scene = new TestScene();
+  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.z = 10.0;
@@ -28,13 +28,13 @@ class TestScene extends Scene {
     document.body.append(_stats.container);
     
     var cube = new Cube(1.0, 1.0, 1.0);
-    cube.position.setValues(0.0, -1.0, 0.0);
+    cube.position.setValues(-2.0, 0.0, 0.0);
     add(cube);
 
     
     var sphere = new Sphere(1.0, 16, 16);
-    sphere.position.setValues(1.0, 1.0, 0.0);
-    sphere.wireframe = true;
+    sphere.position.setValues(2.0, 0.0, 0.0);
+    sphere.wireframe = false;
     add(sphere);
     
 //    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
@@ -102,13 +102,15 @@ class TestLoadMesh extends Scene {
     
     var cube = new Cube(1.0, 1.0, 1.0);
     cube.position.setValues(-2.0, 0.0, 0.0);
-    add(cube);
+//    add(cube);
     
+    var ambientLight = new Light(0xff0000, Light.AMBIENT);
+    lights.add(ambientLight);
     
-    var directLight = new Light(0xcdffff, Light.DIRECT);
+    var directLight = new Light(0xffffff, Light.DIRECT);
     directLight.position = new Vector3(1.0,1.0,1.0);
-    directLight.ambient = new Vector3(0.3, 0.0, 0.0);
-    directLight.diffuse = new Vector3(0.5, 0.0, 0.0);
+    directLight.ambient = new Vector3(0.0, 0.0, 0.0);
+    directLight.diffuse = new Vector3(0.0, 0.0, 0.0);
     directLight.specular = new Vector3(1.0, 1.0, 1.0);
     directLight.shininess = 100.0;
     lights.add(directLight);

@@ -22,6 +22,7 @@ uniform lightSource uLight0;
 uniform lightSource uLight1;
 uniform lightSource uLight2;
 uniform lightSource uLight3;
+
 vec3 computeLight(vec4 position, vec4 normal, lightSource ls) {
   if(ls.type == -1)
     return vec3(0.0, 0.0, 0.0);
@@ -31,37 +32,7 @@ vec3 computeLight(vec4 position, vec4 normal, lightSource ls) {
   return ls.color * directional;
 }
 
-
-vec3 phong2(vec4 position, vec4 normal, lightSource ls) {
-
-  vec3 eyePosition = normalize(uCameraPosition);
-  vec3 lightPosition = normalize(ls.position);
-  vec3 P = normalize(position.xyz);
-  vec3 N = normalize(normal.xyz);
-  vec3 viewDirection = normalize(-P);
-
-  //ambient term
-  vec3 ambient = ls.ambient;
-
-  //diffuse term
-  vec3 L = normalize(lightPosition - P);
-  float diffuseLight = max(dot(N, L), 0.0);
-  vec3 diffuse = ls.color * diffuseLight;
-
-  //specular term
-  float specularLight = 0.0;
-  if(diffuseLight > 0.0) {
-    vec3 lightDirection = normalize(lightPosition - P);
-    vec3 V = normalize(eyePosition - P);
-    vec3 H = normalize(reflect(-lightDirection, viewDirection));
-    specularLight = pow(max(dot(N, H), 0.0), ls.shininess);
-  }
-  vec3 specular = ls.color * specularLight;
-
-  return ambient + diffuse + specular;
-}
-
-vec3 phong3(vec4 position, vec4 normal, lightSource ls) {
+vec3 phong(vec4 position, vec4 normal, lightSource ls) {
   vec3 N = normalize(normal.xyz);
   vec3 P = normalize(position.xyz);
   vec3 L = normalize(ls.position - position.xyz);
@@ -75,12 +46,11 @@ vec3 phong3(vec4 position, vec4 normal, lightSource ls) {
   vec3 specular = vec3(0.0, 0.0, 0.0);
   if(diffuseAngle > 0.0){
     vec3 V = normalize(uCameraPosition - position.xyz);
-    vec3 H = 
+    vec3 H = normalize(V + L);
     specular = ls.color * pow(max(dot(N, H), 0.0), ls.shininess); 
   }
   return ambient + diffuse + specular;
 }
-
 
 """;
 
@@ -127,7 +97,7 @@ void main(void) {
   //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight2) + 
   //                computeLight(vPosition, vNormal, 0.0, 0.0, uLight3);
 
-  vec3 lighting = phong3(vPosition, vNormal, uLight0);
+  vec3 lighting = phong(vPosition, vNormal, uLight0);
 
   gl_FragColor = vec4(lighting, 1.0);
 }

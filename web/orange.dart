@@ -8,8 +8,8 @@ void main() {
 
   initOrange(query('#container'));
   
-//  var scene = new TestScene();
-  var scene = new TestLoadMesh();
+  var scene = new TestScene();
+//  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.z = 10.0;
@@ -33,14 +33,14 @@ class TestScene extends Scene {
 
     
     var sphere = new Sphere(1.0, 16, 16);
-    sphere.position.setValues(1.0, 0.0, 0.0);
+    sphere.position.setValues(1.0, 1.0, 0.0);
     add(sphere);
     
 //    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
 //    lights.add(ambientLight);
     
     var directLight = new Light(0xcdffff, Light.DIRECT);
-    directLight.position = new Vector3(50.0, 50.0, -200.0);
+    directLight.position = new Vector3(1.0,1.0,1.0);
     directLight.ambient = new Vector3(0.0, 0.0, 1.0);
     directLight.diffuse = new Vector3(1.0, 0.0, 0.0);
     directLight.specular = new Vector3(0.0, 1.0, 0.0);

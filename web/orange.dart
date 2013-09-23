@@ -12,7 +12,9 @@ void main() {
   var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
-  scene.camera.position.z = 10.0;
+  scene.camera.position.y = 3.0;
+  scene.camera.position.z = 11.0;
+  scene.camera.lookAt(new Vector3(0.0, 0.0, 0.0));
   
   director.replace(scene);
   director.run();
@@ -41,7 +43,7 @@ class TestScene extends Scene {
 //    lights.add(ambientLight);
     
     var directLight = new Light(0xcdffff, Light.DIRECT);
-    directLight.position = new Vector3(1.0,1.0,1.0);
+    directLight.position = new Vector3(-2.0, 1.0, 0.0);
     directLight.ambient = new Vector3(0.0, 0.0, 1.0);
     directLight.diffuse = new Vector3(1.0, 0.0, 0.0);
     directLight.specular = new Vector3(0.0, 1.0, 0.0);
@@ -64,6 +66,8 @@ class TestScene extends Scene {
     }else if(director.keyboard.held(KeyCode.UP)){
 //      camera.position += camera.frontDirection * 0.1;
       moveTarget.position += new Vector3(0.0, 0.1, 0.0);
+      camera.position += WORLD_UP * 0.1;
+      camera.lookAt(new Vector3(0.0, 0.0, 0.0));
     }else if(director.keyboard.held(KeyCode.DOWN)){
 //      camera.position -= camera.frontDirection * 0.1;
       moveTarget.position += new Vector3(0.0, -0.1, 0.0);
@@ -101,11 +105,11 @@ class TestLoadMesh extends Scene {
 //    HttpRequest.getString("greatsword21.json").then(addMesh);
     
     var cube = new Cube(1.0, 1.0, 1.0);
-    cube.position.setValues(-2.0, 0.0, 0.0);
-//    add(cube);
+    cube.position.setValues(1.0, 1.0, 1.0);
+    add(cube);
     
-    var ambientLight = new Light(0xff0000, Light.AMBIENT);
-    lights.add(ambientLight);
+//    var ambientLight = new Light(0xff0000, Light.AMBIENT);
+//    lights.add(ambientLight);
     
     var directLight = new Light(0xffffff, Light.DIRECT);
     directLight.position = new Vector3(1.0,1.0,1.0);
@@ -137,7 +141,9 @@ class TestLoadMesh extends Scene {
 //      camera.rotation.setAxisAngle(WORLD_UP, camera.rotation.radians - 0.01);
     }else if(director.keyboard.held(KeyCode.UP)){
 //      camera.position += camera.frontDirection * 0.1;
-      moveTarget.position += new Vector3(0.0, 0.0, 0.1);
+//      moveTarget.position += new Vector3(0.0, 0.0, 0.1);
+      camera.position += WORLD_UP * 0.1;
+      camera.lookAt(new Vector3(0.0, 0.0, 0.0));
     }else if(director.keyboard.held(KeyCode.DOWN)){
 //      camera.position -= camera.frontDirection * 0.1;
       moveTarget.position += new Vector3(0.0, 0.0, -0.1);
@@ -147,8 +153,11 @@ class TestLoadMesh extends Scene {
     var s = interval / 1000.0;
     i += 0.02 ;
     children.forEach((e) {
-      e.rotation.setAxisAngle(WORLD_UP, sin(i));
+//      e.rotation.setAxisAngle(WORLD_UP, sin(i));
     });
+    
+    lights[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
+    children[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
   }
   
   render() {

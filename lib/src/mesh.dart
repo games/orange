@@ -3,6 +3,7 @@ part of orange;
 
 class Mesh extends Transform {
   bool useSharedVertices;
+  bool wireframe = false;
   Geometry _geometry;
   Material _material;
   
@@ -36,9 +37,11 @@ class Mesh extends Transform {
       renderer.ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, new Uint16List.fromList(_faces), gl.STATIC_DRAW);
     } 
     
-    if(_faceBuffer != null) {
+    if(!wireframe && _faceBuffer != null) {
       renderer.ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _faceBuffer);
       renderer.ctx.drawElements(gl.TRIANGLES, _faces.length, gl.UNSIGNED_SHORT, 0);
+    } else if(wireframe) {
+      renderer.ctx.drawArrays(gl.LINE_STRIP, 0, (_geometry.vertices.length / 3).toInt());
     }
     
     if(_subMeshes != null)

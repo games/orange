@@ -34,6 +34,7 @@ class TestScene extends Scene {
     
     var sphere = new Sphere(1.0, 16, 16);
     sphere.position.setValues(1.0, 1.0, 0.0);
+    sphere.wireframe = true;
     add(sphere);
     
 //    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);

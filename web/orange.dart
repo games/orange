@@ -8,12 +8,12 @@ void main() {
 
   initOrange(query('#container'));
   
-  var scene = new TestScene();
-//  var scene = new TestLoadMesh();
+//  var scene = new TestScene();
+  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
-  scene.camera.position.y = 3.0;
-  scene.camera.position.z = 11.0;
+  scene.camera.position.y = .0;
+  scene.camera.position.z = 10.0;
   scene.camera.lookAt(new Vector3(0.0, 0.0, 0.0));
   
   director.replace(scene);
@@ -35,7 +35,7 @@ class TestScene extends Scene {
     
     var cube2 = new Cube(1.0, 1.0, 1.0);
     cube2.material.shader = Shader.phongShader;
-    cube2.position.setValues(-4.0, 0.0, 0.0);
+    cube2.position.setValues(-2.0, 2.0, 0.0);
     add(cube2);
 
     
@@ -43,16 +43,23 @@ class TestScene extends Scene {
     sphere.position.setValues(2.0, 0.0, 0.0);
     sphere.wireframe = true;
     add(sphere);
+
+    
+    var sphere2 = new Sphere(1.0, 8, 8);
+    sphere2.position.setValues(2.0, 2.0, 0.0);
+    sphere2.wireframe = true;
+    sphere2.material.shader = Shader.phongShader;
+    add(sphere2);
     
 //    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
 //    lights.add(ambientLight);
     
     var directLight = new Light(0xcdffff, Light.DIRECT);
     directLight.position = new Vector3(-2.0, 1.0, 0.0);
-    directLight.ambient = new Vector3(0.0, 0.0, 1.0);
-    directLight.diffuse = new Vector3(1.0, 0.0, 0.0);
-    directLight.specular = new Vector3(0.0, 1.0, 0.0);
-    directLight.shininess = 10.0;
+    directLight.ambient = new Vector3(0.3, 0.0, 0.0);
+    directLight.diffuse = new Vector3(0.5, 0.0, 0.0);
+    directLight.specular = new Vector3(1.0, 1.0, 1.0);
+    directLight.shininess = 15.0;
     lights.add(directLight);
   }
   
@@ -118,10 +125,10 @@ class TestLoadMesh extends Scene {
     
     var directLight = new Light(0xffffff, Light.DIRECT);
     directLight.position = new Vector3(1.0,1.0,1.0);
-    directLight.ambient = new Vector3(0.0, 0.0, 0.0);
-    directLight.diffuse = new Vector3(0.0, 0.0, 0.0);
+    directLight.ambient = new Vector3(0.3, 0.0, 0.0);
+    directLight.diffuse = new Vector3(0.5, 0.0, 0.0);
     directLight.specular = new Vector3(1.0, 1.0, 1.0);
-    directLight.shininess = 100.0;
+    directLight.shininess = 15.0;
     lights.add(directLight);
   }
   
@@ -160,9 +167,9 @@ class TestLoadMesh extends Scene {
     children.forEach((e) {
 //      e.rotation.setAxisAngle(WORLD_UP, sin(i));
     });
-    
-//    lights[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
-//    children[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
+    var r = 10.0;
+    lights[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);
+    children[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);
   }
   
   render() {

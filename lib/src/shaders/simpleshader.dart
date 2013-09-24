@@ -23,30 +23,30 @@ uniform lightSource uLight1;
 uniform lightSource uLight2;
 uniform lightSource uLight3;
 
-vec3 phong(vec4 position, vec4 normal, lightSource ls) {
-  vec3 N = normalize(normal.xyz);
-  vec3 P = normalize(position.xyz);
-  vec3 L = normalize(ls.position - position.xyz);
+vec3 phong(vec3 position, vec3 normal, lightSource ls) {
+  vec3 N = normal;
+  vec3 P = normalize(position);
+  vec3 L = normalize(ls.position - position);
   
   //ambient term
   vec3 ambient = ls.ambient;
 
   //diffuse term
   float diffuseAngle = max(dot(N, L), 0.0);
-  vec3 diffuse = ls.color * diffuseAngle;
+  vec3 diffuse = ls.diffuse * diffuseAngle;
 
   //specular term
   vec3 specular = vec3(0.0, 0.0, 0.0);
   if(diffuseAngle > 0.0){
-    vec3 V = normalize(uCameraPosition - position.xyz);
+    vec3 V = normalize(uCameraPosition - position);
     vec3 H = normalize(V + L);
-    specular = ls.color * pow(max(dot(N, H), 0.0), ls.shininess); 
+    specular = ls.specular * pow(max(dot(N, H), 0.0), ls.shininess); 
   }
 
   return ambient + diffuse + specular;
 }
 
-vec3 computeLight(vec4 position, vec4 normal, lightSource ls) {
+vec3 computeLight(vec3 position, vec3 normal, lightSource ls) {
   if(ls.type == -1)
     return vec3(0.0, 0.0, 0.0);
   if(ls.type == 0)
@@ -68,13 +68,14 @@ uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uNormalMatrix;
 
-varying vec4 vPosition;
-varying vec4 vNormal;
+varying vec3 vPosition;
+varying vec3 vNormal;
 
 void main(void) {
-  vPosition = uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
-  gl_Position = uProjectionMatrix * vPosition;
-  vNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+  vec4 pos = uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
+  gl_Position = uProjectionMatrix * pos;
+  vPosition = pos.xyz;
+  vNormal = normalize((uNormalMatrix * vec4(aVertexNormal, 0.0)).xyz);
 }
 """;
 
@@ -87,8 +88,8 @@ uniform vec3 uMaterialDiffuse;
 uniform vec3 uMaterialSpecular;
 uniform vec3 uCameraPosition;
 
-varying vec4 vPosition;
-varying vec4 vNormal;
+varying vec3 vPosition;
+varying vec3 vNormal;
 
 $_shader_light_structure
 $_shader_lights
@@ -100,8 +101,8 @@ void main(void) {
                   computeLight(vPosition, vNormal, uLight3);
 
   //vec3 lighting = phong(vPosition, vNormal, uLight0);
-
-  gl_FragColor = vec4(lighting * vec3(1.0, 0.0, 0.0), 1.0);
+  vec3 color = vec3(1.0, 1.0, 1.0);
+  gl_FragColor = vec4(lighting * color, 1.0);
 }
 """;
 

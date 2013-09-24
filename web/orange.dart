@@ -8,8 +8,8 @@ void main() {
 
   initOrange(query('#container'));
   
-//  var scene = new TestScene();
-  var scene = new TestLoadMesh();
+  var scene = new TestScene();
+//  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.y = 3.0;
@@ -32,11 +32,16 @@ class TestScene extends Scene {
     var cube = new Cube(1.0, 1.0, 1.0);
     cube.position.setValues(-2.0, 0.0, 0.0);
     add(cube);
+    
+    var cube2 = new Cube(1.0, 1.0, 1.0);
+    cube2.material.shader = Shader.phongShader;
+    cube2.position.setValues(-4.0, 0.0, 0.0);
+    add(cube2);
 
     
-    var sphere = new Sphere(1.0, 16, 16);
+    var sphere = new Sphere(1.0, 8, 8);
     sphere.position.setValues(2.0, 0.0, 0.0);
-    sphere.wireframe = false;
+    sphere.wireframe = true;
     add(sphere);
     
 //    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
@@ -47,7 +52,7 @@ class TestScene extends Scene {
     directLight.ambient = new Vector3(0.0, 0.0, 1.0);
     directLight.diffuse = new Vector3(1.0, 0.0, 0.0);
     directLight.specular = new Vector3(0.0, 1.0, 0.0);
-    directLight.shininess = 100.0;
+    directLight.shininess = 10.0;
     lights.add(directLight);
   }
   
@@ -156,8 +161,8 @@ class TestLoadMesh extends Scene {
 //      e.rotation.setAxisAngle(WORLD_UP, sin(i));
     });
     
-    lights[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
-    children[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
+//    lights[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
+//    children[0].position.setValues(cos(i) * 2.0, 1.0, sin(i) * 2.0);
   }
   
   render() {

@@ -5,7 +5,7 @@ class Mesh extends Transform {
   bool useSharedVertices;
   bool wireframe = false;
   Geometry _geometry;
-  Material _material;
+  Material material;
   
   List<int> _faces;
   gl.Buffer _faceBuffer;
@@ -21,14 +21,14 @@ class Mesh extends Transform {
       _geometry.prepare(renderer);
     }
     
-    if(_material != null) {
-      if(_material.shader == null)
-        _material.shader = Shader.simpleShader;
-      _material.shader.compile();
-      _material.shader.use();
-      _material.shader.setupAttributes(this);
-      _material.shader.setupUniforms(this);
-      _material.shader.setupLights(_director.scene.lights);
+    if(material != null) {
+      if(material.shader == null)
+        material.shader = Shader.simpleShader;
+      material.shader.compile();
+      material.shader.use();
+      material.shader.setupAttributes(this);
+      material.shader.setupUniforms(this);
+      material.shader.setupLights(_director.scene.lights);
     }
     
     if(_faceBuffer == null && _faces != null) {
@@ -77,27 +77,27 @@ Mesh parseMesh(String jsonStr) {
     }
     
     var material = submesh["material"];
-    sub._material = new Material();
-    sub._material.textureSource = material["texture"];
-    sub._material.shader = Shader.simpleShader;
+    sub.material = new Material();
+    sub.material.textureSource = material["texture"];
+    sub.material.shader = Shader.simpleShader;
     
     var ambient = material["ambient"];
-    sub._material.ambient = new List.generate(ambient.length, (i) {
+    sub.material.ambient = new List.generate(ambient.length, (i) {
       return ambient[i].toDouble();
     });
 
     var diffuse = material["diffuse"];
-    sub._material.diffuse = new List.generate(diffuse.length, (i) {
+    sub.material.diffuse = new List.generate(diffuse.length, (i) {
       return diffuse[i].toDouble();
     });
     
     var specular = material["specular"];
-    sub._material.specular = new List.generate(specular.length, (i) {
+    sub.material.specular = new List.generate(specular.length, (i) {
       return specular[i].toDouble();
     });
     
     var emissive = material["emissive"];
-    sub._material.emissive = new List.generate(emissive.length, (i) {
+    sub.material.emissive = new List.generate(emissive.length, (i) {
       return emissive[i].toDouble();
     });
     

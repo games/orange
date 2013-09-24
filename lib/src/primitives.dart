@@ -94,8 +94,8 @@ class Cube extends Mesh {
                20, 21, 22,   20, 22, 23  // Left face
              ];
     
-    _material = new Material();
-    _material.shader = Shader.phongShader;
+    material = new Material();
+    material.shader = Shader.simpleShader;
   }
 }
 
@@ -161,8 +161,8 @@ class Sphere extends Mesh {
       }
     }
     
-    _material = new Material();
-    _material.shader = Shader.simpleShader;
+    material = new Material();
+    material.shader = Shader.simpleShader;
     
   }
 }

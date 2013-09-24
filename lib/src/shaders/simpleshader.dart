@@ -30,9 +30,11 @@ vec3 phong(vec4 position, vec4 normal, lightSource ls) {
   
   //ambient term
   vec3 ambient = ls.ambient;
+
   //diffuse term
   float diffuseAngle = max(dot(N, L), 0.0);
   vec3 diffuse = ls.color * diffuseAngle;
+
   //specular term
   vec3 specular = vec3(0.0, 0.0, 0.0);
   if(diffuseAngle > 0.0){
@@ -40,13 +42,14 @@ vec3 phong(vec4 position, vec4 normal, lightSource ls) {
     vec3 H = normalize(V + L);
     specular = ls.color * pow(max(dot(N, H), 0.0), ls.shininess); 
   }
+
   return ambient + diffuse + specular;
 }
 
 vec3 computeLight(vec4 position, vec4 normal, lightSource ls) {
   if(ls.type == -1)
     return vec3(0.0, 0.0, 0.0);
-  if(ls.type == 0) 
+  if(ls.type == 0)
     return ls.color;
   return phong(position, normal, ls);
 }
@@ -98,7 +101,7 @@ void main(void) {
 
   //vec3 lighting = phong(vPosition, vNormal, uLight0);
 
-  gl_FragColor = vec4(lighting, 1.0);
+  gl_FragColor = vec4(lighting * vec3(1.0, 0.0, 0.0), 1.0);
 }
 """;
 

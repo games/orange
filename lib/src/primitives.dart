@@ -164,12 +164,22 @@ class Sphere extends Mesh {
     material = new Material();
     material.shader = Shader.simpleShader;
     
+//    computeVertexNormals();
+//    computeFaceNormals();
+    
+//    var s = "";
+//    var i = 1;
+//    _geometry.normals.forEach((v){
+//      s += v.toString() + ", ";
+//      if(i==3) {
+//        s += "\n";
+//        i = 0;
+//      }
+//      i++;
+//    });
+//    print(s);
   }
 }
-
-
-
-
 
 
 

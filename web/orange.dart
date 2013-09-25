@@ -8,8 +8,8 @@ void main() {
 
   initOrange(query('#container'));
   
-//  var scene = new TestScene();
-  var scene = new TestLoadMesh();
+  var scene = new TestScene();
+//  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.y = .0;
@@ -30,37 +30,54 @@ class TestScene extends Scene {
     document.body.append(_stats.container);
     
     var cube = new Cube(1.0, 1.0, 1.0);
-    cube.position.setValues(-2.0, 0.0, 0.0);
+    cube.material.shader = Shader.phongShader;
+    cube.position.setValues(1.0, 2.0, 0.0);
+//    cube.computeVertexNormals();
     add(cube);
     
     var cube2 = new Cube(1.0, 1.0, 1.0);
     cube2.material.shader = Shader.phongShader;
-    cube2.position.setValues(-2.0, 2.0, 0.0);
+    cube2.position.setValues(-1.0, 2.0, 0.0);
+    cube2.computeFaceNormals();
     add(cube2);
 
     
-    var sphere = new Sphere(1.0, 8, 8);
-    sphere.position.setValues(2.0, 0.0, 0.0);
-    sphere.wireframe = true;
+    var sphere = new Sphere(1.0, 8, 32);
+    sphere.position.setValues(-1.0, 0.0, 0.0);
+    sphere.wireframe = false;
+//    sphere.material.shader = Shader.phongShader;
+    sphere.computeVertexNormals();
     add(sphere);
 
     
-    var sphere2 = new Sphere(1.0, 8, 8);
-    sphere2.position.setValues(2.0, 2.0, 0.0);
-    sphere2.wireframe = true;
+    var sphere2 = new Sphere(1.0, 8, 32);
+    sphere2.position.setValues(1.0, 0.0, 0.0);
+//    sphere2.wireframe = true;
     sphere2.material.shader = Shader.phongShader;
+    sphere2.computeFaceNormals();
     add(sphere2);
-    
+
 //    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
 //    lights.add(ambientLight);
     
     var directLight = new Light(0xcdffff, Light.DIRECT);
-    directLight.position = new Vector3(-2.0, 1.0, 0.0);
+    directLight.position = new Vector3(0.0, 1.0, 0.0);
     directLight.ambient = new Vector3(0.3, 0.0, 0.0);
     directLight.diffuse = new Vector3(0.5, 0.0, 0.0);
     directLight.specular = new Vector3(1.0, 1.0, 1.0);
     directLight.shininess = 15.0;
     lights.add(directLight);
+    
+    HttpRequest.getString("teapot.json").then(addMesh);
+  }
+  
+  addMesh(String responseData) {
+    var mesh = parseMesh(responseData);
+    mesh.position = new Vector3(0.0, -3.0, 0.0);
+    mesh.material = new Material();
+    mesh.material.shader = Shader.simpleShader;
+    mesh.computeVertexNormals();
+    add(mesh);
   }
   
   var i = 0.0;
@@ -94,7 +111,7 @@ class TestScene extends Scene {
 //    children[1].scale.splat(sin(i));
     
     children.forEach((e) {
-      e.rotation.setEuler(i, i, i);
+      e.rotation.setAxisAngle(WORLD_UP, i % (2*PI));
     });
   }
   
@@ -113,7 +130,8 @@ class TestLoadMesh extends Scene {
     _stats = new Stats();
     document.body.append(_stats.container);
 //    HttpRequest.getString("npc_huf_town_01.json").then(addMesh);
-    HttpRequest.getString("hum_f.json").then(addMesh);
+//    HttpRequest.getString("hum_f.json").then(addMesh);
+    HttpRequest.getString("teapot.json").then(addMesh);
 //    HttpRequest.getString("greatsword21.json").then(addMesh);
     
     var cube = new Cube(1.0, 1.0, 1.0);
@@ -134,8 +152,11 @@ class TestLoadMesh extends Scene {
   
   addMesh(String responseData) {
     var mesh = parseMesh(responseData);
-//    mesh.position = new Vector3(-2.0 + children.length * 5, -1.0, 0.0);
-    mesh.position = new Vector3(0.0, -1.0, 5.0);
+//    mesh.position = new Vector3(-2.0 + children.length * 5, -1.0, 5.0);
+    mesh.position = new Vector3(0.0, 0.0, 0.0);
+    mesh.material = new Material();
+    mesh.material.shader = Shader.simpleShader;
+    mesh.computeVertexNormals();
     add(mesh);
   }
   
@@ -165,9 +186,9 @@ class TestLoadMesh extends Scene {
     var s = interval / 1000.0;
     i += 0.02 ;
     children.forEach((e) {
-//      e.rotation.setAxisAngle(WORLD_UP, sin(i));
+      e.rotation.setAxisAngle(WORLD_UP, i % (2 * PI));
     });
-    var r = 10.0;
+    var r = 5.0;
     lights[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);
     children[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);
   }

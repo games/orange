@@ -243,14 +243,6 @@ class PhongShader extends Shader {
 //          ctx.uniform1f(lightSource["angleFalloff"], light.angleFalloff);
 //        if(light.angle != null)
 //          ctx.uniform1f(lightSource["angle"], light.angle);
-        if(light.ambient != null)
-          ctx.uniform3fv(lightSource["ambient"], vector3ToFloat32List(light.ambient));
-        if(light.diffuse != null)
-          ctx.uniform3fv(lightSource["diffuse"], vector3ToFloat32List(light.diffuse));
-        if(light.specular != null)
-          ctx.uniform3fv(lightSource["specular"], vector3ToFloat32List(light.specular));
-        if(light.shininess != null)
-          ctx.uniform1f(lightSource["shininess"], light.shininess);
       }else{
         ctx.uniform1i(lightSource["type"], Light.NONE);
       }

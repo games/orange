@@ -166,22 +166,37 @@ class Sphere extends Mesh {
     
 //    computeVertexNormals();
 //    computeFaceNormals();
-    
-//    var s = "";
-//    var i = 1;
-//    _geometry.normals.forEach((v){
-//      s += v.toString() + ", ";
-//      if(i==3) {
-//        s += "\n";
-//        i = 0;
-//      }
-//      i++;
-//    });
-//    print(s);
   }
 }
 
 
+class Plane extends Mesh {
+  Plane(num width, num height) {
+    num hw = width / 2;
+    num hh = height / 2;
+    _geometry = new Geometry();
+    _geometry.vertices = [-hw, 0.0, hh, hw, 0.0, hh, hw, 0.0, -hh, -hw, 0.0, -hh];
+    _faces = [0, 1, 2, 0, 2, 3];
+    material = new Material();
+    material.shader = Shader.simpleShader;
+    computeVertexNormals();
+  }
+}
+
+
+printArray(array, [row = 3]){
+    var s = "";
+    var i = 1;
+    array.forEach((v){
+      s += v.toString() + ", ";
+      if(i == row) {
+        s += "\n";
+        i = 0;
+      }
+      i++;
+    });
+    print(s);
+}
 
 
 

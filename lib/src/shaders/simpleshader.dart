@@ -7,13 +7,7 @@ struct lightSource {
 
   vec3 direction;     // used by directional and spotlight (global direction of the transfom)
   vec3 position;      // used by hemisphere, point, spotlight (it's the global position of the transform)
-
   vec3 color;    
-
-  vec3 ambient;       // Ambient light intensity
-  vec3 diffuse;       // Diffuse light intensity
-  vec3 specular;      // Specular light intensity
-  float shininess;
 };
 """;
 
@@ -26,24 +20,27 @@ uniform lightSource uLight3;
 vec3 phong(vec3 position, vec3 normal, lightSource ls) {
   vec3 N = normal;
   vec3 P = normalize(position);
-  vec3 L = normalize(ls.position - position);
-  
-  //ambient term
-  vec3 ambient = ls.ambient;
+  vec3 L;
+  // point light
+  if(ls.type == 1){
+    L = normalize(ls.position);
+  }else if(ls.type == 2){
+    L = normalize(ls.position - position);
+  }
 
   //diffuse term
   float diffuseAngle = max(dot(N, L), 0.0);
-  vec3 diffuse = ls.diffuse * diffuseAngle;
+  vec3 diffuse = ls.color * diffuseAngle;
 
   //specular term
   vec3 specular = vec3(0.0, 0.0, 0.0);
   if(diffuseAngle > 0.0){
     vec3 V = normalize(uCameraPosition - position);
     vec3 H = normalize(V + L);
-    specular = ls.specular * pow(max(dot(N, H), 0.0), ls.shininess); 
+    specular = ls.color * pow(max(dot(N, H), 0.0), uShininess);
   }
 
-  return ambient + diffuse + specular;
+  return diffuse + specular;
 }
 
 vec3 computeLight(vec3 position, vec3 normal, lightSource ls) {
@@ -87,6 +84,8 @@ uniform vec3 uMaterialAmbient;
 uniform vec3 uMaterialDiffuse;
 uniform vec3 uMaterialSpecular;
 uniform vec3 uCameraPosition;
+uniform vec3 uColor;
+uniform float uShininess;
 
 varying vec3 vPosition;
 varying vec3 vNormal;
@@ -99,10 +98,7 @@ void main(void) {
                   computeLight(vPosition, vNormal, uLight1) + 
                   computeLight(vPosition, vNormal, uLight2) + 
                   computeLight(vPosition, vNormal, uLight3);
-
-  //vec3 lighting = phong(vPosition, vNormal, uLight0);
-  vec3 color = vec3(1.0, 1.0, 1.0);
-  gl_FragColor = vec4(lighting * color, 1.0);
+  gl_FragColor = vec4(lighting * uColor, 1.0);
 }
 """;
 
@@ -118,6 +114,8 @@ class SimpleShader extends Shader {
   gl.UniformLocation viewMatrixUniform;
   gl.UniformLocation normalMatrixUniform;
   gl.UniformLocation cameraPositionUniform;
+  gl.UniformLocation colorUniform;
+  gl.UniformLocation shininessUniform;
   List<Map<String, gl.UniformLocation>> lightsUniform;
   
   SimpleShader._internal() {
@@ -142,6 +140,8 @@ class SimpleShader extends Shader {
     viewMatrixUniform = ctx.getUniformLocation(program, "uViewMatrix");
     normalMatrixUniform = ctx.getUniformLocation(program, "uNormalMatrix");
     cameraPositionUniform = ctx.getUniformLocation(program, "uCameraPosition");
+    colorUniform = ctx.getUniformLocation(program, "uColor");
+    shininessUniform = ctx.getUniformLocation(program, "uShininess");
     
     lightsUniform = new List(MAX_LIGHTS);
     for(var i = 0; i < MAX_LIGHTS; i++) {
@@ -181,9 +181,6 @@ class SimpleShader extends Shader {
     _director.scene.camera.projectionMatrix.copyIntoArray(tmp);
     ctx.uniformMatrix4fv(projectionMatrixUniform, false, tmp);
     
-//    _director.scene.camera.matrix.copyIntoArray(tmp);
-//    ctx.uniformMatrix4fv(viewMatrixUniform, false, tmp);
-    
     _director.scene.camera.copyViewMatrixIntoArray(tmp);
     ctx.uniformMatrix4fv(viewMatrixUniform, false, tmp);
     
@@ -191,6 +188,9 @@ class SimpleShader extends Shader {
     
     mesh.matrix.copyIntoArray(tmp);
     ctx.uniformMatrix4fv(modelMatrixUniform, false, tmp);
+    
+    ctx.uniform3fv(colorUniform, vector3ToFloat32List(mesh.material.color.rgb));
+    ctx.uniform1f(shininessUniform, mesh.material.shininess);
     
     var normalMatrix = new Matrix4.zero();
     normalMatrix.copyInverse(mesh.matrix);
@@ -215,14 +215,6 @@ class SimpleShader extends Shader {
 //          ctx.uniform1f(lightSource["angleFalloff"], light.angleFalloff);
 //        if(light.angle != null)
 //          ctx.uniform1f(lightSource["angle"], light.angle);
-        if(light.ambient != null)
-          ctx.uniform3fv(lightSource["ambient"], vector3ToFloat32List(light.ambient));
-        if(light.diffuse != null)
-          ctx.uniform3fv(lightSource["diffuse"], vector3ToFloat32List(light.diffuse));
-        if(light.specular != null)
-          ctx.uniform3fv(lightSource["specular"], vector3ToFloat32List(light.specular));
-        if(light.shininess != null)
-          ctx.uniform1f(lightSource["shininess"], light.shininess);
       }else{
         ctx.uniform1i(lightSource["type"], Light.NONE);
       }

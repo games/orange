@@ -10,4 +10,6 @@ class Material {
   
   Shader shader;
   gl.Texture texture;
+  Color color = new Color.fromHex(0xffffff);
+  double shininess = 5.0;
 }

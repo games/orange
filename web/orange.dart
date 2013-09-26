@@ -12,7 +12,7 @@ void main() {
 //  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
-  scene.camera.position.y = .0;
+  scene.camera.position.y = 5.0;
   scene.camera.position.z = 10.0;
   scene.camera.lookAt(new Vector3(0.0, 0.0, 0.0));
   
@@ -30,52 +30,61 @@ class TestScene extends Scene {
     document.body.append(_stats.container);
     
     var cube = new Cube(1.0, 1.0, 1.0);
-    cube.material.shader = Shader.phongShader;
-    cube.position.setValues(1.0, 2.0, 0.0);
-//    cube.computeVertexNormals();
+    cube.material.shader = Shader.simpleShader;
+    cube.material.color = new Color.fromHex(0x00ff00);
+    cube.position.setValues(-2.0, 3.0, 0.0);
+    cube.computeVertexNormals();
     add(cube);
     
     var cube2 = new Cube(1.0, 1.0, 1.0);
     cube2.material.shader = Shader.phongShader;
-    cube2.position.setValues(-1.0, 2.0, 0.0);
+    cube2.material.color = new Color.fromHex(0xffff00);
+    cube2.position.setValues(2.0, 3.0, 0.0);
     cube2.computeFaceNormals();
     add(cube2);
 
     
-    var sphere = new Sphere(1.0, 8, 32);
-    sphere.position.setValues(-1.0, 0.0, 0.0);
+    var sphere = new Sphere(1.0, 8, 8);
+    sphere.position.setValues(-3.0, 1.0, 0.0);
     sphere.wireframe = false;
-//    sphere.material.shader = Shader.phongShader;
+    sphere.material.shader = Shader.simpleShader;
     sphere.computeVertexNormals();
     add(sphere);
-
     
-    var sphere2 = new Sphere(1.0, 8, 32);
-    sphere2.position.setValues(1.0, 0.0, 0.0);
+    var sphere2 = new Sphere(1.0, 8, 8);
+    sphere2.position.setValues(3.0, 1.0, 0.0);
 //    sphere2.wireframe = true;
     sphere2.material.shader = Shader.phongShader;
     sphere2.computeFaceNormals();
     add(sphere2);
-
-//    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
-//    lights.add(ambientLight);
     
-    var directLight = new Light(0xcdffff, Light.DIRECT);
-    directLight.position = new Vector3(0.0, 1.0, 0.0);
-    directLight.ambient = new Vector3(0.3, 0.0, 0.0);
-    directLight.diffuse = new Vector3(0.5, 0.0, 0.0);
-    directLight.specular = new Vector3(1.0, 1.0, 1.0);
-    directLight.shininess = 15.0;
-    lights.add(directLight);
+    var flooter = new Plane(10.0, 10.0);
+    add(flooter);
+
+    var ambientLight = new Light(0x95C7DE, Light.AMBIENT);
+    lights.add(ambientLight);
+    
+//    var light0 = new Light(0xcdffff, Light.DIRECT);
+//    light0.position = new Vector3(1.0, 1.0, 0.0);
+//    light0.ambient = new Vector3(0.3, 0.0, 0.0);
+//    light0.diffuse = new Vector3(0.5, 0.0, 0.0);
+//    light0.specular = new Vector3(1.0, 1.0, 1.0);
+//    light0.shininess = 15.0;
+//    lights.add(light0);
+    
+    var light1 = new Light(0xcdffff, Light.POINT);
+    light1.position = new Vector3(-15.0, 10.0, 0.0);
+    lights.add(light1);
     
     HttpRequest.getString("teapot.json").then(addMesh);
   }
   
   addMesh(String responseData) {
     var mesh = parseMesh(responseData);
-    mesh.position = new Vector3(0.0, -3.0, 0.0);
+    mesh.position = new Vector3(0.0, 0.0, 0.0);
     mesh.material = new Material();
     mesh.material.shader = Shader.simpleShader;
+//    mesh.material.shininess = 5.0;
     mesh.computeVertexNormals();
     add(mesh);
   }
@@ -143,10 +152,6 @@ class TestLoadMesh extends Scene {
     
     var directLight = new Light(0xffffff, Light.DIRECT);
     directLight.position = new Vector3(1.0,1.0,1.0);
-    directLight.ambient = new Vector3(0.3, 0.0, 0.0);
-    directLight.diffuse = new Vector3(0.5, 0.0, 0.0);
-    directLight.specular = new Vector3(1.0, 1.0, 1.0);
-    directLight.shininess = 15.0;
     lights.add(directLight);
   }
   

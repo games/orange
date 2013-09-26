@@ -23,11 +23,6 @@ class Light extends Transform{
   double angleFalloff;
   double angle;
   
-  Vector3 ambient;
-  Vector3 diffuse;
-  Vector3 specular;
-  double shininess;
-  
   int type;
   Light(num hex, [int type = -1]): color = new Color.fromHex(hex), this.type = type, super();
 }

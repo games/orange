@@ -51,7 +51,7 @@ class Mesh extends Transform {
         renderer.ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _faceBuffer);
         renderer.ctx.drawElements(gl.TRIANGLES, _faces.length, gl.UNSIGNED_SHORT, 0);
       } else if(wireframe) {
-        renderer.ctx.drawArrays(gl.LINE_STRIP, 0, (_geometry.vertices.length / 3).toInt());
+        renderer.ctx.drawArrays(gl.LINE_STRIP, 0, _geometry.vertices.length ~/ 3);
       }
     }
   }

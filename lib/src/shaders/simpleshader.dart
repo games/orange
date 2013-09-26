@@ -40,7 +40,7 @@ vec3 phong(vec3 position, vec3 normal, lightSource ls) {
     specular = ls.color * pow(max(dot(N, H), 0.0), uShininess);
   }
 
-  return diffuse + specular;
+  return diffuse ;
 }
 
 vec3 computeLight(vec3 position, vec3 normal, lightSource ls) {
@@ -153,10 +153,6 @@ class SimpleShader extends Shader {
       lightSource["intensity"] = ctx.getUniformLocation(program, "uLight$i.intensity");
       lightSource["angleFalloff"] = ctx.getUniformLocation(program, "uLight$i.angleFalloff");
       lightSource["angle"] = ctx.getUniformLocation(program, "uLight$i.angle");
-      lightSource["ambient"] = ctx.getUniformLocation(program, "uLight$i.ambient");
-      lightSource["diffuse"] = ctx.getUniformLocation(program, "uLight$i.diffuse");
-      lightSource["specular"] = ctx.getUniformLocation(program, "uLight$i.specular");
-      lightSource["shininess"] = ctx.getUniformLocation(program, "uLight$i.shininess");
       lightsUniform[i] = lightSource;
     }
   }

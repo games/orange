@@ -93,7 +93,7 @@ final String _shader_phong_fragment_source =
 """
 precision mediump float;
 
-const vec3 lightPos = vec3(1.0,1.0,1.0);
+const vec3 lightPos = vec3(0.0,10.0,0.0);
 const vec3 ambientColor = vec3(0.3, 0.0, 0.0);
 const vec3 diffuseColor = vec3(0.5, 0.0, 0.0);
 const vec3 specColor = vec3(1.0, 1.0, 1.0);

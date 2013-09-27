@@ -24,6 +24,6 @@ class Light extends Transform{
   double angle;
   
   int type;
-  Light(num hex, [int type = -1]): color = new Color.fromHex(hex), this.type = type, super();
+  Light(num hex, [int type = -1]): color = new Color.fromHex(hex), this.type = type, this.intensity = 1.0, super();
 }
 

@@ -8,8 +8,8 @@ void main() {
 
   initOrange(query('#container'));
   
-//  var scene = new TestScene();
-  var scene = new TestLoadMesh();
+  var scene = new TestScene();
+//  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.y = 5.0;
@@ -25,6 +25,7 @@ class TestScene extends Scene {
 
   Stats _stats;
   Mesh _visual;
+  Light _spotLight;
   
   enter() {
     _stats = new Stats();
@@ -60,6 +61,7 @@ class TestScene extends Scene {
 //    add(sphere2);
     
     var flooter = new Plane(10.0, 10.0);
+//    flooter.material.shader = Shader.phongShader;
     add(flooter);
 
     var light0 = new Light(0x333333, Light.AMBIENT);
@@ -69,12 +71,15 @@ class TestScene extends Scene {
 //    light1.position = new Vector3(1.0, 1.0, 0.0);
 //    lights.add(light1);
     
-    var light2 = new Light(0xcdffff, Light.POINT);
-    light2.position = new Vector3(0.0, 0.0, 0.0);
-    lights.add(light2);
+    _spotLight = new Light(0xcdffff, Light.SPOTLIGHT);
+    _spotLight.position = new Vector3(0.0, 10.0, 0.0);
+    _spotLight.intensity = 1.0;
+    _spotLight.angle = PI;
+    _spotLight.angleFalloff = 0.15;
+    lights.add(_spotLight);
     
     _visual = new Cube(0.5, 0.5, 0.5);
-    _visual.position = light2.position.clone();
+    _visual.position = _spotLight.position.clone();
     add(_visual);
     
     HttpRequest.getString("teapot.json").then(addMesh);
@@ -85,7 +90,6 @@ class TestScene extends Scene {
     mesh.position = new Vector3(3.0, 0.0, 0.0);
     mesh.material = new Material();
     mesh.material.shader = Shader.simpleShader;
-    mesh.material.shininess = 105.0;
     mesh.computeVertexNormals();
     add(mesh);
   }
@@ -130,7 +134,9 @@ class TestScene extends Scene {
 //    });
       
 //      lights[1].position.setValues(lights[1].position.x, cos(i) * 10, 0.0);
-      _visual.position = lights[1].position.clone();
+      _spotLight.angle = sin(i);
+      _spotLight.angleFalloff = 0.5;
+      _visual.position = _spotLight.position.clone();
   }
   
   render() {

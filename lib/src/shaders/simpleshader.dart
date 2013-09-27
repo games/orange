@@ -7,7 +7,10 @@ struct lightSource {
 
   vec3 direction;     // used by directional and spotlight (global direction of the transfom)
   vec3 position;      // used by hemisphere, point, spotlight (it's the global position of the transform)
-  vec3 color;    
+  vec3 color;
+  float intensity;
+  float angle;
+  float angleFalloff;
 };
 """;
 
@@ -18,36 +21,44 @@ uniform lightSource uLight2;
 uniform lightSource uLight3;
 
 vec3 phong(vec3 position, vec3 normal, lightSource ls) {
-  vec3 N = normal;
   vec3 P = normalize(position);
-  vec3 L;
+  vec3 lightDirection;
   // point light
   if(ls.type == 1){
-    L = normalize(ls.position);
+    lightDirection = normalize(ls.position);
   }else if(ls.type == 2){
-    L = normalize(ls.position - position);
+    lightDirection = normalize(ls.position - position);
   }
 
   //diffuse term
-  float diffuseAngle = max(dot(N, L), 0.0);
+  float diffuseAngle = max(dot(normal, lightDirection), 0.0);
   vec3 diffuse = ls.color * diffuseAngle;
 
   //specular term
   vec3 specular = vec3(0.0, 0.0, 0.0);
   if(diffuseAngle > 0.0){
-    vec3 V = normalize(uCameraPosition - position);
-    vec3 H = normalize(V + L);
-    specular = ls.color * pow(max(dot(N, H), 0.0), uShininess);
+    vec3 viewDirection = normalize(uCameraPosition - position);
+    vec3 H = normalize(viewDirection + lightDirection);
+    float specAngle = max(dot(normal, H), 0.0);
+    specular = ls.color * pow(specAngle, uShininess);
+  }
+  if(ls.type == 3) {
+    float dd = dot(lightDirection, normalize(ls.position));
+    float ca = cos(ls.angle);
+    float cf = cos(ls.angle + ls.angleFalloff);
+    float spm = smoothstep(cf, ca, dd);
+    diffuse *= spm;
+    specular *= spm;
   }
 
-  return diffuse ;
+  return diffuse * ls.intensity  + specular;
 }
 
 vec3 computeLight(vec3 position, vec3 normal, lightSource ls) {
-  if(ls.type == -1)
+  if(ls.type < 0 || ls.type > 5)
     return vec3(0.0, 0.0, 0.0);
   if(ls.type == 0)
-    return ls.color;
+    return ls.color * ls.intensity;
   return phong(position, normal, ls);
 }
 
@@ -205,12 +216,11 @@ class SimpleShader extends Shader {
         ctx.uniform3fv(lightSource["direction"], vector3ToFloat32List(light.position));
         ctx.uniform3fv(lightSource["color"], vector3ToFloat32List(light.color.rgb));
         ctx.uniform3fv(lightSource["position"], vector3ToFloat32List(light.position));
-//        if(light.intensity != null)
-//          ctx.uniform1f(lightSource["intensity"], light.intensity);
-//        if(light.angleFalloff != null)
-//          ctx.uniform1f(lightSource["angleFalloff"], light.angleFalloff);
-//        if(light.angle != null)
-//          ctx.uniform1f(lightSource["angle"], light.angle);
+        ctx.uniform1f(lightSource["intensity"], light.intensity);
+        if(light.angleFalloff != null)
+          ctx.uniform1f(lightSource["angleFalloff"], light.angleFalloff);
+        if(light.angle != null)
+          ctx.uniform1f(lightSource["angle"], light.angle);
       }else{
         ctx.uniform1i(lightSource["type"], Light.NONE);
       }

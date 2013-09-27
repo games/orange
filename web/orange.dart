@@ -8,8 +8,8 @@ void main() {
 
   initOrange(query('#container'));
   
-  var scene = new TestScene();
-//  var scene = new TestLoadMesh();
+//  var scene = new TestScene();
+  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.y = 5.0;
@@ -160,9 +160,10 @@ class TestLoadMesh extends Scene {
     add(_visual);
     
 //    HttpRequest.getString("npc_huf_town_01.json").then(addMesh);
-    HttpRequest.getString("hum_f.json").then(addMesh);
-    HttpRequest.getString("teapot.json").then(addMesh);
+//    HttpRequest.getString("hum_f.json").then(addMesh);
+//    HttpRequest.getString("teapot.json").then(addMesh);
 //    HttpRequest.getString("greatsword21.json").then(addMesh);
+    HttpRequest.getString("mm.json").then(addMesh);
     
     
     var ambientLight = new Light(0xff0000, Light.AMBIENT);

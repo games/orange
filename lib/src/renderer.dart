@@ -15,7 +15,7 @@ class Renderer {
   prepare() {
     ctx.viewport(0, 0, _director.canvas.width, _director.canvas.height);
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-//    ctx.clearColor(0.40784313725490196, 0.6431372549019608, 0.9607843137254902, 1.0);
-    ctx.clearColor(0.0, 0.0, 0.0, 1.0);
+    ctx.clearColor(0.40784313725490196, 0.6431372549019608, 0.9607843137254902, 1.0);
+//    ctx.clearColor(0.0, 0.0, 0.0, 1.0);
   }
 }

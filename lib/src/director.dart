@@ -20,6 +20,7 @@ class Director {
     _scene.enter();
   }
   
+  double get elapsed => _lastElapsed;
   Keyboard get keyboard => _keyboard;
   Renderer get renderer => _renderer;
   Scene get scene => _scene;
@@ -31,6 +32,7 @@ class Director {
   
   _animate(num elapsed) {
     html.window.requestAnimationFrame(_animate);
+    
     var interval = elapsed - _lastElapsed;
     _renderer.prepare();
     _scene.update(interval);

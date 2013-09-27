@@ -1,7 +1,7 @@
 part of orange;
 
 /// from J3D
-class Light extends Transform{
+class Light extends Transform {
   
   /// Type of light: None. This is used of shader internals.
   static final int NONE = -1;
@@ -18,12 +18,27 @@ class Light extends Transform{
   /// Type of light: Spherical Harmonics. This light type does not have any settings. The coefficients are hardcoded into the shaders currently - (take a look at Lights.glsl) but there are plans to allow conditional compilation in shaders in the future. The one that is currently used is 'Grace Catherdral'.
   static final int SPHERICAL_HARMONICS = 5;
   
+  Vector3 direction = new Vector3(0.0, 0.0, -1.0);
   Color color;
-  double intensity;
+  double intensity = 0.5;
   double angleFalloff;
   double angle;
   
   int type;
+  
+  Light.fromColor(this.color, [int type = -1]) : this.type = type, super();
+  
   Light(num hex, [int type = -1]): color = new Color.fromHex(hex), this.type = type, this.intensity = 1.0, super();
+  
+  updateMatrix() {
+    direction.setValues(0.0, 0.0, -1.0);
+    rotation.rotate(direction).normalize();
+  }
 }
+
+
+
+
+
+
 

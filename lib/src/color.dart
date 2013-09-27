@@ -6,6 +6,12 @@ class Color {
   double green;
   double blue;
   
+  Color(int r, int g, int b) {
+    red = r / 255.0;
+    green = g / 255.0;
+    blue = b / 255.0;
+  }
+  
   Color.fromHex([num hexColor]) : red = 1.0, green = 1.0, blue = 1.0 {
     if(hexColor != null) {
       hex = hexColor;

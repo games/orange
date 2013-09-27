@@ -5,14 +5,14 @@ final String _shader_light_structure2 = """
 struct lightSource {
   int type;
 
-  vec3 direction;     // used by directional and spotlight (global direction of the transfom)
-  vec3 position;      // used by hemisphere, point, spotlight (it's the global position of the transform)
+  vec3 direction;
+  vec3 position;
 
   vec3 color;    
 
-  vec3 ambient;       // Ambient light intensity
-  vec3 diffuse;       // Diffuse light intensity
-  vec3 specular;      // Specular light intensity
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
   float shininess;
 };
 """;

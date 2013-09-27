@@ -31,7 +31,7 @@ class Mesh extends Transform {
       material.shader.setupLights(_director.scene.lights);
     }
     
-    if(_faceBuffer == null && _faces != null) {
+    if(_faceBuffer == null && _faces != null && _faces.length > 0) {
       _faceBuffer = renderer.ctx.createBuffer();
       renderer.ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _faceBuffer);
       renderer.ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, new Uint16List.fromList(_faces), gl.STATIC_DRAW);
@@ -42,6 +42,7 @@ class Mesh extends Transform {
         e.position = position.clone();
         e.rotation = rotation.clone();
         e.scale = scale.clone();
+        e.wireframe = wireframe;
         if(e.useSharedVertices)
           e._geometry = _geometry;
         e.render(); 
@@ -93,7 +94,7 @@ class Mesh extends Transform {
   
   
   computeVertexNormals() {
-    if(_faces == null)
+    if(_faces == null || _geometry == null)
       return;
     var faceNormals = new List.filled(_faces.length, null);
     var vertices = _geometry.vertices;

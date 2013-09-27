@@ -22,12 +22,14 @@ uniform lightSource uLight3;
 
 vec3 phong(vec3 position, vec3 normal, lightSource ls) {
   vec3 P = normalize(position);
+  vec3 lightPosition = ls.position;
+  vec3 towardLight = lightPosition - position;
   vec3 lightDirection;
   // point light
   if(ls.type == 1){
-    lightDirection = normalize(ls.position);
-  }else if(ls.type == 2){
-    lightDirection = normalize(ls.position - position);
+    lightDirection = -ls.direction;
+  } else {
+    lightDirection = normalize(towardLight);
   }
 
   //diffuse term
@@ -38,20 +40,29 @@ vec3 phong(vec3 position, vec3 normal, lightSource ls) {
   vec3 specular = vec3(0.0, 0.0, 0.0);
   if(diffuseAngle > 0.0){
     vec3 viewDirection = normalize(uCameraPosition - position);
-    vec3 H = normalize(viewDirection + lightDirection);
+    vec3 H = normalize(viewDirection + towardLight);
     float specAngle = max(dot(normal, H), 0.0);
     specular = ls.color * pow(specAngle, uShininess);
   }
-  if(ls.type == 3) {
-    float dd = dot(lightDirection, normalize(ls.position));
+  float attenuation = 0.0;
+  float dist = length(towardLight);
+  if(ls.type == 2) {
+    attenuation = 1.0 / (1.0 + 0.045 * dist + 0.0075 * dist * dist);
+  }else if(ls.type == 3) {
+    float dd = dot(lightDirection, normalize(lightPosition));
     float ca = cos(ls.angle);
     float cf = cos(ls.angle + ls.angleFalloff);
     float spm = smoothstep(cf, ca, dd);
     diffuse *= spm;
     specular *= spm;
+//    float abc = max(dot(lightDirection, normalize(lightPosition)), 0.0);
+//    
+//    float lll = (pow(abc, 10.0)) / (length(lightDirection) + pow(length(lightDirection), 2.0));
+//    diffuse *= lll;
+//    specular *= lll;
   }
 
-  return diffuse * ls.intensity  + specular;
+  return diffuse * ls.intensity * attenuation  + specular * attenuation;
 }
 
 vec3 computeLight(vec3 position, vec3 normal, lightSource ls) {
@@ -68,6 +79,8 @@ vec3 computeLight(vec3 position, vec3 normal, lightSource ls) {
 
 final String _shader_normal_color_vertex_source = 
 """
+precision mediump float;
+
 attribute vec3 aVertexPosition;
 attribute highp vec3 aVertexNormal;
 
@@ -80,8 +93,8 @@ varying vec3 vPosition;
 varying vec3 vNormal;
 
 void main(void) {
-  vec4 pos = uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
-  gl_Position = uProjectionMatrix * pos;
+  vec4 pos = uModelMatrix * vec4(aVertexPosition, 1.0);
+  gl_Position = uProjectionMatrix * uViewMatrix * pos;
   vPosition = pos.xyz;
   vNormal = normalize((uNormalMatrix * vec4(aVertexNormal, 0.0)).xyz);
 }
@@ -91,6 +104,8 @@ final String _shader_normal_color_fragment_source =
 """
 precision mediump float;
 
+uniform mat4 uModelMatrix;
+uniform mat4 uViewMatrix;
 uniform vec3 uMaterialAmbient;
 uniform vec3 uMaterialDiffuse;
 uniform vec3 uMaterialSpecular;
@@ -191,7 +206,8 @@ class SimpleShader extends Shader {
     _director.scene.camera.copyViewMatrixIntoArray(tmp);
     ctx.uniformMatrix4fv(viewMatrixUniform, false, tmp);
     
-    ctx.uniform3fv(cameraPositionUniform, vector3ToFloat32List(_director.scene.camera.position));
+    var cp = _director.scene.camera.matrix * _director.scene.camera.position;
+    ctx.uniform3fv(cameraPositionUniform, vector3ToFloat32List(cp));
     
     mesh.matrix.copyIntoArray(tmp);
     ctx.uniformMatrix4fv(modelMatrixUniform, false, tmp);
@@ -213,7 +229,7 @@ class SimpleShader extends Shader {
       if(i < lights.length) {
         var light = lights[i];
         ctx.uniform1i(lightSource["type"], light.type);
-        ctx.uniform3fv(lightSource["direction"], vector3ToFloat32List(light.position));
+        ctx.uniform3fv(lightSource["direction"], vector3ToFloat32List(light.direction));
         ctx.uniform3fv(lightSource["color"], vector3ToFloat32List(light.color.rgb));
         ctx.uniform3fv(lightSource["position"], vector3ToFloat32List(light.position));
         ctx.uniform1f(lightSource["intensity"], light.intensity);

@@ -9,8 +9,11 @@ struct lightSource {
   vec3 position;      // used by hemisphere, point, spotlight (it's the global position of the transform)
   vec3 color;
   float intensity;
-  float angle;
-  float angleFalloff;
+  float spotExponent;
+  float spotCosCutoff;
+  float constantAttenuation;
+  float linearAttenuation;
+  float quadraticAttenuation;
 };
 """;
 
@@ -47,19 +50,15 @@ vec3 phong(vec3 position, vec3 normal, lightSource ls) {
   float attenuation = 0.0;
   float dist = length(towardLight);
   if(ls.type == 2) {
-    attenuation = 1.0 / (1.0 + 0.045 * dist + 0.0075 * dist * dist);
-  }else if(ls.type == 3) {
-    float dd = dot(lightDirection, normalize(lightPosition));
-    float ca = cos(ls.angle);
-    float cf = cos(ls.angle + ls.angleFalloff);
-    float spm = smoothstep(cf, ca, dd);
-    diffuse *= spm;
-    specular *= spm;
-//    float abc = max(dot(lightDirection, normalize(lightPosition)), 0.0);
-//    
-//    float lll = (pow(abc, 10.0)) / (length(lightDirection) + pow(length(lightDirection), 2.0));
-//    diffuse *= lll;
-//    specular *= lll;
+    attenuation = 1.0 / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
+  } else if(ls.type == 3) {
+    float spotEffect = dot(-ls.direction, lightDirection);
+    if(spotEffect > ls.spotCosCutoff){
+      spotEffect = pow(spotEffect, ls.spotExponent);
+      attenuation = spotEffect / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
+    }
+  } else {
+    attenuation = 1.0;
   }
 
   return diffuse * ls.intensity * attenuation  + specular * attenuation;
@@ -177,8 +176,11 @@ class SimpleShader extends Shader {
       lightSource["position"] = ctx.getUniformLocation(program, "uLight$i.position");
       lightSource["color"] = ctx.getUniformLocation(program, "uLight$i.color");
       lightSource["intensity"] = ctx.getUniformLocation(program, "uLight$i.intensity");
-      lightSource["angleFalloff"] = ctx.getUniformLocation(program, "uLight$i.angleFalloff");
-      lightSource["angle"] = ctx.getUniformLocation(program, "uLight$i.angle");
+      lightSource["spotExponent"] = ctx.getUniformLocation(program, "uLight$i.spotExponent");
+      lightSource["spotCosCutoff"] = ctx.getUniformLocation(program, "uLight$i.spotCosCutoff");
+      lightSource["constantAttenuation"] = ctx.getUniformLocation(program, "uLight$i.constantAttenuation");
+      lightSource["linearAttenuation"] = ctx.getUniformLocation(program, "uLight$i.linearAttenuation");
+      lightSource["quadraticAttenuation"] = ctx.getUniformLocation(program, "uLight$i.quadraticAttenuation");
       lightsUniform[i] = lightSource;
     }
   }
@@ -207,6 +209,7 @@ class SimpleShader extends Shader {
     ctx.uniformMatrix4fv(viewMatrixUniform, false, tmp);
     
     var cp = _director.scene.camera.matrix * _director.scene.camera.position;
+    cp = _director.scene.camera.position;
     ctx.uniform3fv(cameraPositionUniform, vector3ToFloat32List(cp));
     
     mesh.matrix.copyIntoArray(tmp);
@@ -233,10 +236,13 @@ class SimpleShader extends Shader {
         ctx.uniform3fv(lightSource["color"], vector3ToFloat32List(light.color.rgb));
         ctx.uniform3fv(lightSource["position"], vector3ToFloat32List(light.position));
         ctx.uniform1f(lightSource["intensity"], light.intensity);
-        if(light.angleFalloff != null)
-          ctx.uniform1f(lightSource["angleFalloff"], light.angleFalloff);
-        if(light.angle != null)
-          ctx.uniform1f(lightSource["angle"], light.angle);
+        ctx.uniform1f(lightSource["constantAttenuation"], light.constantAttenuation);
+        ctx.uniform1f(lightSource["linearAttenuation"], light.linearAttenuation);
+        ctx.uniform1f(lightSource["quadraticAttenuation"], light.quadraticAttenuation);
+        if(light.spotExponent != null)
+          ctx.uniform1f(lightSource["spotExponent"], light.spotExponent);
+        if(light.spotCutoff != null)
+          ctx.uniform1f(lightSource["spotCosCutoff"], light.spotCosCutoff);
       }else{
         ctx.uniform1i(lightSource["type"], Light.NONE);
       }

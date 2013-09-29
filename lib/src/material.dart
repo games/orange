@@ -7,9 +7,9 @@ class Material {
   List<double> diffuse;
   List<double> specular;
   List<double> emissive;
+  double shininess = 50.0;
   
   Shader shader;
   gl.Texture texture;
   Color color = new Color.fromHex(0xffffff);
-  double shininess = 50.0;
 }

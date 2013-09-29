@@ -8,6 +8,7 @@ class TestLightingScene extends Scene {
 
   Stats _stats;
   Mesh _cube;
+  Mesh _teapot;
   Light _directionalLight;
   Light _pointLight;
   Light _spotLight;
@@ -46,22 +47,26 @@ class TestLightingScene extends Scene {
     lights.add(light0);
     
     _directionalLight = new Light(0xffffff, Light.DIRECT);
-    _directionalLight.position = new Vector3(0.0, 10.0, 0.0);
-    _directionalLight.rotation.setEuler(0.0, 0.0, 0.0);
+    _directionalLight.rotation.setEuler(0.0, -PI / 4, 0.0);
     _directionalLight.updateMatrix();
-//    lights.add(_directionalLight);
+    _directionalLight.intensity = 0.3;
+    lights.add(_directionalLight);
     
-    _pointLight = new Light(0xffffff, Light.POINT);
+    _pointLight = new Light(0xff0000, Light.POINT);
     _pointLight.position = new Vector3(0.0, 3.0, 0.0);
-    _pointLight.intensity = 1.0;
-    lights.add(_pointLight);
+    _pointLight.intensity = 0.2;
+//    lights.add(_pointLight);
     
-    _spotLight = new Light(0xcdffff, Light.SPOTLIGHT);
-    _spotLight.position = new Vector3(0.0, 5.0, 2.0);
+    _spotLight = new Light(0xff0000, Light.SPOTLIGHT);
+    _spotLight.position = new Vector3(0.0, 3.0, 0.0);
     _spotLight.intensity = 1.0;
-    _spotLight.angle = PI;
-    _spotLight.angleFalloff = 0.15;
-//    lights.add(_spotLight);
+    _spotLight.direction = new Vector3(1.0, 0.0, 0.0);
+    _spotLight.spotCutoff = PI / 2;
+    _spotLight.spotExponent = 10.0;
+    _spotLight.constantAttenuation = 0.05;
+    _spotLight.linearAttenuation = 0.05;
+    _spotLight.quadraticAttenuation = 0.01;
+    lights.add(_spotLight);
     
     
     HttpRequest.getString("teapot.json").then(addMesh);
@@ -74,13 +79,14 @@ class TestLightingScene extends Scene {
     mesh.material.shader = Shader.simpleShader;
     mesh.computeVertexNormals();
     add(mesh);
+    _teapot = mesh;
   }
   
   var i = 0.0;
   update(double interval) {
     _stats.begin();
 
-    i += 0.01;
+    i += 0.02;
     i = i % (PI * 2);
     
 //    _directionalLight.rotation.setAxisAngle(WORLD_UP, i);
@@ -89,10 +95,22 @@ class TestLightingScene extends Scene {
 //    _cube.rotation.setAxisAngle(WORLD_UP, i);
     
 //    _pointLight.position.setValues(cos(i) * 5, 3.0, sin(i) * 5);
-//    _pointLight.position.setValues(0.0, cos(i) * 5, 0.0);
-    _cube.position = _pointLight.position.clone();
+//    _pointLight.position.setValues(0.0, cos(i) * 4, 0.0);
+//    _cube.position = _pointLight.position.clone();
     
 //      _spotLight.angle = 0.8624042272433387;//sin(i);
+//      _spotLight.position.setValues(0.0, cos(i) * 4, 0.0);
+//      _spotLight.position.setValues(cos(i) * 5, 1.0, sin(i) * 5);
+      _spotLight.rotation.setAxisAngle(new Vector3(0.0, 1.0, 1.0), i);
+//      _spotLight.rotation.setEuler(PI/2, 0.0, 0.0);
+      _spotLight.updateMatrix();
+//      _spotLight.direction = new Vector3(cos(i) * 5, 0.0, sin(i) * 5).normalize();
+//      _spotLight.position.setValues(0.0, cos(i) + 1, 0.0);
+//      _spotLight.position.setValues(0.0, 1.0, 0.0);
+      _cube.rotation = _spotLight.rotation.clone();
+      _cube.position = _spotLight.position.clone();
+//      if(_teapot != null)
+//        _teapot.rotation.setAxisAngle(new Vector3(0.0, 1.0, 0.0), i);
 //      _spotLight.angle = sin(i);
 //      print(_spotLight.angle);
 //      _spotLight.angleFalloff = 0.05;

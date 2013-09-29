@@ -21,8 +21,13 @@ class Light extends Transform {
   Vector3 direction = new Vector3(0.0, 0.0, -1.0);
   Color color;
   double intensity = 0.5;
-  double angleFalloff;
-  double angle;
+  double spotCutoff = math.PI / 2; // (range [0.0, 90.0], 180.0)
+  double spotExponent = 10.0;
+  double constantAttenuation = 1.0; // K0
+  double linearAttenuation = 0.045; // K1
+  double quadraticAttenuation = 0.0075; // K2
+  
+  double get spotCosCutoff => math.cos(spotCutoff);
   
   int type;
   
@@ -31,8 +36,9 @@ class Light extends Transform {
   Light(num hex, [int type = -1]): color = new Color.fromHex(hex), this.type = type, this.intensity = 1.0, super();
   
   updateMatrix() {
-    direction.setValues(0.0, 0.0, -1.0);
-    rotation.rotate(direction).normalize();
+    super.updateMatrix();
+    direction.setValues(0.0, 0.0, 1.0);
+    rotation.rotate(direction).normalize().setValues(-direction.x, -direction.y, direction.z);
   }
 }
 

@@ -22,6 +22,8 @@ part 'src/parser.dart';
 part 'src/color.dart';
 part 'src/light.dart';
 part 'src/keyboard.dart';
+part 'src/skeleton.dart';
+part 'src/bone.dart';
 
 part 'src/shaders/shader.dart';
 part 'src/shaders/simpleshader.dart';

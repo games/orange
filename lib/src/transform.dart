@@ -27,10 +27,17 @@ class Transform {
     matrix = new Matrix4.identity();
   }
   
+  find(String name) {
+    return children.firstWhere((e) => e.name == name);
+  }
+  
   add(Transform child) {
     child.removeFromParent();
     child.parent = this;
     children.add(child);
+    if(child.name == null) {
+      child.name = "Mesh ${children.length}";
+    }
   }
   
   remove(Transform child) {

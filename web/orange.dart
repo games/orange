@@ -5,11 +5,12 @@ import 'package:stats/stats.dart';
 import 'package:vector_math/vector_math.dart';
 import 'test_lighting.dart';
 
+Scene scene;
 void main() {
 
   initOrange(query('#container'));
   
-  var scene = new TestLightingScene();
+  scene = new TestLightingScene();
 //  var scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
@@ -19,7 +20,6 @@ void main() {
   
   director.replace(scene);
   director.run();
-  
 }
 
 

@@ -4,3 +4,4 @@ dependencies:
   browser: any
   vector_math: any
   stats: any
+  web_ui: any

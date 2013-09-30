@@ -5,6 +5,10 @@ final Vector3 WORLD_LEFT = new Vector3(-1.0, 0.0, 0.0);
 final Vector3 WORLD_RIGHT = new Vector3(1.0, 0.0, 0.0);
 final Vector3 WORLD_DOWN = new Vector3(0.0, -1.0, 0.0);
 
+final Vector3 UNIT_X = new Vector3(1.0, 0.0, 0.0);
+final Vector3 UNIT_Y = new Vector3(0.0, 1.0, 0.0);
+final Vector3 UNIT_Z = new Vector3(0.0, 0.0, 1.0);
+
 abstract class Camera extends Transform {
   double near;
   double far;
@@ -21,6 +25,22 @@ abstract class Camera extends Transform {
   
   copyViewMatrixIntoArray(Float32List vm) {
     matrix.copyIntoArray(vm);
+  }
+
+  rotate(Vector3 axis, double angleInRadian) {
+    rotation *= new Quaternion.axisAngle(axis, angleInRadian);
+  }
+  
+  roll(double angleInRadian) {
+    rotate(rotation.rotated(UNIT_Z), angleInRadian);
+  }
+  
+  yaw(double angleInRadian) {
+    rotate(rotation.rotated(UNIT_Y), angleInRadian);
+  }
+  
+  pitch(double angleInRadian) {
+    rotate(rotation.rotated(UNIT_X), angleInRadian);
   }
   
   Vector3 get frontDirection =>  (_focusPosition - position).normalize();

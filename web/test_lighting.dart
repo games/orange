@@ -47,9 +47,9 @@ class TestLightingScene extends Scene {
     lights.add(light0);
     
     _directionalLight = new Light(0xffffff, Light.DIRECT);
-    _directionalLight.rotation.setEuler(0.0, -PI / 4, 0.0);
+    _directionalLight.rotation.setEuler(0.0, PI / 4, 0.0);
     _directionalLight.updateMatrix();
-    _directionalLight.intensity = 0.3;
+    _directionalLight.intensity = 1.0;
     lights.add(_directionalLight);
     
     _pointLight = new Light(0xff0000, Light.POINT);
@@ -66,7 +66,7 @@ class TestLightingScene extends Scene {
     _spotLight.constantAttenuation = 0.05;
     _spotLight.linearAttenuation = 0.05;
     _spotLight.quadraticAttenuation = 0.01;
-    lights.add(_spotLight);
+//    lights.add(_spotLight);
     
     
     HttpRequest.getString("teapot.json").then(addMesh);
@@ -77,6 +77,7 @@ class TestLightingScene extends Scene {
     mesh.position = new Vector3(3.0, 0.0, 0.0);
     mesh.material = new Material();
     mesh.material.shader = Shader.simpleShader;
+//    mesh.scale.scale(0.05);
     mesh.computeVertexNormals();
     add(mesh);
     _teapot = mesh;

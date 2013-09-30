@@ -47,7 +47,7 @@ vec3 phong(vec3 position, vec3 normal, lightSource ls) {
     float specAngle = max(dot(normal, H), 0.0);
     specular = ls.color * pow(specAngle, uShininess);
   }
-  float attenuation = 0.0;
+  float attenuation = 1.0;
   float dist = length(towardLight);
   if(ls.type == 2) {
     attenuation = 1.0 / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
@@ -56,9 +56,9 @@ vec3 phong(vec3 position, vec3 normal, lightSource ls) {
     if(spotEffect > ls.spotCosCutoff){
       spotEffect = pow(spotEffect, ls.spotExponent);
       attenuation = spotEffect / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
+    } else {
+      attenuation = 0.0;
     }
-  } else {
-    attenuation = 1.0;
   }
 
   return diffuse * ls.intensity * attenuation  + specular * attenuation;

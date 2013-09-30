@@ -11,10 +11,10 @@ void main() {
   initOrange(query('#container'));
   
   scene = new TestLightingScene();
-//  var scene = new TestLoadMesh();
+//  scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
-  scene.camera.position.y = 5.0;
+  scene.camera.position.y = 2.0;
   scene.camera.position.z = 10.0;
   scene.camera.lookAt(new Vector3(0.0, 0.0, 0.0));
   
@@ -39,10 +39,17 @@ class TestLoadMesh extends Scene {
 //    add(_visual);
     
 //    HttpRequest.getString("npc_huf_town_01.json").then(addMesh);
-//    HttpRequest.getString("hum_f.json").then(addMesh);
+    HttpRequest.getString("hum_f.json").then(addMesh);
 //    HttpRequest.getString("teapot.json").then(addMesh);
+    HttpRequest.getString("mm02.json").then((r) {
+      var mesh = parseMesh(r);
+      mesh.position = new Vector3(-2.0 + (count++) * 5, 0.0, 0.0);
+      mesh.scale.scale(0.05);
+      mesh.material = new Material();
+      mesh.material.shader = Shader.simpleShader;
+      add(mesh);
+    });
 //    HttpRequest.getString("greatsword21.json").then(addMesh);
-    HttpRequest.getString("mm.json").then(addMesh);
     
     
     var ambientLight = new Light(0xff0000, Light.AMBIENT);
@@ -62,7 +69,7 @@ class TestLoadMesh extends Scene {
     var mesh = parseMesh(responseData);
     mesh.position = new Vector3(-2.0 + (count++) * 5, 0.0, 0.0);
 //    mesh.position = new Vector3(0.0, 0.0, 0.0);
-    mesh.scale.setValues(0.1, 0.1, 0.1);
+//    mesh.scale.scale(0.05);
     mesh.material = new Material();
     mesh.material.shader = Shader.simpleShader;
 //    mesh.wireframe = true;
@@ -86,7 +93,7 @@ class TestLoadMesh extends Scene {
 //      camera.position += camera.frontDirection * 0.1;
 //      moveTarget.position += new Vector3(0.0, 0.0, 0.1);
       camera.position += WORLD_UP * 0.1;
-      camera.lookAt(new Vector3(0.0, 0.0, 0.0));
+//      camera.lookAt(new Vector3(0.0, 0.0, 0.0));
     }else if(director.keyboard.held(KeyCode.DOWN)){
 //      camera.position -= camera.frontDirection * 0.1;
       moveTarget.position += new Vector3(0.0, 0.0, -0.1);
@@ -102,7 +109,7 @@ class TestLoadMesh extends Scene {
 //    lights[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);
 //    children[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);
     
-    _visual.position = lights[0].position.clone();
+//    _visual.position = lights[0].position.clone();
   }
   
   render() {

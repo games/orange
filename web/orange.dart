@@ -10,8 +10,8 @@ void main() {
 
   initOrange(query('#container'));
   
-  scene = new TestLightingScene();
-//  scene = new TestLoadMesh();
+//  scene = new TestLightingScene();
+  scene = new TestLoadMesh();
   
   scene.camera = new PerspectiveCamera();
   scene.camera.position.y = 2.0;
@@ -39,11 +39,11 @@ class TestLoadMesh extends Scene {
 //    add(_visual);
     
 //    HttpRequest.getString("npc_huf_town_01.json").then(addMesh);
-    HttpRequest.getString("hum_f.json").then(addMesh);
+//    HttpRequest.getString("hum_f.json").then(addMesh);
 //    HttpRequest.getString("teapot.json").then(addMesh);
     HttpRequest.getString("mm02.json").then((r) {
       var mesh = parseMesh(r);
-      mesh.position = new Vector3(-2.0 + (count++) * 5, 0.0, 0.0);
+      mesh.position = new Vector3(0.0, -1.0, 1.0);
       mesh.scale.scale(0.05);
       mesh.material = new Material();
       mesh.material.shader = Shader.simpleShader;
@@ -56,8 +56,8 @@ class TestLoadMesh extends Scene {
 //    lights.add(ambientLight);
     
     var directLight = new Light(0xffffff, Light.DIRECT);
-    directLight.position = new Vector3(1.0, 0.0, 0.0);
-//    lights.add(directLight);
+    directLight.position = new Vector3(1.0, 0.0, -1.0);
+    lights.add(directLight);
     
     var pointLight = new Light(0xffffff, Light.POINT);
     pointLight.position = new Vector3(0.0, 3.0, 0.0);

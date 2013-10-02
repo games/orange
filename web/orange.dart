@@ -43,8 +43,8 @@ class TestLoadMesh extends Scene {
 //    HttpRequest.getString("teapot.json").then(addMesh);
     HttpRequest.getString("mm02.json").then((r) {
       var mesh = parseMesh(r);
-      mesh.position = new Vector3(0.0, -1.0, 1.0);
-      mesh.scale.scale(0.05);
+      mesh.position = new Vector3(0.0, -3.0, 1.0);
+      mesh.scale.scale(0.08);
       mesh.material = new Material();
       mesh.material.shader = Shader.simpleShader;
       add(mesh);
@@ -102,9 +102,9 @@ class TestLoadMesh extends Scene {
     
     var s = interval / 1000.0;
     i += 0.02 ;
-//    children.forEach((e) {
-//      e.rotation.setAxisAngle(WORLD_UP, i % (2 * PI));
-//    });
+    children.forEach((e) {
+      e.rotation.setAxisAngle(WORLD_UP, i % (2 * PI));
+    });
 //    var r = 5.0;
 //    lights[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);
 //    children[0].position.setValues(cos(i) * r, 1.0, sin(i) * r);

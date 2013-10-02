@@ -90,6 +90,10 @@ class TestLightingScene extends Scene {
     i += 0.02;
     i = i % (PI * 2);
     
+    children.forEach((e) {
+      e.rotation.setAxisAngle(WORLD_UP, i);
+    });
+    
 //    _directionalLight.rotation.setAxisAngle(WORLD_UP, i);
 //    _directionalLight.updateMatrix();
     

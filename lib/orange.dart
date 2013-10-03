@@ -34,7 +34,7 @@ part 'src/event/eventdispatcher.dart';
 part 'src/event/events.dart';
 part 'src/event/eventsubscription.dart';
 
-
+part 'src/math/vector.dart';
 
 Director _director;
 

@@ -5,3 +5,4 @@ dependencies:
   vector_math: any
   stats: any
   web_ui: any
+  unittest: any

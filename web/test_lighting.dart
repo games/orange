@@ -73,7 +73,7 @@ class TestLightingScene extends Scene {
   }
   
   addMesh(String responseData) {
-    var mesh = parseMesh(responseData);
+    var mesh = MeshParser.parse(responseData);
     mesh.position = new Vector3(3.0, 0.0, 0.0);
     mesh.material = new Material();
     mesh.material.shader = Shader.simpleShader;

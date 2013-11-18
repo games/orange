@@ -45,3 +45,15 @@ initOrange(html.CanvasElement canvas) {
 Director get director {
   return _director;
 }
+
+
+
+
+
+
+
+
+
+
+
+

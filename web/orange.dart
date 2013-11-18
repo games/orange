@@ -8,7 +8,7 @@ import 'test_lighting.dart';
 Scene scene;
 void main() {
 
-  initOrange(query('#container'));
+  initOrange(querySelector('#container'));
   
 //  scene = new TestLightingScene();
   scene = new TestLoadMesh();
@@ -42,7 +42,7 @@ class TestLoadMesh extends Scene {
 //    HttpRequest.getString("hum_f.json").then(addMesh);
 //    HttpRequest.getString("teapot.json").then(addMesh);
     HttpRequest.getString("mm02.json").then((r) {
-      var mesh = parseMesh(r);
+      var mesh = MeshParser.parse(r);
       mesh.position = new Vector3(0.0, -3.0, 1.0);
       mesh.scale.scale(0.08);
       mesh.material = new Material();
@@ -66,7 +66,7 @@ class TestLoadMesh extends Scene {
   
   int count = 0;
   addMesh(String responseData) {
-    var mesh = parseMesh(responseData);
+    var mesh = MeshParser.parse(responseData);
     mesh.position = new Vector3(-2.0 + (count++) * 5, 0.0, 0.0);
 //    mesh.position = new Vector3(0.0, 0.0, 0.0);
 //    mesh.scale.scale(0.05);

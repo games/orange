@@ -133,7 +133,7 @@ class Mesh extends Transform {
 
 
 Mesh parseMesh(String jsonStr) {
-  var jsonObj = json.parse(jsonStr);
+  var jsonObj = JSON.decode(jsonStr);
   
   var mesh = new Mesh();
   

@@ -2,7 +2,7 @@ library orange;
 
 
 import 'dart:html' as html;
-import 'dart:json' as json;
+import 'dart:convert' show JSON;
 import 'dart:web_gl' as gl;
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -34,7 +34,7 @@ part 'src/event/eventdispatcher.dart';
 part 'src/event/events.dart';
 part 'src/event/eventsubscription.dart';
 
-part 'src/math/vector.dart';
+//part 'src/math/vector.dart';
 
 Director _director;
 

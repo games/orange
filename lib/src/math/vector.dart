@@ -45,6 +45,16 @@ class Vector3 {
   
   double dot(Vector3 other) => _x * other._x + _y * other._y + _z * other._z;
   
+  Vector3 cross(Vector3 other) {
+    return new Vector3(
+        _y * other._z - _z * other._y,
+        _z * other._x - _x * other._z,
+        _x * other._y - _y * other._x 
+        );
+  }
+  
+  
+  
   Vector3 projectTo(Vector3 other) => other * (clone().dot(other) / other.lengthSquared);
   
   Vector3 clone() => new Vector3(_x, _y, _z);

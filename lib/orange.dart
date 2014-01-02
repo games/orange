@@ -55,6 +55,8 @@ part 'src/event/eventdispatcher.dart';
 part 'src/event/events.dart';
 part 'src/event/eventsubscription.dart';
 
+part 'src/skeleton.dart';
+part 'src/joint.dart';
 
 final Vector3 WORLD_UP = new Vector3(0.0, 1.0, 0.0);
 final Vector3 WORLD_LEFT = new Vector3(-1.0, 0.0, 0.0);

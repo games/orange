@@ -1,17 +1,30 @@
 part of orange;
 
 
+typedef void UpdateHandler(num interval);
+
+
 class Director {
+  static Director _shared;
+  static Director get shared => _shared; 
+  
   html.CanvasElement _canvas;
   Renderer _renderer;
   Scene _scene;
   double _lastElapsed;
-  Keyboard _keyboard;
+  EventDispatcher<num> _onTick;
+  
+  factory Director(html.CanvasElement canvas) {
+    if(_shared == null){
+      _shared = new Director._internal(canvas);
+    }
+    return _shared;
+  }
   
   Director._internal(this._canvas) {
     _renderer = new Renderer(_canvas);
-    _keyboard = new Keyboard();
     _lastElapsed = 0.0;
+    _onTick = new EventDispatcher(this);
   }
   
   replace(Scene scene) {
@@ -20,27 +33,26 @@ class Director {
     _scene.enter();
   }
   
-  double get elapsed => _lastElapsed;
-  Keyboard get keyboard => _keyboard;
-  Renderer get renderer => _renderer;
-  Scene get scene => _scene;
-  html.CanvasElement get canvas => _canvas;
-  
-  run() {
+  startup() {
     html.window.requestAnimationFrame(_animate);
   }
   
   _animate(num elapsed) {
     html.window.requestAnimationFrame(_animate);
-    
     var interval = elapsed - _lastElapsed;
-    _renderer.prepare();
     _scene.update(interval);
-    _keyboard.update(interval);
-    _scene.camera.updateMatrix();
-    _scene.render();
+    _onTick.dispatch(interval);
+    _scene.camera.updateMatrixWorld();
+    _renderer.prepare();
+    _renderer.render(_scene);
     _lastElapsed = elapsed;
   }
+  
+  double get elapsed => _lastElapsed;
+  Renderer get renderer => _renderer;
+  Scene get scene => _scene;
+  html.CanvasElement get canvas => _canvas;
+  EventDispatcher<num> get onTick => _onTick;
 }
 
 

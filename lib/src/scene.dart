@@ -1,17 +1,22 @@
 part of orange;
 
 
-class Scene extends Transform {
+class Scene {
+  Resources resources;
+  List<Node> nodes;
   
   Camera camera;
-  List<Light> lights = [];
+  Color backgroundColor = new Color.fromHex(0x84A6EE);
   
   enter() {
+    
+  }
+  
+  update(num elapsed) {
+    
   }
   
   exit() {
-  }
-  
-  update(double interval) {
+    
   }
 }

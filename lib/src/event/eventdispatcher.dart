@@ -10,7 +10,7 @@ class EventDispatcher<T> {
     _trigger = trigger;
   }
 
-  EventSubscription<T> listen(handler) {
+  EventSubscription<T> listen(EventHandler<T> handler) {
       var subscription = new EventSubscription<T>(this, handler);
       _subscriptions.add(subscription);
       return subscription;

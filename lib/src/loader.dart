@@ -4,19 +4,19 @@ part of orange;
 class Loader {
   String _path;
   Uri _uri;
-  Scene _scene;
+  Node _root;
   Resources _resources = new Resources();
 
   Loader(this._path) {
     _uri = Uri.parse(_path);
   }
   
-  Future<Scene> start() {
-    var completer = new Completer<Scene>();
+  Future start() {
+    var completer = new Completer();
     html.HttpRequest.getString(_path)
       .then((rsp){
           if(_parse(JSON.decode(rsp))){
-            completer.complete(_scene);
+            completer.complete({"root": _root, "resources": _resources});
           }else{
             completer.completeError("parse failure");
           }
@@ -241,22 +241,20 @@ class Loader {
   handleScenes(Map description) {
     var json = description.values.first;
     if(json != null) {
-      _scene = new Scene();
-      _scene.resources = _resources;
-      _scene.nodes = new List();
+      _root = new Node();
       json["nodes"].forEach((name){
         var node = _resources[name];
         if(node != null) {
           if (node is Camera) {
-            _scene.camera = node;
+            
           } else if(node is Light) {
             //TODO : light
           } else if(node is Node) {
-            _scene.nodes.add(node);
+            _root.add(node);
           }
         }
       });
-      _scene.nodes.forEach((node) => _buildNodeHirerachy(node));
+      _root.children.forEach((node) => _buildNodeHierarchy(node));
       return true;
     }else{
       return false;
@@ -267,13 +265,13 @@ class Loader {
     return true;
   }
 
-  _buildNodeHirerachy(Node node) {
+  _buildNodeHierarchy(Node node) {
     if(node.children == null)
       node.children = new List();
     node.childNames.forEach((name){
       var child = _resources[name];
       node.add(child);
-      _buildNodeHirerachy(child);
+      _buildNodeHierarchy(child);
     });
   }
   

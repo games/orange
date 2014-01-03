@@ -1,5 +1,15 @@
 {
-    "animations": {},
+    "animations": {
+        "idle": "smd/idle.smd",
+        "idle_dupe1_dupe1": "smd/idle_dupe1_dupe1.smd",
+        "idle_injured": "smd/idle_injured.smd",
+        "idle_long": "smd/idle_long.smd",
+        "attack1_test": "smd/attack1_test.smd",
+        "attack1_tonedown": "smd/attack1_tonedown.smd",
+        "attack2_tonedown": "smd/attack2_tonedown.smd",
+        "run": "smd/run.smd",
+        "run_injured": "smd/run_injured.smd"
+    },
     "asset": {},
     "accessors": {
         "attribute_1": {

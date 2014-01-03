@@ -262,6 +262,9 @@ class Loader {
   }
   
   handleAnimations(description) {
+    description.forEach((k, v){
+            
+    });
     return true;
   }
 

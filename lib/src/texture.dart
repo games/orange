@@ -16,7 +16,8 @@ class Texture {
   setup(gl.RenderingContext ctx) {
     if(source == null) {
       source = new html.ImageElement(src : path);
-      source.onLoad.listen((_) => _createTexture(ctx));
+      source.onLoad.listen((_) => _createTexture(ctx)).
+        onError(()=> print("Failed to load image : $path"));
     }
   }
   

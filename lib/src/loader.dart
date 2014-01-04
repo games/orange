@@ -6,6 +6,7 @@ class Loader {
   Uri _uri;
   Node _root;
   Resources _resources = new Resources();
+  Map<String, Joint> _joints = {};
 
   Loader(this._path) {
     _uri = Uri.parse(_path);
@@ -205,35 +206,60 @@ class Loader {
     return true;
   }
   
-  handleSkins(description) {
+  handleSkins(Map description) {
+    description.forEach((k, v) {
+      var skin = new Skin();
+      skin.bindShapeMatrix = _newMatrix4FromArray(v["bindShapeMatrix"]);
+      skin.jointsIds = v["joints"];
+      skin.inverseBindMatricesDescription = v["inverseBindMatrices"];
+      skin.inverseBindMatricesDescription["bufferView"] = _resources[v["inverseBindMatrices"]["bufferView"]];
+      _resources[k] = skin;
+    });
     return true;
   }
   
   handleNodes(Map description) {
-    description.forEach((k, v){
-      if(v["light"] != null) {
-        var light = new Light();
-        light.applyMatrix(_newMatrix4FromArray(v["matrix"]));
-        _resources[k] = light;
-      } else if(v["camera"] != null) {
-        var camera = _resources[v["camera"]];
-        camera.applyMatrix(_newMatrix4FromArray(v["matrix"]));
-        _resources[k] = camera;
+    description.forEach((String k, Map v){
+      var matrix;
+      if(v.containsKey("matrix")) {
+        matrix = _newMatrix4FromArray(v["matrix"]);
       } else {
-        var node = new Node();
+        matrix = _newMatrix4FromSQT(v["scale"], v["rotation"], v["translation"]);
+      }
+      var node;
+      if(v.containsKey("jointId")) {
+        node = new Joint();
+        node.id = v["jointId"];
+        node.name = v["name"];
+      }else if(v.containsKey("light")) {
+        node = new Light();
+      } else if(v.containsKey("camera")) {
+        node = _resources[v["camera"]];
+      } else {
+        node = new Node();
         node.name = v["name"];
         node.childNames = v["children"];
-        node.applyMatrix(_newMatrix4FromArray(v["matrix"]));
-        var meshes = v["meshes"];
-        if(meshes != null) {
+        if(v.containsKey("meshes")) {
+          var meshes = v["meshes"];
           node.meshes = new List.generate(meshes.length, (i){
             return _resources[meshes[i]];
           }, growable: false);
-        }else{
+        } else if(v.containsKey("mesh")) {
+          node.meshes = [_resources[v["mesh"]]];
+        } else if (v.containsKey("instanceSkin")) {
+          var instanceSkin = _resources[v["instanceSkin"]];
+          instanceSkin["skin"] = _resources[instanceSkin["skin"]];
+          node.instanceSkin = instanceSkin;
+          var source = instanceSkin["sources"];
+          node.meshes = new List.generate(source.length, (i){
+            return _resources[source[i]];
+          }, growable: false);
+        } else {
           node.meshes = new List(0);
         }
-        _resources[k] = node;
       }
+      node.applyMatrix(matrix);
+      _resources[k] = node;
     });
     return true;
   }
@@ -278,6 +304,17 @@ class Loader {
     });
   }
   
+  _buildSkins(Node node) {
+    if(node.instanceSkin != null) {
+      _buildSkin(node);
+    }
+    node.children.forEach((n) => _buildSkins(n));
+  }
+  
+  _buildSkin(Node node) {
+    
+  }
+  
   Matrix4 _newMatrix4FromArray(List arr) {
     return new Matrix4(
         arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble(), arr[3].toDouble(),
@@ -286,6 +323,13 @@ class Loader {
         arr[12].toDouble(), arr[13].toDouble(), arr[14].toDouble(), arr[15].toDouble());
   }
 
+  Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
+    var m = new Matrix4.zero();
+    m.fromRotationTranslation(new Quaternion(r[0].toDouble(), r[1].toDouble(), r[2].toDouble(), r[3].toDouble()), 
+        new Vector3(t[0].toDouble(), t[1].toDouble(), t[2].toDouble()));
+    m.scale(s[0].toDouble(), s[1].toDouble(), s[2].toDouble());
+    return m;
+  }
 }
 
 

@@ -6,6 +6,7 @@ class Primitive {
   Map<String, MeshAttribute> attributes;
   Material material;
   int primitive;
+  Skin skin;
   
   bool get ready => indices.buffer != null && attributes.keys.every((k) => attributes[k].buffer != null);
   

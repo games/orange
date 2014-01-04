@@ -6,16 +6,25 @@ class Node {
   List<Node> children;
   List<String> childNames;
   Matrix4 _matrix;
+  Map instanceSkin;
   List<Mesh> meshes;
   
   Node parent;
   Matrix4 matrixWorld;
+  
+  Vector3 _position;
+  Quaternion _rotation;
+  Vector3 _scale;
   
   Node() {
     children = new List();
     _matrix = new Matrix4.identity();
     matrixWorld = new Matrix4.identity();
     meshes = new List();
+    
+    _position = new Vector3.zero();
+    _rotation = new Quaternion.identity();
+    _scale = new Vector3(1.0, 1.0, 1.0);
   }
   
   add(Node child) {
@@ -45,6 +54,7 @@ class Node {
   
   rotateX(double rad) {
     _matrix.rotateX(rad);
+//    _matrix.decompose(_position, _rotation, _scale);
   }
   
   rotateY(double rad) {
@@ -53,13 +63,19 @@ class Node {
   
   rotateZ(double rad) {
     _matrix.rotateZ(rad);
+//    _matrix.decompose(_position, _rotation, _scale);
   }
   
   applyMatrix(Matrix4 m) {
     _matrix.multiply(m);
+//    _matrix.decompose(_position, _rotation, _scale);
   }
   
   updateMatrixWorld() {
+//    if(!(this is Camera)){
+//    _matrix.fromRotationTranslation(_rotation, _position);
+//    _matrix.scale(_scale);
+//    }
     if(parent != null) {
       matrixWorld = parent.matrixWorld * _matrix;
     } else {

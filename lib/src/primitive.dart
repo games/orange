@@ -6,9 +6,11 @@ class Primitive {
   Map<String, MeshAttribute> attributes;
   Material material;
   int primitive;
-  Skin skin;
+  Float32List jointMatrices;
   
-  bool get ready => indices.buffer != null && attributes.keys.every((k) => attributes[k].buffer != null);
+  bool get ready => 
+      indices.ready && 
+      attributes.keys.every((k) => attributes[k].ready);
   
   setupBuffer(gl.RenderingContext ctx) {
     indices.setupBuffer(ctx);

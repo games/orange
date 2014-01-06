@@ -21,11 +21,11 @@ void main() {
     scene.nodes.add(root);
     
     scene.camera = new PerspectiveCamera(canvas.width / canvas.height);
-    scene.camera.translate(new Vector3(0.0,2.0, 15.0));
+    scene.camera.translate(new Vector3(0.0,2.0, 550.0));
 //    scene.camera.lookAt(new Vector3(0.0, 0.0, -1.0));
     
     root.rotateX(radians(-90.0));
-//    root.rotateZ(radians(-35.0));
+    root.rotateZ(radians(-80.0));
     
     director.replace(scene);
     director.startup();

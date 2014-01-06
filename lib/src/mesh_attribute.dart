@@ -12,15 +12,19 @@ class MeshAttribute {
   List<double> min;
   
   gl.Buffer buffer;
-  TypedData list;
+  TypedData bufferData;
+  
+  bool get ready => bufferData != null;
   
   setupBuffer(gl.RenderingContext ctx) {
     if(buffer == null) {
       if(bufferView.bufferRefs.ready) {
-        buffer = ctx.createBuffer();
-        ctx.bindBuffer(bufferView.target, buffer);
-        list = createTypedData();
-        ctx.bufferDataTyped(bufferView.target, list, gl.STATIC_DRAW);
+        bufferData = createTypedData();
+        if(bufferView.target != null) {
+          buffer = ctx.createBuffer();
+          ctx.bindBuffer(bufferView.target, buffer);
+          ctx.bufferDataTyped(bufferView.target, bufferData, gl.STATIC_DRAW);
+        }
       } else {
         bufferView.bufferRefs.load();
       }
@@ -37,6 +41,8 @@ class MeshAttribute {
         return new Float32List.view(bufferView.bufferRefs.bytes, offset, count * byteStride ~/ 4);
       case gl.UNSIGNED_SHORT:
         return new Uint16List.view(bufferView.bufferRefs.bytes, offset, count);
+      case gl.FLOAT_MAT4:
+        return new Float32List.view(bufferView.bufferRefs.bytes, offset, count * 16);
       default:
         throw new Exception("Not support yet");
     }

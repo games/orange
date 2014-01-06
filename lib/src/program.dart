@@ -87,8 +87,7 @@ class Program {
       case gl.FLOAT_MAT3:
         ctx.uniformMatrix3fv(location, false, _mat3f(value)); break;
       case gl.FLOAT_MAT4:
-        ctx.uniformMatrix4fv(location, false, _mat4f(value)); 
-        break;
+        ctx.uniformMatrix4fv(location, false, _mat4f(value)); break;
       case gl.FLOAT:
         ctx.uniform1f(location, value); break;
       case gl.FLOAT_VEC2:
@@ -106,7 +105,9 @@ class Program {
     }
   }
   
-  _vec(List list, int length) {
+  _vec(list, int length) {
+    if(list is Float32List) 
+      return list;
     var l = new List(length);
     for(var i = 0; i < length; i++)
       l[i] = list[i].toDouble();
@@ -119,10 +120,14 @@ class Program {
     return tmp;
   }
   
-  _mat4f(Matrix4 mat) {
-    var tmp = new Float32List(16);
-    mat.copyIntoArray(tmp);
-    return tmp;
+  _mat4f(maxtrixOrList) {
+    if(maxtrixOrList is Matrix4) {
+      var tmp = new Float32List(16);
+      maxtrixOrList.copyIntoArray(tmp);
+      return tmp;
+    } else {
+      return maxtrixOrList;
+    }
   }
 }
 

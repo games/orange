@@ -11,6 +11,7 @@ class Node {
   
   Node parent;
   Matrix4 matrixWorld;
+  Skin skin;
   
   Vector3 _position;
   Quaternion _rotation;

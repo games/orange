@@ -211,8 +211,12 @@ class Loader {
       var skin = new Skin();
       skin.bindShapeMatrix = _newMatrix4FromArray(v["bindShapeMatrix"]);
       skin.jointsIds = v["joints"];
-      skin.inverseBindMatricesDescription = v["inverseBindMatrices"];
-      skin.inverseBindMatricesDescription["bufferView"] = _resources[v["inverseBindMatrices"]["bufferView"]];
+      skin.inverseBindMatrices = new MeshAttribute();
+      skin.inverseBindMatrices.bufferView = _resources[v["inverseBindMatrices"]["bufferView"]];
+      skin.inverseBindMatrices.byteOffset = v["inverseBindMatrices"]["byteOffset"];
+      skin.inverseBindMatrices.count = v["inverseBindMatrices"]["count"];
+      skin.inverseBindMatrices.type = v["inverseBindMatrices"]["type"];
+      skin.jointsForSkeleton = new Map();
       _resources[k] = skin;
     });
     return true;
@@ -230,15 +234,13 @@ class Loader {
       if(v.containsKey("jointId")) {
         node = new Joint();
         node.id = v["jointId"];
-        node.name = v["name"];
+        _joints[node.id] = node;
       }else if(v.containsKey("light")) {
         node = new Light();
       } else if(v.containsKey("camera")) {
         node = _resources[v["camera"]];
       } else {
         node = new Node();
-        node.name = v["name"];
-        node.childNames = v["children"];
         if(v.containsKey("meshes")) {
           var meshes = v["meshes"];
           node.meshes = new List.generate(meshes.length, (i){
@@ -247,7 +249,7 @@ class Loader {
         } else if(v.containsKey("mesh")) {
           node.meshes = [_resources[v["mesh"]]];
         } else if (v.containsKey("instanceSkin")) {
-          var instanceSkin = _resources[v["instanceSkin"]];
+          var instanceSkin = v["instanceSkin"];
           instanceSkin["skin"] = _resources[instanceSkin["skin"]];
           node.instanceSkin = instanceSkin;
           var source = instanceSkin["sources"];
@@ -258,6 +260,8 @@ class Loader {
           node.meshes = new List(0);
         }
       }
+      node.name = v["name"];
+      node.childNames = v["children"];
       node.applyMatrix(matrix);
       _resources[k] = node;
     });
@@ -281,6 +285,7 @@ class Loader {
         }
       });
       _root.children.forEach((node) => _buildNodeHierarchy(node));
+      _buildSkins(_root);
       return true;
     }else{
       return false;
@@ -312,10 +317,29 @@ class Loader {
   }
   
   _buildSkin(Node node) {
-    
+    Skin skin = node.instanceSkin["skin"];
+    if(skin != null) {
+      node.instanceSkin["skeletons"].forEach((skeleton) {
+        var rootSkeleton = _resources[skeleton];
+        if(rootSkeleton != null) {
+          var jointsIds = skin.jointsIds;
+          var joints = [];
+          jointsIds.forEach((jointId) {
+            //FIXME: should be use this one: var joint = rootSkeleton.nodeWithJointID(jointId);
+            var joint = _joints[jointId];
+            if(joint != null) 
+              joints.add(joint);
+          });
+          skin.jointsForSkeleton[skeleton] = joints; 
+        }
+      });
+      node.skin = skin;
+    }
   }
   
   Matrix4 _newMatrix4FromArray(List arr) {
+    if(arr.length != 16)
+      return new Matrix4.identity();
     return new Matrix4(
         arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble(), arr[3].toDouble(),
         arr[4].toDouble(), arr[5].toDouble(), arr[6].toDouble(), arr[7].toDouble(),

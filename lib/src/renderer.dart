@@ -30,13 +30,19 @@ class Renderer {
   
   _renderNode(Scene scene, Node node) {
     var camera = scene.camera;
+    if(node.skin != null && node.skin.inverseBindMatrices.ready == false) {
+      node.skin.inverseBindMatrices.setupBuffer(ctx);
+      return;
+    } else if(node.skin != null) {
+      node.skin.process(node);
+    }
     node.meshes.forEach((mesh) {
       mesh.primitives.forEach((primitive) {
         if(primitive.ready) {
           var material = primitive.material;
 //          material = new ColorMaterial(new Color.fromHex(0x0000ff));
           var technique = material.technique;
-          technique = techniqueForTextureMaterial;
+//          technique = techniqueForTextureMaterial;
           var pass = technique.passes[material.technique.pass];
           var program = pass.program;
           program.build(ctx);
@@ -110,6 +116,8 @@ class Renderer {
                     value = camera.matrixWorld * node.matrixWorld;
                   } else if (semantic == "MODELVIEWINVERSETRANSPOSE") {
                     value = (camera.matrixWorld * node.matrixWorld).normalMatrix3();
+                  } else if (semantic == "JOINT_MATRIX") {
+                    value = primitive.jointMatrices;
                   }
                 }
               }

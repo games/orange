@@ -285,6 +285,7 @@ class Loader {
         }
       });
       _root.children.forEach((node) => _buildNodeHierarchy(node));
+      _root.updateMatrixWorld();
       _buildSkins(_root);
       return true;
     }else{

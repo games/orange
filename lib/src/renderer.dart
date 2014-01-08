@@ -42,7 +42,7 @@ class Renderer {
           var material = primitive.material;
 //          material = new ColorMaterial(new Color.fromHex(0x0000ff));
           var technique = material.technique;
-//          technique = techniqueForTextureMaterial;
+          technique = techniqueForTextureMaterial;
           var pass = technique.passes[material.technique.pass];
           var program = pass.program;
           program.build(ctx);

@@ -483,6 +483,14 @@ class Matrix4 {
     return this;
   }
   
+  Vector3 multiplyVector3(Vector3 arg) {
+    Vector3 r = new Vector3.zero();
+    r.storage[0] = (storage[0] * arg.storage[0]) + (storage[4] * arg.storage[1]) + (storage[8] * arg.storage[2]) + storage[12];
+    r.storage[1] = (storage[1] * arg.storage[0]) + (storage[5] * arg.storage[1]) + (storage[9] * arg.storage[2]) + storage[13];
+    r.storage[2] = (storage[2] * arg.storage[0]) + (storage[6] * arg.storage[1]) + (storage[10] * arg.storage[2]) + storage[14];
+    return r;
+  }
+  
   Matrix4 translate(Vector3 v) {
     var x = v[0], y = v[1], z = v[2],
         a00, a01, a02, a03,

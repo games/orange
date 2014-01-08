@@ -1,100 +1,39 @@
 part of orange;
 
 
-class Texture {
-  Sampler sampler;
-  String path;
-  html.ImageElement source;
-  int format;
-  int internalFormat;
-  int target;
+
+class TextureManager {
+  static TextureManager _shared = new TextureManager._internal();
   
-  bool get ready => texture != null;
-  
-  gl.Texture texture;
-  
-  setup(gl.RenderingContext ctx) {
-    if(source == null) {
-      source = new html.ImageElement(src : path);
-      source.onLoad.listen((_) => _createTexture(ctx)).
-        onError(()=> print("Failed to load image : $path"));
-    }
+  factory TextureManager() {
+    return _shared;
   }
   
-  _createTexture(gl.RenderingContext ctx) {
-    var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) ||
-        (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) ||
-        (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
-        (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
-    
-    var image = source;
-    if(usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
-      image = _ensureImage(source);
-    }
-    
-    texture = ctx.createTexture();
-    ctx.bindTexture(target, texture);
-    ctx.texParameteri(target, gl.TEXTURE_WRAP_S, sampler.wrapS);
-    ctx.texParameteri(target, gl.TEXTURE_WRAP_T, sampler.wrapT);
-    ctx.texParameteri(target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
-    ctx.texParameteri(target, gl.TEXTURE_MAG_FILTER, sampler.magFilter);
-    ctx.texImage2D(target, 0, internalFormat, format, gl.UNSIGNED_BYTE, image);
-    if(usesMipMaps) {
-      ctx.generateMipmap(target);
-    }
-    ctx.bindTexture(target, null);
+  Map<String, gl.Texture> _textures;
+  
+  TextureManager._internal() {
+    _textures = {};
   }
   
-  _ensureImage(html.ImageElement source) {
-    var img = source;
-    var shouldResize = false;
-    var width = source.width;
-    if(!_isPowerOfTwo(width)) {
-      width = _nextHighestPowerOfTwo(width);
-      shouldResize = true;
+  Future<gl.Texture> load(gl.RenderingContext ctx, String url) {
+    var completer = new Completer<gl.Texture>();
+    if(_textures.containsKey(url)) {
+      completer.complete(_textures[url]);
+    } else {
+      var texture = ctx.createTexture();
+      var image = new html.ImageElement(src : url);
+      image.onLoad.listen((_) {
+        ctx.bindTexture(gl.TEXTURE_2D, texture);
+        ctx.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        ctx.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        ctx.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+        ctx.generateMipmap(gl.TEXTURE_2D);
+        completer.complete(texture);
+      }).
+      onError(() {
+        print("Failed to load image : $url");
+        completer.completeError(texture);
+      });
     }
-    var height = source.height;
-    if(!_isPowerOfTwo(height)) {
-      height = _nextHighestPowerOfTwo(height);
-      shouldResize = true;
-    }
-    if(shouldResize) {
-      var canvas = new html.CanvasElement();
-      canvas.width = width;
-      canvas.height = height;
-      var graphics = canvas.context2D;
-      graphics.drawImageScaled(source, 0, 0, width, height);
-      img = canvas;
-    }
-    return img;
   }
 }
-
-_isPowerOfTwo(int x) {
-  return (x & (x - 1)) == 0;
-}
-
-_nextHighestPowerOfTwo(int x) {
-  --x;
-  for(var i = 1; i < 32; i <<= 1) {
-    x = x | x >> i;
-  }
-  return x + 1;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

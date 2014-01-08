@@ -48,6 +48,10 @@ class Vector3 {
     storage[i] = v;
   }
   
+  Vector3 operator+(Vector3 other) => new Vector3(storage[0] + other.storage[0],
+      storage[1] + other.storage[1],
+      storage[2] + other.storage[2]);
+  
   toString() {
     return "vec3($x, $y, $z)";
   }

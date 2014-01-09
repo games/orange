@@ -3,5 +3,5 @@ part of orange;
 
 
 class Keyframe {
-  List<Bone> bones = [];
+  List<Joint> joints = [];
 }

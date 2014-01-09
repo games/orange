@@ -2,12 +2,12 @@ part of orange;
 
 
 
-class Bone {
+class Joint {
   String name;
   Vector3 pos;
   Quaternion rot;
   Matrix4 bindPoseMat;
-  Matrix4 boneMat;
+  Matrix4 jointMat;
   Vector3 worldPos;
   Quaternion worldRot;
   int parent;

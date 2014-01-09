@@ -25,6 +25,12 @@ class Matrix4 {
   
   Matrix4.zero();
   
+  Matrix4.fromList(List<num> list) {
+    for(var i = 0; i < 16 && i < list.length; i++) {
+      storage[i] = list[i].toDouble();
+    }
+  }
+  
   Matrix4.identity() {
     setIdentity();
   }

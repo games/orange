@@ -2,13 +2,30 @@ part of orange;
 
 
 
-class ModelCamera {
+class Camera {
+  Matrix4 _viewMatrix = new Matrix4.identity();
+  bool _dirty = true;
+  Vector3 _position;
+  
+  Vector3 get position => _position;
+  set position(Vector3 val) {
+    _position = val;
+    _dirty = true;
+  }
+  
+  Matrix4 get viewMatrix {
+    return _viewMatrix;
+  }
+  
+  update(double interval) {}
+}
+
+
+class ModelCamera extends Camera {
   bool _moving = false;
   html.Point<double> _lastPos;
   double _distance = 32.0;
   Vector3 _center = new Vector3.zero();
-  Matrix4 _viewMatrix = new Matrix4.identity();
-  bool _dirty = true;
   
   double orbitX = 0.0;
   double orbitY = 0.0;
@@ -73,22 +90,18 @@ class ModelCamera {
     }
     return _viewMatrix;
   }
-  
-  update() {}
 }
 
-class FlyCamera {
+class FlyingCamera extends Camera {
   bool _moving = false;
   html.Point<double> _lastPos = new html.Point(0.0, 0.0);
-  Vector3 _angles;
-  Vector3 _position;
+  Vector3 _angles = new Vector3.zero();
   double speed = 25.0;
-  List<bool> _pressedKeys = new List(128);
+  List<bool> _pressedKeys = new List.filled(128, false);
   Matrix4 _viewMatrix = new Matrix4.identity();
   Matrix4 _rotMatrix = new Matrix4.identity();
-  bool _dirty = true;
   
-  FlyCamera(html.CanvasElement canvas) {
+  FlyingCamera(html.CanvasElement canvas) {
     html.window.onKeyDown.listen((e) => _pressedKeys[e.keyCode] = true);
     html.window.onKeyUp.listen((e) => _pressedKeys[e.keyCode] = false);
     canvas.onMouseDown.listen((e) {
@@ -132,12 +145,6 @@ class FlyCamera {
   Vector3 get angles => _angles;
   set angles(Vector3 val) {
     _angles = val;
-    _dirty = true;
-  }
-  
-  Vector3 get position => _position;
-  set position(Vector3 val) {
-    _position = val;
     _dirty = true;
   }
   

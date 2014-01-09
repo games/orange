@@ -35,5 +35,6 @@ class TextureManager {
         completer.completeError(texture);
       });
     }
+    return completer.future;
   }
 }

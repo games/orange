@@ -10,6 +10,10 @@ class Vector3 {
     setValues(x_, y_, z_);
   }
   
+  Vector3.fromList(List<num> list) {
+    setValues(list[0].toDouble(), list[1].toDouble(), list[2].toDouble());
+  }
+  
   setValues(double x_, double y_, double z_) {
     storage[0] = x_;
     storage[1] = y_;

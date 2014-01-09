@@ -11,6 +11,12 @@ class Quaternion {
     storage[3] = w;
   }
   
+  Quaternion.fromList(List<num> list) {
+    for(var i = 0; i < 4; i++) {
+      storage[i] = list[i].toDouble();
+    }
+  }
+  
   Quaternion.identity() {
     setIdentity();
   }
@@ -62,10 +68,7 @@ class Quaternion {
       this[0] = ( m13 + m31 ) / s;
       this[1] = ( m23 + m32 ) / s;
       this[2] = 0.25 * s;
-
     }
-
-
     return this;
   }
   
@@ -88,10 +91,44 @@ class Quaternion {
     return this;
   }
   
+  Vector3 multiplyVec3(Vector3 vec) {
+    var dest = new Vector3.zero();
+
+    var x = vec[0], y = vec[1], z = vec[2],
+        qx = this[0], qy = this[1], qz = this[2], qw = this[3],
+
+        // calculate quat * vec
+        ix = qw * x + qy * z - qz * y,
+        iy = qw * y + qz * x - qx * z,
+        iz = qw * z + qx * y - qy * x,
+        iw = -qx * x - qy * y - qz * z;
+
+    // calculate result * inverse quat
+    dest[0] = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+    dest[1] = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+    dest[2] = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+
+    return dest;
+  }
+  
+  Quaternion multiply(Quaternion other) {
+    var qax = this[0], qay = this[1], qaz = this[2], qaw = this[3],
+        qbx = other[0], qby = other[1], qbz = other[2], qbw = other[3];
+
+    this[0] = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+    this[1] = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+    this[2] = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+    this[3] = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+    return this;
+  }
+  
   double operator[](int i) => storage[i];
   void operator[]=(int i, double v) {
     storage[i] = v;
   }
+  
+  Quaternion clone() => new Quaternion(storage[0], storage[1], storage[2], storage[3]);
   
   String toString() {
     return 'quat(${storage[0]}, ${storage[1]}, ${storage[2]}, ${storage[3]})';

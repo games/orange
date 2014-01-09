@@ -17,12 +17,33 @@ import 'dart:async';
 
 part 'src/camera.dart';
 part 'src/model.dart';
+part 'src/skinned_model.dart';
 part 'src/shader.dart';
 part 'src/texture.dart';
+part 'src/mesh.dart';
+part 'src/lightmap.dart';
+part 'src/renderer.dart';
+part 'src/built_in_shaders.dart';
+part 'src/bone.dart';
+part 'src/animation.dart';
+part 'src/keyframe.dart';
 
 part 'src/math/matrix4.dart';
 part 'src/math/matrix3.dart';
 part 'src/math/vector3.dart';
 part 'src/math/quaternion.dart';
 part 'src/math/angle.dart';
+
+
+
+or(expectValue, defaultValue) {
+  if(expectValue == null) 
+    return defaultValue;
+  return expectValue;
+}
+
+
+
+
+
 

@@ -2,36 +2,50 @@ import 'dart:html';
 import 'dart:math';
 import '../lib/orange.dart';
 import 'package:stats/stats.dart';
+import 'dart:async';
 //import 'package:vector_math/vector_math.dart';
 
-void main() {
 
-  var url = "http://127.0.0.1:3030/orange/web/abaddon/abaddon.json";
-  url = "http://127.0.0.1:3030/orange/web/astroboy/astroboy.json";
+double _lastElapsed = 0.0;
+Renderer renderer;
+Model model;
+Animation animation;
+
+void main() {
+  var url = "http://127.0.0.1:3030/orange/testmodel/model/main_player_lorez";
   var canvas = querySelector("#container");
-  var director = new Director(canvas);
-  var scene = new Scene();
+  renderer = new Renderer(canvas);
   
-  var loader = new Loader(url);
-  loader.start().then((data) {
-    var root = data["root"];
-    var resources = data["resources"];
-    
-    scene.resources = resources;
-    scene.nodes.add(root);
-    
-    scene.camera = new PerspectiveCamera(canvas.width / canvas.height);
-    scene.camera.translate(new Vector3(0.0,2.0, 15.0));
-//    scene.camera.lookAt(new Vector3(0.0, 0.0, -1.0));
-    
-    root.rotateX(radians(-90.0));
-    root.rotateZ(radians(-80.0));
-    
-    director.replace(scene);
-    director.startup();
+  model = new SkinnedModel();
+  model.load(renderer.ctx, url);
+  
+  animation = new Animation();
+  animation.load("http://127.0.0.1:3030/orange/testmodel/model/run_forward").then((_) {
+    var frameId = 0;
+    var frameTime = 1000 ~/ animation.frameRate;
+    new Timer.periodic(new Duration(milliseconds: frameTime), (t) {
+      if(model.complete) {
+        animation.evaluate(frameId % animation.frameCount, model);
+        frameId++;
+      }
+    });
+  });
+  
+  window.requestAnimationFrame(_animate);
+  window.onResize.listen((e){
+    renderer.resize();
   });
 }
 
+_animate(num elapsed) {
+  window.requestAnimationFrame(_animate);
+  var interval = elapsed - _lastElapsed;
+  
+  renderer.camera.update(interval);
+  renderer.drawFrame(model);
+
+  _lastElapsed = elapsed;
+}
 
 
 

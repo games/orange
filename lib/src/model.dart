@@ -3,26 +3,12 @@ part of orange;
 
 
 
-class ModelVertexFormat {
-  static const Position = 0x0001;
-  static const UV = 0x0002;
-  static const UV2 = 0x0004;
-  static const Normal = 0x0008;
-  static const Tangent = 0x0010;
-  static const Color = 0x0020;
-  static const BoneWeights = 0x0040;
-}
 
 Shader modelShader;
+Shader skinnedModelShader;
 Shader lightmapShader;
 Matrix4 identityMat = new Matrix4.identity();
 
-String getLumpId(id) {
-  return new String.fromCharCodes([id & 0xff,
-                                   (id >> 8) & 0xff,
-                                   (id >> 16) & 0xff,
-                                   (id >> 24) & 0xff]);
-}
 
 class Model {
   static List<Model> _instances = [];
@@ -36,104 +22,7 @@ class Model {
   bool complete = false;
   Matrix4 matrix = new Matrix4.identity();
   Lightmap lightmap;
-  
-  Future<Model> load(gl.RenderingContext ctx, String url) {
-    var completer = new Completer();
-    var vertComplete = false, modelComplete = false;
-    html.HttpRequest.request("$url.wglvert", responseType: "arraybuffer").then((r){
-      var bytes = _parseBinary(r.response);
-      _compileBuffers(ctx, bytes);
-      vertComplete = true;
-      if(modelComplete) {
-        complete = true;
-        completer.complete(this);
-      }
-    });
-    html.HttpRequest.request("$url.wglmodel").then((r){
-      var model = JSON.decode(r.response);
-      _parseModel(model);
-      _compileMaterials(ctx, meshes);
-      modelComplete = true;
-      if(vertComplete) {
-        complete = true;
-        completer.complete(this);
-      }
-    });
-    return completer.future;
-  }
-  
-  _parseBinary(Object buffer) {
-    var vertexArray, indexArray;
-    var header = new Uint32List.view(buffer, 0, 3);
-    if(getLumpId(header[0]) != "wglv") {
-      throw new ArgumentError("Binary file magic number does not match expected value.");
-    }
-    if(header[1] > 1) {
-      throw new ArgumentError("Binary file version is not supported.");
-    }
-    var lumpCount = header[2];
-    header = new Uint32List.view(buffer, 12, lumpCount * 3);
-    for(var i = 0; i < lumpCount; i++) {
-      var lumpId = getLumpId(header[i * 3]);
-      var offset = header[(i * 3) + 1];
-      var length = header[(i * 3) + 2];
-      switch(lumpId) {
-        case "vert":
-          vertexArray = _parseVert(buffer, offset, length);
-          break;
-        case "indx":
-          indexArray = _parseIndex(buffer, offset, length);
-          break;
-      }
-    }
-    return {"vertex": vertexArray, "index": indexArray};
-  }
-  
-  _parseVert(Object buffer, int offset, int length) {
-    var header = new Uint32List.view(buffer, offset, 2);
-    vertexFormat = header[0];
-    vertexStride = header[1];
-    return new Uint8List.view(buffer, offset + 8, length - 8);
-  }
-  
-  _parseIndex(Object buffer, int offset, int length) {
-    return new Uint16List.view(buffer, offset, length ~/ 2);
-  }
-  
-  _compileBuffers(gl.RenderingContext ctx, dynamic bytes) {
-    vertexBuffer = ctx.createBuffer();
-    ctx.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    ctx.bufferDataTyped(gl.ARRAY_BUFFER, bytes["vertex"], gl.STATIC_DRAW);
-    
-    indexBuffer = ctx.createBuffer();
-    ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, bytes["index"], gl.STATIC_DRAW);
-  }
-  
-  _parseModel(Map doc) {
-    meshes = []; 
-    doc["meshes"].forEach((v) {
-      var mesh = new Mesh();
-      mesh.defaultTexture = v["defaultTexture"];
-      mesh.material = v["material"];
-      v["submeshes"].forEach((sv) {
-        var subMesh = new Mesh();
-        subMesh.boneCount = sv["boneCount"];
-        subMesh.boneOffset = sv["boneOffset"];
-        subMesh.indexCount = sv["indexCount"];
-        subMesh.indexOffset = sv["indexOffset"];
-        mesh.subMeshes.add(subMesh);
-      });
-      meshes.add(mesh);
-    });
-  }
-  
-  _compileMaterials(gl.RenderingContext ctx, List<Mesh> meshes) {
-    var textureManager = new TextureManager();
-    meshes.forEach((mesh) {
-      textureManager.load(ctx, mesh.defaultTexture).then((t) => mesh.diffuse = t);
-    });
-  }
+  Skeleton _skeleton;  
   
   Model() {
     _instances.add(this);
@@ -205,20 +94,26 @@ class Model {
         var bonesAttrib = shader.attributes["bones"];
         ctx.enableVertexAttribArray(weightsAttrib.location);
         ctx.enableVertexAttribArray(bonesAttrib.location);
-        ctx.vertexAttribPointer(weightsAttrib.location, 3, gl.FLOAT, false, stride, offset);
+//        ctx.vertexAttribPointer(weightsAttrib.location, 3, gl.FLOAT, false, stride, offset);
+        ctx.vertexAttribPointer(weightsAttrib.location, 3, gl.FLOAT, false, stride, 48);
         ctx.vertexAttribPointer(bonesAttrib.location, 3, gl.FLOAT, false, stride, offset + 12);
       }
     }
   }
   
   draw(gl.RenderingContext ctx, Matrix4 viewMatrix, Matrix4 projectionMatrix) {
-    if(complete == false)
-      return;
-    
-    if(modelShader == null) {
-      modelShader = new Shader(ctx, modelVS, modelFS);
+    Shader shader;
+    if(_skeleton != null) {
+      if(skinnedModelShader == null) {
+        skinnedModelShader = new Shader(ctx, skinnedModelVS, skinnedModelFS);
+      }
+      shader = skinnedModelShader;
+    } else {
+      if(modelShader == null) {
+        modelShader = new Shader(ctx, modelVS, modelFS);
+      }
+      shader = modelShader;
     }
-    var shader = modelShader;
     if(shader.ready == false) {
       return;
     }
@@ -231,15 +126,35 @@ class Model {
     ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, or(matrix, identityMat).storage);
     ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
     
-    meshes.forEach((mesh) {
-      ctx.activeTexture(gl.TEXTURE0);
-      ctx.bindTexture(gl.TEXTURE_2D, mesh.diffuse);
-      ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
-      mesh.subMeshes.forEach((subMesh) {
-        ctx.drawElements(gl.TRIANGLES, subMesh.indexCount, gl.UNSIGNED_SHORT, subMesh.indexOffset * 2);
+    if(_skeleton == null) {
+      meshes.forEach((mesh) {
+        ctx.activeTexture(gl.TEXTURE0);
+        ctx.bindTexture(gl.TEXTURE_2D, mesh.diffuse);
+        ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
+        mesh.subMeshes.forEach((subMesh) {
+          ctx.drawElements(gl.TRIANGLES, subMesh.indexCount, gl.UNSIGNED_SHORT, subMesh.indexOffset * 2);
+        });
       });
-      
-    });
+    } else {
+      if(_skeleton._dirtyBones) {
+        for(var i = 0; i < _skeleton.bones.length; i++) {
+          var bone = _skeleton.bones[i];
+          for(var j = 0; j < bone.boneMat.storage.length; j++) {
+            _skeleton.boneMatrices[i * 16 + j] = bone.boneMat[j];
+          }
+        }
+      }
+      meshes.forEach((mesh) {
+        ctx.activeTexture(gl.TEXTURE0);
+        ctx.bindTexture(gl.TEXTURE_2D, mesh.diffuse);
+        ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
+        mesh.subMeshes.forEach((subMesh) {
+          var boneSet = _skeleton.boneMatrices.sublist(subMesh.boneOffset * 16, (subMesh.boneOffset + subMesh.boneCount) * 16);
+          ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, boneSet);
+          ctx.drawElements(gl.TRIANGLES, subMesh.indexCount, gl.UNSIGNED_SHORT, subMesh.indexOffset * 2);
+        });
+      });
+    }
   }
   
   drawInstances(gl.RenderingContext ctx, Matrix4 viewMatrix, Matrix4 projectionMatrix, int visibileFlag) {
@@ -280,9 +195,6 @@ class Model {
   }
   
   drawLightmappedInstances(gl.RenderingContext ctx, Matrix4 viewMatrix, Matrix4 projectionMatrix, lightmaps, visibileFlag) {
-    if(complete == false) {
-      return;
-    }
     if(_visibleFlag > 0 && _visibleFlag < visibileFlag) {
       return;
     }

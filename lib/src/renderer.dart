@@ -32,8 +32,6 @@ class Renderer {
   
   drawFrame(Model model) {
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    if(model.complete) {
-      model.draw(ctx, camera.viewMatrix, projectionMatrix);
-    }
+    model.draw(ctx, camera.viewMatrix, projectionMatrix);
   }
 }

@@ -48,8 +48,8 @@ class Animation {
     });
   }
   
-  evaluate(int frameId, SkinnedModel model) {
-    var bones = model.bones;
+  evaluate(int frameId, Model model) {
+    var bones = model._skeleton.bones;
     if(bones == null) {
       return;
     }
@@ -74,7 +74,7 @@ class Animation {
       }
     });
     
-    model._dirtyBones = true;
+    model._skeleton._dirtyBones = true;
   }
 }
 

@@ -16,22 +16,23 @@ void main() {
   var canvas = querySelector("#container");
   renderer = new Renderer(canvas);
   
-  model = new SkinnedModel();
-  model.load(renderer.ctx, url);
-  
-  animation = new Animation();
-  animation.load("http://127.0.0.1:3030/orange/testmodel/model/run_forward").then((_) {
-    var frameId = 0;
-    var frameTime = 1000 ~/ animation.frameRate;
-    new Timer.periodic(new Duration(milliseconds: frameTime), (t) {
-      if(model.complete) {
+  var loader = new WglLoader();
+  loader.load(renderer.ctx, url).then((m) {
+    model = m;
+    
+    animation = new Animation();
+    animation.load("http://127.0.0.1:3030/orange/testmodel/model/run_forward").then((_) {
+      var frameId = 0;
+      var frameTime = 1000 ~/ animation.frameRate;
+      new Timer.periodic(new Duration(milliseconds: frameTime), (t) {
         animation.evaluate(frameId % animation.frameCount, model);
         frameId++;
-      }
+      });
     });
+    
+    window.requestAnimationFrame(_animate);
   });
   
-  window.requestAnimationFrame(_animate);
   window.onResize.listen((e){
     renderer.resize();
   });

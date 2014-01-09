@@ -17,7 +17,6 @@ import 'dart:async';
 
 part 'src/camera.dart';
 part 'src/model.dart';
-part 'src/skinned_model.dart';
 part 'src/shader.dart';
 part 'src/texture.dart';
 part 'src/mesh.dart';
@@ -27,6 +26,10 @@ part 'src/built_in_shaders.dart';
 part 'src/bone.dart';
 part 'src/animation.dart';
 part 'src/keyframe.dart';
+part 'src/buffer.dart';
+part 'src/skeleton.dart';
+
+part 'src/loaders/wgl_loader.dart';
 
 part 'src/math/matrix4.dart';
 part 'src/math/matrix3.dart';

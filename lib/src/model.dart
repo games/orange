@@ -19,7 +19,6 @@ class Model {
   gl.Buffer indexBuffer;
   List<Mesh> meshes = [];
   int _visibleFlag = -1;
-  bool complete = false;
   Matrix4 matrix = new Matrix4.identity();
   Lightmap lightmap;
   Skeleton _skeleton;  
@@ -94,8 +93,9 @@ class Model {
         var bonesAttrib = shader.attributes["bones"];
         ctx.enableVertexAttribArray(weightsAttrib.location);
         ctx.enableVertexAttribArray(bonesAttrib.location);
-//        ctx.vertexAttribPointer(weightsAttrib.location, 3, gl.FLOAT, false, stride, offset);
-        ctx.vertexAttribPointer(weightsAttrib.location, 3, gl.FLOAT, false, stride, 48);
+        // FIXME: this is a bug. 
+        offset += 4;
+        ctx.vertexAttribPointer(weightsAttrib.location, 3, gl.FLOAT, false, stride, offset);
         ctx.vertexAttribPointer(bonesAttrib.location, 3, gl.FLOAT, false, stride, offset + 12);
       }
     }
@@ -157,11 +157,8 @@ class Model {
     }
   }
   
+  
   drawInstances(gl.RenderingContext ctx, Matrix4 viewMatrix, Matrix4 projectionMatrix, int visibileFlag) {
-    if(complete == false) {
-      return;
-    }
-    
     if(_visibleFlag > 0 && _visibleFlag < visibileFlag) {
       return;
     }

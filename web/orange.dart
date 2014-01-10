@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'dart:html' as html;
 import '../lib/orange.dart';
 //import 'package:stats/stats.dart';
 import 'dart:async';
@@ -14,7 +14,7 @@ void main() {
   var url = "http://127.0.0.1:3030/orange/testmodel/model/main_player_lorez";
 //  url = "http://127.0.0.1:3030/orange/testmodel/model/main_weapon001";
   
-  var canvas = querySelector("#container");
+  var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas);
   
   var loader = new WglLoader();
@@ -31,20 +31,20 @@ void main() {
       });
     });
     
-    window.requestAnimationFrame(_animate);
+    html.window.requestAnimationFrame(_animate);
   });
   
-  window.onResize.listen((e){
+  html.window.onResize.listen((e){
     renderer.resize();
   });
 }
 
 _animate(num elapsed) {
-  window.requestAnimationFrame(_animate);
+  html.window.requestAnimationFrame(_animate);
   var interval = elapsed - _lastElapsed;
   
   renderer.camera.update(interval);
-  renderer.drawFrame(node);
+  renderer.draw(node);
 
   _lastElapsed = elapsed;
 }

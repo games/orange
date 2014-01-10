@@ -11,8 +11,8 @@ import 'dart:web_gl' as gl;
 import 'dart:math' as math;
 import 'dart:typed_data';
 //import 'package:vector_math/vector_math.dart';
-//import 'dart:mirrors';
 import 'dart:async';
+import 'dart:mirrors';
 
 
 part 'src/camera.dart';
@@ -31,6 +31,7 @@ part 'src/skeleton.dart';
 part 'src/semantics.dart';
 
 part 'src/loaders/wgl_loader.dart';
+part 'src/loaders/gltf_loader.dart';
 
 part 'src/math/matrix4.dart';
 part 'src/math/matrix3.dart';
@@ -45,6 +46,8 @@ or(expectValue, defaultValue) {
     return defaultValue;
   return expectValue;
 }
+
+capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
 
 

@@ -27,8 +27,10 @@ class WglLoader {
   
   Node _model;
   bool _skinned;
+  Uri _uri;
   
   Future<Node> load(gl.RenderingContext ctx, String url) {
+    _uri = Uri.parse(url);
     _model = new Node();
     _skinned = false;
     var completer = new Completer();
@@ -125,7 +127,7 @@ class WglLoader {
     _model.meshes = []; 
     description["meshes"].forEach((Map v) {
       var mesh = new Mesh();
-      textureManager.load(ctx, v["defaultTexture"]).then((t) => mesh.diffuse = t);
+      textureManager.load(ctx,  _uri.resolve(v["defaultTexture"]).toString()).then((t) => mesh.diffuse = t);
       mesh.material = v["material"];
       if(v.containsKey("submeshes")) {
         v["submeshes"].forEach((sv) {

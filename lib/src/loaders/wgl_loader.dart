@@ -26,6 +26,8 @@ String _getLumpId(id) {
 class WglLoader {
   
   Node _model;
+  int _format;
+  int _stride;
   bool _skinned;
   Uri _uri;
   
@@ -73,38 +75,9 @@ class WglLoader {
   
   _parseVert(ByteBuffer buffer, int offset, int length) {
     var header = new Uint32List.view(buffer, offset, 2);
-    var format = header[0], stride = header[1];
-    var byteOffset = 0;
-    _model.attributes = {};
-    _model.attributes[Semantics.position] = new MeshAttribute(3, gl.FLOAT, stride, byteOffset);
-    byteOffset = 12;
-    if(format & ModelVertexFormat.UV > 0) {
-      _model.attributes[Semantics.texture] = new MeshAttribute(2, gl.FLOAT, stride, byteOffset);
-      byteOffset += 8;
-    }
-    if(format & ModelVertexFormat.UV2 > 0) {
-      _model.attributes[Semantics.texture2] = new MeshAttribute(2, gl.FLOAT, stride, byteOffset);
-      byteOffset += 8;
-    }
-    if(format & ModelVertexFormat.Normal > 0) {
-      _model.attributes[Semantics.normal] = new MeshAttribute(3, gl.FLOAT, stride, byteOffset);
-      byteOffset += 12;
-    }
-    if(format & ModelVertexFormat.Tangent > 0) {
-      _model.attributes[Semantics.tangent] = new MeshAttribute(3, gl.FLOAT, stride, byteOffset);
-      byteOffset += 12;
-    }
-    if(format & ModelVertexFormat.Color > 0) {
-      _model.attributes[Semantics.color] = new MeshAttribute(4, gl.UNSIGNED_BYTE, stride, byteOffset);
-//      offset += 4;
-    } 
-    // FIXME: this is a bug. 
-    byteOffset += 4;
-    if(format & ModelVertexFormat.BoneWeights > 0) {
-      _model.attributes[Semantics.weights] = new MeshAttribute(3, gl.FLOAT, stride, byteOffset);
-      _model.attributes[Semantics.bones] = new MeshAttribute(3, gl.FLOAT, stride, byteOffset + 12);
-      _skinned = true;
-    }
+    _format = header[0]; 
+    _stride = header[1];
+    _skinned = _format & ModelVertexFormat.BoneWeights > 0;
     return new Uint8List.view(buffer, offset + 8, length - 8);
   }
   
@@ -125,21 +98,7 @@ class WglLoader {
   _parseModel(gl.RenderingContext ctx, Map description) {
     var textureManager = new TextureManager();
     _model.meshes = []; 
-    description["meshes"].forEach((Map v) {
-      var mesh = new Mesh();
-      textureManager.load(ctx,  _uri.resolve(v["defaultTexture"]).toString()).then((t) => mesh.diffuse = t);
-      mesh.material = v["material"];
-      if(v.containsKey("submeshes")) {
-        v["submeshes"].forEach((sv) {
-          var subMesh = new Mesh();
-          subMesh.jointCount = sv["boneCount"];
-          subMesh.jointOffset = sv["boneOffset"];
-          subMesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, sv["indexOffset"] * 2, sv["indexCount"]);
-          mesh.subMeshes.add(subMesh);
-        });
-      }
-      _model.meshes.add(mesh);
-    });
+
     if(_skinned) {
       _model.skeleton = new Skeleton();
       _model.skeleton.jointMatrices = new Float32List(16 * MAX_BONES_PER_MESH);
@@ -164,5 +123,59 @@ class WglLoader {
         _model.skeleton.joints.add(joint);
       });
     }
+    
+    description["meshes"].forEach((Map v) {
+      var mesh = new Mesh();
+      // TODO: maybe there is a bug
+      var textureUrl = v["defaultTexture"];
+      if(textureUrl == null || textureUrl.isEmpty)
+        return;
+      textureManager.load(ctx,  _uri.resolve(textureUrl).toString()).then((t) => mesh.diffuse = t);
+      mesh.material = v["material"];
+      if(v.containsKey("submeshes")) {
+        v["submeshes"].forEach((sv) {
+          var subMesh = new Mesh();
+          subMesh.skeleton = _model.skeleton;
+          subMesh.jointCount = sv["boneCount"];
+          subMesh.jointOffset = sv["boneOffset"];
+          var offset = sv["indexOffset"] * 2;
+          
+          subMesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, offset, sv["indexCount"]);
+
+          subMesh.attributes = {};
+          subMesh.attributes[Semantics.position] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
+          offset += 12;
+          if(_format & ModelVertexFormat.UV > 0) {
+            subMesh.attributes[Semantics.texture] = new MeshAttribute(2, gl.FLOAT, _stride, offset);
+            offset += 8;
+          }
+          if(_format & ModelVertexFormat.UV2 > 0) {
+            subMesh.attributes[Semantics.texture2] = new MeshAttribute(2, gl.FLOAT, _stride, offset);
+            offset += 8;
+          }
+          if(_format & ModelVertexFormat.Normal > 0) {
+            subMesh.attributes[Semantics.normal] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
+            offset += 12;
+          }
+          if(_format & ModelVertexFormat.Tangent > 0) {
+            subMesh.attributes[Semantics.tangent] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
+            offset += 12;
+          }
+          if(_format & ModelVertexFormat.Color > 0) {
+            subMesh.attributes[Semantics.color] = new MeshAttribute(4, gl.UNSIGNED_BYTE, _stride, offset);
+            //indexOffset += 4;
+          } 
+          // TODO: this is a bug. 
+          offset += 4;
+          if(_format & ModelVertexFormat.BoneWeights > 0) {
+            subMesh.attributes[Semantics.weights] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
+            subMesh.attributes[Semantics.bones] = new MeshAttribute(3, gl.FLOAT, _stride, offset + 12);
+          }
+          
+          mesh.subMeshes.add(subMesh);
+        });
+      }
+      _model.meshes.add(mesh);
+    });
   }
 }

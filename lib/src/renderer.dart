@@ -54,18 +54,36 @@ class Renderer {
     if(node.skeleton != null) {
       node.skeleton.update();
     }
-    node.meshes.forEach((mesh) {
+    node.meshes.forEach((mesh) => _drawMesh(mesh, shader));
+    node.children.forEach((child) => draw(child));
+  }
+  
+  _drawMesh(Mesh mesh, Shader shader) {
+    if(mesh.attributes != null) {
+      mesh.attributes.forEach((sementic, accessor) {
+        if(shader.attributes.containsKey(sementic)) {
+          var attrib = shader.attributes[sementic];
+          ctx.enableVertexAttribArray(attrib.location);
+          ctx.vertexAttribPointer(attrib.location, accessor.size, accessor.type, accessor.normalized, accessor.stride, accessor.offset);
+        }
+      });
+    }
+    
+    if(mesh.diffuse != null) {
       ctx.activeTexture(gl.TEXTURE0);
       ctx.bindTexture(gl.TEXTURE_2D, mesh.diffuse);
       ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
-      mesh.subMeshes.forEach((subMesh) {
-        if(node.skeleton != null) {
-          ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, node.skeleton.subBoneMatrices(subMesh));
-        }
-        ctx.drawElements(gl.TRIANGLES, subMesh.indicesAttrib.count, subMesh.indicesAttrib.type, subMesh.indicesAttrib.offset);
-      });
-    });
-    node.children.forEach((child) => draw(child));
+    }
+
+    if(mesh.skeleton != null) {
+      ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, mesh.skeleton.subBoneMatrices(mesh));
+    }
+    
+    if(mesh.indicesAttrib != null) {
+      ctx.drawElements(gl.TRIANGLES, mesh.indicesAttrib.count, mesh.indicesAttrib.type, mesh.indicesAttrib.offset);
+    }
+    
+    mesh.subMeshes.forEach((subMesh) => _drawMesh(subMesh, shader));
   }
   
   _switchShader(Node node) {

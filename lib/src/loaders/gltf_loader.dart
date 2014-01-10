@@ -96,6 +96,21 @@ class GltfLoader {
         
         var primitive = new Mesh();
         primitive.material = p["material"];
+        primitive.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0,
+            indicesAttrib["byteOffset"] + _getResource("bufferView", indicesAttrib["bufferView"])["byteOffset"], 
+            indicesAttrib["count"]);
+        
+        primitive.attributes = {};
+        attributes.forEach((ak, av) {
+          var accessor = _getResource("accessor", av);
+          var bufferView = _getResource("bufferView", accessor["bufferView"]);
+          if(ak == "NORMAL") {
+            primitive.attributes[Semantics.normal] = new MeshAttribute(
+                accessor["byteStride"] ~/ 4, 
+                gl.FLOAT, 0, 0, 0);
+          }
+        });
+        
         
         return primitive;
       }, growable: false);

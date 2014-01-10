@@ -10,7 +10,6 @@ class Node {
   List<Mesh> meshes = [];
   Matrix4 _localMatrix;
   Matrix4 worldMatrix;
-  Map<String, MeshAttribute> attributes;
   Skeleton skeleton;
   Node parent;
   List<Node> children;
@@ -78,13 +77,6 @@ class Node {
   bindBuffer(gl.RenderingContext ctx, Shader shader) {
     ctx.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    attributes.forEach((sementic, accessor) {
-      if(shader.attributes.containsKey(sementic)) {
-        var attrib = shader.attributes[sementic];
-        ctx.enableVertexAttribArray(attrib.location);
-        ctx.vertexAttribPointer(attrib.location, accessor.size, accessor.type, accessor.normalized, accessor.stride, accessor.offset);
-      }
-    });
   }
 }
 

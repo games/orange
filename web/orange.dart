@@ -13,6 +13,9 @@ Animation animation;
 void main() {
   var url = "http://127.0.0.1:3030/orange/testmodel/model/main_player_lorez";
 //  url = "http://127.0.0.1:3030/orange/testmodel/model/main_weapon001";
+//  url = "http://127.0.0.1:3030/orange/testmodel/model/barrelSmall";
+//  url = "http://127.0.0.1:3030/orange/testmodel/model/crateMedium";
+//  url = "http://127.0.0.1:3030/orange/testmodel/model/vat";
   
   var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas);

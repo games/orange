@@ -1,14 +1,14 @@
 {
     "modelVersion": 1,
-    "name": "polySurface3574",
+    "name": "main_weapon001",
     "meshes": [ 
         {
             "material": "",
-            "defaultTexture": "/orange/testmodel/texture/Props.png",
+            "defaultTexture": "/orange/models/texture/Player.png",
             "submeshes": [
                 { 
                     "indexOffset": 0,
-                    "indexCount": 498,
+                    "indexCount": 2859,
                     "boneOffset": 0,
                     "boneCount": 0
                 }

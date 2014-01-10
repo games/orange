@@ -4,7 +4,7 @@
     "meshes": [ 
         {
             "material": "",
-            "defaultTexture": "/orange/testmodel/texture/RobotArm.png",
+            "defaultTexture": "/orange/models/texture/RobotArm.png",
             "submeshes": [
                 { 
                     "indexOffset": 0,

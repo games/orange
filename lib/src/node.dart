@@ -5,6 +5,7 @@ part of orange;
 
 
 class Node {
+  String name;
   gl.Buffer vertexBuffer;
   gl.Buffer indexBuffer;
   List<Mesh> meshes = [];

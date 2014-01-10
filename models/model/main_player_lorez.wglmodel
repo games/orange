@@ -4,7 +4,7 @@
     "meshes": [ 
         {
             "material": "",
-            "defaultTexture": "http://127.0.0.1:3030/orange/testmodel/texture/Player.png",
+            "defaultTexture": "/orange/models/texture/Player.png",
             "submeshes": [
                 { 
                     "indexOffset": 0,

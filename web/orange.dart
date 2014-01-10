@@ -11,28 +11,29 @@ Node node;
 Animation animation;
 
 void main() {
-  var url = "http://127.0.0.1:3030/orange/testmodel/model/main_player_lorez";
-//  url = "http://127.0.0.1:3030/orange/testmodel/model/main_weapon001";
-//  url = "http://127.0.0.1:3030/orange/testmodel/model/barrelSmall";
-//  url = "http://127.0.0.1:3030/orange/testmodel/model/crateMedium";
-//  url = "http://127.0.0.1:3030/orange/testmodel/model/vat";
+  var url = "http://127.0.0.1:3030/orange/models/model/main_player_lorez";
+//  url = "http://127.0.0.1:3030/orange/models/model/main_weapon001";
+//  url = "http://127.0.0.1:3030/orange/models/model/barrelSmall";
+//  url = "http://127.0.0.1:3030/orange/models/model/crateMedium";
+//  url = "http://127.0.0.1:3030/orange/models/model/vat";
+  url = "http://127.0.0.1:3030/orange/models/duck/duck.json";
   
   var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas);
   
-  var loader = new WglLoader();
+  var loader = new GltfLoader();
   loader.load(renderer.ctx, url).then((m) {
     node = m;
     
-    animation = new Animation();
-    animation.load("http://127.0.0.1:3030/orange/testmodel/model/run_forward").then((_) {
-      var frameId = 0;
-      var frameTime = 1000 ~/ animation.frameRate;
-      new Timer.periodic(new Duration(milliseconds: frameTime), (t) {
-        animation.evaluate(frameId % animation.frameCount, node);
-        frameId++;
-      });
-    });
+//    animation = new Animation();
+//    animation.load("http://127.0.0.1:3030/orange/testmodel/model/run_forward").then((_) {
+//      var frameId = 0;
+//      var frameTime = 1000 ~/ animation.frameRate;
+//      new Timer.periodic(new Duration(milliseconds: frameTime), (t) {
+//        animation.evaluate(frameId % animation.frameCount, node);
+//        frameId++;
+//      });
+//    });
     
     html.window.requestAnimationFrame(_animate);
   });

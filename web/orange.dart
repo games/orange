@@ -24,6 +24,7 @@ void main() {
 renderGltf() {
   renderer.camera.center = new Vector3(0.0, -1.0, -500.0);
   var url = "http://127.0.0.1:3030/orange/models/duck/duck.json";
+//  url = "http://127.0.0.1:3030/orange/models/astroboy/astroboy.json";
   var loader = new GltfLoader();
   loader.load(renderer.ctx, url).then((m) {
     node = m;

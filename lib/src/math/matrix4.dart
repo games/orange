@@ -731,7 +731,7 @@ class Matrix4 {
     return out;
   }
   
-  decompose(Vector3 translation, Quaternion rotation, Vector3 scaling) {
+  decompose(Vector3 translation, Quaternion rotation, [Vector3 scaling]) {
     translation[0] = storage[12];
     translation[1] = storage[13];
     translation[2] = storage[14];
@@ -755,6 +755,10 @@ class Matrix4 {
       zs = 1.0;
     }
     xs=ys=zs=1.0;
+    
+    if(scaling == null) {
+      scaling = new Vector3.zero();
+    }
     
     scaling[0] = xs * math.sqrt(storage[0] * storage[0] + storage[1] * storage[1] + storage[2] * storage[2]);
     scaling[1] = ys * math.sqrt(storage[4] * storage[4] + storage[5] * storage[5] + storage[6] * storage[6]);

@@ -109,13 +109,13 @@ class WglLoader {
       jointsDesc.forEach((jointDesc) {
         var joint = new Joint();
         joint.name = jointDesc["name"];
-        joint.parent = jointDesc["parent"];
+        joint.parentId = jointDesc["parent"];
         joint.skinned = jointDesc["skinned"];
         joint.pos = new Vector3.fromList(jointDesc["pos"]);
         joint.rot = new Quaternion.fromList(jointDesc["rot"]);
         joint.bindPoseMat = new Matrix4.fromList(jointDesc["bindPoseMat"]);
         joint.jointMat = new Matrix4.identity();
-        if(joint.parent == -1) {
+        if(joint.parentId == -1) {
           joint.worldPos = joint.pos;
           joint.worldRot = joint.rot;
         } else {

@@ -203,7 +203,7 @@ class GltfLoader {
           node.meshes = [_resources[v["mesh"]]];
         } else if (v.containsKey("instanceSkin")) {
           var instanceSkin = v["instanceSkin"];
-          node.skeleton = _resources[instanceSkin["skin"]];
+//          node.skeleton = _resources[instanceSkin["skin"]]["skeleton"];
           var source = instanceSkin["sources"];
           node.meshes = new List.generate(source.length, (i){
             return _resources[source[i]];

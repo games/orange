@@ -2,7 +2,7 @@ part of orange;
 
 
 
-class Joint {
+class Joint extends Node {
   String name;
   Vector3 pos;
   Quaternion rot;
@@ -10,6 +10,12 @@ class Joint {
   Matrix4 jointMat;
   Vector3 worldPos;
   Quaternion worldRot;
-  int parent;
+  int parentId;
   bool skinned;
+  
+  applyMatrix(Matrix4 m) {
+    pos = new Vector3.zero();
+    rot = new Quaternion.identity();
+    m.decompose(pos, rot);
+  }
 }

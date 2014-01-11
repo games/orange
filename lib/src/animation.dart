@@ -60,8 +60,8 @@ class Animation {
         joint.pos = frame.joints[jointId].pos;
         joint.rot = frame.joints[jointId].rot;
       }
-      if(joint.parent != -1) {
-        var parent = joints[joint.parent];
+      if(joint.parentId != -1) {
+        var parent = joints[joint.parentId];
         joint.worldPos = parent.worldRot.multiplyVec3(joint.pos);
         joint.worldPos = joint.worldPos + parent.worldPos;
         joint.worldRot = parent.worldRot.clone().multiply(joint.rot);

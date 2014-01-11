@@ -4,6 +4,11 @@ part of orange;
 var defaultSampler = new Sampler();
 
 
+class Texture {
+  gl.Texture data;
+  int target;
+}
+
 
 class TextureManager {
   static TextureManager _shared = new TextureManager._internal();
@@ -18,8 +23,8 @@ class TextureManager {
     _textures = {};
   }
   
-  Future<gl.Texture> load(gl.RenderingContext ctx, Map descripton) {
-    var completer = new Completer<gl.Texture>();
+  Future<Texture> load(gl.RenderingContext ctx, Map descripton) {
+    var completer = new Completer<Texture>();
     var url = descripton["path"];
     if(_textures.containsKey(url)) {
       completer.complete(_textures[url]);
@@ -34,11 +39,13 @@ class TextureManager {
       var format = or(descripton["format"], gl.RGBA);
       var image = new html.ImageElement(src : url);
       image.onLoad.listen((_) {
-        var texture = ctx.createTexture();
+        var texture = new Texture();
+        texture.data = ctx.createTexture();
+        texture.target = target;
         if(usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
           image = _ensureImage(image);
         }
-        ctx.bindTexture(target, texture);
+        ctx.bindTexture(target, texture.data);
         ctx.texParameteri(target, gl.TEXTURE_WRAP_S, sampler.wrapS);
         ctx.texParameteri(target, gl.TEXTURE_WRAP_T, sampler.wrapT);
         ctx.texParameteri(target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
@@ -48,6 +55,7 @@ class TextureManager {
           ctx.generateMipmap(target);
         }
         ctx.bindTexture(target, null);
+        _textures[url] = texture;
         completer.complete(texture);
       }).
       onError(() {

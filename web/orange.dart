@@ -11,8 +11,6 @@ Node node;
 Animation animation;
 
 void main() {
-  var canvas = html.querySelector("#container");
-  renderer = new Renderer(canvas);
   html.window.onResize.listen((e){
     renderer.resize();
   });
@@ -22,6 +20,8 @@ void main() {
 }
 
 renderGltf() {
+  var canvas = html.querySelector("#container");
+  renderer = new Renderer(canvas);
   renderer.camera.center = new Vector3(0.0, -1.0, -500.0);
   var url = "http://127.0.0.1:3030/orange/models/duck/duck.json";
 //  url = "http://127.0.0.1:3030/orange/models/astroboy/astroboy.json";
@@ -38,6 +38,8 @@ renderWgl() {
 //  url = "http://127.0.0.1:3030/orange/models/model/barrelSmall";
 //  url = "http://127.0.0.1:3030/orange/models/model/crateMedium";
 //  url = "http://127.0.0.1:3030/orange/models/model/vat";
+  var canvas = html.querySelector("#container");
+  renderer = new Renderer(canvas, true);
   renderer.camera.center = new Vector3(0.0, -0.5, 0.0);
   var loader = new WglLoader();
   loader.load(renderer.ctx, url).then((m) {

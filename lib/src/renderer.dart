@@ -12,7 +12,7 @@ class Renderer {
   double fov;
   Matrix4 projectionMatrix;
   
-  Renderer(html.CanvasElement canvas) {
+  Renderer(html.CanvasElement canvas, [bool flipTexture = false]) {
     this.canvas = canvas;
     ctx = canvas.getContext3d();
     camera = new ModelCamera(canvas);
@@ -25,7 +25,9 @@ class Renderer {
     ctx.clearDepth(1.0);
     ctx.enable(gl.DEPTH_TEST);
     ctx.enable(gl.CULL_FACE);
-    ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    if(flipTexture) {
+      ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    }
   }
   
   resize() {
@@ -72,7 +74,7 @@ class Renderer {
     
     if(mesh.diffuse != null) {
       ctx.activeTexture(gl.TEXTURE0);
-      ctx.bindTexture(gl.TEXTURE_2D, mesh.diffuse);
+      ctx.bindTexture(mesh.diffuse.target, mesh.diffuse.data);
       ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
     }
 

@@ -132,7 +132,7 @@ class WglLoader {
       var textureUrl = v["defaultTexture"];
       if(textureUrl == null || textureUrl.isEmpty)
         return;
-      textureManager.load(ctx,  _uri.resolve(textureUrl).toString()).then((t) => mesh.diffuse = t);
+      textureManager.load(ctx, {"path": _uri.resolve(textureUrl).toString()}).then((t) => mesh.diffuse = t);
       mesh.material = v["material"];
       if(v.containsKey("submeshes")) {
         v["submeshes"].forEach((sv) {

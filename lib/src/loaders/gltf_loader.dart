@@ -27,6 +27,7 @@ class GltfLoader {
           
           handleBufferViews(json["bufferViews"]);
           handleImages(json["images"]);
+          handleSamplers(json["samplers"]);
           handleTextures(json["textures"]);
           handleMaterials(json["materials"]);
           handleAccessors(json["accessors"]);
@@ -76,9 +77,21 @@ class GltfLoader {
     doc.forEach((k, v) => _resources[k] = v);
   }
   
+  handleSamplers(Map doc) {
+    doc.forEach((k, v) {
+      var sampler = new Sampler();
+      sampler.magFilter = v["magFilter"];
+      sampler.minFilter = v["minFilter"];
+      sampler.wrapS = v["wrapS"];
+      sampler.wrapT = v["wrapT"];
+      _resources[k] = sampler;
+    });
+  }
+  
   handleTextures(Map description) {
     description.forEach((k, v){
       v["path"] = _uri.resolve(_resources[v["source"]]["path"]).toString();
+      v["sampler"] = _resources[v["sampler"]];
       _resources[k] = v;
     });
   }
@@ -110,12 +123,11 @@ class GltfLoader {
         
         var submesh = new Mesh();
         submesh.material = p["material"];
-        var material = _resources[submesh.material];
-        textureManager.load(_ctx,  material["diffuse"]["path"]).then((t) => submesh.diffuse = t);
         
-        submesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0,
-            indicesAttrib["byteOffset"], 
-            indicesAttrib["count"]);
+        var material = _resources[submesh.material];
+        textureManager.load(_ctx,  material["diffuse"]).then((t) => submesh.diffuse = t);
+        
+        submesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], indicesAttrib["count"]);
         
         submesh.attributes = {};
         attributes.forEach((ak, av) {

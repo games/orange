@@ -17,7 +17,7 @@ class Renderer {
     ctx = canvas.getContext3d();
     camera = new ModelCamera(canvas);
     camera.distance = 4.0;
-    camera.center = new Vector3(0.0, -1.0, -500.0);
+    camera.center = new Vector3.zero();
     fov = 45.0;
     projectionMatrix = new Matrix4.perspective(fov, canvas.width / canvas.height, 1.0, 4096.0);
     

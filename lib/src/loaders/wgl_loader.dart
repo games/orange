@@ -30,6 +30,8 @@ class WglLoader {
   int _stride;
   bool _skinned;
   Uri _uri;
+  TypedData _vertexArray;
+  TypedData _indexArray;
   
   Future<Node> load(gl.RenderingContext ctx, String url) {
     _uri = Uri.parse(url);
@@ -39,7 +41,8 @@ class WglLoader {
     Future.wait([html.HttpRequest.request("$url.wglvert", responseType: "arraybuffer"),
                  html.HttpRequest.request("$url.wglmodel")])
            .then((responses) {
-                   _compileBuffers(ctx, _parseBinary(responses[0].response));
+                   _parseBinary(responses[0].response);
+                   _compileBuffers(ctx);
                    _parseModel(ctx, JSON.decode(responses[1].response));
                    completer.complete(_model);
                  });
@@ -63,14 +66,13 @@ class WglLoader {
       var length = header[(i * 3) + 2];
       switch(lumpId) {
         case "vert":
-          vertexArray = _parseVert(buffer, offset, length);
+          _vertexArray = _parseVert(buffer, offset, length);
           break;
         case "indx":
-          indexArray = _parseIndex(buffer, offset, length);
+          _indexArray = _parseIndex(buffer, offset, length);
           break;
       }
     }
-    return {"vertex": vertexArray, "index": indexArray};
   }
   
   _parseVert(ByteBuffer buffer, int offset, int length) {
@@ -85,14 +87,14 @@ class WglLoader {
     return new Uint16List.view(buffer, offset, length ~/ 2);
   }
   
-  _compileBuffers(gl.RenderingContext ctx, Map buffers) {
+  _compileBuffers(gl.RenderingContext ctx) {
     _model.vertexBuffer = ctx.createBuffer();
     ctx.bindBuffer(gl.ARRAY_BUFFER, _model.vertexBuffer);
-    ctx.bufferDataTyped(gl.ARRAY_BUFFER, buffers["vertex"], gl.STATIC_DRAW);
+    ctx.bufferDataTyped(gl.ARRAY_BUFFER, _vertexArray, gl.STATIC_DRAW);
     
     _model.indexBuffer = ctx.createBuffer();
     ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _model.indexBuffer);
-    ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, buffers["index"], gl.STATIC_DRAW);
+    ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, _indexArray, gl.STATIC_DRAW);
   }
   
   _parseModel(gl.RenderingContext ctx, Map description) {
@@ -139,37 +141,48 @@ class WglLoader {
           subMesh.jointCount = sv["boneCount"];
           subMesh.jointOffset = sv["boneOffset"];
           var offset = sv["indexOffset"] * 2;
-          
-          subMesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, offset, sv["indexCount"]);
+          var count = sv["indexCount"];
+          subMesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, offset, count);
 
+          var attrib;
           subMesh.attributes = {};
-          subMesh.attributes[Semantics.position] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
+          attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+          subMesh.attributes[Semantics.position] = attrib;
           offset += 12;
           if(_format & ModelVertexFormat.UV > 0) {
-            subMesh.attributes[Semantics.texture] = new MeshAttribute(2, gl.FLOAT, _stride, offset);
+            attrib = new MeshAttribute(2, gl.FLOAT, _stride, offset, count);
+            subMesh.attributes[Semantics.texture] = attrib;
+            
             offset += 8;
           }
           if(_format & ModelVertexFormat.UV2 > 0) {
-            subMesh.attributes[Semantics.texture2] = new MeshAttribute(2, gl.FLOAT, _stride, offset);
+            attrib = new MeshAttribute(2, gl.FLOAT, _stride, offset, count);
+            subMesh.attributes[Semantics.texture2] = attrib;
             offset += 8;
           }
           if(_format & ModelVertexFormat.Normal > 0) {
-            subMesh.attributes[Semantics.normal] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
+            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+            subMesh.attributes[Semantics.normal] = attrib;
             offset += 12;
           }
           if(_format & ModelVertexFormat.Tangent > 0) {
-            subMesh.attributes[Semantics.tangent] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
+            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+            subMesh.attributes[Semantics.tangent] = attrib;
             offset += 12;
           }
           if(_format & ModelVertexFormat.Color > 0) {
-            subMesh.attributes[Semantics.color] = new MeshAttribute(4, gl.UNSIGNED_BYTE, _stride, offset);
+            attrib = new MeshAttribute(4, gl.UNSIGNED_BYTE, _stride, offset, count);
+            subMesh.attributes[Semantics.color] = attrib;
             //indexOffset += 4;
           } 
           // TODO: this is a bug. 
           offset += 4;
           if(_format & ModelVertexFormat.BoneWeights > 0) {
-            subMesh.attributes[Semantics.weights] = new MeshAttribute(3, gl.FLOAT, _stride, offset);
-            subMesh.attributes[Semantics.bones] = new MeshAttribute(3, gl.FLOAT, _stride, offset + 12);
+            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+            subMesh.attributes[Semantics.weights] = attrib;
+            
+            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset + 12, count);
+            subMesh.attributes[Semantics.bones] = attrib;
           }
           
           mesh.subMeshes.add(subMesh);

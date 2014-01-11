@@ -76,8 +76,10 @@ class Node {
   }
   
   bindBuffer(gl.RenderingContext ctx, Shader shader) {
-    ctx.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    if(vertexBuffer != null)
+      ctx.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    if(indexBuffer != null)
+      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   }
 }
 

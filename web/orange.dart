@@ -26,7 +26,7 @@ void main() {
     node = m;
     
 //    animation = new Animation();
-//    animation.load("http://127.0.0.1:3030/orange/testmodel/model/run_forward").then((_) {
+//    animation.load("http://127.0.0.1:3030/orange/models/model/run_forward").then((_) {
 //      var frameId = 0;
 //      var frameTime = 1000 ~/ animation.frameRate;
 //      new Timer.periodic(new Duration(milliseconds: frameTime), (t) {
@@ -48,6 +48,7 @@ _animate(num elapsed) {
   var interval = elapsed - _lastElapsed;
   
   renderer.camera.update(interval);
+  renderer.prepare();
   renderer.draw(node);
 
   _lastElapsed = elapsed;

@@ -98,6 +98,7 @@ class GltfLoader {
   
   handleMeshes(Map description) {
     description.forEach((k, v){
+      var textureManager = new TextureManager();
       var mesh = new Mesh();
       mesh.name = v["name"];
       var primitives = v["primitives"];
@@ -109,15 +110,18 @@ class GltfLoader {
         
         var submesh = new Mesh();
         submesh.material = p["material"];
+        var material = _resources[submesh.material];
+        textureManager.load(_ctx,  material["diffuse"]["path"]).then((t) => submesh.diffuse = t);
+        
         submesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0,
-            indicesAttrib["byteOffset"] + _resources[indicesAttrib["bufferView"]]["byteOffset"], 
+            indicesAttrib["byteOffset"], 
             indicesAttrib["count"]);
         
         submesh.attributes = {};
         attributes.forEach((ak, av) {
           var accessor = _resources[av];
           var bufferView = _resources[accessor["bufferView"]];
-          var byteOffset = accessor["byteOffset"] + bufferView["byteOffset"];
+          var byteOffset = accessor["byteOffset"];
           switch(ak) {
             case "NORMAL": 
               submesh.attributes[Semantics.normal] = new MeshAttribute(3, gl.FLOAT, 0, byteOffset);

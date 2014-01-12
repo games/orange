@@ -8,7 +8,8 @@ class GltfLoader {
   Uri _uri;
   Map<String, dynamic> _resources;
   Map<String, Joint> _joints;
-  Map<String, List<String>> _nodeHierarchy;
+  Map<String, List<String>> _childrenOfNode;
+  Map<String, List<String>> _jointsOfSkeleton;
   
   Future<Node> load(gl.RenderingContext ctx, String url) {
     _ctx = ctx;
@@ -17,7 +18,8 @@ class GltfLoader {
     _root.mesh = new Mesh();
     _resources = {};
     _joints = {};
-    _nodeHierarchy = {};
+    _childrenOfNode = {};
+    _jointsOfSkeleton = {};
     var completer = new Completer();
     html.HttpRequest.getString(url).then((rsp){
         var json = JSON.decode(rsp);
@@ -63,6 +65,8 @@ class GltfLoader {
         _root.mesh.indexBuffer = _ctx.createBuffer();
         _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _root.mesh.indexBuffer);
         _ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);        
+      } else {
+        v["data"] = new Float32List.view(buffer, v["byteOffset"], v["byteLength"] ~/ 4);
       }
       _resources[k] = v; 
     });
@@ -176,14 +180,11 @@ class GltfLoader {
     description.forEach((k, v) {
       List joints = v["joints"];
       var skeleton = new Skeleton();
+      skeleton.name = k;
       skeleton.jointMatrices = new Float32List(16 * joints.length);
       skeleton.joints = [];
-      joints.forEach((j) {
-        var joint = new Joint();
-        joint.name = j;
-        skeleton.joints.add(joint);
-      });
       v["skeleton"] = skeleton;
+      _jointsOfSkeleton[k] = joints;
       _resources[k] = v;
     });
   }
@@ -208,26 +209,30 @@ class GltfLoader {
       } else {
         node = new Node();
         node.name = v["name"];
-        node.mesh = new Mesh();
         if(v.containsKey("meshes")) {
           var meshes = v["meshes"];
+          node.mesh = new Mesh();
           node.mesh.subMeshes = new List.generate(meshes.length, (i){
             return _resources[meshes[i]];
           }, growable: false);
         } else if(v.containsKey("mesh")) {
+          node.mesh = new Mesh();
           node.mesh.subMeshes = [_resources[v["mesh"]]];
         } else if (v.containsKey("instanceSkin")) {
           var instanceSkin = v["instanceSkin"];
-//          node.skeleton = _resources[instanceSkin["skin"]]["skeleton"];
+          node.skeleton = _resources[instanceSkin["skin"]]["skeleton"];
           var source = instanceSkin["sources"];
+          node.mesh = new Mesh();
           node.mesh.subMeshes = new List.generate(source.length, (i){
-            return _resources[source[i]];
+            var m = _resources[source[i]];
+            m.skeleton = node.skeleton;
+            m.jointOffset = 0;
+            m.jointCount = _jointsOfSkeleton[node.skeleton.name].length;
+            return m;
           }, growable: false);
-        } else {
-          node.mesh.subMeshes = new List(0);
         }
       }
-      _nodeHierarchy[node.name] = v["children"];
+      _childrenOfNode[node.name] = v["children"];
       node.applyMatrix(matrix);
       _resources[k] = node;
     });
@@ -246,21 +251,40 @@ class GltfLoader {
     _buildSkins(_root);
   }
   
-  _buildSkins(Node node) {
-    if(node.skeleton != null) {
-      
-    }
-  }
-  
   _buildNodeHierarchy(Node node) {
     if(node.children == null)
       node.children = new List();
-    var childNames = _nodeHierarchy[node.name];
+    var childNames = _childrenOfNode[node.name];
     childNames.forEach((name){
       var child = _resources[name];
       node.add(child);
       _buildNodeHierarchy(child);
     });
+  }
+  
+  _buildSkins(Node node) {
+    if(node.skeleton != null) {
+      var skin = _resources[node.skeleton.name];
+      node.skeleton.joints = [];
+      var jointsNames = _jointsOfSkeleton[node.skeleton.name];
+      jointsNames.forEach((jointName) {
+        var joint = _joints[jointName];
+        node.skeleton.joints.add(joint);
+      });
+
+      var invBindMatAttri = skin["inverseBindMatrices"];
+      var bufferView = _resources[invBindMatAttri["bufferView"]];
+      var buffer = bufferView["data"];
+      var jointCount = node.skeleton.joints.length;
+      for(var i = 0; i < jointCount; i++) {
+        var joint = node.skeleton.joints[i];
+        joint.jointMat = new Matrix4.identity();
+        for(var j = 0; j < 16; j++) {
+          joint.jointMat[j] = buffer[(i * 16) + j];
+        }
+      }
+    }
+    node.children.forEach((child) => _buildSkins(child));
   }
   
 }

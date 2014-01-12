@@ -3,6 +3,7 @@ part of orange;
 
 
 class Skeleton {
+  String name;
   List<Joint> joints;
   Float32List jointMatrices;
   bool _dirtyJoints = true;
@@ -10,9 +11,9 @@ class Skeleton {
   update() {
     if(_dirtyJoints) {
       for(var i = 0; i < joints.length; i++) {
-        var bone = joints[i];
-        for(var j = 0; j < bone.jointMat.storage.length; j++) {
-          jointMatrices[i * 16 + j] = bone.jointMat[j];
+        var joint = joints[i];
+        for(var j = 0; j < joint.jointMat.storage.length; j++) {
+          jointMatrices[i * 16 + j] = joint.jointMat[j];
         }
       }
       _dirtyJoints = false;

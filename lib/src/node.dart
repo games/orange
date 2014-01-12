@@ -6,6 +6,8 @@ part of orange;
 
 class Node {
   String name;
+  Vector3 pos;
+  Quaternion rot;
   Matrix4 _localMatrix;
   Matrix4 worldMatrix;
   Skeleton skeleton;
@@ -15,6 +17,8 @@ class Node {
   Mesh mesh;
   
   Node() {
+    pos = new Vector3.zero();
+    rot = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();
     worldMatrix = new Matrix4.identity();
     children = [];
@@ -37,35 +41,13 @@ class Node {
     }
   }
   
-  translate(Vector3 translation) {
-    _localMatrix.translate(translation);
-  }
-  
-  scale(dynamic x, [double y = null, double z = null]) {
-    _localMatrix.scale(x, y, z);
-  }
-  
-  rotate(double angle, Vector3 axis) {
-    _localMatrix.rotate(angle, axis);
-  }
-  
-  rotateX(double rad) {
-    _localMatrix.rotateX(rad);
-  }
-  
-  rotateY(double rad) {
-    _localMatrix.rotateY(rad);
-  }
-  
-  rotateZ(double rad) {
-    _localMatrix.rotateZ(rad);
-  }
-  
   applyMatrix(Matrix4 m) {
     _localMatrix.multiply(m);
+    m.decompose(pos, rot);
   }
   
   updateMatrix() {
+    _localMatrix.fromRotationTranslation(rot, pos);
     if(parent != null) {
       worldMatrix = parent._localMatrix * worldMatrix;
     } else {

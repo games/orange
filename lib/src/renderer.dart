@@ -79,7 +79,8 @@ class Renderer {
     }
 
     if(mesh.skeleton != null) {
-      ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, mesh.skeleton.subBoneMatrices(mesh));
+      var boneMat = mesh.skeleton.subBoneMatrices(mesh);
+      ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, boneMat);
     }
     
     if(mesh.indicesAttrib != null) {

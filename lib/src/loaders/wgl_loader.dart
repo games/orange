@@ -25,7 +25,7 @@ String _getLumpId(id) {
 
 class WglLoader {
   
-  Node _model;
+  Node _node;
   int _format;
   int _stride;
   bool _skinned;
@@ -35,7 +35,8 @@ class WglLoader {
   
   Future<Node> load(gl.RenderingContext ctx, String url) {
     _uri = Uri.parse(url);
-    _model = new Node();
+    _node = new Node();
+    _node.mesh = new Mesh();
     _skinned = false;
     var completer = new Completer();
     Future.wait([html.HttpRequest.request("$url.wglvert", responseType: "arraybuffer"),
@@ -44,7 +45,7 @@ class WglLoader {
                    _parseBinary(responses[0].response);
                    _compileBuffers(ctx);
                    _parseModel(ctx, JSON.decode(responses[1].response));
-                   completer.complete(_model);
+                   completer.complete(_node);
                  });
     return completer.future;
   }
@@ -88,23 +89,22 @@ class WglLoader {
   }
   
   _compileBuffers(gl.RenderingContext ctx) {
-    _model.vertexBuffer = ctx.createBuffer();
-    ctx.bindBuffer(gl.ARRAY_BUFFER, _model.vertexBuffer);
+    _node.mesh.vertexBuffer = ctx.createBuffer();
+    ctx.bindBuffer(gl.ARRAY_BUFFER, _node.mesh.vertexBuffer);
     ctx.bufferDataTyped(gl.ARRAY_BUFFER, _vertexArray, gl.STATIC_DRAW);
     
-    _model.indexBuffer = ctx.createBuffer();
-    ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _model.indexBuffer);
+    _node.mesh.indexBuffer = ctx.createBuffer();
+    ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _node.mesh.indexBuffer);
     ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, _indexArray, gl.STATIC_DRAW);
   }
   
   _parseModel(gl.RenderingContext ctx, Map description) {
     var textureManager = new TextureManager();
-    _model.meshes = []; 
 
     if(_skinned) {
-      _model.skeleton = new Skeleton();
-      _model.skeleton.jointMatrices = new Float32List(16 * MAX_BONES_PER_MESH);
-      _model.skeleton.joints = [];
+      _node.skeleton = new Skeleton();
+      _node.skeleton.jointMatrices = new Float32List(16 * MAX_BONES_PER_MESH);
+      _node.skeleton.joints = [];
       var jointsDesc = or(description["bones"], []);
       jointsDesc.forEach((jointDesc) {
         var joint = new Joint();
@@ -122,10 +122,11 @@ class WglLoader {
           joint.worldPos = new Vector3.zero();
           joint.worldRot = new Quaternion.identity();
         }
-        _model.skeleton.joints.add(joint);
+        _node.skeleton.joints.add(joint);
       });
     }
     
+    _node.mesh = new Mesh();
     description["meshes"].forEach((Map v) {
       var mesh = new Mesh();
       // TODO: maybe there is a bug
@@ -137,7 +138,7 @@ class WglLoader {
       if(v.containsKey("submeshes")) {
         v["submeshes"].forEach((sv) {
           var subMesh = new Mesh();
-          subMesh.skeleton = _model.skeleton;
+          subMesh.skeleton = _node.skeleton;
           subMesh.jointCount = sv["boneCount"];
           subMesh.jointOffset = sv["boneOffset"];
           var offset = sv["indexOffset"] * 2;
@@ -188,7 +189,7 @@ class WglLoader {
           mesh.subMeshes.add(subMesh);
         });
       }
-      _model.meshes.add(mesh);
+      _node.mesh.subMeshes.add(mesh);
     });
   }
 }

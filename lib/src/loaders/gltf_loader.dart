@@ -14,6 +14,7 @@ class GltfLoader {
     _ctx = ctx;
     _uri = Uri.parse(url);
     _root = new Node();
+    _root.mesh = new Mesh();
     _resources = {};
     _joints = {};
     _nodeHierarchy = {};
@@ -23,19 +24,13 @@ class GltfLoader {
         var loadBufferFutures = [];
         json["buffers"].forEach((k, v) => loadBufferFutures.add(_loadBuffer(k, v)));
         Future.wait(loadBufferFutures).then((List buffers) {
-          
-          
-          handleBufferViews(json["bufferViews"]);
-          handleImages(json["images"]);
-          handleSamplers(json["samplers"]);
-          handleTextures(json["textures"]);
-          handleMaterials(json["materials"]);
-          handleAccessors(json["accessors"]);
-          handleMeshes(json["meshes"]);
-          handleSkins(json["skins"]);
-          handleNodes(json["nodes"]);
-          handleScenes(json["scenes"]);
-
+          InstanceMirror mirror = reflect(this);          
+          var categories = ["bufferViews", "images", "samplers", "textures", "materials", "attributes", "indices", "accessors", "meshes", "skins", "nodes", "scenes"];
+          categories.forEach((cat) {
+              var description = json[cat];
+              if(description != null)
+                mirror.invoke(new Symbol("handle${capitalize(cat)}"), [description]);
+          });
           completer.complete(_root);
         });
       })
@@ -57,16 +52,16 @@ class GltfLoader {
   handleBufferViews(Map doc) {
     doc.forEach((k, v) {
       var buffer = _resources[v["buffer"]]["data"];
-      var target = v["target"];
+      var target = _ensureType(v["target"]);
       if(target == gl.ARRAY_BUFFER) {
         var vert = new Float32List.view(buffer, v["byteOffset"], v["byteLength"] ~/ 4);
-        _root.vertexBuffer = _ctx.createBuffer();
-        _ctx.bindBuffer(gl.ARRAY_BUFFER, _root.vertexBuffer);
+        _root.mesh.vertexBuffer = _ctx.createBuffer();
+        _ctx.bindBuffer(gl.ARRAY_BUFFER, _root.mesh.vertexBuffer);
         _ctx.bufferDataTyped(gl.ARRAY_BUFFER, vert, gl.STATIC_DRAW);
       } else if (target == gl.ELEMENT_ARRAY_BUFFER) {
         var idx = new Uint16List.view(buffer, v["byteOffset"], v["byteLength"] ~/ 2);
-        _root.indexBuffer = _ctx.createBuffer();
-        _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _root.indexBuffer);
+        _root.mesh.indexBuffer = _ctx.createBuffer();
+        _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _root.mesh.indexBuffer);
         _ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);        
       }
       _resources[k] = v; 
@@ -80,10 +75,10 @@ class GltfLoader {
   handleSamplers(Map doc) {
     doc.forEach((k, v) {
       var sampler = new Sampler();
-      sampler.magFilter = v["magFilter"];
-      sampler.minFilter = v["minFilter"];
-      sampler.wrapS = v["wrapS"];
-      sampler.wrapT = v["wrapT"];
+      sampler.magFilter = _ensureType(v["magFilter"]);
+      sampler.minFilter = _ensureType(v["minFilter"]);
+      sampler.wrapS = _ensureType(v["wrapS"]);
+      sampler.wrapT = _ensureType(v["wrapT"]);
       _resources[k] = sampler;
     });
   }
@@ -92,19 +87,35 @@ class GltfLoader {
     description.forEach((k, v){
       v["path"] = _uri.resolve(_resources[v["source"]]["path"]).toString();
       v["sampler"] = _resources[v["sampler"]];
+      v["format"] = _ensureType(v["format"]);
+      v["internalFormat"] = _ensureType(v["internalFormat"]);
+      v["target"] = _ensureType(v["target"]);
       _resources[k] = v;
     });
   }
   
   handleMaterials(Map description) {
     description.forEach((k, v){
-      v["diffuse"] = _resources[v["instanceTechnique"]["values"]["diffuse"]];
+      //TODO : because the dota2 model from {qtel} is old version.
+      var diffuse;
+      var values = v["instanceTechnique"]["values"];
+      if(values is List) {
+        diffuse = values.firstWhere((e) => e["parameter"] == "diffuse");
+        diffuse = diffuse != null ? diffuse["value"] : null;
+      } else {
+        diffuse = values["diffuse"];
+      }
+      v["diffuse"] = _resources[diffuse];
       _resources[k] = v;
     });
   }
   
+  handleAttributes(description) => handleAccessors(description);
+  handleIndices(description) => handleAccessors(description);
+  
   handleAccessors(description) {
     description.forEach((k, v){
+      v["type"] = _ensureType(v["type"]);
       _resources[k] = v;
     });
   }
@@ -120,6 +131,9 @@ class GltfLoader {
         var indicesAttrib = _resources[p["indices"]];
         var primitiveType = p["primitive"];
         var attributes = p["attributes"];
+        if(attributes == null) {
+          attributes = p["semantics"];
+        }
         
         var submesh = new Mesh();
         submesh.material = p["material"];
@@ -194,22 +208,23 @@ class GltfLoader {
       } else {
         node = new Node();
         node.name = v["name"];
+        node.mesh = new Mesh();
         if(v.containsKey("meshes")) {
           var meshes = v["meshes"];
-          node.meshes = new List.generate(meshes.length, (i){
+          node.mesh.subMeshes = new List.generate(meshes.length, (i){
             return _resources[meshes[i]];
           }, growable: false);
         } else if(v.containsKey("mesh")) {
-          node.meshes = [_resources[v["mesh"]]];
+          node.mesh.subMeshes = [_resources[v["mesh"]]];
         } else if (v.containsKey("instanceSkin")) {
           var instanceSkin = v["instanceSkin"];
 //          node.skeleton = _resources[instanceSkin["skin"]]["skeleton"];
           var source = instanceSkin["sources"];
-          node.meshes = new List.generate(source.length, (i){
+          node.mesh.subMeshes = new List.generate(source.length, (i){
             return _resources[source[i]];
           }, growable: false);
         } else {
-          node.meshes = new List(0);
+          node.mesh.subMeshes = new List(0);
         }
       }
       _nodeHierarchy[node.name] = v["children"];
@@ -263,6 +278,34 @@ Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
   return m;
 }
 
+
+
+_ensureType(type) {
+  if(type is num) {
+    return type;
+  } else {
+    switch(type) {
+      case "FLOAT": return gl.FLOAT;
+      case "FLOAT_VEC2": return gl.FLOAT_VEC2;
+      case "FLOAT_VEC3": return gl.FLOAT_VEC3;
+      case "FLOAT_VEC4": return gl.FLOAT_VEC4;
+      case "FLOAT_MAT2": return gl.FLOAT_MAT2;
+      case "FLOAT_MAT3": return gl.FLOAT_MAT3;
+      case "FLOAT_MAT4": return gl.FLOAT_MAT4;
+      case "UNSIGNED_BYTE": return gl.UNSIGNED_BYTE;
+      case "UNSIGNED_INT": return gl.UNSIGNED_INT;
+      case "UNSIGNED_SHORT": return gl.UNSIGNED_SHORT;
+      case "LINEAR": return gl.LINEAR;
+      case "LINEAR_MIPMAP_LINEAR": return gl.LINEAR_MIPMAP_LINEAR;
+      case "RGBA": return gl.RGBA;
+      case "TEXTURE_2D": return gl.TEXTURE_2D;
+      case "REPEAT": return gl.REPEAT;
+      case "ARRAY_BUFFER": return gl.ARRAY_BUFFER;
+      case "ELEMENT_ARRAY_BUFFER": return gl.ELEMENT_ARRAY_BUFFER;
+      default: return 0;
+    }
+  }
+}
 
 
 

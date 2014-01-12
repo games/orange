@@ -6,14 +6,13 @@ part of orange;
 
 class Node {
   String name;
-  gl.Buffer vertexBuffer;
-  gl.Buffer indexBuffer;
-  List<Mesh> meshes = [];
   Matrix4 _localMatrix;
   Matrix4 worldMatrix;
   Skeleton skeleton;
   Node parent;
   List<Node> children;
+  
+  Mesh mesh;
   
   Node() {
     _localMatrix = new Matrix4.identity();
@@ -76,10 +75,10 @@ class Node {
   }
   
   bindBuffer(gl.RenderingContext ctx, Shader shader) {
-    if(vertexBuffer != null)
-      ctx.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    if(indexBuffer != null)
-      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    if(mesh.vertexBuffer != null)
+      ctx.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
+    if(mesh.indexBuffer != null)
+      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
   }
 }
 

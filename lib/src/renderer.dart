@@ -57,7 +57,7 @@ class Renderer {
     if(node.skeleton != null) {
       node.skeleton.update();
     }
-    node.meshes.forEach((mesh) => _drawMesh(mesh, shader));
+    _drawMesh(node.mesh, shader);
     node.children.forEach((child) => draw(child));
   }
   

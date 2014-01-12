@@ -12,4 +12,6 @@ class Mesh {
   Skeleton skeleton;
   int jointOffset;
   int jointCount;
+  gl.Buffer vertexBuffer;
+  gl.Buffer indexBuffer;
 }

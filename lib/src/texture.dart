@@ -25,44 +25,48 @@ class TextureManager {
   
   Future<Texture> load(gl.RenderingContext ctx, Map descripton) {
     var completer = new Completer<Texture>();
-    var url = descripton["path"];
-    if(_textures.containsKey(url)) {
-      completer.complete(_textures[url]);
+    if(descripton == null) {
+      completer.complete(null);
     } else {
-      var sampler = or(descripton["sampler"], defaultSampler);
-      var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) ||
-          (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) ||
-          (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
-          (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
-      var target = or(descripton["target"], gl.TEXTURE_2D);
-      var internalFormat = or(descripton["internalFormat"], gl.RGBA);
-      var format = or(descripton["format"], gl.RGBA);
-      var image = new html.ImageElement(src : url);
-      image.onLoad.listen((_) {
-        var texture = new Texture();
-        texture.data = ctx.createTexture();
-        texture.target = target;
-        if(usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
-          image = _ensureImage(image);
-        }
-        ctx.bindTexture(target, texture.data);
-        ctx.texParameteri(target, gl.TEXTURE_WRAP_S, sampler.wrapS);
-        ctx.texParameteri(target, gl.TEXTURE_WRAP_T, sampler.wrapT);
-        ctx.texParameteri(target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
-        ctx.texParameteri(target, gl.TEXTURE_MAG_FILTER, sampler.magFilter);
-        ctx.texImage2D(target, 0, internalFormat, format, gl.UNSIGNED_BYTE, image);
-        if(usesMipMaps) {
-          ctx.generateMipmap(target);
-        }
-        ctx.bindTexture(target, null);
-        _textures[url] = texture;
-        completer.complete(texture);
-      }).
-      onError(() {
-        print("Failed to load image : $url");
-        completer.completeError(null);
-      });
-    }
+      var url = descripton["path"];
+      if(_textures.containsKey(url)) {
+        completer.complete(_textures[url]);
+      } else {
+        var sampler = or(descripton["sampler"], defaultSampler);
+        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) ||
+            (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) ||
+            (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
+            (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
+        var target = or(descripton["target"], gl.TEXTURE_2D);
+        var internalFormat = or(descripton["internalFormat"], gl.RGBA);
+        var format = or(descripton["format"], gl.RGBA);
+        var image = new html.ImageElement(src : url);
+        image.onLoad.listen((_) {
+          var texture = new Texture();
+          texture.data = ctx.createTexture();
+          texture.target = target;
+          if(usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
+            image = _ensureImage(image);
+          }
+          ctx.bindTexture(target, texture.data);
+          ctx.texParameteri(target, gl.TEXTURE_WRAP_S, sampler.wrapS);
+          ctx.texParameteri(target, gl.TEXTURE_WRAP_T, sampler.wrapT);
+          ctx.texParameteri(target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
+          ctx.texParameteri(target, gl.TEXTURE_MAG_FILTER, sampler.magFilter);
+          ctx.texImage2D(target, 0, internalFormat, format, gl.UNSIGNED_BYTE, image);
+          if(usesMipMaps) {
+            ctx.generateMipmap(target);
+          }
+          ctx.bindTexture(target, null);
+          _textures[url] = texture;
+          completer.complete(texture);
+        }).
+        onError(() {
+          print("Failed to load image : $url");
+          completer.completeError(null);
+        });
+      }
+    }  
     return completer.future;
   }
   

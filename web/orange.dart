@@ -22,12 +22,12 @@ void main() {
 renderGltf() {
   var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas);
-  renderer.camera.center = new Vector3(0.0, -1.0, -500.0);
+  renderer.camera.center = new Vector3(0.0, -1.0, -10.0);
   var url = "http://127.0.0.1:3030/orange/models/duck/duck.json";
-//  url = "http://127.0.0.1:3030/orange/models/astroboy/astroboy.json";
+  url = "http://127.0.0.1:3030/orange/models/astroboy/astroboy.json";
 //  url = "http://127.0.0.1:3030/orange/models/abaddon/abaddon.json";
-  url = "http://127.0.0.1:3030/orange/models/mirana/mirana.json";
-  url = "http://127.0.0.1:3030/orange/models/pudge/pudge.json";
+//  url = "http://127.0.0.1:3030/orange/models/mirana/mirana.json";
+//  url = "http://127.0.0.1:3030/orange/models/pudge/pudge.json";
   var loader = new GltfLoader();
   loader.load(renderer.ctx, url).then((m) {
     node = m;

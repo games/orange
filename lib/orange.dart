@@ -31,6 +31,7 @@ part 'src/skeleton.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
 part 'src/pass.dart';
+part 'src/light.dart';
 
 part 'src/loaders/wgl_loader.dart';
 part 'src/loaders/gltf_loader.dart';

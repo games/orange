@@ -47,17 +47,17 @@ class Renderer {
     ctx.useProgram(shader.program);
     
     node.updateMatrix();
-    node.bindBuffer(ctx, shader);
-    
-    ctx.uniform3f(shader.uniforms["lightPos"].location, 16, -32, 32);
-    ctx.uniformMatrix4fv(shader.uniforms["viewMat"].location, false, camera.viewMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, node.worldMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
-    
-    if(node.skeleton != null) {
-      node.skeleton.update();
+    if(node.mesh != null) {
+      node.bindBuffer(ctx, shader);
+      ctx.uniform3f(shader.uniforms["lightPos"].location, 16, -32, 32);
+      ctx.uniformMatrix4fv(shader.uniforms["viewMat"].location, false, camera.viewMatrix.storage);
+      ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, node.worldMatrix.storage);
+      ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
+      if(node.skeleton != null) {
+        node.skeleton.update();
+      }
+      _drawMesh(node.mesh, shader);
     }
-    _drawMesh(node.mesh, shader);
     node.children.forEach((child) => draw(child));
   }
   

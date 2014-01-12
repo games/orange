@@ -237,12 +237,8 @@ class GltfLoader {
     var json = description.values.first;
     json["nodes"].forEach((name){
       var node = _resources[name];
-      if(node != null) {
-        if (node is Camera) {
-          
-        } else if(node is Node) {
-          _root.add(node);
-        }
+      if(node != null && !(node is Joint)) {
+        _root.add(node);
       }
     });
     _root.children.forEach((node) => _buildNodeHierarchy(node));

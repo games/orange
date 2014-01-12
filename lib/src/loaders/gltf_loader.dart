@@ -57,11 +57,13 @@ class GltfLoader {
       var target = _ensureType(v["target"]);
       if(target == gl.ARRAY_BUFFER) {
         var vert = new Float32List.view(buffer, v["byteOffset"], v["byteLength"] ~/ 4);
+        v["data"] = vert;
         _root.mesh.vertexBuffer = _ctx.createBuffer();
         _ctx.bindBuffer(gl.ARRAY_BUFFER, _root.mesh.vertexBuffer);
         _ctx.bufferDataTyped(gl.ARRAY_BUFFER, vert, gl.STATIC_DRAW);
       } else if (target == gl.ELEMENT_ARRAY_BUFFER) {
         var idx = new Uint16List.view(buffer, v["byteOffset"], v["byteLength"] ~/ 2);
+        v["data"] = idx;
         _root.mesh.indexBuffer = _ctx.createBuffer();
         _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _root.mesh.indexBuffer);
         _ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);        
@@ -125,6 +127,9 @@ class GltfLoader {
   }
   
   handleMeshes(Map description) {
+    var once = false;
+    var arr = [];
+    
     description.forEach((k, v){
       var textureManager = new TextureManager();
       var mesh = new Mesh();
@@ -140,9 +145,7 @@ class GltfLoader {
         }
         
         var submesh = new Mesh();
-        submesh.material = p["material"];
-        
-        var material = _resources[submesh.material];
+        var material = _resources[p["material"]];
         textureManager.load(_ctx,  material["diffuse"]).then((t) => submesh.diffuse = t);
         
         submesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], indicesAttrib["count"]);
@@ -152,26 +155,21 @@ class GltfLoader {
           var accessor = _resources[av];
           var bufferView = _resources[accessor["bufferView"]];
           var byteOffset = accessor["byteOffset"];
-          switch(ak) {
-            case "NORMAL": 
-              submesh.attributes[Semantics.normal] = new MeshAttribute(3, gl.FLOAT, 0, byteOffset);
-              break;
-            case "POSITION":
-              submesh.attributes[Semantics.position] = new MeshAttribute(3, gl.FLOAT, 0, byteOffset);
-              break;
-            case "TEXCOORD_0":
-              submesh.attributes[Semantics.texture] = new MeshAttribute(2, gl.FLOAT, 0, byteOffset);
-              break;
-            case "WEIGHT":
-              submesh.attributes[Semantics.weights] = new MeshAttribute(3, gl.FLOAT, 0, byteOffset);
-              break;
-            case "JOINT":
-              submesh.attributes[Semantics.bones] = new MeshAttribute(3, gl.FLOAT, 0, byteOffset);
-              break;
+          var size = accessor["byteStride"] ~/ 4;
+          submesh.attributes[_convertSemantics(ak)] = new MeshAttribute(size, gl.FLOAT, 0, byteOffset);
+          
+          if(ak == "WEIGHT") {
+            var view = new Float32List.view(bufferView["data"].buffer, byteOffset, indicesAttrib["count"]);
+            if(view != null) {
+              var vv = view.length;
+            }
           }
+          
         });
         return submesh;
       }, growable: false);
+
+      print(arr.join("\r\n"));
       _resources[k] = mesh;
     });
   }
@@ -183,6 +181,7 @@ class GltfLoader {
       skeleton.name = k;
       skeleton.jointMatrices = new Float32List(16 * joints.length);
       skeleton.joints = [];
+      skeleton.bindShapeMatrix = new Matrix4.fromList(v["bindShapeMatrix"]);
       v["skeleton"] = skeleton;
       _jointsOfSkeleton[k] = joints;
       _resources[k] = v;
@@ -197,7 +196,7 @@ class GltfLoader {
       } else {
         matrix = _newMatrix4FromSQT(v["scale"], v["rotation"], v["translation"]);
       }
-      var node;
+      var node, mesh;
       if(v.containsKey("jointId")) {
         node = new Joint();
         node.name = v["jointId"];
@@ -211,19 +210,19 @@ class GltfLoader {
         node.name = v["name"];
         if(v.containsKey("meshes")) {
           var meshes = v["meshes"];
-          node.mesh = new Mesh();
-          node.mesh.subMeshes = new List.generate(meshes.length, (i){
+          mesh = new Mesh();
+          mesh.subMeshes = new List.generate(meshes.length, (i){
             return _resources[meshes[i]];
           }, growable: false);
         } else if(v.containsKey("mesh")) {
-          node.mesh = new Mesh();
-          node.mesh.subMeshes = [_resources[v["mesh"]]];
+          mesh = new Mesh();
+          mesh.subMeshes = [_resources[v["mesh"]]];
         } else if (v.containsKey("instanceSkin")) {
           var instanceSkin = v["instanceSkin"];
           node.skeleton = _resources[instanceSkin["skin"]]["skeleton"];
           var source = instanceSkin["sources"];
-          node.mesh = new Mesh();
-          node.mesh.subMeshes = new List.generate(source.length, (i){
+          mesh = new Mesh();
+          mesh.subMeshes = new List.generate(source.length, (i){
             var m = _resources[source[i]];
             m.skeleton = node.skeleton;
             m.jointOffset = 0;
@@ -232,8 +231,11 @@ class GltfLoader {
           }, growable: false);
         }
       }
-      _childrenOfNode[node.name] = v["children"];
+      if(mesh != null) {
+        node.mesh = mesh;
+      }
       node.applyMatrix(matrix);
+      _childrenOfNode[node.name] = v["children"];
       _resources[k] = node;
     });
   }
@@ -246,9 +248,19 @@ class GltfLoader {
         _root.add(node);
       }
     });
+    
+//    _root.mesh.material = new Material();
+//    _root.mesh.material.pass = new Pass();
+//    if(_root.skeleton != null) {
+//      _root.mesh.material.pass.shader = new Shader(_ctx, skinnedModelVS, skinnedModelFS);
+//    } else {
+//      _root.mesh.material.pass.shader = new Shader(_ctx, modelVS, modelFS);
+//    }
+//    _root.mesh.subMeshes.forEach((m) => m.material = _root.mesh.material);
+    
     _root.children.forEach((node) => _buildNodeHierarchy(node));
-    _root.updateMatrix();
     _buildSkins(_root);
+    _root.updateMatrix();
   }
   
   _buildNodeHierarchy(Node node) {
@@ -278,10 +290,21 @@ class GltfLoader {
       var jointCount = node.skeleton.joints.length;
       for(var i = 0; i < jointCount; i++) {
         var joint = node.skeleton.joints[i];
-        joint.jointMat = new Matrix4.identity();
+        var inverseBindMatrix = new Matrix4.identity();
         for(var j = 0; j < 16; j++) {
-          joint.jointMat[j] = buffer[(i * 16) + j];
+          inverseBindMatrix[j] = buffer[(i * 16) + j];
         }
+        // outv : 
+        //  for 0 -> n:
+        //    outv += ((((v * BSM) * IMBi) * JMi) * JW)
+        //
+        // n: number of joints that influence vertex v
+        // BSM: bind shape matrix
+        // IBMi: inverse bind matrix of joint i
+        // JMi: joint matrix of joint i
+        // JW: joint weight/influence of joint i on vertex v
+        joint.inverseBindMatrix = inverseBindMatrix;
+        joint.jointMat = inverseBindMatrix;
       }
     }
     node.children.forEach((child) => _buildSkins(child));
@@ -298,6 +321,19 @@ Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
   return m;
 }
 
+
+
+
+
+String _convertSemantics(String name) {
+  return {
+    "NORMAL": Semantics.normal,
+    "POSITION": Semantics.position,
+    "TEXCOORD_0": Semantics.texture,
+    "WEIGHT": Semantics.weights,
+    "JOINT": Semantics.bones,
+  }[name];
+}
 
 
 _ensureType(type) {

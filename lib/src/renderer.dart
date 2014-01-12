@@ -1,10 +1,6 @@
 part of orange;
 
 
-Shader modelShader;
-Shader skinnedModelShader;
-
-
 class Renderer {
   html.CanvasElement canvas;
   gl.RenderingContext ctx;
@@ -39,26 +35,29 @@ class Renderer {
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
   
-  draw(Node node) {
-    Shader shader = _switchShader(node);
-    if(shader.ready == false) {
-      return;
-    }
-    ctx.useProgram(shader.program);
-    
-    node.updateMatrix();
+  draw(Node node, Pass pass) {
     if(node.mesh != null) {
-      node.bindBuffer(ctx, shader);
-      ctx.uniform3f(shader.uniforms["lightPos"].location, 16, -32, 32);
-      ctx.uniformMatrix4fv(shader.uniforms["viewMat"].location, false, camera.viewMatrix.storage);
-      ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, node.worldMatrix.storage);
-      ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
-      if(node.skeleton != null) {
-        node.skeleton.update();
+      Shader shader = pass.shader;
+      if(shader.ready == false) {
+        return;
       }
-      _drawMesh(node.mesh, shader);
+      pass.prepare(ctx);
+      ctx.useProgram(shader.program);
+
+      node.updateMatrix();
+      if(node.mesh != null) {
+        node.bindBuffer(ctx, shader);
+        ctx.uniform3f(shader.uniforms["lightPos"].location, 16, -32, 32);
+        ctx.uniformMatrix4fv(shader.uniforms["viewMat"].location, false, camera.viewMatrix.storage);
+        ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, node.worldMatrix.storage);
+        ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
+        if(node.skeleton != null) {
+          node.skeleton.update();
+        }
+        _drawMesh(node.mesh, shader);
+      }
     }
-    node.children.forEach((child) => draw(child));
+    node.children.forEach((child) => draw(child, pass));
   }
   
   _drawMesh(Mesh mesh, Shader shader) {
@@ -88,21 +87,5 @@ class Renderer {
     }
     
     mesh.subMeshes.forEach((subMesh) => _drawMesh(subMesh, shader));
-  }
-  
-  _switchShader(Node node) {
-    var shader;
-    if(node.skeleton != null) {
-      if(skinnedModelShader == null) {
-        skinnedModelShader = new Shader(ctx, skinnedModelVS, skinnedModelFS);
-      }
-      shader = skinnedModelShader;
-    } else {
-      if(modelShader == null) {
-        modelShader = new Shader(ctx, modelVS, modelFS);
-      }
-      shader = modelShader;
-    }
-    return shader;
   }
 }

@@ -7,6 +7,7 @@ import 'dart:async';
 
 double _lastElapsed = 0.0;
 Renderer renderer;
+Pass pass;
 Node node;
 Animation animation;
 
@@ -14,6 +15,7 @@ void main() {
   html.window.onResize.listen((e){
     renderer.resize();
   });
+  
   
   renderGltf();
 //  renderWgl();
@@ -23,11 +25,15 @@ renderGltf() {
   var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas);
   renderer.camera.center = new Vector3(0.0, -1.0, -10.0);
+  pass = new Pass();
+  pass.shader = new Shader(renderer.ctx, skinnedModelVS, skinnedModelFS);
+  
   var url = "http://127.0.0.1:3030/orange/models/duck/duck.json";
   url = "http://127.0.0.1:3030/orange/models/astroboy/astroboy.json";
 //  url = "http://127.0.0.1:3030/orange/models/abaddon/abaddon.json";
 //  url = "http://127.0.0.1:3030/orange/models/mirana/mirana.json";
 //  url = "http://127.0.0.1:3030/orange/models/pudge/pudge.json";
+  
   var loader = new GltfLoader();
   loader.load(renderer.ctx, url).then((m) {
     node = m;
@@ -44,6 +50,9 @@ renderWgl() {
   var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas, true);
   renderer.camera.center = new Vector3(0.0, -0.5, 0.0);
+  pass = new Pass();
+  pass.shader = new Shader(renderer.ctx, skinnedModelVS2, skinnedModelFS2);
+  
   var loader = new WglLoader();
   loader.load(renderer.ctx, url).then((m) {
     node = m;
@@ -67,7 +76,7 @@ _animate(num elapsed) {
   
   renderer.camera.update(interval);
   renderer.prepare();
-  renderer.draw(node);
+  renderer.draw(node, pass);
 
   _lastElapsed = elapsed;
 }

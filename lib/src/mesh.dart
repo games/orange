@@ -4,7 +4,7 @@ part of orange;
 
 class Mesh {
   String name;
-  String material;
+  Material material;
   Texture diffuse;
   List<Mesh> subMeshes = [];
   MeshAttribute indicesAttrib;

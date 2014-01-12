@@ -24,7 +24,7 @@ String _getLumpId(id) {
 
 
 class WglLoader {
-  
+  gl.RenderingContext _ctx;
   Node _node;
   int _format;
   int _stride;
@@ -34,6 +34,7 @@ class WglLoader {
   TypedData _indexArray;
   
   Future<Node> load(gl.RenderingContext ctx, String url) {
+    _ctx = ctx;
     _uri = Uri.parse(url);
     _node = new Node();
     _node.mesh = new Mesh();
@@ -134,7 +135,13 @@ class WglLoader {
       if(textureUrl == null || textureUrl.isEmpty)
         return;
       textureManager.load(ctx, {"path": _uri.resolve(textureUrl).toString()}).then((t) => mesh.diffuse = t);
-      mesh.material = v["material"];
+//      mesh.material = new Material();
+//      mesh.material.pass = new Pass();
+//      if(_skinned) {
+//        mesh.material.pass.shader = new Shader(_ctx, skinnedModelVS2, skinnedModelFS2);
+//      } else {
+//        mesh.material.pass.shader = new Shader(_ctx, modelVS, modelFS);
+//      }
       if(v.containsKey("submeshes")) {
         v["submeshes"].forEach((sv) {
           var subMesh = new Mesh();

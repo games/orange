@@ -4,6 +4,7 @@ part of orange;
 
 class Skeleton {
   String name;
+  Matrix4 bindShapeMatrix;
   List<Joint> joints;
   Float32List jointMatrices;
   bool _dirtyJoints = true;

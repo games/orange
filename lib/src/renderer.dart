@@ -7,6 +7,7 @@ class Renderer {
   ModelCamera camera;
   double fov;
   Matrix4 projectionMatrix;
+  Pass pass;
   
   Renderer(html.CanvasElement canvas, [bool flipTexture = false]) {
     this.canvas = canvas;
@@ -24,6 +25,9 @@ class Renderer {
     if(flipTexture) {
       ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     }
+    
+    pass = new Pass();
+    pass.shader = new Shader(ctx, modelVS, modelFS);
   }
   
   resize() {
@@ -35,57 +39,82 @@ class Renderer {
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
   
-  draw(Node node, Pass pass) {
-    if(node.mesh != null) {
-      Shader shader = pass.shader;
-      if(shader.ready == false) {
-        return;
-      }
-      pass.prepare(ctx);
-      ctx.useProgram(shader.program);
-
-      node.updateMatrix();
-      if(node.mesh != null) {
-        node.bindBuffer(ctx, shader);
-        ctx.uniform3f(shader.uniforms["lightPos"].location, 16, -32, 32);
-        ctx.uniformMatrix4fv(shader.uniforms["viewMat"].location, false, camera.viewMatrix.storage);
-        ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, node.worldMatrix.storage);
-        ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
-        if(node.skeleton != null) {
-          node.skeleton.update();
-        }
-        _drawMesh(node.mesh, shader);
-      }
-    }
-    node.children.forEach((child) => draw(child, pass));
+  draw(Mesh mesh) {
+    var shader = pass.shader;
+    if(shader.ready == false)
+      return;
+    pass.prepare(ctx);
+    
+    mesh.updateMatrix();
+    
+    ctx.uniform3f(shader.uniforms["lightPos"].location, 16, -32, 32);
+    ctx.uniformMatrix4fv(shader.uniforms["viewMat"].location, false, camera.viewMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, mesh.worldMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
+    
+    _drawMesh(mesh, shader);
   }
   
   _drawMesh(Mesh mesh, Shader shader) {
-    if(mesh.attributes != null) {
-      mesh.attributes.forEach((sementic, accessor) {
-        if(shader.attributes.containsKey(sementic)) {
-          var attrib = shader.attributes[sementic];
-          ctx.enableVertexAttribArray(attrib.location);
-          ctx.vertexAttribPointer(attrib.location, accessor.size, accessor.type, accessor.normalized, accessor.stride, accessor.offset);
+    if(mesh.geometry != null) {
+      var geometry = mesh.geometry;
+      shader.attributes.forEach((semantics, attrib) {
+        switch(semantics) {
+          case Semantics.position:
+            ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.positions);
+            ctx.enableVertexAttribArray(attrib.location);
+            ctx.vertexAttribPointer(attrib.location, 3, gl.FLOAT, false, 0, 0);
+            break;
+          case Semantics.normal:
+            ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.normals);
+            ctx.enableVertexAttribArray(attrib.location);
+            ctx.vertexAttribPointer(attrib.location, 3, gl.FLOAT, false, 0, 0);
+            break;
+          case Semantics.texture:
+            ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.textureCoords);
+            ctx.enableVertexAttribArray(attrib.location);
+            ctx.vertexAttribPointer(attrib.location, 2, gl.FLOAT, false, 0, 0);
+            break;
         }
       });
     }
-    
-    if(mesh.diffuse != null) {
+    if(mesh.material != null && mesh.material.texture != null) {
       ctx.activeTexture(gl.TEXTURE0);
-      ctx.bindTexture(mesh.diffuse.target, mesh.diffuse.data);
+      ctx.bindTexture(mesh.material.texture.target, mesh.material.texture.data);
       ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
     }
-
-    if(mesh.skeleton != null) {
-      var boneMat = mesh.skeleton.subBoneMatrices(mesh);
-      ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, boneMat);
+    
+    //TODO : handle skeleton
+    
+    if(mesh.faces != null) {
+      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces);
+      ctx.drawElements(gl.TRIANGLES, mesh.geometry.vertexCount, gl.UNSIGNED_SHORT, 0);
     }
     
-    if(mesh.indicesAttrib != null) {
-      ctx.drawElements(gl.TRIANGLES, mesh.indicesAttrib.count, mesh.indicesAttrib.type, mesh.indicesAttrib.offset);
-    }
-    
-    mesh.subMeshes.forEach((subMesh) => _drawMesh(subMesh, shader));
+    mesh.children.forEach((child) => _drawMesh(child, shader));
   }
+  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

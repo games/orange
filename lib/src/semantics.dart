@@ -28,4 +28,9 @@ class Semantics {
   static const String color = "color";
   static const String weights = "weights";
   static const String bones = "bones";
+  
+  static const String emissive = "emissive";
+  static const String specular = "specular";
+  static const String ambient = "ambient";
+  static const String diffuse = "diffuse";
 }

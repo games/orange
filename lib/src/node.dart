@@ -10,11 +10,8 @@ class Node {
   Quaternion rot;
   Matrix4 _localMatrix;
   Matrix4 worldMatrix;
-  Skeleton skeleton;
   Node parent;
   List<Node> children;
-  
-  Mesh mesh;
   
   Node() {
     pos = new Vector3.zero();
@@ -54,13 +51,6 @@ class Node {
       worldMatrix = _localMatrix.clone();
     }
     children.forEach((c) => c.updateMatrix());
-  }
-  
-  bindBuffer(gl.RenderingContext ctx, Shader shader) {
-    if(mesh.vertexBuffer != null)
-      ctx.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
-    if(mesh.indexBuffer != null)
-      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
   }
 }
 

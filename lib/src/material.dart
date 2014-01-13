@@ -3,5 +3,7 @@ part of orange;
 
 
 class Material {
-  Pass pass;
+  String name;
+  Map parameters;
+  Texture texture;
 }

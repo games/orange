@@ -17,8 +17,21 @@ void main() {
   });
   
   
-  renderGltf();
+//  renderGltf();
 //  renderWgl();
+  renderOgre();
+}
+
+renderOgre() {
+  var canvas = html.querySelector("#container");
+  renderer = new Renderer(canvas);
+  renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
+  var url = "http://127.0.0.1:3030/orange/models/ogre/hum_f.json";
+  var loader = new OgreLoader();
+  loader.load(renderer.ctx, url).then((m) {
+    node = m;
+    html.window.requestAnimationFrame(_animate);
+  });
 }
 
 renderGltf() {
@@ -76,7 +89,7 @@ _animate(num elapsed) {
   
   renderer.camera.update(interval);
   renderer.prepare();
-  renderer.draw(node, pass);
+  renderer.draw(node);
 
   _lastElapsed = elapsed;
 }

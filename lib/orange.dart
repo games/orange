@@ -33,9 +33,12 @@ part 'src/sampler.dart';
 part 'src/pass.dart';
 part 'src/light.dart';
 part 'src/material.dart';
+part 'src/geometry.dart';
+part 'src/technique.dart';
 
 part 'src/loaders/wgl_loader.dart';
 part 'src/loaders/gltf_loader.dart';
+part 'src/loaders/ogre_loader.dart';
 
 part 'src/math/matrix4.dart';
 part 'src/math/matrix3.dart';

@@ -48,7 +48,7 @@ class Animation {
     });
   }
   
-  evaluate(int frameId, Node node) {
+  evaluate(int frameId, Mesh node) {
     if(node.skeleton == null)
       return;
     
@@ -60,17 +60,17 @@ class Animation {
         joint.pos = frame.joints[jointId].pos;
         joint.rot = frame.joints[jointId].rot;
       }
-      if(joint.parentId != -1) {
-        var parent = joints[joint.parentId];
-        joint.worldPos = parent.worldRot.multiplyVec3(joint.pos);
-        joint.worldPos = joint.worldPos + parent.worldPos;
-        joint.worldRot = parent.worldRot.clone().multiply(joint.rot);
-      }
-      
-      if(joint.skinned) {
-        joint.jointMat = new Matrix4.identity().fromRotationTranslation(joint.worldRot, joint.worldPos);
-        joint.jointMat.multiply(joint.bindPoseMat);
-      }
+//      if(joint.parentId != -1) {
+//        var parent = joints[joint.parentId];
+//        joint.worldPos = parent.worldRot.multiplyVec3(joint.pos);
+//        joint.worldPos = joint.worldPos + parent.worldPos;
+//        joint.worldRot = parent.worldRot.clone().multiply(joint.rot);
+//      }
+//      
+//      if(joint.skinned) {
+//        joint.jointMat = new Matrix4.identity().fromRotationTranslation(joint.worldRot, joint.worldPos);
+//        joint.jointMat.multiply(joint.bindPoseMat);
+//      }
     });
     
     node.skeleton._dirtyJoints = true;

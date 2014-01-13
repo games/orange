@@ -2,8 +2,6 @@ part of orange;
 
 
 
-
-
 class Pass {
   bool depthTest = true;
   bool depthMask = true;
@@ -20,6 +18,7 @@ class Pass {
     setState(ctx, gl.CULL_FACE, cullFaceEnable);
     setState(ctx, gl.SAMPLE_ALPHA_TO_COVERAGE, true);
     ctx.depthMask(depthMask);
+    ctx.useProgram(shader.program);
   }
   
   setState(gl.RenderingContext ctx, int cap, bool enable) {

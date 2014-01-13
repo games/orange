@@ -2,16 +2,11 @@ part of orange;
 
 
 
-class Mesh {
+class Mesh extends Node {
   String name;
+  Geometry geometry;
+  Float32List bonesAssignments;
+  gl.Buffer faces;
   Material material;
-  Texture diffuse;
-  List<Mesh> subMeshes = [];
-  MeshAttribute indicesAttrib;
-  Map<String, MeshAttribute> attributes;
   Skeleton skeleton;
-  int jointOffset;
-  int jointCount;
-  gl.Buffer vertexBuffer;
-  gl.Buffer indexBuffer;
 }

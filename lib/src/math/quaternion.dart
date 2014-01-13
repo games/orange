@@ -17,8 +17,24 @@ class Quaternion {
     }
   }
   
+  Quaternion.axisAngle(Vector3 axis, double angle) {
+    setAxisAngle(axis, angle);
+  }
+  
   Quaternion.identity() {
     setIdentity();
+  }
+  
+  void setAxisAngle(Vector3 axis, double radians) {
+    double len = axis.length;
+    if (len == 0.0) {
+      return;
+    }
+    double halfSin = math.sin(radians * 0.5) / len;
+    storage[0] = axis.storage[0] * halfSin;
+    storage[1] = axis.storage[1] * halfSin;
+    storage[2] = axis.storage[2] * halfSin;
+    storage[3] = math.cos(radians * 0.5);
   }
   
   Quaternion setFromRotation(Matrix4 m) {

@@ -88,7 +88,13 @@ class Renderer {
     
     if(mesh.faces != null) {
       ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces);
-      ctx.drawElements(gl.TRIANGLES, mesh.geometry.vertexCount, gl.UNSIGNED_SHORT, 0);
+      var m = mesh;
+      while(m.geometry == null && m.parent != null) {
+        m = m.parent;
+      }
+      if(m.geometry != null) {
+        ctx.drawElements(gl.TRIANGLES, m.geometry.vertexCount, gl.UNSIGNED_SHORT, 0);
+      }
     }
     
     mesh.children.forEach((child) => _drawMesh(child, shader));

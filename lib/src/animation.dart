@@ -40,8 +40,8 @@ class Animation {
       var keyframe = new Keyframe();
       frame.forEach((b) {
         var joint = new Joint();
-        joint.pos = new Vector3.fromList(b["pos"]);
-        joint.rot = new Quaternion.fromList(b["rot"]);
+        joint.position = new Vector3.fromList(b["pos"]);
+        joint.rotation = new Quaternion.fromList(b["rot"]);
         keyframe.joints.add(joint);
       });
       keyframes.add(keyframe);
@@ -57,8 +57,8 @@ class Animation {
     joints.forEach((joint) {
       var jointId = jointsIds[joint.name];
       if(jointId != null) {
-        joint.pos = frame.joints[jointId].pos;
-        joint.rot = frame.joints[jointId].rot;
+        joint.position = frame.joints[jointId].position;
+        joint.rotation = frame.joints[jointId].rotation;
       }
 //      if(joint.parentId != -1) {
 //        var parent = joints[joint.parentId];

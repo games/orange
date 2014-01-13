@@ -112,13 +112,13 @@ class WglLoader {
         joint.name = jointDesc["name"];
         joint.parentId = jointDesc["parent"];
         joint.skinned = jointDesc["skinned"];
-        joint.pos = new Vector3.fromList(jointDesc["pos"]);
-        joint.rot = new Quaternion.fromList(jointDesc["rot"]);
+        joint.position = new Vector3.fromList(jointDesc["pos"]);
+        joint.rotation = new Quaternion.fromList(jointDesc["rot"]);
         joint.bindPoseMat = new Matrix4.fromList(jointDesc["bindPoseMat"]);
         joint.jointMat = new Matrix4.identity();
         if(joint.parentId == -1) {
-          joint.worldPos = joint.pos;
-          joint.worldRot = joint.rot;
+          joint.worldPos = joint.position;
+          joint.worldRot = joint.rotation;
         } else {
           joint.worldPos = new Vector3.zero();
           joint.worldRot = new Quaternion.identity();
@@ -150,46 +150,46 @@ class WglLoader {
           subMesh.jointOffset = sv["boneOffset"];
           var offset = sv["indexOffset"] * 2;
           var count = sv["indexCount"];
-          subMesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, offset, count);
+          subMesh.indicesAttrib = new BufferView(2, gl.UNSIGNED_SHORT, 0, offset, count);
 
           var attrib;
           subMesh.attributes = {};
-          attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+          attrib = new BufferView(3, gl.FLOAT, _stride, offset, count);
           subMesh.attributes[Semantics.position] = attrib;
           offset += 12;
           if(_format & ModelVertexFormat.UV > 0) {
-            attrib = new MeshAttribute(2, gl.FLOAT, _stride, offset, count);
+            attrib = new BufferView(2, gl.FLOAT, _stride, offset, count);
             subMesh.attributes[Semantics.texture] = attrib;
             
             offset += 8;
           }
           if(_format & ModelVertexFormat.UV2 > 0) {
-            attrib = new MeshAttribute(2, gl.FLOAT, _stride, offset, count);
+            attrib = new BufferView(2, gl.FLOAT, _stride, offset, count);
             subMesh.attributes[Semantics.texture2] = attrib;
             offset += 8;
           }
           if(_format & ModelVertexFormat.Normal > 0) {
-            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+            attrib = new BufferView(3, gl.FLOAT, _stride, offset, count);
             subMesh.attributes[Semantics.normal] = attrib;
             offset += 12;
           }
           if(_format & ModelVertexFormat.Tangent > 0) {
-            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+            attrib = new BufferView(3, gl.FLOAT, _stride, offset, count);
             subMesh.attributes[Semantics.tangent] = attrib;
             offset += 12;
           }
           if(_format & ModelVertexFormat.Color > 0) {
-            attrib = new MeshAttribute(4, gl.UNSIGNED_BYTE, _stride, offset, count);
+            attrib = new BufferView(4, gl.UNSIGNED_BYTE, _stride, offset, count);
             subMesh.attributes[Semantics.color] = attrib;
             //indexOffset += 4;
           } 
           // TODO: this is a bug. 
           offset += 4;
           if(_format & ModelVertexFormat.BoneWeights > 0) {
-            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset, count);
+            attrib = new BufferView(3, gl.FLOAT, _stride, offset, count);
             subMesh.attributes[Semantics.weights] = attrib;
             
-            attrib = new MeshAttribute(3, gl.FLOAT, _stride, offset + 12, count);
+            attrib = new BufferView(3, gl.FLOAT, _stride, offset + 12, count);
             subMesh.attributes[Semantics.bones] = attrib;
           }
           

@@ -6,16 +6,16 @@ part of orange;
 
 class Node {
   String name;
-  Vector3 pos;
-  Quaternion rot;
+  Vector3 position;
+  Quaternion rotation;
   Matrix4 _localMatrix;
   Matrix4 worldMatrix;
   Node parent;
   List<Node> children;
   
   Node() {
-    pos = new Vector3.zero();
-    rot = new Quaternion.identity();
+    position = new Vector3.zero();
+    rotation = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();
     worldMatrix = new Matrix4.identity();
     children = [];
@@ -40,11 +40,11 @@ class Node {
   
   applyMatrix(Matrix4 m) {
     _localMatrix.multiply(m);
-    m.decompose(pos, rot);
+    _localMatrix.decompose(position, rotation);
   }
   
   updateMatrix() {
-    _localMatrix.fromRotationTranslation(rot, pos);
+    _localMatrix.fromRotationTranslation(rotation, position);
     if(parent != null) {
       worldMatrix = parent._localMatrix * worldMatrix;
     } else {

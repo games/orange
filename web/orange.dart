@@ -24,7 +24,7 @@ void main() {
 
 renderOgre() {
   var canvas = html.querySelector("#container");
-  renderer = new Renderer(canvas);
+  renderer = new Renderer(canvas, true);
   renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
   var url = "http://127.0.0.1:3030/orange/models/ogre/hum_f.json";
   url = "http://127.0.0.1:3030/orange/models/ogre/alric.json";

@@ -58,23 +58,12 @@ class Renderer {
   _drawMesh(Mesh mesh, Shader shader) {
     if(mesh.geometry != null) {
       var geometry = mesh.geometry;
-      shader.attributes.forEach((semantics, attrib) {
-        switch(semantics) {
-          case Semantics.position:
-            ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.positions);
-            ctx.enableVertexAttribArray(attrib.location);
-            ctx.vertexAttribPointer(attrib.location, 3, gl.FLOAT, false, 0, 0);
-            break;
-          case Semantics.normal:
-            ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.normals);
-            ctx.enableVertexAttribArray(attrib.location);
-            ctx.vertexAttribPointer(attrib.location, 3, gl.FLOAT, false, 0, 0);
-            break;
-          case Semantics.texture:
-            ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.textureCoords);
-            ctx.enableVertexAttribArray(attrib.location);
-            ctx.vertexAttribPointer(attrib.location, 2, gl.FLOAT, false, 0, 0);
-            break;
+      shader.attributes.forEach((semantic, attrib) {
+        if(geometry.buffers.containsKey(semantic)) {
+          var bufferView = geometry.buffers[semantic];
+          ctx.bindBuffer(gl.ARRAY_BUFFER, bufferView.buffer);
+          ctx.enableVertexAttribArray(attrib.location);
+          ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
         }
       });
     }
@@ -87,14 +76,8 @@ class Renderer {
     //TODO : handle skeleton
     
     if(mesh.faces != null) {
-      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces);
-      var m = mesh;
-      while(m.geometry == null && m.parent != null) {
-        m = m.parent;
-      }
-      if(m.geometry != null) {
-        ctx.drawElements(gl.TRIANGLES, m.geometry.vertexCount, gl.UNSIGNED_SHORT, 0);
-      }
+      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces.buffer);
+      ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
     }
     
     mesh.children.forEach((child) => _drawMesh(child, shader));

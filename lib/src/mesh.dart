@@ -6,7 +6,7 @@ class Mesh extends Node {
   String name;
   Geometry geometry;
   Float32List bonesAssignments;
-  gl.Buffer faces;
+  BufferView faces;
   Material material;
   Skeleton skeleton;
 }

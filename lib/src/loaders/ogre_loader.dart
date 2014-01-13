@@ -48,20 +48,26 @@ class OgreLoader {
       geometry.vertexCount = geo["vertexcount"].toInt();
       
       // TODO should be merge into one buffer and upload once.
+      
+      geometry.buffers = {};
+      
       var data = new Float32List.fromList(geo["positions"]);
-      geometry.positions = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.positions);
+      var buffer = _ctx.createBuffer();
+      _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
       _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, 0, buffer);
       
       data = new Float32List.fromList(geo["normals"]);
-      geometry.normals = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.normals);
+      buffer = _ctx.createBuffer();
+      _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
       _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, 0, buffer);
       
       data = new Float32List.fromList(geo["texturecoords"]);
-      geometry.textureCoords = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ARRAY_BUFFER, geometry.textureCoords);
+      buffer = _ctx.createBuffer();
+      _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
       _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      geometry.buffers[Semantics.texture] = new BufferView(2, gl.FLOAT, 0, 0, 0, buffer);
       
       mesh.geometry = geometry;
     }
@@ -70,9 +76,10 @@ class OgreLoader {
     }
     if(doc.containsKey("faces")) {
       var data = new Uint16List.fromList(doc["faces"]);
-      mesh.faces = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces);
+      var buffer = _ctx.createBuffer();
+      _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
       _ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, data.length, buffer);
     }
     if(doc.containsKey("skeleton")) {
       var skeleton = new Skeleton();
@@ -86,9 +93,9 @@ class OgreLoader {
           joint.parentId = -1;
         }
         joint.name = j["name"];
-        joint.pos = new Vector3.fromList(j["position"]);
+        joint.position = new Vector3.fromList(j["position"]);
         var rot = j["rotation"];
-        joint.rot = new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"]);
+        joint.rotation = new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"]);
         skeleton.joints.add(joint);
       });
     }

@@ -148,7 +148,7 @@ class GltfLoader {
         var material = _resources[p["material"]];
         textureManager.load(_ctx,  material["diffuse"]).then((t) => submesh.diffuse = t);
         
-        submesh.indicesAttrib = new MeshAttribute(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], indicesAttrib["count"]);
+        submesh.indicesAttrib = new BufferView(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], indicesAttrib["count"]);
         
         submesh.attributes = {};
         attributes.forEach((ak, av) {
@@ -156,7 +156,7 @@ class GltfLoader {
           var bufferView = _resources[accessor["bufferView"]];
           var byteOffset = accessor["byteOffset"];
           var size = accessor["byteStride"] ~/ 4;
-          submesh.attributes[_convertSemantics(ak)] = new MeshAttribute(size, gl.FLOAT, 0, byteOffset);
+          submesh.attributes[_convertSemantics(ak)] = new BufferView(size, gl.FLOAT, 0, byteOffset);
           
           if(ak == "WEIGHT") {
             var view = new Float32List.view(bufferView["data"].buffer, byteOffset, indicesAttrib["count"]);

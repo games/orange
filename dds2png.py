@@ -5,7 +5,7 @@ import pyglet
 
 
 def convert():
-	filename = '/Users/z/workspace/github/orange/models/ogre/alric.dds'
+	filename = '/Users/z/workspace/github/orange/models/ogre/NPC_HUF_TOWN_01.dds'
 	texture = pyglet.image.load(filename)
 	texture.get_texture().save(filename.replace('.dds', '.png'))
 

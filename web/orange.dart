@@ -8,7 +8,7 @@ import 'dart:async';
 double _lastElapsed = 0.0;
 Renderer renderer;
 Pass pass;
-Node node;
+List<Mesh> meshes = [];
 Animation animation;
 
 void main() {
@@ -30,10 +30,22 @@ renderOgre() {
   url = "http://127.0.0.1:3030/orange/models/ogre/alric.json";
   var loader = new OgreLoader();
   loader.load(renderer.ctx, url).then((m) {
-    node = m;
+    m.position.setValues(-1.0, 0.0, 0.0);
+    meshes.add(m);
     html.window.requestAnimationFrame(_animate);
   });
+  
+  loader = new OgreLoader();
+  loader.load(renderer.ctx, "http://127.0.0.1:3030/orange/models/ogre/hum_f.json").then((m) {
+    m.position.setValues(1.0, 0.0, 0.0);
+    meshes.add(m);
+  });
+  
 }
+
+
+
+
 
 renderGltf() {
   var canvas = html.querySelector("#container");
@@ -50,7 +62,7 @@ renderGltf() {
   
   var loader = new GltfLoader();
   loader.load(renderer.ctx, url).then((m) {
-    node = m;
+    meshes.add(m);
     html.window.requestAnimationFrame(_animate);
   });
 }
@@ -69,13 +81,13 @@ renderWgl() {
   
   var loader = new WglLoader();
   loader.load(renderer.ctx, url).then((m) {
-    node = m;
+    meshes.add(m);
     animation = new Animation();
     animation.load("http://127.0.0.1:3030/orange/models/model/run_forward").then((_) {
       var frameId = 0;
       var frameTime = 1000 ~/ animation.frameRate;
       new Timer.periodic(new Duration(milliseconds: frameTime), (t) {
-        animation.evaluate(frameId % animation.frameCount, node);
+        animation.evaluate(frameId % animation.frameCount, meshes.first);
         frameId++;
       });
     });
@@ -90,7 +102,7 @@ _animate(num elapsed) {
   
   renderer.camera.update(interval);
   renderer.prepare();
-  renderer.draw(node);
+  meshes.forEach((m) => renderer.draw(m));
 
   _lastElapsed = elapsed;
 }

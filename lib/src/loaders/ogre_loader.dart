@@ -93,7 +93,7 @@ class OgreLoader {
       });
     }
     if(doc.containsKey("submeshes")) {
-      doc["submeshes"].forEach((submesh) => mesh.children.add(_parseMesh(submesh)));
+      doc["submeshes"].forEach((submesh) => mesh.add(_parseMesh(submesh)));
     }
     return mesh;
   }

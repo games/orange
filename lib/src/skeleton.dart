@@ -10,7 +10,7 @@ class Skeleton {
   Float32List jointMatrices;
   bool _dirtyJoints = true;
   
-  updateHierarchy() {
+  buildHierarchy() {
     roots = [];
     joints.forEach((joint) {
       if(joint.parentId == -1) {
@@ -19,19 +19,20 @@ class Skeleton {
         joints[joint.parentId].add(joint);
       }
     });
+    roots.forEach((joint) => joint.updateMatrix());
   }
   
   updateMatrix() {
     if(_dirtyJoints) {
       if(jointMatrices == null) {
-        jointMatrices = new Float32List(MAX_BONES_PER_MESH * 16);
+        jointMatrices = new Float32List(MAX_JOINTS_PER_MESH * 16);
       }
       roots.forEach((joint) => joint.updateMatrix());
       for(var i = 0; i < joints.length; i++) {
         var joint = joints[i];
-        var len = joint.worldMatrix.storage.length;
-        for(var j = 0; j < len; j++) {
-          jointMatrices[i * 16 + j] = joint.worldMatrix[j];
+        var mat = joint.inverseBindMatrix * joint.worldMatrix;
+        for(var j = 0; j < 16; j++) {
+          jointMatrices[i * 16 + j] = mat[j];
         }
       }
       _dirtyJoints = false;

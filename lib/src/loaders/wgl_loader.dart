@@ -104,7 +104,7 @@ class WglLoader {
 
     if(_skinned) {
       _node.skeleton = new Skeleton();
-      _node.skeleton.jointMatrices = new Float32List(16 * MAX_BONES_PER_MESH);
+      _node.skeleton.jointMatrices = new Float32List(16 * MAX_JOINTS_PER_MESH);
       _node.skeleton.joints = [];
       var jointsDesc = or(description["bones"], []);
       jointsDesc.forEach((jointDesc) {
@@ -190,7 +190,7 @@ class WglLoader {
             subMesh.attributes[Semantics.weights] = attrib;
             
             attrib = new BufferView(3, gl.FLOAT, _stride, offset + 12, count);
-            subMesh.attributes[Semantics.bones] = attrib;
+            subMesh.attributes[Semantics.joints] = attrib;
           }
           
           mesh.subMeshes.add(subMesh);

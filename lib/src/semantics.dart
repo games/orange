@@ -27,7 +27,7 @@ class Semantics {
   static const String tangent = "tangent";
   static const String color = "color";
   static const String weights = "weights";
-  static const String bones = "bones";
+  static const String joints = "joints";
   
   static const String emissive = "emissive";
   static const String specular = "specular";

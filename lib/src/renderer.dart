@@ -53,6 +53,8 @@ class Renderer {
     ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
     
     _drawMesh(mesh, shader);
+    
+    // TODO : should be disable all attributes and uniforms in the end draw.
   }
   
   _drawMesh(Mesh mesh, Shader shader) {
@@ -72,19 +74,15 @@ class Renderer {
       ctx.bindTexture(mesh.material.texture.target, mesh.material.texture.data);
       ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
     }
-    
-    //TODO : handle skeleton
     if(mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();
       var boneMat = mesh.skeleton.jointMatrices;
-      ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, boneMat);
+      ctx.uniformMatrix4fv(shader.uniforms["jointMat"].location, false, boneMat);
     }
-    
     if(mesh.faces != null) {
       ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces.buffer);
       ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
     }
-    
     mesh.children.forEach((child) => _drawMesh(child, shader));
   }
   

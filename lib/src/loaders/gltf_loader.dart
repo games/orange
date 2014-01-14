@@ -331,7 +331,7 @@ String _convertSemantics(String name) {
     "POSITION": Semantics.position,
     "TEXCOORD_0": Semantics.texture,
     "WEIGHT": Semantics.weights,
-    "JOINT": Semantics.bones,
+    "JOINT": Semantics.joints,
   }[name];
 }
 

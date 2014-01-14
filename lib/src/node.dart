@@ -46,7 +46,7 @@ class Node {
   updateMatrix() {
     _localMatrix.fromRotationTranslation(rotation, position);
     if(parent != null) {
-      worldMatrix = parent._localMatrix * worldMatrix;
+      worldMatrix = parent.worldMatrix * _localMatrix;
     } else {
       worldMatrix = _localMatrix.clone();
     }

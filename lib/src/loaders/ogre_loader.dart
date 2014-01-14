@@ -46,29 +46,15 @@ class OgreLoader {
       var geo = doc["geometry"];
       var geometry = new Geometry();
       geometry.vertexCount = geo["vertexcount"].toInt();
-      
       // TODO should be merge into one buffer and upload once.
-      
       geometry.buffers = {};
-      
-      var data = new Float32List.fromList(geo["positions"]);
-      var buffer = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-      geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, 0, buffer);
-      
-      data = new Float32List.fromList(geo["normals"]);
-      buffer = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-      geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, 0, buffer);
-      
-      data = new Float32List.fromList(geo["texturecoords"]);
-      buffer = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-      geometry.buffers[Semantics.texture] = new BufferView(2, gl.FLOAT, 0, 0, 0, buffer);
-      
+      geometry.buffers[Semantics.position] = _createBufferView(new Float32List.fromList(geo["positions"]), 3, gl.FLOAT);
+      geometry.buffers[Semantics.normal] = _createBufferView(new Float32List.fromList(geo["normals"]), 3, gl.FLOAT);
+      geometry.buffers[Semantics.texture] = _createBufferView(new Float32List.fromList(geo["texturecoords"]), 2, gl.FLOAT);
+      if(doc.containsKey("jointindices") && doc.containsKey("jointweights")) {
+        geometry.buffers[Semantics.bones] = _createBufferView(new Uint16List.fromList(doc["jointindices"]), 4, gl.UNSIGNED_SHORT);
+        geometry.buffers[Semantics.weights] = _createBufferView(new Float32List.fromList(doc["jointweights"]), 4, gl.FLOAT);
+      }
       mesh.geometry = geometry;
     }
     if(doc.containsKey("material")) {
@@ -98,11 +84,20 @@ class OgreLoader {
         joint.rotation = new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"]);
         skeleton.joints.add(joint);
       });
+      skeleton.updateHierarchy();
     }
+    
     if(doc.containsKey("submeshes")) {
       doc["submeshes"].forEach((submesh) => mesh.add(_parseMesh(submesh)));
     }
     return mesh;
+  }
+  
+  _createBufferView(TypedData data, int size, int type) {
+    var buffer = _ctx.createBuffer();
+    _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    return new BufferView(size, type, 0, 0, 0, buffer);
   }
 }
 

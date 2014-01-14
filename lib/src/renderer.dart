@@ -27,7 +27,7 @@ class Renderer {
     }
     
     pass = new Pass();
-    pass.shader = new Shader(ctx, modelVS, modelFS);
+    pass.shader = new Shader(ctx, skinnedModelVS, skinnedModelFS);
   }
   
   resize() {
@@ -74,6 +74,11 @@ class Renderer {
     }
     
     //TODO : handle skeleton
+    if(mesh.skeleton != null) {
+      mesh.skeleton.updateMatrix();
+      var boneMat = mesh.skeleton.jointMatrices;
+      ctx.uniformMatrix4fv(shader.uniforms["boneMat"].location, false, boneMat);
+    }
     
     if(mesh.faces != null) {
       ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces.buffer);

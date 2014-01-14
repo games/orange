@@ -59,41 +59,6 @@ void main(void) {
 """;
 
 
-const String lightmapVS = """
-precision highp float;
-attribute vec3 position;
-attribute vec2 texture;
-attribute vec2 texture2;
-uniform mat4 viewMat;
-uniform mat4 modelMat;
-uniform mat4 projectionMat;
-uniform vec2 lightmapScale;
-uniform vec2 lightmapOffset;
-varying vec2 vTexCoord;
-varying vec2 vLightCoord;
-void main(void) {
- mat4 modelViewMat = viewMat * modelMat;
- vec4 vPosition = modelViewMat * vec4(position, 1.0);
- gl_Position = projectionMat * vPosition;
- vTexCoord = texture;
- vLightCoord = texture2 * lightmapScale + lightmapOffset;
-}
-""";
-
-
-const String lightmapFS = """
-precision highp float;
-uniform sampler2D diffuse;
-uniform sampler2D lightmap;
-varying vec2 vTexCoord;
-varying vec2 vLightCoord;
-void main(void) {
- vec4 color = texture2D(diffuse, vTexCoord);
- vec4 lightValue = texture2D(lightmap, vLightCoord);
- float brightness = 9.0;
- gl_FragColor = vec4(color.rgb * lightValue.rgb * (lightValue.a * brightness), 1.0);
-}
-""";
 
 const int MAX_BONES_PER_MESH = 60;
 

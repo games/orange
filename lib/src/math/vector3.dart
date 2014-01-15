@@ -47,16 +47,49 @@ class Vector3 {
     return x * x + y * y + z * z;
   }
   
+  Vector3 add(Vector3 arg) {
+    storage[0] = storage[0] + arg.storage[0];
+    storage[1] = storage[1] + arg.storage[1];
+    storage[2] = storage[2] + arg.storage[2];
+    return this;
+  }
+  
   double operator[](int i) => storage[i];
   void operator[]=(int i, double v) {
     storage[i] = v;
   }
   
-  Vector3 operator+(Vector3 other) => new Vector3(storage[0] + other.storage[0],
-      storage[1] + other.storage[1],
-      storage[2] + other.storage[2]);
+  Vector3 operator+(Vector3 other) => clone().add(other);
   
   toString() {
     return "vec3($x, $y, $z)";
   }
 }
+
+
+
+
+/**
+ * Performs a linear interpolation between two vec3's
+ *
+ * @param {vec3} a the first operand
+ * @param {vec3} b the second operand
+ * @param {Number} t interpolation amount between the two inputs
+ * @returns {vec3} out
+ */
+lerp (Vector3 a, Vector3 b, double t) {
+  var out = new Vector3.zero();
+  var ax = a[0],
+      ay = a[1],
+      az = a[2];
+  out[0] = ax + t * (b[0] - ax);
+  out[1] = ay + t * (b[1] - ay);
+  out[2] = az + t * (b[2] - az);
+  return out;
+}
+
+
+
+
+
+

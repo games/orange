@@ -76,8 +76,8 @@ class Renderer {
     }
     if(mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();
-      var boneMat = mesh.skeleton.jointMatrices;
-      ctx.uniformMatrix4fv(shader.uniforms["jointMat"].location, false, boneMat);
+      var jointMat = mesh.skeleton.jointMatrices;
+      ctx.uniformMatrix4fv(shader.uniforms["jointMat"].location, false, jointMat);
     }
     if(mesh.faces != null) {
       ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces.buffer);

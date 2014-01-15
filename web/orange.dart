@@ -52,7 +52,7 @@ _animate(num elapsed) {
   stats.begin();
   
   if(animator != null) {
-    meshes.forEach((m) => animator.evaluate(m));
+    meshes.forEach((m) => animator.evaluate(m, interval));
   }
   
   renderer.camera.update(interval);

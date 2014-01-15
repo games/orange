@@ -32,7 +32,7 @@ class Parser {
     animation.tracks = [];
     doc["tracks"].forEach((t) {
       var track = new Track();
-      track.jointName = t["joint"];
+      track.jointId = t["joint"];
       track.keyframes = [];
       t["keyframes"].forEach((k) {
         var keyframe = new Keyframe();

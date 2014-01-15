@@ -780,8 +780,10 @@ class Matrix4 {
     storage[i] = v;
   }
   
-  Matrix4 operator*(Matrix4 mat) {
-    return clone().multiply(mat);
+  operator*(dynamic a) {
+    if(a is Vector3) 
+      return multiplyVector3(a);
+    return clone().multiply(a);
   }
   
   void copyIntoArray(List<num> array, [int offset=0]) {

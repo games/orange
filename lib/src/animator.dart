@@ -8,6 +8,7 @@ class Animator {
   Skeleton skeleton;
   Animation animation;
   
+  int frameId = 0;
   
   int version;
   int frameRate = 0;
@@ -43,7 +44,7 @@ class Animator {
 //    });
 //  }
   
-  evaluate(Mesh mesh) {
+  evaluate(Mesh mesh, double interval) {
 //    if(node.skeleton == null)
 //      return;
 //    
@@ -71,10 +72,39 @@ class Animator {
 //    node.skeleton._dirtyJoints = true;
     
     mesh.skeleton = skeleton;
+    
+    duration += interval * 0.001;
+    duration = duration % animation.length;
+    var frame = animation.length ~/ duration;
+    animation.tracks.forEach((track) {
+      var joint = mesh.skeleton.joints[track.jointId];
+      var startframe, endframe;
+      for(var i = 0; i < track.keyframes.length - 1; i++) {
+        startframe = track.keyframes[i];
+        endframe = track.keyframes[i + 1];
+        if (startframe.time <= duration && endframe.time >= duration) {
+          break;
+        }
+      }
+      var percent = (duration - startframe.time) / (endframe.time - startframe.time);
+      var pos = lerp(startframe.translate, endframe.translate, percent);
+      var rot = slerp(startframe.rotate, endframe.rotate, percent);
+     
+//      joint.rotation = rot.multiply(joint.originRot);
+      joint.position = pos + joint.originPos;
+      
+//      if(joint.parent != null) {
+//        var parent = joint.parent;
+//        joint.worldPos = parent.worldRot.multiplyVec3(joint.position);
+//        joint.worldPos = joint.worldPos + parent.worldPos;
+//        joint.worldRot = parent.worldRot.clone().multiply(joint.rotation);
+//      }
+
+      
+//      joint.position = joint.bindPostMatrix * lerp(startframe.translate, endframe.translate, percent);
+//      joint.rotation = joint.bindPostMatrix * slerp(startframe.rotate, endframe.rotate, percent);
+    });
     mesh.skeleton._dirtyJoints = true;
-    
-    
-    
   }
 }
 

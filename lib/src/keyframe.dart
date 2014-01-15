@@ -3,5 +3,7 @@ part of orange;
 
 
 class Keyframe {
-  List<Joint> joints = [];
+  double time;
+  Quaternion rotate;
+  Vector3 translate;
 }

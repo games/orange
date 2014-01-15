@@ -9,7 +9,7 @@ double _lastElapsed = 0.0;
 Renderer renderer;
 Pass pass;
 List<Mesh> meshes = [];
-Animation animation;
+Animator animator;
 Stats stats;
 
 void main() {
@@ -34,18 +34,26 @@ renderOgre() {
     html.window.requestAnimationFrame(_animate);
   });
   
-  loader = new OgreLoader();
-  loader.load(renderer.ctx, "http://127.0.0.1:3030/orange/models/ogre/boss_sturm.json").then((m) {
-    m.position.setValues(2.0, 0.0, 0.0);
-    meshes.add(m);
-  });
+//  loader = new OgreLoader();
+//  loader.load(renderer.ctx, "http://127.0.0.1:3030/orange/models/ogre/boss_sturm.json").then((m) {
+//    m.position.setValues(2.0, 0.0, 0.0);
+//    meshes.add(m);
+//  });
   
+  var al = new AnimatorLoader();
+  al.load("http://127.0.0.1:3030/orange/models/ogre/run.json").then((a) {
+    animator = a;
+  });
 }
 
 
 _animate(num elapsed) {
   var interval = elapsed - _lastElapsed;
   stats.begin();
+  
+  if(animator != null) {
+    meshes.forEach((m) => animator.evaluate(m));
+  }
   
   renderer.camera.update(interval);
   renderer.prepare();

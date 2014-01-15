@@ -68,24 +68,7 @@ class OgreLoader {
       mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, data.length, buffer);
     }
     if(doc.containsKey("skeleton")) {
-      var skeleton = new Skeleton();
-      skeleton.joints = [];
-      doc["skeleton"]["joints"].forEach((j) {
-        var joint = new Joint();
-        joint.id = j["id"];
-        if(j.containsKey("parent")) {
-          joint.parentId = j["parent"];
-        } else {
-          joint.parentId = -1;
-        }
-        joint.name = j["name"];
-        joint.position = new Vector3.fromList(j["position"]);
-        var rot = j["rotation"];
-        joint.rotation = new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"]);
-        skeleton.joints.add(joint);
-      });
-      skeleton.buildHierarchy();
-      mesh.skeleton = skeleton;
+      mesh.skeleton = Parser.parseSkeleton(doc["skeleton"]);
     }
     
     if(doc.containsKey("submeshes")) {

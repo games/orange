@@ -23,7 +23,7 @@ part 'src/mesh.dart';
 part 'src/renderer.dart';
 part 'src/built_in_shaders.dart';
 part 'src/joint.dart';
-part 'src/animation.dart';
+part 'src/animator.dart';
 part 'src/keyframe.dart';
 part 'src/buffer_view.dart';
 part 'src/skeleton.dart';
@@ -34,10 +34,14 @@ part 'src/light.dart';
 part 'src/material.dart';
 part 'src/geometry.dart';
 part 'src/technique.dart';
+part 'src/animation.dart';
+part 'src/track.dart';
 
 part 'src/loaders/wgl_loader.dart';
 part 'src/loaders/gltf_loader.dart';
 part 'src/loaders/ogre_loader.dart';
+part 'src/loaders/animator_loader.dart';
+part 'src/loaders/parser.dart';
 
 part 'src/math/matrix4.dart';
 part 'src/math/matrix3.dart';

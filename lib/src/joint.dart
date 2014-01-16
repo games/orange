@@ -18,7 +18,7 @@ class Joint extends Node {
       originRot = rotation;
     }
     if(bindPoseMatrix == null) {
-      bindPoseMatrix = _localMatrix;
+      bindPoseMatrix = _localMatrix.clone();
     }
     if(inverseBindMatrix == null) {
       inverseBindMatrix = worldMatrix.clone();

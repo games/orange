@@ -5,7 +5,7 @@ part of orange;
 class Joint extends Node {
   int id;
   int parentId;
-  Matrix4 bindPostMatrix;
+  Matrix4 bindPoseMatrix;
   Matrix4 inverseBindMatrix;
   
   Vector3 originPos;
@@ -17,11 +17,11 @@ class Joint extends Node {
       originPos = position;
       originRot = rotation;
     }
-    if(bindPostMatrix == null) {
-      bindPostMatrix = worldMatrix;
+    if(bindPoseMatrix == null) {
+      bindPoseMatrix = _localMatrix;
     }
     if(inverseBindMatrix == null) {
-      inverseBindMatrix = bindPostMatrix.clone();
+      inverseBindMatrix = worldMatrix.clone();
       inverseBindMatrix.invert();
     }
   }

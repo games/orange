@@ -8,6 +8,7 @@ class Renderer {
   double fov;
   Matrix4 projectionMatrix;
   Pass pass;
+  Color backgroundColor = new Color.fromHex(0x84A6EE);
   
   Renderer(html.CanvasElement canvas, [bool flipTexture = false]) {
     this.canvas = canvas;
@@ -18,10 +19,8 @@ class Renderer {
     fov = 45.0;
     projectionMatrix = new Matrix4.perspective(fov, canvas.width / canvas.height, 1.0, 4096.0);
     
-    ctx.clearColor(0.0, 0.0, 0.2, 1.0);
+    ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
     ctx.clearDepth(1.0);
-    ctx.enable(gl.DEPTH_TEST);
-    ctx.enable(gl.CULL_FACE);
     if(flipTexture) {
       ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     }

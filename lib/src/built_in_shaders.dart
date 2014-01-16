@@ -124,7 +124,7 @@ void main(void) {
  float shininess = 8.0;
  vec3 specularColor = vec3(1.0, 1.0, 1.0);
  vec3 lightColor = vec3(1.0, 1.0, 1.0);
- vec3 ambientLight = vec3(0.15, 0.15, 0.15);
+ vec3 ambientLight = vec3(0.3, 0.3, 0.3);
 
  vec4 color = texture2D(diffuse, vTexture);
  vec3 normal = normalize(vNormal);

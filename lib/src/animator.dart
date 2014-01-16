@@ -75,23 +75,73 @@ class Animator {
     
     duration += interval * 0.001;
     duration = duration % animation.length;
-    var frame = animation.length ~/ duration;
+    
     animation.tracks.forEach((track) {
       var joint = mesh.skeleton.joints[track.jointId];
-      var startframe, endframe;
-      for(var i = 0; i < track.keyframes.length - 1; i++) {
+      var startframe, endframe, i;
+      for(i = 0; i < track.keyframes.length - 1; i++) {
         startframe = track.keyframes[i];
         endframe = track.keyframes[i + 1];
-        if (startframe.time <= duration && endframe.time >= duration) {
+        if (endframe.time >= duration) {
           break;
         }
       }
-      var percent = (duration - startframe.time) / (endframe.time - startframe.time);
+      
+      i = 3;
+      startframe = track.keyframes[i];
+      endframe = track.keyframes[i + 1];
+      
+      var percent = 0.0;//(duration - startframe.time) / (endframe.time - startframe.time);
       var pos = lerp(startframe.translate, endframe.translate, percent);
       var rot = slerp(startframe.rotate, endframe.rotate, percent);
+      
+      joint._needsUpdateLocalMatrix = false;
+      joint._localMatrix = joint.bindPoseMatrix * new Matrix4.zero().fromRotationTranslation(rot, pos);
+      
+      
+      
+      
      
-//      joint.rotation = rot.multiply(joint.originRot);
-      joint.position = pos + joint.originPos;
+//      joint.rotation = rot.clone().multiply(joint.originRot);
+//      joint.position = joint.originPos + rot.multiplyVec3(pos);
+//      joint.rotation = joint.originRot.clone().multiply(rot);
+//      joint.position = joint.originPos + pos;
+      
+//      if(joint.parent != null) {
+//        var parent = joint.parent;
+//        joint.position = parent.rotation.multiplyVec3(pos);
+//        joint.position = joint.position + parent.position;
+//        joint.rotation = parent.rotation.clone().multiply(rot);
+//      }
+      
+      
+      
+//      joint.rotation = joint.originRot.clone();
+//      joint.position = joint.originPos.clone();
+//      
+//      for(i = 0; i < track.keyframes.length - 1; i++) {
+//        startframe = track.keyframes[i];
+//        endframe = track.keyframes[i + 1];
+//        
+//        var percent = (duration - startframe.time) / (endframe.time - startframe.time);
+//        var pos = lerp(startframe.translate, endframe.translate, percent);
+//        var rot = slerp(startframe.rotate, endframe.rotate, percent);
+//        joint.rotation.multiply(rot);
+////        joint.position.add(pos);
+//        if(duration < endframe.time) {
+//          break;
+//        }
+//      }
+      
+      
+//      joint.rotation = startframe.rotate.clone().multiply(joint.originRot);
+//      joint.position = startframe.translate.clone().add(joint.originPos);
+      
+//      joint._dirtyLocalMatrix = false;
+//      joint._localMatrix = joint.bindPoseMatrix.clone();
+//      joint._localMatrix.translate(pos);
+//      joint._localMatrix.rotate(rot.radians, rot.axis);
+      
       
 //      if(joint.parent != null) {
 //        var parent = joint.parent;

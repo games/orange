@@ -147,6 +147,13 @@ class Quaternion {
     return this;
   }
   
+  double get radians => 2.0 * math.acos(storage[3]);
+
+  Vector3 get axis {
+      double scale = 1.0 / (1.0 - (storage[3] * storage[3]));
+      return new Vector3(storage[0] * scale, storage[1] * scale, storage[2] * scale);
+  }
+  
   Quaternion operator+(Quaternion other) => clone().add(other);
   
   double operator[](int i) => storage[i];

@@ -12,11 +12,13 @@ class Node {
   Matrix4 worldMatrix;
   Node parent;
   List<Node> children;
+  bool _needsUpdateLocalMatrix;
   
   Node() {
     position = new Vector3.zero();
     rotation = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();
+    _needsUpdateLocalMatrix = true;
     worldMatrix = new Matrix4.identity();
     children = [];
   }
@@ -41,10 +43,13 @@ class Node {
   applyMatrix(Matrix4 m) {
     _localMatrix.multiply(m);
     _localMatrix.decompose(position, rotation);
+    _needsUpdateLocalMatrix = true;
   }
   
   updateMatrix() {
-    _localMatrix.fromRotationTranslation(rotation, position);
+    if(_needsUpdateLocalMatrix) {
+      _localMatrix.fromRotationTranslation(rotation, position);
+    }
     if(parent != null) {
       worldMatrix = parent.worldMatrix * _localMatrix;
     } else {

@@ -28,7 +28,7 @@ class Skeleton {
       roots.forEach((joint) => joint.updateMatrix());
       for(var i = 0; i < joints.length; i++) {
         var joint = joints[i];
-        var mat = joint.worldMatrix * joint.inverseBindMatrix;
+        var mat = joint.worldMatrix * joint._inverseBindMatrix;
         for(var j = 0; j < 16; j++) {
           jointMatrices[i * 16 + j] = mat[j];
         }

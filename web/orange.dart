@@ -25,7 +25,7 @@ void main() {
 renderOgre() {
   var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas);
-  renderer.camera.center = new Vector3(0.0, -1.0, -0.0);
+  renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
   var url = "http://127.0.0.1:3030/orange/models/ogre/alric.json";
   var loader = new OgreLoader();
   loader.load(renderer.ctx, url).then((m) {
@@ -33,15 +33,9 @@ renderOgre() {
     meshes.add(m);
     html.window.requestAnimationFrame(_animate);
   });
-  
-//  loader = new OgreLoader();
-//  loader.load(renderer.ctx, "http://127.0.0.1:3030/orange/models/ogre/boss_sturm.json").then((m) {
-//    m.position.setValues(2.0, 0.0, 0.0);
-//    meshes.add(m);
-//  });
-  
+
   var al = new AnimatorLoader();
-  al.load("http://127.0.0.1:3030/orange/models/ogre/die.json").then((a) {
+  al.load("http://127.0.0.1:3030/orange/models/ogre/special_summon.json").then((a) {
     animator = a;
   });
 }

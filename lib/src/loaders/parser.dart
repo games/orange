@@ -17,8 +17,7 @@ class Parser {
       }
       joint.name = j["name"];
       joint.position = new Vector3.fromList(j["position"]);
-      var rot = j["rotation"];
-      joint.rotation = parseRotation(rot);
+      joint.rotation = parseRotation(j["rotation"]);
       skeleton.joints.add(joint);
     });
     skeleton.buildHierarchy();
@@ -36,7 +35,7 @@ class Parser {
       track.keyframes = [];
       t["keyframes"].forEach((k) {
         var keyframe = new Keyframe();
-        keyframe.time = k["time"];
+        keyframe.time = k["time"].toDouble();
         keyframe.rotate = parseRotation(k["rotate"]);
         keyframe.translate = new Vector3.fromList(k["translate"]);
         track.keyframes.add(keyframe);
@@ -46,7 +45,7 @@ class Parser {
     return animation;
   }
   
-  static parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"]);
+  static parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"].toDouble());
   
 }
 

@@ -9,6 +9,7 @@ class AnimationController {
   Skeleton skeleton;
   Animation animation;
   double _duration = 0.0;
+  Matrix4 _emptyMatrix = new Matrix4.zero();
   
   evaluate(Mesh mesh, double interval) {
     mesh.skeleton = skeleton;
@@ -32,7 +33,7 @@ class AnimationController {
       var rot = slerp(startframe.rotate, endframe.rotate, percent);
       
       joint._needsUpdateLocalMatrix = false;
-      joint._localMatrix = joint.bindPoseMatrix * new Matrix4.zero().fromRotationTranslation(rot, pos);
+      joint._localMatrix = joint._bindPoseMatrix * _emptyMatrix.fromRotationTranslation(rot, pos);
     });
     mesh.skeleton._dirtyJoints = true;
   }

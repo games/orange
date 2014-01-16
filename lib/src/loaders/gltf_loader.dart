@@ -303,7 +303,7 @@ class GltfLoader {
         // IBMi: inverse bind matrix of joint i
         // JMi: joint matrix of joint i
         // JW: joint weight/influence of joint i on vertex v
-        joint.inverseBindMatrix = inverseBindMatrix;
+        joint._inverseBindMatrix = inverseBindMatrix;
         joint.jointMat = inverseBindMatrix;
       }
     }

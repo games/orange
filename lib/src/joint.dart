@@ -5,24 +5,17 @@ part of orange;
 class Joint extends Node {
   int id;
   int parentId;
-  Matrix4 bindPoseMatrix;
-  Matrix4 inverseBindMatrix;
-  
-  Vector3 originPos;
-  Quaternion originRot;
+  Matrix4 _bindPoseMatrix;
+  Matrix4 _inverseBindMatrix;
   
   updateMatrix() {
     super.updateMatrix();
-    if(originPos == null) {
-      originPos = position;
-      originRot = rotation;
+    if(_bindPoseMatrix == null) {
+      _bindPoseMatrix = _localMatrix.clone();
     }
-    if(bindPoseMatrix == null) {
-      bindPoseMatrix = _localMatrix.clone();
-    }
-    if(inverseBindMatrix == null) {
-      inverseBindMatrix = worldMatrix.clone();
-      inverseBindMatrix.invert();
+    if(_inverseBindMatrix == null) {
+      _inverseBindMatrix = worldMatrix.clone();
+      _inverseBindMatrix.invert();
     }
   }
 }

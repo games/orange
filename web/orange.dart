@@ -9,7 +9,7 @@ double _lastElapsed = 0.0;
 Renderer renderer;
 Pass pass;
 List<Mesh> meshes = [];
-Animator animator;
+AnimationController animator;
 Stats stats;
 
 void main() {
@@ -41,7 +41,7 @@ renderOgre() {
 //  });
   
   var al = new AnimatorLoader();
-  al.load("http://127.0.0.1:3030/orange/models/ogre/run.json").then((a) {
+  al.load("http://127.0.0.1:3030/orange/models/ogre/die.json").then((a) {
     animator = a;
   });
 }

@@ -2,7 +2,7 @@ part of orange;
 
 
 
-class Animator {
+class AnimationController {
   int version;
   
   String name;

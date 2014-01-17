@@ -24,7 +24,7 @@ part 'src/mesh.dart';
 part 'src/renderer.dart';
 part 'src/built_in_shaders.dart';
 part 'src/joint.dart';
-part 'src/animation_controller.dart';
+part 'src/animator.dart';
 part 'src/keyframe.dart';
 part 'src/buffer_view.dart';
 part 'src/skeleton.dart';

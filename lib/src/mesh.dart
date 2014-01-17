@@ -8,4 +8,5 @@ class Mesh extends Node {
   BufferView faces;
   Material material;
   Skeleton skeleton;
+  Animator animator;
 }

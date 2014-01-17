@@ -9,7 +9,6 @@ double _lastElapsed = 0.0;
 Renderer renderer;
 Pass pass;
 List<Mesh> meshes = [];
-AnimationController animator;
 Stats stats;
 
 void main() {
@@ -26,17 +25,13 @@ renderOgre() {
   var canvas = html.querySelector("#container");
   renderer = new Renderer(canvas);
   renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
-  var url = "http://127.0.0.1:3030/orange/models/ogre/alric.json";
+  var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
   var loader = new OgreLoader();
   loader.load(renderer.ctx, url).then((m) {
     m.position.setValues(0.0, 0.0, 0.0);
+    m.animator.switchAnimation("Die");
     meshes.add(m);
     html.window.requestAnimationFrame(_animate);
-  });
-
-  var al = new AnimatorLoader();
-  al.load("http://127.0.0.1:3030/orange/models/ogre/idle.json").then((a) {
-    animator = a;
   });
 }
 
@@ -45,9 +40,10 @@ _animate(num elapsed) {
   var interval = elapsed - _lastElapsed;
   stats.begin();
   
-  if(animator != null) {
-    meshes.forEach((m) => animator.evaluate(m, interval));
-  }
+  meshes.forEach((m){
+   if(m.animator != null) 
+     m.animator.evaluate(interval); 
+  });
   
   renderer.camera.update(interval);
   renderer.prepare();

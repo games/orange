@@ -4,7 +4,7 @@ part of orange;
 
 class Parser {
   
-  static parseSkeleton(Map doc) {
+  static Skeleton parseSkeleton(Map doc) {
     var skeleton = new Skeleton();
     skeleton.joints = [];
     doc["joints"].forEach((j) {
@@ -24,7 +24,7 @@ class Parser {
     return skeleton;
   }
   
-  static parseAnimation(Map doc) {
+  static Animation parseAnimation(Map doc) {
     var animation = new Animation();
     animation.name = doc["name"];
     animation.length = doc["length"].toDouble();
@@ -42,6 +42,7 @@ class Parser {
       });
       animation.tracks.add(track);
     });
+    animation.skeleton = parseSkeleton(doc);
     return animation;
   }
   

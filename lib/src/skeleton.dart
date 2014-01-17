@@ -4,7 +4,6 @@ part of orange;
 
 class Skeleton {
   String name;
-  String blendMode;
   List<Joint> roots;
   List<Joint> joints;
   Float32List jointMatrices;

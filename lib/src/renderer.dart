@@ -51,12 +51,13 @@ class Renderer {
     ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, mesh.worldMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
     
-    _drawMesh(mesh, shader);
+    _drawMesh(mesh);
     
     // TODO : should be disable all attributes and uniforms in the end draw.
   }
   
-  _drawMesh(Mesh mesh, Shader shader) {
+  _drawMesh(Mesh mesh) {
+    var shader = pass.shader;
     if(mesh.geometry != null) {
       var geometry = mesh.geometry;
       shader.attributes.forEach((semantic, attrib) {
@@ -82,7 +83,7 @@ class Renderer {
       ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces.buffer);
       ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
     }
-    mesh.children.forEach((child) => _drawMesh(child, shader));
+    mesh.children.forEach(_drawMesh);
   }
   
 }

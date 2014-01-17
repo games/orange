@@ -41,8 +41,6 @@ part 'src/track.dart';
 part 'src/loaders/wgl_loader.dart';
 part 'src/loaders/gltf_loader.dart';
 part 'src/loaders/ogre_loader.dart';
-part 'src/loaders/animator_loader.dart';
-part 'src/loaders/parser.dart';
 
 part 'src/math/matrix4.dart';
 part 'src/math/matrix3.dart';

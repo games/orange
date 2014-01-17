@@ -21,7 +21,7 @@ class OgreLoader {
         var animator = new Animator(_mesh);
         animator._animations = {};
         json["animations"].forEach((a) {
-          var animation = Parser.parseAnimation(a);
+          var animation = _parseAnimation(a);
           animator._animations[animation.name] = animation;
         });
       }
@@ -73,14 +73,57 @@ class OgreLoader {
       mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, data.length, buffer);
     }
     if(doc.containsKey("skeleton")) {
-      mesh.skeleton = Parser.parseSkeleton(doc["skeleton"]);
+      mesh.skeleton = _parseSkeleton(doc["skeleton"]);
     }
-    
     if(doc.containsKey("submeshes")) {
       doc["submeshes"].forEach((submesh) => mesh.add(_parseMesh(submesh)));
     }
     return mesh;
   }
+  
+  Skeleton _parseSkeleton(Map doc) {
+    var skeleton = new Skeleton();
+    skeleton.joints = [];
+    doc["joints"].forEach((j) {
+      var joint = new Joint();
+      joint.id = j["id"];
+      if(j.containsKey("parent")) {
+        joint.parentId = j["parent"];
+      } else {
+        joint.parentId = -1;
+      }
+      joint.name = j["name"];
+      joint.position = new Vector3.fromList(j["position"]);
+      joint.rotation = _parseRotation(j["rotation"]);
+      skeleton.joints.add(joint);
+    });
+    skeleton.buildHierarchy();
+    return skeleton;
+  }
+  
+  Animation _parseAnimation(Map doc) {
+    var animation = new Animation();
+    animation.name = doc["name"];
+    animation.length = doc["length"].toDouble();
+    animation.tracks = [];
+    doc["tracks"].forEach((t) {
+      var track = new Track();
+      track.jointId = t["joint"];
+      track.keyframes = [];
+      t["keyframes"].forEach((k) {
+        var keyframe = new Keyframe();
+        keyframe.time = k["time"].toDouble();
+        keyframe.rotate = _parseRotation(k["rotate"]);
+        keyframe.translate = new Vector3.fromList(k["translate"]);
+        track.keyframes.add(keyframe);
+      });
+      animation.tracks.add(track);
+    });
+    animation.skeleton = _parseSkeleton(doc);
+    return animation;
+  }
+  
+  _parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"].toDouble());
   
   _createBufferView(TypedData data, int size, int type) {
     var buffer = _ctx.createBuffer();

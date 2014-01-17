@@ -19,15 +19,14 @@ class Semantics {
   static const String MODELVIEWINVERSETRANSPOSE = "MODELVIEWINVERSETRANSPOSE";
   static const String VIEWPORT = "VIEWPORT";
   
-  
-  static const String position = "position";
-  static const String texture = "texture";
-  static const String texture2 = "texture2";
-  static const String normal = "normal";
-  static const String tangent = "tangent";
-  static const String color = "color";
-  static const String weights = "weights";
-  static const String joints = "joints";
+  static const String position = "aPosition";
+  static const String texture = "aTexture";
+  static const String texture2 = "aTexture2";
+  static const String normal = "aNormal";
+  static const String tangent = "aTangent";
+  static const String color = "aColor";
+  static const String weights = "aWeights";
+  static const String joints = "aJoints";
   
   static const String emissive = "emissive";
   static const String specular = "specular";

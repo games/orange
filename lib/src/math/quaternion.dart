@@ -147,6 +147,54 @@ class Quaternion {
     return this;
   }
   
+  /// Rotates [v] by [this].
+  Vector3 rotate(Vector3 v) {
+    // conjugate(this) * [v,0] * this
+    double _w = storage[3];
+    double _z = storage[2];
+    double _y = storage[1];
+    double _x = storage[0];
+    double tiw = _w;
+    double tiz = -_z;
+    double tiy = -_y;
+    double tix = -_x;
+    double tx = tiw * v.x + tix * 0.0 + tiy * v.z - tiz * v.y;
+    double ty = tiw * v.y + tiy * 0.0 + tiz * v.x - tix * v.z;
+    double tz = tiw * v.z + tiz * 0.0 + tix * v.y - tiy * v.x;
+    double tw = tiw * 0.0 - tix * v.x - tiy * v.y - tiz * v.z;
+    double result_x = tw * _x + tx * _w + ty * _z - tz * _y;
+    double result_y = tw * _y + ty * _w + tz * _x - tx * _z;
+    double result_z = tw * _z + tz * _w + tx * _y - ty * _x;
+    v.storage[2] = result_z;
+    v.storage[1] = result_y;
+    v.storage[0] = result_x;
+    return v;
+  }
+  
+  /// Normalize [this].
+  Quaternion normalize() {
+    double l = length;
+    if (l == 0.0) {
+      return this;
+    }
+    l = 1.0 / l;
+    storage[3] = storage[3] * l;
+    storage[2] = storage[2] * l;
+    storage[1] = storage[1] * l;
+    storage[0] = storage[0] * l;
+    return this;
+  }
+  
+  double get length => math.sqrt(length2);
+  
+  double get length2 {
+    double _x = storage[0];
+    double _y = storage[1];
+    double _z = storage[2];
+    double _w = storage[3];
+    return (_x * _x) + (_y * _y) + (_z * _z) + (_w * _w);
+  }
+  
   double get radians => 2.0 * math.acos(storage[3]);
 
   Vector3 get axis {

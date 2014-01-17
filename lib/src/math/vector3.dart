@@ -54,6 +54,18 @@ class Vector3 {
     return this;
   }
   
+  Vector3 normalize() {
+    double l = length;
+    if (l == 0.0) {
+      return this;
+    }
+    l = 1.0 / l;
+    storage[0] *= l;
+    storage[1] *= l;
+    storage[2] *= l;
+    return this;
+  }
+  
   double operator[](int i) => storage[i];
   void operator[]=(int i, double v) {
     storage[i] = v;

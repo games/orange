@@ -1,5 +1,6 @@
 part of orange;
 
+const int MAX_LIGHTS = 4;
 
 class Renderer {
   html.CanvasElement canvas;
@@ -9,6 +10,7 @@ class Renderer {
   Matrix4 projectionMatrix;
   Pass pass;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
+  List<Light> lights = [];
   
   Renderer(html.CanvasElement canvas, [bool flipTexture = false]) {
     this.canvas = canvas;
@@ -46,14 +48,39 @@ class Renderer {
     
     mesh.updateMatrix();
     
-    ctx.uniform3f(shader.uniforms["lightPos"].location, 16, -32, 32);
-    ctx.uniformMatrix4fv(shader.uniforms["viewMat"].location, false, camera.viewMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms["modelMat"].location, false, mesh.worldMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms["projectionMat"].location, false, projectionMatrix.storage);
+    ctx.uniform3f(shader.uniforms["uLightPos"].location, 16, -32, 32);
+    ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.viewMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms["uModelMat"].location, false, mesh.worldMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, projectionMatrix.storage);
     
+    _setupLights(shader);
     _drawMesh(mesh);
     
     // TODO : should be disable all attributes and uniforms in the end draw.
+  }
+  
+  _setupLights(Shader shader) {
+    ctx.uniform3fv(shader.uniforms["cameraPosition"].location, camera.center.storage);
+    for(var i = 0; i < MAX_LIGHTS; i++) {
+      var lightSource = shader.uniforms["light$i"];
+      if(i < lights.length) {
+        var light = lights[i];
+        ctx.uniform1i(shader.uniforms["light${i}.type"].location, light.type);
+        ctx.uniform3fv(shader.uniforms["light${i}.direction"].location, light.direction.storage);
+        ctx.uniform3fv(shader.uniforms["light${i}.color"].location, light.color.rgb.storage);
+        ctx.uniform3fv(shader.uniforms["light${i}.position"].location, light.position.storage);
+        ctx.uniform1f(shader.uniforms["light${i}.intensity"].location, light.intensity);
+        ctx.uniform1f(shader.uniforms["light${i}.constantAttenuation"].location, light.constantAttenuation);
+        ctx.uniform1f(shader.uniforms["light${i}.linearAttenuation"].location, light.linearAttenuation);
+        ctx.uniform1f(shader.uniforms["light${i}.quadraticAttenuation"].location, light.quadraticAttenuation);
+        if(light.spotExponent != null)
+          ctx.uniform1f(shader.uniforms["light${i}.spotExponent"].location, light.spotExponent);
+        if(light.spotCutoff != null)
+          ctx.uniform1f(shader.uniforms["light${i}.spotCosCutoff"].location, light.spotCosCutoff);
+      } else {
+        ctx.uniform1i(shader.uniforms["light${i}.type"].location, Light.NONE);
+      }
+    }
   }
   
   _drawMesh(Mesh mesh) {
@@ -82,7 +109,7 @@ class Renderer {
     if(mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();
       var jointMat = mesh.skeleton.jointMatrices;
-      ctx.uniformMatrix4fv(shader.uniforms["jointMat"].location, false, jointMat);
+      ctx.uniformMatrix4fv(shader.uniforms["uJointMat"].location, false, jointMat);
     }
     if(mesh.faces != null) {
       ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces.buffer);

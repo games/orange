@@ -70,9 +70,14 @@ class Renderer {
       });
     }
     if(mesh.material != null && mesh.material.texture != null) {
+      var material = mesh.material;
       ctx.activeTexture(gl.TEXTURE0);
-      ctx.bindTexture(mesh.material.texture.target, mesh.material.texture.data);
+      ctx.bindTexture(material.texture.target, material.texture.data);
       ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
+      ctx.uniform4fv(shader.uniforms["specularColor"].location, material.specularColor);
+      ctx.uniform3fv(shader.uniforms["ambientColor"].location, material.ambientColor);
+      ctx.uniform3fv(shader.uniforms["diffuseColor"].location, material.diffuseColor);
+      ctx.uniform3fv(shader.uniforms["emissiveColor"].location, material.emissiveColor);
     }
     if(mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();

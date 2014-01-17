@@ -43,7 +43,7 @@ varying vec3 vEyeDir;
 void main(void) {
  float shininess = 8.0;
  vec3 specularColor = vec3(1.0, 1.0, 1.0);
- vec3 lightColor = vec3(1.0, 1.0, 1.0);
+ vec3 diffuseColor = vec3(1.0, 1.0, 1.0);
  vec3 ambientLight = vec3(0.15, 0.15, 0.15);
  vec4 color = texture2D(diffuse, vTexture);
  vec3 normal = normalize(vNormal);
@@ -53,7 +53,7 @@ void main(void) {
  float specularLevel = color.a;
  float specularFactor = pow(clamp(dot(reflectDir, eyeDir), 0.0, 1.0), shininess) * specularLevel;
  float lightFactor = max(dot(lightDir, normal), 0.0);
- vec3 lightValue = ambientLight + (lightColor * lightFactor) + (specularColor * specularFactor);
+ vec3 lightValue = ambientLight + (diffuseColor * lightFactor) + (specularColor * specularFactor);
  gl_FragColor = vec4(color.rgb * lightValue, 1.0);
 }
 """;
@@ -105,7 +105,7 @@ void main(void) {
 
    vTexture = texture;
    vNormal = normalize(normal * normalMat);
-   vLightDir = normalize(lightPos-vPosition.xyz);
+   vLightDir = normalize(lightPos - vPosition.xyz);
    vEyeDir = normalize(-vPosition.xyz);
 }
 """;
@@ -114,6 +114,11 @@ void main(void) {
 const String skinnedModelFS = """
 precision highp float;
 uniform sampler2D diffuse;
+// material
+uniform vec4 specularColor;
+uniform vec3 diffuseColor;
+uniform vec3 ambientColor;
+uniform vec3 emissiveColor;
 
 varying vec2 vTexture;
 varying vec3 vNormal;
@@ -121,10 +126,7 @@ varying vec3 vLightDir;
 varying vec3 vEyeDir;
 
 void main(void) {
- float shininess = 8.0;
- vec3 specularColor = vec3(1.0, 1.0, 1.0);
- vec3 lightColor = vec3(1.0, 1.0, 1.0);
- vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+ float shininess = specularColor.w;
 
  vec4 color = texture2D(diffuse, vTexture);
  vec3 normal = normalize(vNormal);
@@ -135,16 +137,19 @@ void main(void) {
  float specularLevel = color.a;
  float specularFactor = pow(clamp(dot(reflectDir, eyeDir), 0.0, 1.0), shininess) * specularLevel;
  float lightFactor = max(dot(lightDir, normal), 0.0);
- vec3 lightValue = ambientLight + (lightColor * lightFactor) + (specularColor * specularFactor);
+ vec3 lightValue = emissiveColor + ambientColor + (diffuseColor * lightFactor) + (specularColor.xyz * specularFactor);
  gl_FragColor = vec4(color.rgb * lightValue, 1.0);
 }
 """;
 
 
 
-
-
-
+const String _shader_light_source = """
+struct lightSource {
+  int type;
+  
+}
+""";
 
 
 

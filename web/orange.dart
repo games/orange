@@ -35,7 +35,7 @@ renderOgre() {
   });
 
   var al = new AnimatorLoader();
-  al.load("http://127.0.0.1:3030/orange/models/ogre/special_summon.json").then((a) {
+  al.load("http://127.0.0.1:3030/orange/models/ogre/idle.json").then((a) {
     animator = a;
   });
 }

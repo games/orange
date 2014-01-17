@@ -24,11 +24,11 @@ class Parser {
     return skeleton;
   }
   
-  static parseAnimation(Map doc) {
-    var animation = new Animation();
-    animation.name = doc["name"];
-    animation.length = doc["length"].toDouble();
-    animation.tracks = [];
+  static parseClip(Map doc) {
+    var clip = new Clip();
+    clip.name = doc["name"];
+    clip.length = doc["length"].toDouble();
+    clip.tracks = [];
     doc["tracks"].forEach((t) {
       var track = new Track();
       track.jointId = t["joint"];
@@ -40,9 +40,9 @@ class Parser {
         keyframe.translate = new Vector3.fromList(k["translate"]);
         track.keyframes.add(keyframe);
       });
-      animation.tracks.add(track);
+      clip.tracks.add(track);
     });
-    return animation;
+    return clip;
   }
   
   static parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"].toDouble());

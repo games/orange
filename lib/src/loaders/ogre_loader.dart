@@ -17,6 +17,12 @@ class OgreLoader {
       var json = JSON.decode(rsp);
       _parseMaterials(json["materials"]);
       _mesh = _parseMesh(json["mesh"]);
+      json["animations"].forEach((a) {
+        var animator = new AnimationController();
+        animator.name = a["name"];
+        animator.skeleton = Parser.parseSkeleton(a);
+        animator.animation = Parser.parseClip(a["animation"]);
+      });
       completer.complete(_mesh);
     });
     return completer.future;

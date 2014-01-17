@@ -11,7 +11,7 @@ class AnimatorLoader {
       var animator = new AnimationController();
       animator.name = json["name"];
       animator.skeleton = Parser.parseSkeleton(json);
-      animator.animation = Parser.parseAnimation(json["animations"][0]);
+      animator.animation = Parser.parseClip(json["animations"][0]);
       completer.complete(animator);
     });
     return completer.future;

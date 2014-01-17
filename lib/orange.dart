@@ -35,7 +35,7 @@ part 'src/light.dart';
 part 'src/material.dart';
 part 'src/geometry.dart';
 part 'src/technique.dart';
-part 'src/clip.dart';
+part 'src/animation.dart';
 part 'src/track.dart';
 
 part 'src/loaders/wgl_loader.dart';

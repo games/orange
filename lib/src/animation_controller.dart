@@ -4,21 +4,20 @@ part of orange;
 
 class AnimationController {
   int version;
-  String clipName;
-  Mesh mesh;
+  
+  String name;
   Skeleton skeleton;
-  Map<String, Clip> clips;
+  Animation animation;
   double _duration = 0.0;
   Matrix4 _emptyMatrix = new Matrix4.zero();
   
-  evaluate(double interval) {
+  evaluate(Mesh mesh, double interval) {
     mesh.skeleton = skeleton;
     
-    var clip = clips[clipName];
     _duration += interval * 0.001;
-    _duration = _duration % clip.length;
+    _duration = _duration % animation.length;
     
-    clip.tracks.forEach((track) {
+    animation.tracks.forEach((track) {
       var joint = mesh.skeleton.joints[track.jointId];
       var startframe, endframe;
       for(var i = 0; i < track.keyframes.length - 1; i++) {

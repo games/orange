@@ -2,7 +2,7 @@ part of orange;
 
 
 
-class Clip {
+class Animation {
   String name;
   double length;
   List<Track> tracks;

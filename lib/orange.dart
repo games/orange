@@ -23,11 +23,8 @@ part 'src/texture.dart';
 part 'src/mesh.dart';
 part 'src/renderer.dart';
 part 'src/built_in_shaders.dart';
-part 'src/joint.dart';
-part 'src/animator.dart';
 part 'src/keyframe.dart';
 part 'src/buffer_view.dart';
-part 'src/skeleton.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
 part 'src/pass.dart';
@@ -35,8 +32,12 @@ part 'src/light.dart';
 part 'src/material.dart';
 part 'src/geometry.dart';
 part 'src/technique.dart';
-part 'src/animation.dart';
-part 'src/track.dart';
+
+part 'src/animation/joint.dart';
+part 'src/animation/animator.dart';
+part 'src/animation/skeleton.dart';
+part 'src/animation/animation.dart';
+part 'src/animation/track.dart';
 
 part 'src/loaders/wgl_loader.dart';
 part 'src/loaders/gltf_loader.dart';

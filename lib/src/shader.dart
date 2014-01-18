@@ -16,7 +16,7 @@ class Shader {
   Shader.load(gl.RenderingContext ctx, String vertexShaderUrl, String fragmentShaderUrl) {
     Future.wait([html.HttpRequest.getString(vertexShaderUrl), 
                  html.HttpRequest.getString(fragmentShaderUrl)])
-                   .then(([vs, fs]) => _initialize(ctx, vs, fs));
+                   .then((r) => _initialize(ctx, r[0], r[1]));
   }
   
   _initialize(gl.RenderingContext ctx, String vertexShaderSource, String fragmentShaderSource) {

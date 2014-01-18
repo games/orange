@@ -12,7 +12,7 @@ class Renderer {
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   List<Light> lights = [];
   
-  Renderer(html.CanvasElement canvas, [bool flipTexture = false]) {
+  Renderer(html.CanvasElement canvas) {
     this.canvas = canvas;
     ctx = canvas.getContext3d();
     camera = new ModelCamera(canvas);
@@ -23,9 +23,7 @@ class Renderer {
     
     ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
     ctx.clearDepth(1.0);
-    if(flipTexture) {
-      ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-    }
+//    ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     
     pass = new Pass();
     pass.shader = new Shader(ctx, skinnedModelVS, skinnedModelFS);
@@ -48,12 +46,12 @@ class Renderer {
     
     mesh.updateMatrix();
     
-    ctx.uniform3f(shader.uniforms["uLightPos"].location, 16, -32, 32);
+//    ctx.uniform3f(shader.uniforms["uLightPos"].location, 16, -32, 32);
     ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.viewMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["uModelMat"].location, false, mesh.worldMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, projectionMatrix.storage);
-    
     _setupLights(shader);
+    
     _drawMesh(mesh);
     
     // TODO : should be disable all attributes and uniforms in the end draw.
@@ -65,6 +63,7 @@ class Renderer {
       var lightSource = shader.uniforms["light$i"];
       if(i < lights.length) {
         var light = lights[i];
+        light.updateMatrix();
         ctx.uniform1i(shader.uniforms["light${i}.type"].location, light.type);
         ctx.uniform3fv(shader.uniforms["light${i}.direction"].location, light.direction.storage);
         ctx.uniform3fv(shader.uniforms["light${i}.color"].location, light.color.rgb.storage);
@@ -90,9 +89,10 @@ class Renderer {
       shader.attributes.forEach((semantic, attrib) {
         if(geometry.buffers.containsKey(semantic)) {
           var bufferView = geometry.buffers[semantic];
-          ctx.bindBuffer(gl.ARRAY_BUFFER, bufferView.buffer);
+          bufferView.bindBuffer(ctx);
           ctx.enableVertexAttribArray(attrib.location);
-          ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
+          ctx.vertexAttribPointer(attrib.location, 
+              bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
         }
       });
     }
@@ -102,9 +102,9 @@ class Renderer {
       ctx.bindTexture(material.texture.target, material.texture.data);
       ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
       ctx.uniform4fv(shader.uniforms["specularColor"].location, material.specularColor);
-      ctx.uniform3fv(shader.uniforms["ambientColor"].location, material.ambientColor);
-      ctx.uniform3fv(shader.uniforms["diffuseColor"].location, material.diffuseColor);
-      ctx.uniform3fv(shader.uniforms["emissiveColor"].location, material.emissiveColor);
+//      ctx.uniform3fv(shader.uniforms["ambientColor"].location, material.ambientColor);
+//      ctx.uniform3fv(shader.uniforms["diffuseColor"].location, material.diffuseColor);
+//      ctx.uniform3fv(shader.uniforms["emissiveColor"].location, material.emissiveColor);
     }
     if(mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();
@@ -112,7 +112,7 @@ class Renderer {
       ctx.uniformMatrix4fv(shader.uniforms["uJointMat"].location, false, jointMat);
     }
     if(mesh.faces != null) {
-      ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.faces.buffer);
+      mesh.faces.bindBuffer(ctx);
       ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
     }
     mesh.children.forEach(_drawMesh);

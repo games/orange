@@ -68,9 +68,10 @@ class OgreLoader {
     if(doc.containsKey("faces")) {
       var data = new Uint16List.fromList(doc["faces"]);
       var buffer = _ctx.createBuffer();
-      _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
-      _ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
-      mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, data.length, buffer);
+//      _ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+//      _ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+//      mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, data.length, {data: data, target: gl.ELEMENT_ARRAY_BUFFER});
+      mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
     }
     if(doc.containsKey("skeleton")) {
       mesh.skeleton = _parseSkeleton(doc["skeleton"]);
@@ -126,10 +127,7 @@ class OgreLoader {
   _parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"].toDouble());
   
   _createBufferView(TypedData data, int size, int type) {
-    var buffer = _ctx.createBuffer();
-    _ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    _ctx.bufferDataTyped(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    return new BufferView(size, type, 0, 0, 0, buffer);
+    return new BufferView(size, type, 0, 0, count: 0, data: data);
   }
 }
 

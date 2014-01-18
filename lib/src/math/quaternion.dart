@@ -171,6 +171,20 @@ class Quaternion {
     return v;
   }
   
+  /// rad angle (in radians) to rotate
+  Quaternion rotateX(rad) {
+    rad *= 0.5; 
+
+    var ax = storage[0], ay = storage[1], az = storage[2], aw = storage[3],
+        bx = math.sin(rad), bw = math.cos(rad);
+
+    storage[0] = ax * bw + aw * bx;
+    storage[1] = ay * bw + az * bx;
+    storage[2] = az * bw - ay * bx;
+    storage[3] = aw * bw - ax * bx;
+    return this;
+  }
+  
   /// Normalize [this].
   Quaternion normalize() {
     double l = length;

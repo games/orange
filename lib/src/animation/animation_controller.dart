@@ -2,7 +2,7 @@ part of orange;
 
 
 
-class Animator {
+class AnimationController {
   String name;
   Animation _animation;
   Map<String, Animation> _animations;
@@ -10,7 +10,7 @@ class Animator {
   double _duration = 0.0;
   Matrix4 _emptyMatrix = new Matrix4.zero();
   
-  Animator(this._mesh) {
+  AnimationController(this._mesh) {
     _mesh.animator = this;
   }
   

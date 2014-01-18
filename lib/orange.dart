@@ -34,7 +34,7 @@ part 'src/geometry.dart';
 part 'src/technique.dart';
 
 part 'src/animation/joint.dart';
-part 'src/animation/animator.dart';
+part 'src/animation/animation_controller.dart';
 part 'src/animation/skeleton.dart';
 part 'src/animation/animation.dart';
 part 'src/animation/track.dart';

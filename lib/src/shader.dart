@@ -9,23 +9,33 @@ class Shader {
   Map<String, ShaderProperty> attributes;
   Map<String, ShaderProperty> uniforms;
   
-  Shader(gl.RenderingContext ctx, String vertexShader, String fragmentShader) {
-    var vs = _compileShader(ctx, vertexShader, gl.VERTEX_SHADER);
-    var fs = _compileShader(ctx, fragmentShader, gl.FRAGMENT_SHADER);
+  Shader(gl.RenderingContext ctx, String vertexShaderSource, String fragmentShaderSource) {
+    _initialize(ctx, vertexShaderSource, fragmentShaderSource);
+  }
+  
+  Shader.load(gl.RenderingContext ctx, String vertexShaderUrl, String fragmentShaderUrl) {
+    Future.wait([html.HttpRequest.getString(vertexShaderUrl), 
+                 html.HttpRequest.getString(fragmentShaderUrl)])
+                   .then(([vs, fs]) => _initialize(ctx, vs, fs));
+  }
+  
+  _initialize(gl.RenderingContext ctx, String vertexShaderSource, String fragmentShaderSource) {
+    var vertexShader = _compileShader(ctx, vertexShaderSource, gl.VERTEX_SHADER);
+    var fragmentShader = _compileShader(ctx, fragmentShaderSource, gl.FRAGMENT_SHADER);
     program = ctx.createProgram();
-    ctx.attachShader(program, vs);
-    ctx.attachShader(program, fs);
+    ctx.attachShader(program, vertexShader);
+    ctx.attachShader(program, fragmentShader);
     ctx.linkProgram(program);
     if(!ctx.getProgramParameter(program, gl.LINK_STATUS)) {
       ctx.deleteProgram(program);
-      ctx.deleteShader(vs);
-      ctx.deleteShader(fs);
+      ctx.deleteShader(vertexShader);
+      ctx.deleteShader(fragmentShader);
     } else {
       attributes = {};
       var attribCount = ctx.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
       for(var i = 0; i < attribCount; i++) {
-         var info = ctx.getActiveAttrib(program, i);
-         attributes[info.name] = new ShaderProperty(info.name, ctx.getAttribLocation(program, info.name), info.type);
+        var info = ctx.getActiveAttrib(program, i);
+        attributes[info.name] = new ShaderProperty(info.name, ctx.getAttribLocation(program, info.name), info.type);
       }
       
       uniforms = {};

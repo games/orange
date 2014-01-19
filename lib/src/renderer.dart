@@ -25,8 +25,8 @@ class Renderer {
     ctx.clearDepth(1.0);
 //    ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     
-    pass = new Pass();
-    pass.shader = new Shader(ctx, skinnedModelVS, skinnedModelFS);
+//    pass = new Pass();
+//    pass.shader = new Shader(ctx, skinnedModelVS, skinnedModelFS);
   }
   
   resize() {
@@ -46,10 +46,11 @@ class Renderer {
     
     mesh.updateMatrix();
     
-//    ctx.uniform3f(shader.uniforms["uLightPos"].location, 16, -32, 32);
     ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.viewMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["uModelMat"].location, false, mesh.worldMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, projectionMatrix.storage);
+    shader.uniform(ctx, "uNormalMat", (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().transpose());
+    
     _setupLights(shader);
     
     _drawMesh(mesh);
@@ -58,26 +59,27 @@ class Renderer {
   }
   
   _setupLights(Shader shader) {
-    ctx.uniform3fv(shader.uniforms["cameraPosition"].location, camera.center.storage);
+    shader.uniform(ctx, "cameraPosition", camera.center.storage);
     for(var i = 0; i < MAX_LIGHTS; i++) {
-      var lightSource = shader.uniforms["light$i"];
       if(i < lights.length) {
         var light = lights[i];
         light.updateMatrix();
         ctx.uniform1i(shader.uniforms["light${i}.type"].location, light.type);
+        ctx.uniform1f(shader.uniforms["light${i}.intensity"].location, light.intensity);
         ctx.uniform3fv(shader.uniforms["light${i}.direction"].location, light.direction.storage);
         ctx.uniform3fv(shader.uniforms["light${i}.color"].location, light.color.rgb.storage);
         ctx.uniform3fv(shader.uniforms["light${i}.position"].location, light.position.storage);
-        ctx.uniform1f(shader.uniforms["light${i}.intensity"].location, light.intensity);
         ctx.uniform1f(shader.uniforms["light${i}.constantAttenuation"].location, light.constantAttenuation);
         ctx.uniform1f(shader.uniforms["light${i}.linearAttenuation"].location, light.linearAttenuation);
         ctx.uniform1f(shader.uniforms["light${i}.quadraticAttenuation"].location, light.quadraticAttenuation);
         if(light.spotExponent != null)
           ctx.uniform1f(shader.uniforms["light${i}.spotExponent"].location, light.spotExponent);
-        if(light.spotCutoff != null)
-          ctx.uniform1f(shader.uniforms["light${i}.spotCosCutoff"].location, light.spotCosCutoff);
+        if(light.outerCutoff != null)
+          ctx.uniform1f(shader.uniforms["light${i}.outerCutoff"].location, light.outerCutoff);
+        if(light.innerCutoff != null)
+          ctx.uniform1f(shader.uniforms["light${i}.innerCutoff"].location, light.innerCutoff);
       } else {
-        ctx.uniform1i(shader.uniforms["light${i}.type"].location, Light.NONE);
+        shader.uniform(ctx, "light${i}.type", Light.NONE);
       }
     }
   }
@@ -96,20 +98,25 @@ class Renderer {
         }
       });
     }
-    if(mesh.material != null && mesh.material.texture != null) {
+    if(mesh.material != null) {
       var material = mesh.material;
-      ctx.activeTexture(gl.TEXTURE0);
-      ctx.bindTexture(material.texture.target, material.texture.data);
-      ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
-      ctx.uniform4fv(shader.uniforms["specularColor"].location, material.specularColor);
-//      ctx.uniform3fv(shader.uniforms["ambientColor"].location, material.ambientColor);
-//      ctx.uniform3fv(shader.uniforms["diffuseColor"].location, material.diffuseColor);
-//      ctx.uniform3fv(shader.uniforms["emissiveColor"].location, material.emissiveColor);
+      if(mesh.material.texture != null) {
+        ctx.activeTexture(gl.TEXTURE0);
+        ctx.bindTexture(material.texture.target, material.texture.data);
+//        ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
+        shader.uniform(ctx, "diffuse", 0);
+      }
+      shader.uniform(ctx, "shininess", material.shininess);
+      shader.uniform(ctx, "specularColor", material.specularColor);
+      shader.uniform(ctx, "ambientColor", material.ambientColor);
+      shader.uniform(ctx, "diffuseColor", material.diffuseColor);
+      shader.uniform(ctx, "emissiveColor", material.emissiveColor);
     }
     if(mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();
       var jointMat = mesh.skeleton.jointMatrices;
       ctx.uniformMatrix4fv(shader.uniforms["uJointMat"].location, false, jointMat);
+      shader.uniform(ctx, "uJointMat", jointMat);
     }
     if(mesh.faces != null) {
       mesh.faces.bindBuffer(ctx);

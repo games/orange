@@ -66,6 +66,45 @@ class Vector3 {
     return this;
   }
   
+  /// Inner product.
+  double dot(Vector3 other) {
+    double sum;
+    sum = storage[0] * other.storage[0];
+    sum += storage[1] * other.storage[1];
+    sum += storage[2] * other.storage[2];
+    return sum;
+  }
+
+  /// Cross product.
+  Vector3 cross(Vector3 other) {
+    double _x = storage[0];
+    double _y = storage[1];
+    double _z = storage[2];
+    double ox = other.storage[0];
+    double oy = other.storage[1];
+    double oz = other.storage[2];
+    return new Vector3(_y * oz - _z * oy, _z * ox - _x * oz, _x * oy - _y * ox);
+  }
+  
+  /// Negate
+  Vector3 operator-() => new Vector3(- storage[0], - storage[1], - storage[2]);
+
+  /// Subtract two vectors.
+  Vector3 operator-(Vector3 other) => new Vector3(storage[0] - other.storage[0],
+                                         storage[1] - other.storage[1],
+                                         storage[2] - other.storage[2]);
+  /// Scale.
+  Vector3 operator/(double scale) {
+    var o = 1.0 / scale;
+    return new Vector3(storage[0] * o, storage[1] * o, storage[2] * o);
+  }
+
+  /// Scale.
+  Vector3 operator*(double scale) {
+    var o = scale;
+    return new Vector3(storage[0] * o, storage[1] * o, storage[2] * o);
+  }
+  
   double operator[](int i) => storage[i];
   void operator[]=(int i, double v) {
     storage[i] = v;

@@ -8,15 +8,15 @@ class Plane extends PolygonMesh {
   Plane(double x, double y) {
     initialzie(4, 6);
     
-    setVertex(0, new Vector3(-x, -y, 0.0));
-    setVertex(1, new Vector3(x, -y, 0.0));
-    setVertex(2, new Vector3(x, y, 0.0));
-    setVertex(3, new Vector3(-x, y, 0.0));
+    setVertex(0, [-x, -y, 0.0]);
+    setVertex(1, [x, -y, 0.0]);
+    setVertex(2, [x, y, 0.0]);
+    setVertex(3, [-x, y, 0.0]);
 
-    setTexCoord(0, new Vector2(0.0, 0.0));
-    setTexCoord(1, new Vector2(1.0, 0.0));
-    setTexCoord(2, new Vector2(1.0, 1.0));
-    setTexCoord(3, new Vector2(0.0, 1.0));
+    setTexCoord(0, [0.0, 0.0]);
+    setTexCoord(1, [1.0, 0.0]);
+    setTexCoord(2, [1.0, 1.0]);
+    setTexCoord(3, [0.0, 1.0]);
 
     _indices[0] = 0;
     _indices[1] = 1;

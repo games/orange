@@ -36,8 +36,10 @@ class OgreLoader {
     doc.forEach((String n, Map m) {
       var material = new Material();
       material.name = m["name"];
+      var specular = m["specular"];
+      material.shininess = specular[3];
+      material.specularColor = new Float32List.fromList([specular[0], specular[1], specular[2]]);
       material.emissiveColor = new Float32List.fromList(m["emissive"]);
-      material.specularColor = new Float32List.fromList(m["specular"]);
       material.ambientColor = new Float32List.fromList(m["ambient"]);
       material.diffuseColor = new Float32List.fromList(m["diffuse"]);
       textureManager.load(_ctx,  {"path": _uri.resolve(m["texture"]).toString()}).then((t) => material.texture = t);

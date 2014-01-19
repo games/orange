@@ -11,8 +11,8 @@ class BufferView {
   bool normalized = false;
   int count;
   int target;
-  TypedData data;
   gl.Buffer buffer;
+  TypedData data;
   
   BufferView(this.size, this.type, this.stride, this.offset,
       {int count: 0, TypedData data: null, int target: gl.ARRAY_BUFFER}) {

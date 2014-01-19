@@ -185,6 +185,30 @@ class Quaternion {
     return this;
   }
   
+  Quaternion rotateY(double rad) {
+    rad *= 0.5; 
+    var ax = storage[0], ay = storage[1], az = storage[2], aw = storage[3],
+        by = math.sin(rad), bw = math.cos(rad);
+    storage[0] = ax * bw - az * by;
+    storage[1] = ay * bw + aw * by;
+    storage[2] = az * bw + ax * by;
+    storage[3] = aw * bw - ay * by;
+    return this;
+  }
+
+  Quaternion rotateZ(double rad) {
+    rad *= 0.5; 
+
+    var ax = storage[0], ay = storage[1], az = storage[2], aw = storage[3],
+        bz = math.sin(rad), bw = math.cos(rad);
+
+    storage[0] = ax * bw + ay * bz;
+    storage[1] = ay * bw - ax * bz;
+    storage[2] = az * bw + aw * bz;
+    storage[3] = aw * bw - az * bz;
+    return this;
+  }
+  
   /// Normalize [this].
   Quaternion normalize() {
     double l = length;

@@ -10,14 +10,9 @@ class PolygonMesh extends Mesh {
   Float32List _texCoords;
   Uint16List _indices;
   
-  PolygonMesh() {
-    
-  }
-  
   initialzie(int vertexCount, int facesCount) {
     geometry = new Geometry();
     geometry.vertexCount = vertexCount;
-    geometry.buffers = {};
     _vertexes = new Float32List(vertexCount * 3);
     geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, count: vertexCount, data: _vertexes);
     _normals = new Float32List(vertexCount * 3);
@@ -26,6 +21,26 @@ class PolygonMesh extends Mesh {
     geometry.buffers[Semantics.texture] = new BufferView(2, gl.FLOAT, 0, 0, count: vertexCount, data: _texCoords);
     _indices = new Uint16List(facesCount);
     faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: facesCount, data: _indices, target: gl.ELEMENT_ARRAY_BUFFER);
+  }
+  
+  setVertexes(List vertexes) {
+    _vertexes = new Float32List.fromList(vertexes);
+    geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, count: _vertexes.length ~/ 3, data: _vertexes);
+  }
+  
+  setNormals(List normals) {
+    _normals = new Float32List.fromList(normals);
+    geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: _normals.length ~/3, data: _normals);
+  }
+  
+  setTexCoords(List texCoords) {
+    _texCoords = new Float32List.fromList(texCoords);
+    geometry.buffers[Semantics.texture] = new BufferView(2, gl.FLOAT, 0, 0, count: _texCoords.length ~/ 2, data: _texCoords);
+  }
+  
+  setFaces(List indices) {
+    _indices = new Uint16List.fromList(indices);
+    faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: _indices.length, data: _indices, target: gl.ELEMENT_ARRAY_BUFFER);
   }
   
   calculateNormals() {
@@ -60,11 +75,11 @@ class PolygonMesh extends Mesh {
     index *= 3;
     return new Vector3(_vertexes[index], _vertexes[index + 1], _vertexes[index + 2]);
   }
-  setVertex(int index, Vector3 vertex) {
+  setVertex(int index, List vertex) {
     index *= 3;
-    _vertexes[index] = vertex.x;
-    _vertexes[index + 1] = vertex.y;
-    _vertexes[index + 2] = vertex.z;
+    _vertexes[index] = vertex[0];
+    _vertexes[index + 1] = vertex[1];
+    _vertexes[index + 2] = vertex[2];
   }
   
   Vector3 getNormal(int index) {
@@ -82,10 +97,10 @@ class PolygonMesh extends Mesh {
     index *= 2;
     return new Vector2(_texCoords[index], _texCoords[index + 1]);
   }
-  setTexCoord(int index, Vector2 uv) {
+  setTexCoord(int index, List uv) {
     index *= 2;
-    _texCoords[index] = uv.x;
-    _texCoords[index + 1] = uv.y;
+    _texCoords[index] = uv[0];
+    _texCoords[index + 1] = uv[1];
   }
   
 }

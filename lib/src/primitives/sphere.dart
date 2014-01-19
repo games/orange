@@ -5,10 +5,6 @@ part of orange;
 /// from nutty engine
 class Sphere extends PolygonMesh {
   
-  /// <param name="numSegments">Number of horizontal segments to create.</param>
-  /// <param name="numRings">Number of vertical rings to create.</param>
-  /// <param name="radius">Radius of the sphere.</param>
-  /// <param name="cutoff">Amount of sphere to cutoff. 0.5 generates a hemisphere.</param>
   Sphere(int numSegments, int numRings, double radius, {double cutoff: 0.0}) {
     cutoff = math.max(0.0, math.min(1.0, 1.0 - cutoff));
     var actualRings = (numRings * cutoff);
@@ -23,8 +19,8 @@ class Sphere extends PolygonMesh {
       for(var x = 0; x < numSegments; x++) {
         var u = x / (numSegments - 1.0);
         var xangle = u * (2.0 * math.PI);
-        setVertex(point, new Vector3(math.cos(xangle) * r, math.sin(xangle) * r, ypos));
-        setTexCoord(point, new Vector2(u, v));
+        setVertex(point, [math.cos(xangle) * r, math.sin(xangle) * r, ypos]);
+        setTexCoord(point, [u, v]);
         
         if((y > 0) && (x < (numSegments - 1))) {
           var p = point - numSegments;

@@ -66,6 +66,34 @@ class Shader {
     return shader;
   }
   
+  uniform(gl.RenderingContext ctx, String symbol, value) {
+    if(uniforms.containsKey(symbol) && value != null) {
+      var property = uniforms[symbol];
+      switch(property.type) {
+        case gl.FLOAT_MAT2:
+          ctx.uniformMatrix2fv(property.location, false, value); break;
+        case gl.FLOAT_MAT3:
+          ctx.uniformMatrix3fv(property.location, false, value.storage); break;
+        case gl.FLOAT_MAT4:
+          ctx.uniformMatrix4fv(property.location, false, value); break;
+        case gl.FLOAT:
+          ctx.uniform1f(property.location, value); break;
+        case gl.FLOAT_VEC2:
+          ctx.uniform2fv(property.location, value.storage); break;
+        case gl.FLOAT_VEC3:
+          ctx.uniform3fv(property.location, value); break;
+        case gl.FLOAT_VEC4:
+          ctx.uniform4fv(property.location, value.storage); break;
+        case gl.INT:
+          ctx.uniform1i(property.location, value); break;
+        case gl.SAMPLER_2D:
+          ctx.uniform1i(property.location, value); break;
+        case gl.SAMPLER_CUBE:
+          ctx.uniform1i(property.location, value); break;
+      }
+    }
+  }
+  
   
 }
 

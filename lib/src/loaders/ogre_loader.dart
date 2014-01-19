@@ -67,7 +67,6 @@ class OgreLoader {
     }
     if(doc.containsKey("faces")) {
       var data = new Uint16List.fromList(doc["faces"]);
-      var buffer = _ctx.createBuffer();
       mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
     }
     if(doc.containsKey("skeleton")) {

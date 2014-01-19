@@ -33,6 +33,11 @@ part 'src/material.dart';
 part 'src/geometry.dart';
 part 'src/technique.dart';
 
+part 'src/primitives/polygon_mesh.dart';
+part 'src/primitives/cube.dart';
+part 'src/primitives/sphere.dart';
+part 'src/primitives/plane.dart';
+
 part 'src/animation/joint.dart';
 part 'src/animation/animation_controller.dart';
 part 'src/animation/skeleton.dart';
@@ -45,7 +50,9 @@ part 'src/loaders/ogre_loader.dart';
 
 part 'src/math/matrix4.dart';
 part 'src/math/matrix3.dart';
+part 'src/math/vector2.dart';
 part 'src/math/vector3.dart';
+part 'src/math/vector4.dart';
 part 'src/math/quaternion.dart';
 part 'src/math/angle.dart';
 

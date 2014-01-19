@@ -56,6 +56,14 @@ class Renderer {
     _drawMesh(mesh);
     
     // TODO : should be disable all attributes and uniforms in the end draw.
+//    shader.attributes.forEach((semantic, attrib) {
+//      ctx.disableVertexAttribArray(attrib.location);
+//    });
+//    shader.uniforms.forEach((semantic, uniform) {
+//      shader.uniform(ctx, semantic, null);
+//    });
+    ctx.activeTexture(gl.TEXTURE0);
+    ctx.bindTexture(gl.TEXTURE_2D, null);
   }
   
   _setupLights(Shader shader) {
@@ -103,7 +111,6 @@ class Renderer {
       if(mesh.material.texture != null) {
         ctx.activeTexture(gl.TEXTURE0);
         ctx.bindTexture(material.texture.target, material.texture.data);
-//        ctx.uniform1i(shader.uniforms["diffuse"].location, 0);
         shader.uniform(ctx, "diffuse", 0);
       }
       shader.uniform(ctx, "shininess", material.shininess);

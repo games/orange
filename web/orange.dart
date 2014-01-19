@@ -7,8 +7,8 @@ import 'test_lighting.dart';
 
 
 void main() {
-//  new TestAnimation().run();
-  new TestLighting().run();
+  new TestAnimation().run();
+//  new TestLighting().run();
 }
 
 

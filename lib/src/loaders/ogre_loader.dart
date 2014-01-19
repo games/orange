@@ -19,10 +19,10 @@ class OgreLoader {
       _mesh = _parseMesh(json["mesh"]);
       if(json.containsKey("animations")) {
         var animator = new AnimationController(_mesh);
-        animator._animations = {};
+        animator.animations = {};
         json["animations"].forEach((a) {
           var animation = _parseAnimation(a);
-          animator._animations[animation.name] = animation;
+          animator.animations[animation.name] = animation;
         });
       }
       completer.complete(_mesh);

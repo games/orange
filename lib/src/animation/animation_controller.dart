@@ -5,7 +5,7 @@ part of orange;
 class AnimationController {
   String name;
   Animation _animation;
-  Map<String, Animation> _animations;
+  Map<String, Animation> animations;
   Mesh _mesh;
   double _duration = 0.0;
   Matrix4 _emptyMatrix = new Matrix4.zero();
@@ -15,7 +15,7 @@ class AnimationController {
   }
   
   switchAnimation(String name) {
-    _animation = _animations[name];
+    _animation = animations[name];
   }
   
   evaluate(double interval) {

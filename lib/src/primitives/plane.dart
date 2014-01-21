@@ -26,7 +26,7 @@ class Plane extends PolygonMesh {
     _indices[4] = 3;
     _indices[5] = 0;
 
-    calculateNormals();
+    computeFaceNormals();
   }
   
 }

@@ -13,8 +13,7 @@ struct LightSource {
   float constantAttenuation;
   float linearAttenuation;
   float quadraticAttenuation;
-  float outerCutoff;
-  float innerCutoff;
+  float spotCosCutoff;
   float spotExponent;
 };
 """;
@@ -236,19 +235,18 @@ vec3 phong(vec3 position, vec3 normal, LightSource ls, float shininess) {
     float specAngle = max(dot(normal, H), 0.0);
     specular = specularColor * pow(specAngle, shininess);
   }
-  float attenuation = 0.0;
+  float attenuation = 1.0;
   float dist = length(towardLight);
   if(ls.type == 2) {
     attenuation = 1.0 / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
   } else if(ls.type == 3) {
     float spotEffect = dot(-ls.direction, lightDirection);
-    float spotlightFade = clamp((ls.outerCutoff - spotEffect) / (ls.outerCutoff - ls.innerCutoff), 0.0, 1.0);
-    //if(spotEffect > ls.spotCosCutoff){
-      spotEffect = pow(spotEffect * spotlightFade, ls.spotExponent);
+    if(spotEffect > ls.spotCosCutoff){
+      spotEffect = pow(spotEffect, ls.spotExponent);
       attenuation = spotEffect / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
-    //}
-  } else {
-    attenuation = 1.0;
+    } else {
+      attenuation = 0.0;
+    }
   }
 
   return diffuse * ls.intensity * attenuation  + specular * attenuation;
@@ -305,7 +303,7 @@ void main(void) {
 
   highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
   highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
-  highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
+  highp vec3 directionalVector = vec3(-2.0, 2.0, 2.0);
   highp float directional = max(dot(normal, directionalVector), 0.0);
   vec3 lighting = ambientLight + (directionalLightColor * directional);
 
@@ -324,7 +322,7 @@ varying vec3 vNormal;
 varying vec3 vLighting;
 
 void main(void) {
-  vec3 color = vec3(1.0, 0.0, 0.0);
+  vec3 color = vec3(0.4, 0.4, 0.4);
   gl_FragColor = vec4(color * vLighting, 1.0);
 }
 """;

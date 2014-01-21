@@ -27,7 +27,7 @@ class Sphere extends PolygonMesh {
 
         normalData.add(x);
         normalData.add(y);
-        normalData.add(z);
+        normalData.add(-z);
         textureCoordData.add(u);
         textureCoordData.add(v);
         vertexPositionData.add(radius * x);

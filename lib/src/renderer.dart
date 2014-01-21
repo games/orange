@@ -5,7 +5,7 @@ const int MAX_LIGHTS = 4;
 class Renderer {
   html.CanvasElement canvas;
   gl.RenderingContext ctx;
-  ModelCamera camera;
+  PerspectiveCamera camera;
   double fov;
   Matrix4 projectionMatrix;
   Pass pass;
@@ -15,11 +15,11 @@ class Renderer {
   Renderer(html.CanvasElement canvas) {
     this.canvas = canvas;
     ctx = canvas.getContext3d();
-    camera = new ModelCamera(canvas);
-    camera.distance = 4.0;
-    camera.center = new Vector3.zero();
+    camera = new PerspectiveCamera(canvas.width / canvas.height);
+//    camera.distance = 4.0;
+//    camera.center = new Vector3.zero();
     fov = 45.0;
-    projectionMatrix = new Matrix4.perspective(fov, canvas.width / canvas.height, 1.0, 4096.0);
+//    projectionMatrix = new Matrix4.perspective(fov, canvas.width / canvas.height, 1.0, 4096.0);
     
     ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
     ctx.clearDepth(1.0);
@@ -46,10 +46,10 @@ class Renderer {
     
     mesh.updateMatrix();
     
-    ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.viewMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.worldMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["uModelMat"].location, false, mesh.worldMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, projectionMatrix.storage);
-    shader.uniform(ctx, "uNormalMat", (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().transpose());
+    ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, camera.projectionMatrix.storage);
+    shader.uniform(ctx, "uNormalMat", (camera.worldMatrix * mesh.worldMatrix).normalMatrix3().transpose());
     
     _setupLights(shader);
     
@@ -67,7 +67,7 @@ class Renderer {
   }
   
   _setupLights(Shader shader) {
-    shader.uniform(ctx, "cameraPosition", camera.center.storage);
+    shader.uniform(ctx, "cameraPosition", camera.position.storage);
     for(var i = 0; i < MAX_LIGHTS; i++) {
       if(i < lights.length) {
         var light = lights[i];
@@ -82,10 +82,8 @@ class Renderer {
         ctx.uniform1f(shader.uniforms["light${i}.quadraticAttenuation"].location, light.quadraticAttenuation);
         if(light.spotExponent != null)
           ctx.uniform1f(shader.uniforms["light${i}.spotExponent"].location, light.spotExponent);
-        if(light.outerCutoff != null)
-          ctx.uniform1f(shader.uniforms["light${i}.outerCutoff"].location, light.outerCutoff);
-        if(light.innerCutoff != null)
-          ctx.uniform1f(shader.uniforms["light${i}.innerCutoff"].location, light.innerCutoff);
+        if(light.spotCutoff != null)
+          ctx.uniform1f(shader.uniforms["light${i}.spotCosCutoff"].location, light.spotCosCutoff);
       } else {
         shader.uniform(ctx, "light${i}.type", Light.NONE);
       }

@@ -12,20 +12,21 @@ class Light extends Node {
   Vector3 direction = new Vector3(0.0, 0.0, -1.0);
   Color color;
   double intensity = 1.0;
-  double outerCutoff = math.PI / 2;
-  double innerCutoff = math.PI / 2;
+  double spotCutoff = math.PI / 2;
   double spotExponent = 10.0;
   double constantAttenuation = 1.0; // K0
   double linearAttenuation = 0.045; // K1
   double quadraticAttenuation = 0.0075; // K2
 
+  double get spotCosCutoff => math.cos(spotCutoff);
   
   Light(num hex, [int type = -1]): color = new Color.fromHex(hex), this.type = type, this.intensity = 1.0, super();
   Light.fromColor(this.color, [int type = -1]) : this.type = type, super();
   
   updateMatrix() {
     super.updateMatrix();
-    direction.setValues(0.0, 0.0, 1.0);
-    rotation.rotate(direction).normalize().setValues(-direction.x, -direction.y, direction.z);
+    //direction.setValues(0.0, 0.0, 1.0);
+    direction.normalize();
+//    rotation.rotate(direction).normalize().setValues(-direction.x, -direction.y, direction.z);
   }
 }

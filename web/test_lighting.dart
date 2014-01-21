@@ -23,12 +23,14 @@ class TestLighting {
     
     var canvas = html.querySelector("#container");
     renderer = new Renderer(canvas);
-    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
+//    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
+    renderer.camera.position = new Vector3(0.0, 0.0, 5.0);
     renderer.pass = new Pass();
     renderer.pass.shader = new Shader(renderer.ctx, lightingModelVS, lightingModelFS);
+//    renderer.pass.shader = new Shader(renderer.ctx, simpleModelVS, simpleModelFS);
     
     var cube = new Cube(0.5, 0.5, 0.5);
-    cube.position.setValues(-1.0, 0.5, 0.0);
+    cube.position.setValues(-1.0, 0.0, 0.0);
     cube.material = new Material();
     cube.material.shininess = 64.0;
     cube.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
@@ -37,7 +39,7 @@ class TestLighting {
     meshes.add(cube);
     
     var sphere = new Sphere(32, 32, 0.5);
-    sphere.position.setValues(1.0, 0.5, 0.0);
+    sphere.position.setValues(0.0, 0.0, 0.0);
     sphere.material = new Material();
     sphere.material.shininess = 64.0;
     sphere.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
@@ -47,6 +49,7 @@ class TestLighting {
     
     var plane = new Plane(2.0, 2.0);
     plane.rotation.rotateX(-PI / 2);
+    plane.position.setValues(0.0, -0.5, 0.0);
     plane.material = new Material();
     plane.material.shininess = 64.0;
     plane.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
@@ -56,25 +59,23 @@ class TestLighting {
     
     var light0 = new Light.fromColor(new Color(51, 51, 51), Light.AMBIENT);
     light0.intensity = 1.0;
-    renderer.lights.add(light0);
+//    renderer.lights.add(light0);
     
     _directionalLight = new Light(0xffffff, Light.DIRECT);
-    _directionalLight.rotation.rotateX(PI / 4);//    .setEuler(0.0, PI / 4, 0.0);
-    _directionalLight.updateMatrix();
+    _directionalLight.rotation.rotateX(-PI);
     _directionalLight.intensity = 1.0;
-    renderer.lights.add(_directionalLight);
+//    renderer.lights.add(_directionalLight);
     
     _pointLight = new Light(0xffffff, Light.POINT);
-    _pointLight.position = new Vector3(1.0, 0.1, 0.0);
-    _pointLight.intensity = 0.2;
-    renderer.lights.add(_pointLight);
+    _pointLight.position = new Vector3(5.0, 5.0, 5.0);
+    _pointLight.intensity = 2.0;
+//    renderer.lights.add(_pointLight);
     
   _spotLight = new Light(0xff0000, Light.SPOTLIGHT);
-  _spotLight.position = new Vector3(0.0, 1.0, 0.0);
-  _spotLight.intensity = 1.0;
-  _spotLight.direction = new Vector3(1.0, 0.0, 0.0);
-  _spotLight.outerCutoff = PI / 4;
-  _spotLight.innerCutoff = PI / 2;
+  _spotLight.position = new Vector3(0.0, 5.0, 0.0);
+  _spotLight.intensity = 2.0;
+  _spotLight.direction = new Vector3(0.0, -1.0, 0.0);
+  _spotLight.spotCutoff = PI / 2;
   _spotLight.spotExponent = 10.0;
   _spotLight.constantAttenuation = 0.05;
   _spotLight.linearAttenuation = 0.05;
@@ -90,6 +91,7 @@ class TestLighting {
     stats.begin();
     
     renderer.camera.update(interval);
+    renderer.camera.updateMatrix();
     renderer.prepare();
     meshes.forEach((m) => renderer.draw(m));
 

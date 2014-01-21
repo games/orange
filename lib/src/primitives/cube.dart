@@ -124,6 +124,8 @@ class Cube extends PolygonMesh {
               1.0,  1.0,
               0.0,  1.0
             ]);
+    
+//    computeFaceNormals();
   }
   
 }

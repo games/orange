@@ -42,7 +42,7 @@ class PolygonMesh extends Mesh {
     faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: _indices.length, data: _indices, target: gl.ELEMENT_ARRAY_BUFFER);
   }
   
-  calculateNormals() {
+  computeFaceNormals() {
     var vertexCount = geometry.buffers[Semantics.position].count;
     _normals.fillRange(0, 0);
 
@@ -57,7 +57,7 @@ class PolygonMesh extends Mesh {
       
       var v1 = p1 - p2;
       var v2 = p2 - p3;
-      var normal = v1.cross(v2);
+      var normal = v1.cross(v2).normalize();
       
       setNormal(i1, getNormal(i1) + normal);
       setNormal(i2, getNormal(i2) + normal);

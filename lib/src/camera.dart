@@ -20,6 +20,44 @@ class Camera {
   update(double interval) {}
 }
 
+class PerspectiveCamera extends Node {
+  
+  double near;
+  double far;
+  double fov;
+  double aspect;
+  Matrix4 projectionMatrix;
+  
+  PerspectiveCamera(double aspect, [double near = 1.0, double far = 1000.0, double fov = 45.0]) {
+    this.aspect = aspect;
+    this.near = near;
+    this.far = far;
+    this.fov = fov;
+    updateProjection();
+  }
+  
+  lookAt(Vector3 target) {
+//    rotation = new Quaternion.fromRotation(makeViewMatrix(position, _focusPosition, WORLD_UP).getRotation());
+//    rotation.inverse();
+//    _needsUpdateLocalMatrix = false;
+    _localMatrix.lookAt(position, target, new Vector3(0.0, 1.0, 0.0));
+    _localMatrix.decompose(position, rotation);
+  }
+  
+  update(double interval) {
+    
+  }
+  
+  updateProjection() {
+    projectionMatrix = new Matrix4.perspective(radians(fov), aspect, near, far);
+  }
+  
+  updateMatrix() {
+    super.updateMatrix();
+    worldMatrix.invert();
+  }
+}
+
 
 class ModelCamera extends Camera {
   bool _moving = false;

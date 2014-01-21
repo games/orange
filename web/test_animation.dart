@@ -18,7 +18,8 @@ class TestAnimation {
     
     var canvas = html.querySelector("#container");
     renderer = new Renderer(canvas);
-    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
+//    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
+    renderer.camera.position = new Vector3(0.0, 1.0, 5.0);
     renderer.pass = new Pass();
     renderer.pass.shader = new Shader(renderer.ctx, skinnedModelVS, skinnedModelFS);
     
@@ -84,6 +85,7 @@ class TestAnimation {
     });
     
     renderer.camera.update(interval);
+    renderer.camera.updateMatrix();
     renderer.prepare();
     meshes.forEach((m) => renderer.draw(m));
 

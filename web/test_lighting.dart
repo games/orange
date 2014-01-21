@@ -62,23 +62,24 @@ class TestLighting {
     _directionalLight.rotation.rotateX(PI / 4);//    .setEuler(0.0, PI / 4, 0.0);
     _directionalLight.updateMatrix();
     _directionalLight.intensity = 1.0;
-//  renderer.lights.add(_directionalLight);
+    renderer.lights.add(_directionalLight);
     
     _pointLight = new Light(0xffffff, Light.POINT);
     _pointLight.position = new Vector3(1.0, 0.1, 0.0);
     _pointLight.intensity = 0.2;
     renderer.lights.add(_pointLight);
     
-//  _spotLight = new Light(0xff0000, Light.SPOTLIGHT);
-//  _spotLight.position = new Vector3(1.0, 1.0, 0.0);
-//  _spotLight.intensity = 1.0;
-//  _spotLight.direction = new Vector3(1.0, 0.0, 0.0);
-//  _spotLight.spotCutoff = math.PI / 2;
-//  _spotLight.spotExponent = 10.0;
-//  _spotLight.constantAttenuation = 0.05;
-//  _spotLight.linearAttenuation = 0.05;
-//  _spotLight.quadraticAttenuation = 0.01;
-//  renderer.lights.add(_spotLight);
+  _spotLight = new Light(0xff0000, Light.SPOTLIGHT);
+  _spotLight.position = new Vector3(0.0, 1.0, 0.0);
+  _spotLight.intensity = 1.0;
+  _spotLight.direction = new Vector3(1.0, 0.0, 0.0);
+  _spotLight.outerCutoff = PI / 4;
+  _spotLight.innerCutoff = PI / 2;
+  _spotLight.spotExponent = 10.0;
+  _spotLight.constantAttenuation = 0.05;
+  _spotLight.linearAttenuation = 0.05;
+  _spotLight.quadraticAttenuation = 0.01;
+  renderer.lights.add(_spotLight);
     
     html.window.requestAnimationFrame(_animate);
   }

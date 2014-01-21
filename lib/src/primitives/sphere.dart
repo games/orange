@@ -2,71 +2,58 @@ part of orange;
 
 
 
-/// from nutty engine
 class Sphere extends PolygonMesh {
   
-  Sphere(int numSegments, int numRings, double radius, {double cutoff: 0.0}) {
-    cutoff = math.max(0.0, math.min(1.0, 1.0 - cutoff));
-    var actualRings = (numRings * cutoff);
-    initialzie((numSegments * actualRings).toInt(), (((numSegments - 1) * 6) * (actualRings - 1)).toInt());
-    
-    var index = 0, point = 0;
-    for(var y = 0; y < actualRings; y++) {
-      var v = y / (numRings - 1.0);
-      var yangle = v * math.PI;
-      var ypos = math.cos(yangle) * radius;
-      var r = math.sin(yangle) * radius;
-      for(var x = 0; x < numSegments; x++) {
-        var u = x / (numSegments - 1.0);
-        var xangle = u * (2.0 * math.PI);
-        setVertex(point, [math.cos(xangle) * r, math.sin(xangle) * r, ypos]);
-        setTexCoord(point, [u, v]);
-        
-        if((y > 0) && (x < (numSegments - 1))) {
-          var p = point - numSegments;
-          _indices[index * 3] = p;
-          _indices[index * 3 + 1] = point;
-          _indices[index * 3 + 2] = point + 1;
-          index++;
-          
-          _indices[index * 3] = point + 1;
-          _indices[index * 3 + 1] = p + 1;
-          _indices[index * 3 + 2] = p;
-          index++;
-        }
-        
-        point++;
+  Sphere(int longitudeBands, int latitudeBands, double radius) {
+    geometry = new Geometry();
+    var vertexPositionData = [];
+    var normalData = [];
+    var textureCoordData = [];
+    for (var latNumber = 0; latNumber <= latitudeBands; latNumber++) {
+      var theta = latNumber * math.PI / latitudeBands;
+      var sinTheta = math.sin(theta);
+      var cosTheta = math.cos(theta);
+
+      for (var longNumber = 0; longNumber <= longitudeBands; longNumber++) {
+        var phi = longNumber * 2 * math.PI / longitudeBands;
+        var sinPhi = math.sin(phi);
+        var cosPhi = math.cos(phi);
+
+        var x = cosPhi * sinTheta;
+        var y = cosTheta;
+        var z = sinPhi * sinTheta;
+        var u = 1 - (longNumber / longitudeBands);
+        var v = 1 - (latNumber / latitudeBands);
+
+        normalData.add(x);
+        normalData.add(y);
+        normalData.add(z);
+        textureCoordData.add(u);
+        textureCoordData.add(v);
+        vertexPositionData.add(radius * x);
+        vertexPositionData.add(radius * y);
+        vertexPositionData.add(radius * z);
       }
     }
+    setVertexes(vertexPositionData);
+    setNormals(normalData);
+    setTexCoords(textureCoordData);
     
-    calculateNormals();
-    
-    for(var x = 0; x < numSegments; x++) {
-      var index1 = x * 3;
-      _normals[index1] = 0.0;
-      _normals[index1 + 1] = 0.0;
-      _normals[index1 + 2] = 1.0;
-      
-      if(actualRings == numRings) {
-        index1 = (_vertexes.length - 3) - index1;
-        _normals[index1] = 0.0;
-        _normals[index1 + 1] = 0.0;
-        _normals[index1 + 2] = -1.0;
+    var indexData = [];
+    for (var latNumber = 0; latNumber < latitudeBands; latNumber++) {
+      for (var longNumber = 0; longNumber < longitudeBands; longNumber++) {
+        var first = (latNumber * (longitudeBands + 1)) + longNumber;
+        var second = first + longitudeBands + 1;
+        indexData.add(first);
+        indexData.add(second);
+        indexData.add(first + 1);
+
+        indexData.add(second);
+        indexData.add(second + 1);
+        indexData.add(first + 1);
       }
     }
-    
-    for(var y = 1; y < (actualRings - 1); y++) {
-      var index1 = (y * numSegments) * 3;
-      var index2 = index1 + ((numSegments - 1) * 3);
-      _normals[index1] = (_normals[index1] + _normals[index2]) * 0.5;
-      _normals[index1 + 1] = (_normals[index1 + 1] + _normals[index2 + 1]) * 0.5;
-      _normals[index1 + 2] = (_normals[index1 + 2] + _normals[index2 + 2]) * 0.5;
-      
-      _normals[index2] = _normals[index1];
-      _normals[index2 + 1] = _normals[index1 + 1];
-      _normals[index2 + 2] = _normals[index1 + 2];
-    }
-    
+    setFaces(indexData);
   }
 }
 

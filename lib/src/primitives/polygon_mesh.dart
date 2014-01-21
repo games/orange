@@ -2,7 +2,6 @@ part of orange;
 
 
 
-/// from nutty engine
 class PolygonMesh extends Mesh {
   
   Float32List _vertexes;

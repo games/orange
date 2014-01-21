@@ -29,25 +29,34 @@ class TestLighting {
     renderer.pass.shader = new Shader(renderer.ctx, lightingModelVS, lightingModelFS);
 //    renderer.pass.shader = new Shader(renderer.ctx, simpleModelVS, simpleModelFS);
     
-    var cube = new Cube(0.5, 0.5, 0.5);
+    var cube = new Cube();
     cube.position.setValues(-1.0, 0.0, 0.0);
     cube.material = new Material();
     cube.material.shininess = 64.0;
     cube.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
     cube.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
     cube.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    meshes.add(cube);
+//    meshes.add(cube);
     
-    var sphere = new Sphere(32, 32, 0.5);
+    var sphere = new Sphere();
     sphere.position.setValues(0.0, 0.0, 0.0);
     sphere.material = new Material();
     sphere.material.shininess = 64.0;
     sphere.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
     sphere.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    meshes.add(sphere);
+//    meshes.add(sphere);
     
-    var plane = new Plane(2.0, 2.0);
+    var cone = new Cone();
+    cone.position.setValues(1.5, 0.0, 0.0);
+    cone.material = new Material();
+    cone.material.shininess = 64.0;
+    cone.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
+    cone.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
+    cone.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
+    meshes.add(cone);
+    
+    var plane = new Plane();
     plane.rotation.rotateX(-PI / 2);
     plane.position.setValues(0.0, -0.5, 0.0);
     plane.material = new Material();
@@ -55,7 +64,7 @@ class TestLighting {
     plane.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
     plane.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
     plane.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    meshes.add(plane);
+//    meshes.add(plane);
     
     var light0 = new Light.fromColor(new Color(51, 51, 51), Light.AMBIENT);
     light0.intensity = 1.0;
@@ -64,12 +73,12 @@ class TestLighting {
     _directionalLight = new Light(0xffffff, Light.DIRECT);
     _directionalLight.rotation.rotateX(-PI);
     _directionalLight.intensity = 1.0;
-//    renderer.lights.add(_directionalLight);
+    renderer.lights.add(_directionalLight);
     
     _pointLight = new Light(0xffffff, Light.POINT);
     _pointLight.position = new Vector3(5.0, 5.0, 5.0);
     _pointLight.intensity = 2.0;
-//    renderer.lights.add(_pointLight);
+    renderer.lights.add(_pointLight);
     
   _spotLight = new Light(0xff0000, Light.SPOTLIGHT);
   _spotLight.position = new Vector3(0.0, 5.0, 0.0);
@@ -89,6 +98,10 @@ class TestLighting {
   _animate(num elapsed) {
     var interval = elapsed - _lastElapsed;
     stats.begin();
+    
+    meshes.forEach((m){
+      m.rotation.rotateY(interval / 1000);
+    });
     
     renderer.camera.update(interval);
     renderer.camera.updateMatrix();

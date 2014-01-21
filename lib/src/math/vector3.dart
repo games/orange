@@ -128,7 +128,7 @@ class Vector3 {
  * @param {Number} t interpolation amount between the two inputs
  * @returns {vec3} out
  */
-lerp (Vector3 a, Vector3 b, double t) {
+Vector3 lerp (Vector3 a, Vector3 b, double t) {
   var out = new Vector3.zero();
   var ax = a[0],
       ay = a[1],

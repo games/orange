@@ -19,8 +19,11 @@ class Semantics {
   static const String MODELVIEWINVERSETRANSPOSE = "MODELVIEWINVERSETRANSPOSE";
   static const String VIEWPORT = "VIEWPORT";
   
+  /// TODO should be rename to vertexes
   static const String position = "aPosition";
+  /// TODO should be rename to texcoords
   static const String texture = "aTexture";
+/// TODO should be rename to texcoords2
   static const String texture2 = "aTexture2";
   static const String normal = "aNormal";
   static const String tangent = "aTangent";

@@ -38,10 +38,10 @@ class OgreLoader {
       material.name = m["name"];
       var specular = m["specular"];
       material.shininess = specular[3];
-      material.specularColor = new Float32List.fromList([specular[0], specular[1], specular[2]]);
-      material.emissiveColor = new Float32List.fromList(m["emissive"]);
-      material.ambientColor = new Float32List.fromList(m["ambient"]);
-      material.diffuseColor = new Float32List.fromList(m["diffuse"]);
+      material.specularColor = new Color.fromList([specular[0], specular[1], specular[2]]);
+      material.emissiveColor = new Color.fromList(m["emissive"]);
+      material.ambientColor = new Color.fromList(m["ambient"]);
+      material.diffuseColor = new Color.fromList(m["diffuse"]);
       textureManager.load(_ctx,  {"path": _uri.resolve(m["texture"]).toString()}).then((t) => material.texture = t);
       _materials[material.name] = material;
     });

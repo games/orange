@@ -5,7 +5,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 
-class TestLighting {
+class TestPrimitives {
   double _lastElapsed = 0.0;
   Renderer renderer;
   Pass pass;
@@ -33,27 +33,27 @@ class TestLighting {
     cube.position.setValues(-1.0, 0.0, 0.0);
     cube.material = new Material();
     cube.material.shininess = 64.0;
-    cube.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
-    cube.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    cube.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
+    cube.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
+    cube.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
+    cube.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
 //    meshes.add(cube);
     
     var sphere = new Sphere();
     sphere.position.setValues(0.0, 0.0, 0.0);
     sphere.material = new Material();
     sphere.material.shininess = 64.0;
-    sphere.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
-    sphere.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    sphere.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
+    sphere.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
+    sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
+    sphere.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
 //    meshes.add(sphere);
     
     var cone = new Cone(bottomRadius: 0.2, height: 0.5);
     cone.position.setValues(0.0, 0.0, 0.0);
     cone.material = new Material();
     cone.material.shininess = 64.0;
-    cone.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
-    cone.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    cone.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
+    cone.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
+    cone.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
+    cone.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
 //    meshes.add(cone);
     
     var plane = new Plane();
@@ -61,14 +61,13 @@ class TestLighting {
     plane.position.setValues(0.0, -0.5, 0.0);
     plane.material = new Material();
     plane.material.shininess = 64.0;
-    plane.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
-    plane.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    plane.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
+    plane.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
+    plane.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
+    plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
 //    meshes.add(plane);
     
-//    var light0 = new Light.fromColor(new Color(51, 51, 51), Light.AMBIENT);
-//    light0.intensity = 1.0;
-//    renderer.lights.add(light0);
+    var coordinate = new Coordinate();
+    meshes.add(coordinate);
     
     _directionalLight = new Light(0xffffff, Light.DIRECT);
     _directionalLight.rotation.rotateX(-PI);
@@ -99,10 +98,10 @@ class TestLighting {
     var interval = elapsed - _lastElapsed;
     stats.begin();
     
-    meshes.forEach((m){
-      m.rotation.rotateX(interval / 1000);
-      m.rotation.rotateY(interval / 1000);
-    });
+//    meshes.forEach((m){
+//      m.rotation.rotateX(interval / 1000);
+//      m.rotation.rotateY(interval / 1000);
+//    });
     
     renderer.camera.update(interval);
     renderer.camera.updateMatrix();

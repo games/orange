@@ -1,5 +1,5 @@
 import 'test_animation.dart';
-import 'test_lighting.dart';
+import 'test_primitives.dart';
 
 
 
@@ -8,7 +8,7 @@ import 'test_lighting.dart';
 
 void main() {
 //  new TestAnimation().run();
-  new TestLighting().run();
+  new TestPrimitives().run();
 }
 
 

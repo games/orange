@@ -38,6 +38,7 @@ part 'src/primitives/cube.dart';
 part 'src/primitives/sphere.dart';
 part 'src/primitives/plane.dart';
 part 'src/primitives/cylinder.dart';
+part 'src/primitives/coordinate.dart';
 
 part 'src/animation/joint.dart';
 part 'src/animation/animation_controller.dart';

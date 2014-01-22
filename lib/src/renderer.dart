@@ -38,22 +38,20 @@ class Renderer {
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
   
-  draw(Mesh mesh) {
+  draw(Node node) {
     var shader = pass.shader;
     if(shader.ready == false)
       return;
     pass.prepare(ctx);
     
-    mesh.updateMatrix();
+    node.updateMatrix();
     
     ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.worldMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms["uModelMat"].location, false, mesh.worldMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, camera.projectionMatrix.storage);
-    shader.uniform(ctx, "uNormalMat", (camera.worldMatrix * mesh.worldMatrix).normalMatrix3().transpose());
     
     _setupLights(shader);
     
-    _drawMesh(mesh);
+    _drawMesh(node);
     
     // TODO : should be disable all attributes and uniforms in the end draw.
 //    shader.attributes.forEach((semantic, attrib) {
@@ -75,7 +73,7 @@ class Renderer {
         ctx.uniform1i(shader.uniforms["light${i}.type"].location, light.type);
         ctx.uniform1f(shader.uniforms["light${i}.intensity"].location, light.intensity);
         ctx.uniform3fv(shader.uniforms["light${i}.direction"].location, light.direction.storage);
-        ctx.uniform3fv(shader.uniforms["light${i}.color"].location, light.color.rgb.storage);
+        ctx.uniform3fv(shader.uniforms["light${i}.color"].location, light.color.storage);
         ctx.uniform3fv(shader.uniforms["light${i}.position"].location, light.position.storage);
         ctx.uniform1f(shader.uniforms["light${i}.constantAttenuation"].location, light.constantAttenuation);
         ctx.uniform1f(shader.uniforms["light${i}.linearAttenuation"].location, light.linearAttenuation);
@@ -92,6 +90,8 @@ class Renderer {
   
   _drawMesh(Mesh mesh) {
     var shader = pass.shader;
+    shader.uniform(ctx, "uModelMat", mesh.worldMatrix.storage);
+    shader.uniform(ctx, "uNormalMat", (camera.worldMatrix * mesh.worldMatrix).normalMatrix3().transpose());
     if(mesh.geometry != null) {
       var geometry = mesh.geometry;
       shader.attributes.forEach((semantic, attrib) {
@@ -111,11 +111,21 @@ class Renderer {
         ctx.bindTexture(material.texture.target, material.texture.data);
         shader.uniform(ctx, "diffuse", 0);
       }
-      shader.uniform(ctx, "shininess", material.shininess);
-      shader.uniform(ctx, "specularColor", material.specularColor);
-      shader.uniform(ctx, "ambientColor", material.ambientColor);
-      shader.uniform(ctx, "diffuseColor", material.diffuseColor);
-      shader.uniform(ctx, "emissiveColor", material.emissiveColor);
+      if(material.shininess != null) {
+        shader.uniform(ctx, "shininess", material.shininess);
+      }
+      if(material.specularColor != null) {
+        shader.uniform(ctx, "specularColor", material.specularColor.storage);
+      }
+      if(material.ambientColor != null) {
+        shader.uniform(ctx, "ambientColor", material.ambientColor.storage);
+      }
+      if(material.diffuseColor != null) {
+        shader.uniform(ctx, "diffuseColor", material.diffuseColor.storage);
+      }
+      if(material.emissiveColor != null) {
+        shader.uniform(ctx, "emissiveColor", material.emissiveColor.storage);
+      }
     }
     if(mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();

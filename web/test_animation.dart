@@ -50,7 +50,7 @@ class TestAnimation {
 //    renderer.lights.add(light0);
     
     
-    var plane = new Plane(2.0, 2.0);
+    var plane = new Plane();
     plane.rotation.rotateX(-math.PI / 2);
     plane.material = new Material();
     plane.material.shininess = 64.0;

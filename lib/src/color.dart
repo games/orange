@@ -2,30 +2,41 @@ part of orange;
 
 
 class Color {
-  double red;
-  double green;
-  double blue;
-  double alpha;
+  final Float32List storage = new Float32List(3);
   
-  Color(int r, int g, int b) {
-    red = r / 255.0;
-    green = g / 255.0;
-    blue = b / 255.0;
-    alpha = 1.0;
+  Color(int r, int g, int b, [double alpha = 1.0]) {
+    storage[0] = r / 255.0;
+    storage[1] = g / 255.0;
+    storage[2] = b / 255.0;
+//    storage[3] = alpha;
   }
   
-  Color.fromHex([num hexColor]) : red = 1.0, green = 1.0, blue = 1.0, alpha = 1.0 {
-    if(hexColor != null) {
-      hex = hexColor;
-    }
+  Color.fromHex(num hexColor) {
+    hex = hexColor;
+  }
+  
+  Color.fromList(List list) {
+    storage[0] = list[0];
+    storage[1] = list[1];
+    storage[2] = list[2];
+//    if(list.length == 4) {
+//      storage[3] = list[3];
+//    } else {
+//      storage[3] = 1.0;
+//    }
   }
   
   set hex(num hexColor) {
     var h = hexColor.floor().toInt();
-    red = ((h & 0xFF0000) >> 16) / 255;
-    green = ((h & 0x00FF00) >> 8) / 255;
-    blue = (h & 0x0000FF) / 255;
+    storage[0] = ((h & 0xFF0000) >> 16) / 255;
+    storage[1] = ((h & 0x00FF00) >> 8) / 255;
+    storage[2] = (h & 0x0000FF) / 255;
+//    storage[3] = 1.0;
   }
   
-  Vector3 get rgb => new Vector3(red, green, blue);
+  Vector3 get rgb => new Vector3.fromList(storage);
+  double get red => storage[0];
+  double get green => storage[1];
+  double get blue => storage[2];
+  double get alpha => 1.0; //storage[3];
 }

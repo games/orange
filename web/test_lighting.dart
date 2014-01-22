@@ -48,7 +48,7 @@ class TestLighting {
 //    meshes.add(sphere);
     
     var cone = new Cone();
-    cone.position.setValues(1.5, 0.0, 0.0);
+    cone.position.setValues(0.0, 0.0, 0.0);
     cone.material = new Material();
     cone.material.shininess = 64.0;
     cone.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
@@ -100,6 +100,7 @@ class TestLighting {
     stats.begin();
     
     meshes.forEach((m){
+      m.rotation.rotateX(interval / 1000);
       m.rotation.rotateY(interval / 1000);
     });
     

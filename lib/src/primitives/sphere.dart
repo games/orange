@@ -9,8 +9,6 @@ class Sphere extends PolygonMesh {
           num thetaStart: 0, thetaLength: math.PI, 
           radius: 1}) {
     
-    geometry = new Geometry();
-    
     var vertexes = [];
     var texcoords = [];
     var normals = [];

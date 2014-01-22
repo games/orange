@@ -6,8 +6,6 @@ class Plane extends PolygonMesh {
   
   Plane({int widthSegments: 1, int heightSegments: 1}) {
     
-    geometry = new Geometry();
-    
     var vertexes = [];
     var texcoords = [];
     var normals = [];

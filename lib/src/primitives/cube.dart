@@ -7,8 +7,6 @@ class Cube extends PolygonMesh {
   var _planeMatrix = new Matrix4.identity();
   
   Cube([int widthSegments = 1, int heightSegments = 1, int depthSegments = 1, bool inside = false]) {
-    geometry = new Geometry();
-
     var planes = [
         _createPlane("px", depthSegments, heightSegments),
         _createPlane("nx", depthSegments, heightSegments),

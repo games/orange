@@ -9,17 +9,8 @@ class PolygonMesh extends Mesh {
   Float32List _texCoords;
   Uint16List _indices;
   
-  initialzie(int vertexCount, int facesCount) {
+  PolygonMesh() {
     geometry = new Geometry();
-    geometry.vertexCount = vertexCount;
-    _vertexes = new Float32List(vertexCount * 3);
-    geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, count: vertexCount, data: _vertexes);
-    _normals = new Float32List(vertexCount * 3);
-    geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: vertexCount, data: _normals);
-    _texCoords = new Float32List(vertexCount * 2);
-    geometry.buffers[Semantics.texture] = new BufferView(2, gl.FLOAT, 0, 0, count: vertexCount, data: _texCoords);
-    _indices = new Uint16List(facesCount);
-    faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: facesCount, data: _indices, target: gl.ELEMENT_ARRAY_BUFFER);
   }
   
   setVertexes(List vertexes) {
@@ -42,10 +33,11 @@ class PolygonMesh extends Mesh {
     faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: _indices.length, data: _indices, target: gl.ELEMENT_ARRAY_BUFFER);
   }
   
-  computeFaceNormals() {
+  generateFacesNormals() {
+    _normals = new Float32List(_vertexes.length);
+    geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: _normals.length ~/3, data: _normals);
+    
     var vertexCount = geometry.buffers[Semantics.position].count;
-    _normals.fillRange(0, 0);
-
     for(var i = 0; i < vertexCount; i++) {
       var i1 = _indices[i];
       var i2 = _indices[i + 1];
@@ -57,16 +49,14 @@ class PolygonMesh extends Mesh {
       
       var v1 = p1 - p2;
       var v2 = p2 - p3;
-      var normal = v1.cross(v2).normalize();
+      var normal = v1.cross(v2);
       
       setNormal(i1, getNormal(i1) + normal);
       setNormal(i2, getNormal(i2) + normal);
       setNormal(i3, getNormal(i3) + normal);
     }
-    
-    for(var i = 0; i < faces.count; i++) {
-      var index = _indices[i];
-      setNormal(index, getNormal(index).normalize());
+    for(var i = 0; i < vertexCount; i++) {
+      setNormal(i, getNormal(i).normalize());
     }
   }
   
@@ -118,44 +108,6 @@ class PolygonMesh extends Mesh {
   }
 
   int get vertexesCount => geometry.buffers[Semantics.position].count;
-  
-  generateVertexNormals() {
-//    var len = faces.count;
-//    var normal = new Vector3.zero();
-//
-//    var v12 = new Vector3.zero(), v23 = new Vector3.zero();
-//
-//    var difference = (_vertexes.length - _normals.length) ~/ 3;
-//    for (var i = 0; i < normals.length; i++) {
-//      vec3.set(normals[i], 0.0, 0.0, 0.0);
-//    }
-//    for (var i = normals.length; i < positions.length; i++) {
-//      //Use array instead of Float32Array
-//      normals[i] = [0.0, 0.0, 0.0];
-//    }
-//
-//    for (var f = 0; f < len; f++) {
-//
-//      var face = faces[f];
-//      var i1 = face[0];
-//      var i2 = face[1];
-//      var i3 = face[2];
-//      var p1 = positions[i1];
-//      var p2 = positions[i2];
-//      var p3 = positions[i3];
-//
-//      vec3.sub(v12, p1, p2);
-//      vec3.sub(v23, p2, p3);
-//      vec3.cross(normal, v12, v23);
-//      // Weighted by the triangle area
-//      vec3.add(normals[i1], normals[i1], normal);
-//      vec3.add(normals[i2], normals[i2], normal);
-//      vec3.add(normals[i3], normals[i3], normal);
-//    }
-//    for (var i = 0; i < normals.length; i++) {
-//      vec3.normalize(normals[i], normals[i]);
-//    }
-  }
 }
 
 

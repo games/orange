@@ -136,7 +136,7 @@ class Renderer {
     if(mesh.faces != null) {
       mesh.faces.bindBuffer(ctx);
       ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
-//      ctx.drawArrays(gl.LINE_STRIP, 0, mesh.geometry.buffers[Semantics.position].count);
+//      ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
     }
     mesh.children.forEach(_drawMesh);
   }

@@ -34,10 +34,11 @@ class PolygonMesh extends Mesh {
   }
   
   generateFacesNormals() {
-    _normals = new Float32List(_vertexes.length);
-    geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: _normals.length ~/3, data: _normals);
-    
     var vertexCount = geometry.buffers[Semantics.position].count;
+    
+    _normals = new Float32List(_vertexes.length);
+    geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: vertexCount, data: _normals);
+    
     for(var i = 0; i < vertexCount; i++) {
       var i1 = _indices[i];
       var i2 = _indices[i + 1];
@@ -54,9 +55,6 @@ class PolygonMesh extends Mesh {
       setNormal(i1, getNormal(i1) + normal);
       setNormal(i2, getNormal(i2) + normal);
       setNormal(i3, getNormal(i3) + normal);
-    }
-    for(var i = 0; i < vertexCount; i++) {
-      setNormal(i, getNormal(i).normalize());
     }
   }
   

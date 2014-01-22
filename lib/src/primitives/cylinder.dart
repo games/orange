@@ -2,12 +2,10 @@ part of orange;
 
 
 
-class Cone extends PolygonMesh {
+class Cylinder extends PolygonMesh {
   
-  Cone({num topRadius: 1, num bottomRadius: 1, num height: 2, int capSegments: 50, int heightSegments: 1}) {
-    
-
-    var positions = [];
+  Cylinder({num topRadius: 1, num bottomRadius: 1, num height: 2, int capSegments: 50, int heightSegments: 1}) {
+    var vertexes = [];
     var texcoords = [];
     var faces = [];
     
@@ -35,18 +33,18 @@ class Cone extends PolygonMesh {
       bottomCap.add(z);
     }
     // Build top cap
-    positions.add(0.0);
-    positions.add(y);
-    positions.add(0.0);
+    vertexes.add(0.0);
+    vertexes.add(y);
+    vertexes.add(0.0);
     // TODO
     texcoords.add(0.0);
     texcoords.add(0.0);
     
     var n = capSegments;
     for (var i = 0; i < n; i++) {
-      positions.add(topCap[i * 3]);
-      positions.add(topCap[i * 3 + 1]);
-      positions.add(topCap[i * 3 + 2]);
+      vertexes.add(topCap[i * 3]);
+      vertexes.add(topCap[i * 3 + 1]);
+      vertexes.add(topCap[i * 3 + 2]);
       
       // TODO
       texcoords.add(i / n);
@@ -58,18 +56,18 @@ class Cone extends PolygonMesh {
     }
 
     // Build bottom cap
-    var offset = positions.length ~/ 3;
-    positions.add(0.0);
-    positions.add(-y);
-    positions.add(0.0);
+    var offset = vertexes.length ~/ 3;
+    vertexes.add(0.0);
+    vertexes.add(-y);
+    vertexes.add(0.0);
 
     texcoords.add(0.0);
     texcoords.add(1.0);
     
     for (var i = 0; i < n; i++) {
-      positions.add(bottomCap[i * 3]);
-      positions.add(bottomCap[i * 3 + 1]);
-      positions.add(bottomCap[i * 3 + 2]);
+      vertexes.add(bottomCap[i * 3]);
+      vertexes.add(bottomCap[i * 3 + 1]);
+      vertexes.add(bottomCap[i * 3 + 2]);
       // TODO
       texcoords.add(i / n);
       texcoords.add(1.0);
@@ -79,8 +77,8 @@ class Cone extends PolygonMesh {
       faces.add(offset + i + 1);
     }
 
-    // // Build side
-    offset = positions.length ~/ 3;
+    // Build side
+    offset = vertexes.length ~/ 3;
     var n2 = heightSegments;
     for (var i = 0; i < n; i++) {
       for (var j = 0; j < n2 + 1; j++) {
@@ -88,9 +86,9 @@ class Cone extends PolygonMesh {
         var v3 = lerp(new Vector3(topCap[i * 3], topCap[i * 3 + 1], topCap[i * 3 + 2]), 
             new Vector3(bottomCap[i * 3], bottomCap[i * 3 + 1], bottomCap[i * 3 + 2]), v);
 
-        positions.add(v3.x);
-        positions.add(v3.y);
-        positions.add(v3.z);
+        vertexes.add(v3.x);
+        vertexes.add(v3.y);
+        vertexes.add(v3.z);
         
         texcoords.add(i / n);
         texcoords.add(v);
@@ -113,10 +111,25 @@ class Cone extends PolygonMesh {
       }
     }
     
-    setVertexes(positions);
+    setVertexes(vertexes);
     setTexCoords(texcoords);
     setFaces(faces);
     generateFacesNormals();
   }
-  
 }
+
+
+
+class Cone extends Cylinder {
+  Cone({num bottomRadius: 1, num height: 2, int capSegments: 50, int heightSegments: 1})
+      :super(topRadius: 0, bottomRadius: bottomRadius, height: height, capSegments: capSegments, heightSegments: heightSegments);
+}
+
+
+
+
+
+
+
+
+

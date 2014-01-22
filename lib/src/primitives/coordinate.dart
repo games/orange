@@ -26,7 +26,7 @@ class Coordinate extends Mesh {
     material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
     material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
     
-    var cone = new Cone(bottomRadius: 0.05, height: 0.15, capSegments: 10);
+    var cone = new Cone(bottomRadius: 0.02, height: 0.1, capSegments: 10);
     cone.position.setValues(0.0, 0.3, 0.0);
     cone.material = material;
     arrow.add(cone);

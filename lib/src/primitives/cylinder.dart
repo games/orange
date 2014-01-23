@@ -111,7 +111,7 @@ class Cylinder extends PolygonMesh {
       }
     }
     
-    setVertexes(vertexes);
+    setVertices(vertexes);
     setTexCoords(texcoords);
     setFaces(faces);
     generateFacesNormals();

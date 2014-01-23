@@ -99,7 +99,7 @@ class Cube extends PolygonMesh {
     buildPlane(0, 1, 1, -1, width, height, depth_half, 4); // pz
     buildPlane(0, 1, -1, -1, width, height, -depth_half, 5); // nz
     
-    setVertexes(vertices);
+    setVertices(vertices);
     setTexCoords(texcoords);
     setFaces(faces);
     setNormals(normals);

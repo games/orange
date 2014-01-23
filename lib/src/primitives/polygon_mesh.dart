@@ -4,7 +4,7 @@ part of orange;
 
 class PolygonMesh extends Mesh {
   
-  Float32List _vertexes;
+  Float32List _vertices;
   Float32List _normals;
   Float32List _texCoords;
   Uint16List _indices;
@@ -13,9 +13,9 @@ class PolygonMesh extends Mesh {
     geometry = new Geometry();
   }
   
-  setVertexes(List vertexes) {
-    _vertexes = new Float32List.fromList(vertexes);
-    geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, count: _vertexes.length ~/ 3, data: _vertexes);
+  setVertices(List vertices) {
+    _vertices = new Float32List.fromList(vertices);
+    geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, count: _vertices.length ~/ 3, data: _vertices);
   }
   
   setNormals(List normals) {
@@ -36,7 +36,7 @@ class PolygonMesh extends Mesh {
   generateFacesNormals() {
     var vertexCount = geometry.buffers[Semantics.position].count;
     
-    _normals = new Float32List(_vertexes.length);
+    _normals = new Float32List(_vertices.length);
     geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: vertexCount, data: _normals);
     
     for(var i = 0; i < vertexCount; i++) {
@@ -60,13 +60,13 @@ class PolygonMesh extends Mesh {
   
   Vector3 getVertex(int index) {
     index *= 3;
-    return new Vector3(_vertexes[index], _vertexes[index + 1], _vertexes[index + 2]);
+    return new Vector3(_vertices[index], _vertices[index + 1], _vertices[index + 2]);
   }
   setVertex(int index, vertex) {
     index *= 3;
-    _vertexes[index] = vertex[0];
-    _vertexes[index + 1] = vertex[1];
-    _vertexes[index + 2] = vertex[2];
+    _vertices[index] = vertex[0];
+    _vertices[index + 1] = vertex[1];
+    _vertices[index + 2] = vertex[2];
   }
   
   Vector3 getNormal(int index) {
@@ -91,7 +91,7 @@ class PolygonMesh extends Mesh {
   }
   
   applyTransform(Matrix4 matrix) {
-    var len = _vertexes.length ~/ 3;
+    var len = _vertices.length ~/ 3;
     for (var i = 0; i < len; i++) {
       setVertex(i, matrix * getVertex(i));
     }

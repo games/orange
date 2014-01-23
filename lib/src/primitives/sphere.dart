@@ -9,7 +9,7 @@ class Sphere extends PolygonMesh {
           num thetaStart: 0, thetaLength: math.PI, 
           radius: 1}) {
     
-    var vertexes = [];
+    var vertices = [];
     var texcoords = [];
     var normals = [];
 
@@ -27,9 +27,9 @@ class Sphere extends PolygonMesh {
         y = radius * math.cos(thetaStart + v * thetaLength);
         z = radius * math.sin(phiStart + u * phiLength) * math.sin(thetaStart + v * thetaLength);
         
-        vertexes.add(x);
-        vertexes.add(y);
-        vertexes.add(z);
+        vertices.add(x);
+        vertices.add(y);
+        vertices.add(z);
         
         texcoords.add(u);
         texcoords.add(v);
@@ -62,7 +62,7 @@ class Sphere extends PolygonMesh {
       }
     }
     
-    setVertexes(vertexes);
+    setVertices(vertices);
     setTexCoords(texcoords);
     setNormals(normals);
     setFaces(faces);

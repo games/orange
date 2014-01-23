@@ -67,7 +67,7 @@ class Plane extends PolygonMesh {
       }
     }
     
-    setVertexes(vertices);
+    setVertices(vertices);
     setTexCoords(texcoords);
     setFaces(faces);
     generateFacesNormals();

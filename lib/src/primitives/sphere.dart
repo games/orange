@@ -11,12 +11,10 @@ class Sphere extends PolygonMesh {
     
     var vertices = [];
     var texcoords = [];
-    var normals = [];
 
     var x, y, z,
     u, v,
     i, j;
-    var normal;
 
     for (j = 0; j <= heightSegments; j ++) {
       for (i = 0; i <= widthSegments; i ++) {
@@ -33,12 +31,6 @@ class Sphere extends PolygonMesh {
         
         texcoords.add(u);
         texcoords.add(v);
-        
-        normal = new Vector3(x, y, z);
-        normal.normalize();
-        normals.add(normal.x);
-        normals.add(normal.y);
-        normals.add(normal.z);
       }
     }
 
@@ -64,8 +56,8 @@ class Sphere extends PolygonMesh {
     
     setVertices(vertices);
     setTexCoords(texcoords);
-    setNormals(normals);
     setFaces(faces);
+    calculateSurfaceNormals();
   }
 }
 

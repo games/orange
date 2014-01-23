@@ -8,7 +8,7 @@ class Cube extends PolygonMesh {
     var width_half = width / 2;
     var height_half = height / 2;
     var depth_half = depth / 2;
-    var vertices = [], faces = [], texcoords = [], normals = [];
+    var vertices = [], faces = [], texcoords = [];
     var buildPlane = (u, v, udir, vdir, width, height, depth, materialIndex) {
       var w, ix, iy,
       gridX = widthSegments,
@@ -17,7 +17,7 @@ class Cube extends PolygonMesh {
       height_half = height / 2,
       offset = vertices.length ~/ 3;
 
-      if(( u == 0 && v == 1) || (u == 1 && v == 0)) {
+      if((u == 0 && v == 1) || (u == 1 && v == 0)) {
         w = 2;
       } else if((u == 0 && v == 2) || (u == 2 && v == 0)) {
         w = 1;
@@ -82,12 +82,6 @@ class Cube extends PolygonMesh {
           texcoords.add(uvc.y);
           texcoords.add(uvd.x);
           texcoords.add(uvd.y);
-          
-          for(var i = 0; i < 6; i++) {
-            normals.add(normal.x);
-            normals.add(normal.y);
-            normals.add(normal.z);
-          }
         }
       }
     };
@@ -102,8 +96,7 @@ class Cube extends PolygonMesh {
     setVertices(vertices);
     setTexCoords(texcoords);
     setFaces(faces);
-    setNormals(normals);
-//    generateFacesNormals();
+    calculateSurfaceNormals();
   }
     
 }

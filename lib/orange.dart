@@ -23,7 +23,7 @@ part 'src/texture.dart';
 part 'src/mesh.dart';
 part 'src/renderer.dart';
 part 'src/built_in_shaders.dart';
-part 'src/keyframe.dart';
+part 'src/animation/keyframe.dart';
 part 'src/buffer_view.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';

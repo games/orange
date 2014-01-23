@@ -103,6 +103,7 @@ class Cube extends PolygonMesh {
     setTexCoords(texcoords);
     setFaces(faces);
     setNormals(normals);
+//    generateFacesNormals();
   }
     
 }

@@ -2,7 +2,6 @@ import 'dart:html' as html;
 import '../lib/orange.dart';
 import 'package:stats/stats.dart';
 import 'dart:math';
-import 'dart:typed_data';
 
 
 class TestPrimitives {

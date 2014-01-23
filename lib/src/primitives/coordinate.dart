@@ -23,7 +23,7 @@ class Coordinate extends Mesh {
     var material = new Material();
     material.shininess = 64.0;
     material.ambientColor = color;
-    material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
+    material.specularColor = new Color.fromList([0.0, 0.0, 0.0]);
     material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
     
     var cone = new Cone(bottomRadius: 0.025, height: 0.1, capSegments: 10);

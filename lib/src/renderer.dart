@@ -48,10 +48,14 @@ class Renderer {
     
     ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.worldMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, camera.projectionMatrix.storage);
-    
+        
     _setupLights(shader);
     
-    _drawMesh(node);
+    if(node is Light) {
+      _drawLight(node);
+    } else if (node is Mesh) {
+      _drawMesh(node);
+    }
     
     // TODO : should be disable all attributes and uniforms in the end draw.
 //    shader.attributes.forEach((semantic, attrib) {
@@ -86,6 +90,15 @@ class Renderer {
         shader.uniform(ctx, "light${i}.type", Light.NONE);
       }
     }
+  }
+  
+  _drawLight(Light light) {
+    var coordinate = new Coordinate();
+    coordinate.position = light.position;
+    coordinate.rotation = light.rotation;
+    coordinate.updateMatrix();
+    coordinate.worldMatrix.invert();
+    _drawMesh(coordinate);
   }
   
   _drawMesh(Mesh mesh) {

@@ -13,7 +13,6 @@ class TestPrimitives {
 
   Light _directionalLight;
   Light _pointLight;
-  Light _spotLight;
   
   
   run() {
@@ -78,17 +77,6 @@ class TestPrimitives {
     _pointLight.position = new Vector3(5.0, 5.0, 5.0);
     _pointLight.intensity = 2.0;
     renderer.lights.add(_pointLight);
-    
-//    _spotLight = new Light(0xff0000, Light.SPOTLIGHT);
-//    _spotLight.position = new Vector3(0.0, 5.0, 0.0);
-//    _spotLight.intensity = 2.0;
-//    _spotLight.direction = new Vector3(0.0, -1.0, 0.0);
-//    _spotLight.spotCutoff = PI / 2;
-//    _spotLight.spotExponent = 10.0;
-//    _spotLight.constantAttenuation = 0.05;
-//    _spotLight.linearAttenuation = 0.05;
-//    _spotLight.quadraticAttenuation = 0.01;
-//    renderer.lights.add(_spotLight);
     
     html.window.requestAnimationFrame(_animate);
   }

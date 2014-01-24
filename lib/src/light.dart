@@ -26,7 +26,8 @@ class Light extends Node {
   updateMatrix() {
     super.updateMatrix();
     //direction.setValues(0.0, 0.0, 1.0);
-    direction.normalize();
+//    direction.normalize();
+    rotation.rotate(direction).normalize();
 //    rotation.rotate(direction).normalize().setValues(-direction.x, -direction.y, direction.z);
   }
 }

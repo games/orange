@@ -2,10 +2,9 @@ import 'dart:html' as html;
 import '../lib/orange.dart';
 import 'package:stats/stats.dart';
 import 'dart:math';
-import 'dart:typed_data';
 
 
-class TestLighting {
+class TestShadow {
   double _lastElapsed = 0.0;
   Renderer renderer;
   Pass pass;
@@ -24,12 +23,9 @@ class TestLighting {
     
     var canvas = html.querySelector("#container");
     renderer = new Renderer(canvas);
-//    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
-    renderer.camera.position = new Vector3(0.0, 0.0, 6.0);
-    
+    renderer.camera.position = new Vector3(0.0, 0.0, 5.0);
     renderer.pass = new Pass();
     renderer.pass.shader = new Shader(renderer.ctx, lightingModelVS, lightingModelFS);
-//    renderer.pass.shader = new Shader(renderer.ctx, simpleModelVS, simpleModelFS);
     
     var cube = new Cube(width: 1, height: 0.5, depth: 1.5);
     cube.position.setValues(-1.0, -0.4, 0.0);
@@ -69,23 +65,24 @@ class TestLighting {
     plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
     ground = plane;
     
+    var coordinate = new Coordinate();
+    meshes.add(coordinate);
+    
     _directionalLight = new Light(0xffffff, Light.DIRECT);
     _directionalLight.rotation.rotateX(-PI);
     _directionalLight.intensity = 1.0;
-//    renderer.lights.add(_directionalLight);
+    renderer.lights.add(_directionalLight);
     
     _pointLight = new Light(0xffffff, Light.POINT);
     _pointLight.position = new Vector3(5.0, 5.0, 5.0);
     _pointLight.intensity = 2.0;
-//    renderer.lights.add(_pointLight);
+    renderer.lights.add(_pointLight);
     
     _spotLight = new Light(0xff0000, Light.SPOTLIGHT);
-    _spotLight.position = new Vector3(-3.0, 2.0, -2.0);
-    _spotLight.rotation.rotateZ(PI / 4);
-    _spotLight.direction = new Vector3(0.0, -1.0, 0.0);
-    _spotLight.direction = _spotLight.rotation.multiplyVec3(new Vector3(0.0, -1.0, 0.0));
+    _spotLight.position = new Vector3(0.0, 5.0, 0.0);
     _spotLight.intensity = 2.0;
-    _spotLight.spotCutoff = PI / 6;
+    _spotLight.direction = new Vector3(0.0, -1.0, 0.0);
+    _spotLight.spotCutoff = PI / 2;
     _spotLight.spotExponent = 10.0;
     _spotLight.constantAttenuation = 0.05;
     _spotLight.linearAttenuation = 0.05;
@@ -107,11 +104,7 @@ class TestLighting {
     renderer.camera.update(interval);
     renderer.camera.updateMatrix();
     renderer.prepare();
-    
     meshes.forEach((m) => renderer.draw(m));
-    
-    renderer.lights.forEach((l) => renderer.draw(l));
-    
     renderer.draw(ground);
 
     stats.end();

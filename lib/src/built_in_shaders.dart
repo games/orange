@@ -79,7 +79,20 @@ void main() {
 
 
 
+const String _shadows_vertex_projection = """
+void drawShadow(in vec3 l, in vec4 v) {
+  float slopeX = (l.y - v.y) / (l.x - v.x);
+  float slopeZ = (l.y - v.y) / (l.z - v.z);
+ 
+  v.y = 0.0;
+  v.x = l.x - (l.y / slopeX);
+  v.z = l.z - (l.y / slopeZ);
+ 
+  gl_Position = pMatrix * mVMatrix * v;
+  frontColor = vec4(0.0, 0.0, 0.0, 1.0);
+}
 
+""";
 
 
 

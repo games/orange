@@ -9,4 +9,5 @@ class Mesh extends Node {
   Material material;
   Skeleton skeleton;
   AnimationController animator;
+  bool wireframe = false;
 }

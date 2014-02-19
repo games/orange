@@ -47,7 +47,7 @@ void main(void) {
 
 const String lightingModelFS = """
 precision highp float;
-uniform sampler2D diffuse;
+uniform sampler2D texture;
 // material
 uniform float shininess;
 uniform vec3 specularColor;
@@ -170,7 +170,7 @@ void main(void) {
 
 const String skinnedModelFS = """
 precision highp float;
-uniform sampler2D diffuse;
+uniform sampler2D texture;
 // material
 uniform float shininess;
 uniform vec3 specularColor;
@@ -189,7 +189,7 @@ varying vec3 vNormal;
 
 void main(void) {
 
- vec4 color = texture2D(diffuse, vTexture);
+ vec4 color = texture2D(texture, vTexture);
 // color = vec4(0.8, 0.8, 0.8, 1.0);
 // vec3 normal = normalize(vNormal);
 // vec3 lightDir = normalize(vLightDir);

@@ -46,8 +46,8 @@ class Renderer {
     
     node.updateMatrix();
     
-    ctx.uniformMatrix4fv(shader.uniforms["uViewMat"].location, false, camera.worldMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms["uProjectionMat"].location, false, camera.projectionMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.worldMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms[Semantics.projectionMat].location, false, camera.projectionMatrix.storage);
         
     _setupLights(shader);
     
@@ -103,8 +103,8 @@ class Renderer {
   
   _drawMesh(Mesh mesh) {
     var shader = pass.shader;
-    shader.uniform(ctx, "uModelMat", mesh.worldMatrix.storage);
-    shader.uniform(ctx, "uNormalMat", (camera.worldMatrix * mesh.worldMatrix).normalMatrix3().transpose());
+    shader.uniform(ctx,  Semantics.modelMat, mesh.worldMatrix.storage);
+    shader.uniform(ctx, Semantics.normalMat, (camera.worldMatrix * mesh.worldMatrix).normalMatrix3().transpose());
     if(mesh.geometry != null) {
       var geometry = mesh.geometry;
       shader.attributes.forEach((semantic, attrib) {
@@ -122,22 +122,22 @@ class Renderer {
       if(mesh.material.texture != null) {
         ctx.activeTexture(gl.TEXTURE0);
         ctx.bindTexture(material.texture.target, material.texture.data);
-        shader.uniform(ctx, "diffuse", 0);
+        shader.uniform(ctx, Semantics.texture, 0);
       }
       if(material.shininess != null) {
-        shader.uniform(ctx, "shininess", material.shininess);
+        shader.uniform(ctx, Semantics.shininess, material.shininess);
       }
       if(material.specularColor != null) {
-        shader.uniform(ctx, "specularColor", material.specularColor.storage);
+        shader.uniform(ctx, Semantics.specularColor, material.specularColor.storage);
       }
       if(material.ambientColor != null) {
-        shader.uniform(ctx, "ambientColor", material.ambientColor.storage);
+        shader.uniform(ctx, Semantics.ambientColor, material.ambientColor.storage);
       }
       if(material.diffuseColor != null) {
-        shader.uniform(ctx, "diffuseColor", material.diffuseColor.storage);
+        shader.uniform(ctx, Semantics.diffuseColor, material.diffuseColor.storage);
       }
       if(material.emissiveColor != null) {
-        shader.uniform(ctx, "emissiveColor", material.emissiveColor.storage);
+        shader.uniform(ctx, Semantics.emissiveColor, material.emissiveColor.storage);
       }
     }
     if(mesh.skeleton != null) {
@@ -148,8 +148,11 @@ class Renderer {
     }
     if(mesh.faces != null) {
       mesh.faces.bindBuffer(ctx);
-      ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
-//      ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
+      if(mesh.wireframe) {
+        ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
+      } else {
+        ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+      }
     }
     mesh.children.forEach(_drawMesh);
   }

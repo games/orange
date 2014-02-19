@@ -101,7 +101,7 @@ class TestLighting {
     stats.begin();
     
     meshes.forEach((m){
-      m.rotation.rotateY(interval / 1000);
+//      m.rotation.rotateY(interval / 1000);
     });
     
     renderer.camera.update(interval);

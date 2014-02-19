@@ -57,7 +57,7 @@ class OgreLoader {
       geometry.buffers = {};
       geometry.buffers[Semantics.position] = _createBufferView(new Float32List.fromList(geo["positions"]), 3, gl.FLOAT);
       geometry.buffers[Semantics.normal] = _createBufferView(new Float32List.fromList(geo["normals"]), 3, gl.FLOAT);
-      geometry.buffers[Semantics.texture] = _createBufferView(new Float32List.fromList(geo["texturecoords"]), 2, gl.FLOAT);
+      geometry.buffers[Semantics.texcoords] = _createBufferView(new Float32List.fromList(geo["texturecoords"]), 2, gl.FLOAT);
       if(doc.containsKey("jointindices") && doc.containsKey("jointweights")) {
         geometry.buffers[Semantics.joints] = _createBufferView(new Uint16List.fromList(doc["jointindices"]), 4, gl.UNSIGNED_SHORT);
         geometry.buffers[Semantics.weights] = _createBufferView(new Float32List.fromList(doc["jointweights"]), 4, gl.FLOAT);

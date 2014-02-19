@@ -22,17 +22,43 @@ class Semantics {
   /// TODO should be rename to vertexes
   static const String position = "aPosition";
   /// TODO should be rename to texcoords
-  static const String texture = "aTexture";
-/// TODO should be rename to texcoords2
-  static const String texture2 = "aTexture2";
+  static const String texcoords = "aTexture";
+ /// TODO should be rename to texcoords2
+  static const String texcoords2 = "aTexture2";
   static const String normal = "aNormal";
   static const String tangent = "aTangent";
   static const String color = "aColor";
   static const String weights = "aWeights";
   static const String joints = "aJoints";
   
-  static const String emissive = "emissive";
-  static const String specular = "specular";
-  static const String ambient = "ambient";
-  static const String diffuse = "diffuse";
+  static const String viewMat = "uViewMat";
+  static const String projectionMat = "uProjectionMat";
+  static const String modelMat = "uModelMat";
+  static const String normalMat = "uNormalMat";
+  
+  static const String texture = "texture";
+  static const String emissiveColor = "emissiveColor";
+  static const String specularColor = "specularColor";
+  static const String ambientColor = "ambientColor";
+  static const String diffuseColor = "diffuseColor";
+  static const String shininess = "shininess";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

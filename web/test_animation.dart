@@ -50,23 +50,22 @@ class TestAnimation {
 //    renderer.lights.add(light0);
     
     
-    var plane = new Plane();
-    plane.rotation.rotateX(-math.PI / 2);
-    plane.material = new Material();
-    plane.material.shininess = 64.0;
-    plane.material.specularColor = new Float32List.fromList([0.8, 0.8, 0.8]);
-    plane.material.ambientColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    plane.material.diffuseColor = new Float32List.fromList([0.3, 0.3, 0.3]);
-    meshes.add(plane);
-    
-    var textureManager = new TextureManager();
-    textureManager.load(renderer.ctx,  {"path": "/orange/models/crate.gif"}).then((t) => plane.material.texture = t);
+//    var plane = new Plane();
+//    plane.rotation.rotateX(-math.PI / 2);
+//    plane.material = new Material();
+//    plane.material.shininess = 64.0;
+//    plane.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
+//    plane.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
+//    plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
+//    meshes.add(plane);
+//    var textureManager = new TextureManager();
+//    textureManager.load(renderer.ctx,  {"path": "/orange/models/crate.gif"}).then((t) => plane.material.texture = t);
 
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(renderer.ctx, url).then((m) {
       m.position.setValues(0.0, 0.0, 0.0);
-      m.animator.switchAnimation("Idle");
+      m.animator.switchAnimation("Die");
       m.animator.animations.forEach((n, a) => print(n));
       meshes.add(m);
       html.window.requestAnimationFrame(_animate);

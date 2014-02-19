@@ -3,7 +3,7 @@ part of orange;
 
 
 
-const String _shader_light_structure = """
+const String shader_light_structure = """
 struct LightSource {
   int type;
   vec3 direction;
@@ -55,8 +55,8 @@ uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
 uniform vec3 emissiveColor;
 
-$_shader_light_structure
-$_shader_lights
+$shader_light_structure
+$shader_lights
 
 varying vec4 vPosition;
 varying vec2 vTexture;
@@ -178,8 +178,8 @@ uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
 uniform vec3 emissiveColor;
 
-$_shader_light_structure
-$_shader_lights
+$shader_light_structure
+$shader_lights
 
 varying vec4 vPosition;
 varying vec2 vTexture;
@@ -217,12 +217,12 @@ void main(void) {
 
 
 
-const String _shader_lights = """
+const String shader_lights = """
 uniform LightSource light0;
 uniform LightSource light1;
 uniform LightSource light2;
 uniform LightSource light3;
-uniform vec3 cameraPosition;
+uniform vec3 uCameraPosition;
 
 vec3 phong(vec3 position, vec3 normal, LightSource ls, float shininess) {
   vec3 P = normalize(position);
@@ -243,7 +243,7 @@ vec3 phong(vec3 position, vec3 normal, LightSource ls, float shininess) {
   //specular term
   vec3 specular = vec3(0.0, 0.0, 0.0);
   if(diffuseAngle > 0.0){
-    vec3 viewDirection = normalize(cameraPosition - position);
+    vec3 viewDirection = normalize(uCameraPosition - position);
     vec3 H = normalize(viewDirection + towardLight);
     float specAngle = max(dot(normal, H), 0.0);
     specular = specularColor * pow(specAngle, shininess);

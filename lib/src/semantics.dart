@@ -3,27 +3,26 @@ part of orange;
 
 
 
-// from : https://github.com/KhronosGroup/glTF/issues/83#issuecomment-24095883
+
 class Semantics {
-  static const String MODEL = "MODEL";
-  static const String VIEW = "VIEW";
-  static const String PROJECTION = "PROJECTION";
-  static const String MODELVIEW = "MODELVIEW";
-  static const String MODELVIEWPROJECTION = "MODELVIEWPROJECTION";
-  static const String MODELINVERSE = "MODELINVERSE";
-  static const String VIEWINVERSE = "VIEWINVERSE";
-  static const String PROJECTIONINVERSE = "PROJECTIONINVERSE";
-  static const String MODELVIEWINVERSE = "MODELVIEWINVERSE";
-  static const String MODELVIEWPROJECTIONINVERSE = "MODELVIEWPROJECTIONINVERSE";
-  static const String MODELINVERSETRANSPOSE = "MODELINVERSETRANSPOSE";
-  static const String MODELVIEWINVERSETRANSPOSE = "MODELVIEWINVERSETRANSPOSE";
-  static const String VIEWPORT = "VIEWPORT";
+// from : https://github.com/KhronosGroup/glTF/issues/83#issuecomment-24095883
+//  static const String MODEL = "MODEL";
+//  static const String VIEW = "VIEW";
+//  static const String PROJECTION = "PROJECTION";
+//  static const String MODELVIEW = "MODELVIEW";
+//  static const String MODELVIEWPROJECTION = "MODELVIEWPROJECTION";
+//  static const String MODELINVERSE = "MODELINVERSE";
+//  static const String VIEWINVERSE = "VIEWINVERSE";
+//  static const String PROJECTIONINVERSE = "PROJECTIONINVERSE";
+//  static const String MODELVIEWINVERSE = "MODELVIEWINVERSE";
+//  static const String MODELVIEWPROJECTIONINVERSE = "MODELVIEWPROJECTIONINVERSE";
+//  static const String MODELINVERSETRANSPOSE = "MODELINVERSETRANSPOSE";
+//  static const String MODELVIEWINVERSETRANSPOSE = "MODELVIEWINVERSETRANSPOSE";
+//  static const String VIEWPORT = "VIEWPORT";
   
   /// TODO should be rename to vertexes
   static const String position = "aPosition";
-  /// TODO should be rename to texcoords
   static const String texcoords = "aTexture";
- /// TODO should be rename to texcoords2
   static const String texcoords2 = "aTexture2";
   static const String normal = "aNormal";
   static const String tangent = "aTangent";
@@ -35,6 +34,7 @@ class Semantics {
   static const String projectionMat = "uProjectionMat";
   static const String modelMat = "uModelMat";
   static const String normalMat = "uNormalMat";
+  static const String cameraPosition = "uCameraPosition";
   
   static const String texture = "texture";
   static const String emissiveColor = "emissiveColor";

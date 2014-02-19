@@ -69,7 +69,7 @@ class Renderer {
   }
   
   _setupLights(Shader shader) {
-    shader.uniform(ctx, "cameraPosition", camera.position.storage);
+    shader.uniform(ctx, Semantics.cameraPosition, camera.position.storage);
     for(var i = 0; i < MAX_LIGHTS; i++) {
       if(i < lights.length) {
         var light = lights[i];

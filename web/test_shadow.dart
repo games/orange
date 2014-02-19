@@ -4,6 +4,75 @@ import 'package:stats/stats.dart';
 import 'dart:math';
 
 
+var comm = """
+  varying vec3 vWorldNormal; varying vec4 vWorldPosition;
+  uniform mat4 ${Semantics.projectionMat}, ${Semantics.viewMat};
+  uniform mat4 lightProj, lightView; uniform mat3 lightRot;
+  uniform mat4 ${Semantics.modelMat};
+""";
+
+var vs = """
+  precision highp float;
+  $comm
+  attribute vec3 ${Semantics.position}, ${Semantics.normal};
+  void main(){
+      vWorldNormal = ${Semantics.normal};
+      vWorldPosition = ${Semantics.modelMat} * vec4(${Semantics.position}, 1.0);
+      gl_Position = ${Semantics.projectionMat} * ${Semantics.viewMat} * vWorldPosition;
+  }
+""";
+
+var fs = """
+  $comm
+  uniform LightSource light0;
+  uniform LightSource light1;
+  uniform LightSource light2;
+  uniform LightSource light3;
+  uniform vec3 uCameraPosition;
+
+  float attenuation(vec3 dir){
+      float dist = length(dir);
+      float radiance = 1.0/(1.0+pow(dist/10.0, 2.0));
+      return clamp(radiance*10.0, 0.0, 1.0);
+  }
+
+  float influence(vec3 normal, float coneAngle){
+      float minConeAngle = ((360.0-coneAngle-10.0)/360.0)*PI;
+      float maxConeAngle = ((360.0-coneAngle)/360.0)*PI;
+      return smoothstep(minConeAngle, maxConeAngle, acos(normal.z));
+  }
+  
+  float lambert(vec3 surfaceNormal, vec3 lightDirNormal){
+      return max(0.0, dot(surfaceNormal, lightDirNormal));
+  }
+  
+  vec3 skyLight(vec3 normal){
+      return vec3(smoothstep(0.0, PI, PI-acos(normal.y)))*0.4;
+  }
+  
+  vec3 gamma(vec3 color){
+      return pow(color, vec3(2.2));
+  }
+  
+  void main(){
+      vec3 worldNormal = normalize(vWorldNormal);
+  
+      vec3 camPos = (${Semantics.viewMat} * vWorldPosition).xyz;
+      vec3 lightPos = (lightView * vWorldPosition).xyz;
+      vec3 lightPosNormal = normalize(lightPos);
+      vec3 lightSurfaceNormal = lightRot * worldNormal;
+  
+      vec3 excident = (
+          skyLight(worldNormal) +
+          lambert(lightSurfaceNormal, -lightPosNormal) *
+          influence(lightPosNormal, 55.0) *
+          attenuation(lightPos)
+      );
+      gl_FragColor = vec4(gamma(excident), 1.0);
+  }
+""";
+
+
 class TestShadow {
   double _lastElapsed = 0.0;
   Renderer renderer;
@@ -43,6 +112,7 @@ class TestShadow {
     sphere.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
+    sphere.wireframe = true;
     meshes.add(sphere);
     
     var cone = new Cone(bottomRadius: 0.2, height: 0.5);

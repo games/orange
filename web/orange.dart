@@ -9,10 +9,10 @@ import 'test_shadow.dart';
 
 
 void main() {
-//  new TestAnimation().run();
+  new TestAnimation().run();
 //  new TestPrimitives().run();
 //  new TestLighting().run();
-  new TestShadow().run();
+//  new TestShadow().run();
 }
 
 

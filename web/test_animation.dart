@@ -11,32 +11,32 @@ class TestAnimation {
   Pass pass;
   List<Mesh> meshes = [];
   Stats stats;
-  
+
   run() {
     stats = new Stats();
     html.document.body.children.add(stats.container);
-    
+
     var canvas = html.querySelector("#container");
     renderer = new Renderer(canvas);
 //    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
     renderer.camera.position = new Vector3(0.0, 1.0, 5.0);
     renderer.pass = new Pass();
     renderer.pass.shader = new Shader(renderer.ctx, skinnedModelVS, skinnedModelFS);
-    
+
     var light0 = new Light.fromColor(new Color(51, 51, 51), Light.AMBIENT);
     light0.intensity = 1.0;
     renderer.lights.add(light0);
-    
+
     light0 = new Light(0xffffff, Light.DIRECT);
     light0.rotation.rotateX(math.PI / 4);//    .setEuler(0.0, PI / 4, 0.0);
     light0.intensity = 1.0;
     renderer.lights.add(light0);
-    
+
     light0 = new Light(0xff0000, Light.POINT);
     light0.position = new Vector3(1.0, 0.1, 0.0);
     light0.intensity = 0.2;
     renderer.lights.add(light0);
-    
+
 //    light0 = new Light(0xff0000, Light.SPOTLIGHT);
 //    light0.position = new Vector3(1.0, 1.0, 0.0);
 //    light0.intensity = 1.0;
@@ -48,8 +48,8 @@ class TestAnimation {
 //    light0.linearAttenuation = 0.05;
 //    light0.quadraticAttenuation = 0.01;
 //    renderer.lights.add(light0);
-    
-    
+
+
 //    var plane = new Plane();
 //    plane.rotation.rotateX(-math.PI / 2);
 //    plane.material = new Material();
@@ -65,7 +65,7 @@ class TestAnimation {
     var loader = new OgreLoader();
     loader.load(renderer.ctx, url).then((m) {
       m.position.setValues(0.0, 0.0, 0.0);
-      m.animator.switchAnimation("Die");
+      m.animator.switchAnimation("Idle");
       m.animator.animations.forEach((n, a) => print(n));
       meshes.add(m);
       html.window.requestAnimationFrame(_animate);
@@ -76,13 +76,13 @@ class TestAnimation {
   _animate(num elapsed) {
     var interval = elapsed - _lastElapsed;
     stats.begin();
-    
+
     meshes.forEach((m){
 //      m.rotation.rotateY(interval / 1000);
       if(m.animator != null)
-        m.animator.evaluate(interval); 
+        m.animator.evaluate(interval);
     });
-    
+
     renderer.camera.update(interval);
     renderer.camera.updateMatrix();
     renderer.prepare();

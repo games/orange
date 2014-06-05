@@ -46,7 +46,7 @@ class Renderer {
     
     node.updateMatrix();
     
-    ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.worldMatrix.storage);
+    ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.viewMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms[Semantics.projectionMat].location, false, camera.projectionMatrix.storage);
         
     _setupLights(shader);
@@ -104,7 +104,7 @@ class Renderer {
   _drawMesh(Mesh mesh) {
     var shader = pass.shader;
     shader.uniform(ctx,  Semantics.modelMat, mesh.worldMatrix.storage);
-    shader.uniform(ctx, Semantics.normalMat, (camera.worldMatrix * mesh.worldMatrix).normalMatrix3().transpose());
+    shader.uniform(ctx, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().transpose());
     if(mesh.geometry != null) {
       var geometry = mesh.geometry;
       shader.attributes.forEach((semantic, attrib) {

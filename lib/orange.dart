@@ -15,6 +15,7 @@ import 'dart:async';
 import 'dart:mirrors';
 
 
+part 'src/once.dart';
 part 'src/color.dart';
 part 'src/camera.dart';
 part 'src/node.dart';

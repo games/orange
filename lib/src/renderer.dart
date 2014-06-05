@@ -42,14 +42,12 @@ class Renderer {
     var shader = pass.shader;
     if (shader.ready == false) return;
     pass.prepare(ctx);
-
-    node.updateMatrix();
-
     ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.viewMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms[Semantics.projectionMat].location, false, camera.projectionMatrix.storage);
 
     _setupLights(shader);
 
+    node.updateMatrix();
     if (node is Light) {
       _drawLight(node);
     } else if (node is Mesh) {

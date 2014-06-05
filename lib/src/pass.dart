@@ -18,6 +18,7 @@ class Pass {
     setState(ctx, gl.CULL_FACE, cullFaceEnable);
     setState(ctx, gl.SAMPLE_ALPHA_TO_COVERAGE, true);
     ctx.depthMask(depthMask);
+    //TODO : fix me
     ctx.useProgram(shader.program);
   }
   

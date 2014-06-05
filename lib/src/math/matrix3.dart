@@ -68,4 +68,12 @@ class Matrix3 {
     array[i+1] = storage[1];
     array[i+0] = storage[0];
   }
+  
+  String toString() {
+    String s = '';
+    s = '$s[0] ${storage[0]} ${storage[1]} ${storage[2]} \n';
+    s = '$s[1] ${storage[3]} ${storage[4]} ${storage[5]} \n';
+    s = '$s[2] ${storage[6]} ${storage[7]} ${storage[8]} \n';
+    return s;
+  }
 }

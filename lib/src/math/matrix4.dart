@@ -275,6 +275,7 @@ class Matrix4 {
     storage[13] = 0.0;
     storage[14] = 0.0;
     storage[15] = 1.0;
+    return this;
   }
   
   /**

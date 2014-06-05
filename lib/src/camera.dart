@@ -29,11 +29,8 @@ class PerspectiveCamera extends Node {
   Matrix4 projectionMatrix;
   Matrix4 viewMatrix;
 
-  PerspectiveCamera(double aspect, [double near = 1.0, double far = 1000.0, double fov = 45.0]) {
+  PerspectiveCamera(double aspect, {this.near: 1.0, this.far: 1000.0, this.fov: 45.0}) {
     this.aspect = aspect;
-    this.near = near;
-    this.far = far;
-    this.fov = fov;
     viewMatrix = new Matrix4.identity();
     updateProjection();
   }
@@ -228,8 +225,6 @@ class FlyingCamera extends Camera {
     }
   }
 }
-
-
 
 
 

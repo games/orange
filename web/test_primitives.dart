@@ -23,6 +23,7 @@ class TestPrimitives {
     renderer = new Renderer(canvas);
 //    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
     renderer.camera.position = new Vector3(0.0, 0.0, 5.0);
+    renderer.camera.lookAt(new Vector3.zero());
     renderer.pass = new Pass();
     renderer.pass.shader = new Shader(renderer.ctx, lightingModelVS, lightingModelFS);
 //    renderer.pass.shader = new Shader(renderer.ctx, simpleModelVS, simpleModelFS);

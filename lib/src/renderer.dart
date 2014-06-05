@@ -39,8 +39,8 @@ class Renderer {
     var shader = pass.shader;
     if (!shader.ready) return false;
     pass.prepare(ctx);
-    ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.viewMatrix.storage);
-    ctx.uniformMatrix4fv(shader.uniforms[Semantics.projectionMat].location, false, camera.projectionMatrix.storage);
+    if (shader.uniforms.containsKey(Semantics.viewMat)) ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.viewMatrix.storage);
+    if (shader.uniforms.containsKey(Semantics.projectionMat)) ctx.uniformMatrix4fv(shader.uniforms[Semantics.projectionMat].location, false, camera.projectionMatrix.storage);
     _setupLights();
     return true;
   }
@@ -154,8 +154,6 @@ class Renderer {
   }
 
 }
-
-
 
 
 

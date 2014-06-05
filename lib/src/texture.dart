@@ -42,6 +42,7 @@ class TextureManager {
           texture.internalFormat = or(descripton["internalFormat"], gl.RGBA);
           texture.format = or(descripton["format"], gl.RGBA);
           texture.data = ctx.createTexture();
+          // TODO: duplicated ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
           ctx.bindTexture(texture.target, texture.data);
           
           var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) ||
@@ -51,6 +52,7 @@ class TextureManager {
           if(usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
             image = _ensureImage(image);
           }
+          // TODO: duplicated ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 
           ctx.bindTexture(texture.target, texture.data);
           ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_S, sampler.wrapS);
           ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, sampler.wrapT);

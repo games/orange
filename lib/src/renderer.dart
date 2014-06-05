@@ -34,19 +34,18 @@ class Renderer {
     projectionMatrix = new Matrix4.perspective(fov, canvas.width / canvas.height, 1.0, 4096.0);
   }
 
-  prepare() {
+  bool prepare() {
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  }
-
-  draw(Node node) {
     var shader = pass.shader;
-    if (shader.ready == false) return;
+    if (!shader.ready) return false;
     pass.prepare(ctx);
     ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.viewMatrix.storage);
     ctx.uniformMatrix4fv(shader.uniforms[Semantics.projectionMat].location, false, camera.projectionMatrix.storage);
+    _setupLights();
+    return true;
+  }
 
-    _setupLights(shader);
-
+  draw(Node node) {
     node.updateMatrix();
     if (node is Light) {
       _drawLight(node);
@@ -65,7 +64,8 @@ class Renderer {
     ctx.bindTexture(gl.TEXTURE_2D, null);
   }
 
-  _setupLights(Shader shader) {
+  _setupLights() {
+    var shader = pass.shader;
     shader.uniform(ctx, Semantics.cameraPosition, camera.position.storage);
     for (var i = 0; i < MAX_LIGHTS; i++) {
       var lt = "light${i}.type";
@@ -154,10 +154,6 @@ class Renderer {
   }
 
 }
-
-
-
-
 
 
 

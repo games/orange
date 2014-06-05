@@ -93,6 +93,7 @@ class Quaternion {
     storage[1] = 0.0;
     storage[2] = 0.0;
     storage[3] = 1.0;
+    return this;
   }
   
   Quaternion inverse() {

@@ -20,10 +20,10 @@ class Semantics {
 //  static const String MODELVIEWINVERSETRANSPOSE = "MODELVIEWINVERSETRANSPOSE";
 //  static const String VIEWPORT = "VIEWPORT";
   
-  /// TODO should be rename to vertexes
+  
   static const String position = "aPosition";
-  static const String texcoords = "aTexture";
-  static const String texcoords2 = "aTexture2";
+  static const String texcoords = "aTexcoords";
+  static const String texcoords2 = "aTexcoords2";
   static const String normal = "aNormal";
   static const String tangent = "aTangent";
   static const String color = "aColor";
@@ -36,7 +36,7 @@ class Semantics {
   static const String normalMat = "uNormalMat";
   static const String cameraPosition = "uCameraPosition";
   
-  static const String texture = "texture";
+  static const String texture = "uTexture";
   static const String emissiveColor = "emissiveColor";
   static const String specularColor = "specularColor";
   static const String ambientColor = "ambientColor";

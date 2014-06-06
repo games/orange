@@ -22,7 +22,7 @@ struct LightSource {
 const String lightingModelVS = """
 precision highp float;
 attribute vec3 aPosition;
-attribute vec2 aTexture;
+attribute vec2 aTexcoords;
 attribute vec3 aNormal;
 
 uniform mat4 uViewMat;
@@ -31,7 +31,7 @@ uniform mat4 uProjectionMat;
 uniform mat3 uNormalMat;
 
 varying vec4 vPosition;
-varying vec2 vTexture;
+varying vec2 vTexcoords;
 varying vec3 vNormal;
 
 void main(void) {
@@ -39,7 +39,7 @@ void main(void) {
    vPosition = modelViewMat * vec4(aPosition, 1.0);
    gl_Position = uProjectionMat * vPosition;
 
-   vTexture = aTexture;
+   vTexcoords = aTexcoords;
    vNormal = normalize(aNormal * uNormalMat);
 }
 """;
@@ -47,7 +47,7 @@ void main(void) {
 
 const String lightingModelFS = """
 precision highp float;
-uniform sampler2D texture;
+uniform sampler2D uTexture;
 // material
 uniform float shininess;
 uniform vec3 specularColor;
@@ -59,7 +59,7 @@ $shader_light_structure
 $shader_lights
 
 varying vec4 vPosition;
-varying vec2 vTexture;
+varying vec2 vTexcoords;
 varying vec3 vNormal;
 
 void main() {
@@ -123,7 +123,7 @@ const int MAX_JOINTS_PER_MESH = 60;
 const String skinnedModelVS = """
 precision highp float;
 attribute vec3 aPosition;
-attribute vec2 aTexture;
+attribute vec2 aTexcoords;
 attribute vec3 aNormal;
 attribute vec4 aJoints;
 attribute vec4 aWeights;
@@ -134,7 +134,7 @@ uniform mat4 uProjectionMat;
 uniform mat4 uJointMat[$MAX_JOINTS_PER_MESH];
 
 varying vec4 vPosition;
-varying vec2 vTexture;
+varying vec2 vTexcoords;
 varying vec3 vNormal;
 //varying vec3 vLightDir;
 //varying vec3 vEyeDir;
@@ -160,7 +160,7 @@ void main(void) {
    vPosition = skinMat * vec4(aPosition, 1.0);
    gl_Position = uProjectionMat * vPosition;
 
-   vTexture = aTexture;
+   vTexcoords = aTexcoords;
    vNormal = normalize(aNormal * normalMat);
 //   vLightDir = normalize(uLightPos - vPosition.xyz);
 //   vEyeDir = normalize(-vPosition.xyz);
@@ -170,7 +170,7 @@ void main(void) {
 
 const String skinnedModelFS = """
 precision highp float;
-uniform sampler2D texture;
+uniform sampler2D uTexture;
 // material
 uniform float shininess;
 uniform vec3 specularColor;
@@ -182,14 +182,14 @@ $shader_light_structure
 $shader_lights
 
 varying vec4 vPosition;
-varying vec2 vTexture;
+varying vec2 vTexcoords;
 varying vec3 vNormal;
 //varying vec3 vLightDir;
 //varying vec3 vEyeDir;
 
 void main(void) {
 
- vec4 color = texture2D(texture, vTexture);
+ vec4 color = texture2D(uTexture, vTexcoords);
 // color = vec4(0.8, 0.8, 0.8, 1.0);
 // vec3 normal = normalize(vNormal);
 // vec3 lightDir = normalize(vLightDir);
@@ -290,7 +290,7 @@ vec3 computeLight(vec3 position, vec3 normal, LightSource ls, float shininess) {
 const String simpleModelVS = """
 precision highp float;
 attribute vec3 aPosition;
-attribute vec2 aTexture;
+attribute vec2 aTexcoords;
 attribute vec3 aNormal;
 
 uniform mat4 uViewMat;
@@ -298,7 +298,7 @@ uniform mat4 uModelMat;
 uniform mat4 uProjectionMat;
 
 varying vec4 vPosition;
-varying vec2 vTexture;
+varying vec2 vTexcoords;
 varying vec3 vLighting;
 
 mat3 getNormalMat(mat4 mat) {
@@ -320,7 +320,7 @@ void main(void) {
   highp float directional = max(dot(normal, directionalVector), 0.0);
   vec3 lighting = ambientLight + (directionalLightColor * directional);
 
-  vTexture = aTexture;
+  vTexcoords = aTexcoords;
   vLighting = lighting;
 }
 """;
@@ -330,7 +330,7 @@ const String simpleModelFS = """
 precision highp float;
 
 varying vec4 vPosition;
-varying vec2 vTexture;
+varying vec2 vTexcoords;
 varying vec3 vNormal;
 varying vec3 vLighting;
 

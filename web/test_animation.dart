@@ -78,14 +78,15 @@ class TestAnimation {
     stats.begin();
 
     meshes.forEach((m) {
-      //      m.rotation.rotateY(interval / 1000);
+            m.rotation.rotateY(interval / 1000);
       if (m.animator != null) m.animator.evaluate(interval);
     });
 
-    renderer.camera.update(interval);
-    renderer.camera.position.setValues(math.cos(elapsed / 1000) * 5, 1.0, math.sin(elapsed / 1000) * 5);
-    renderer.camera.lookAt(new Vector3.zero());
-    renderer.camera.updateMatrix();
+//    renderer.camera.update(interval);
+//    renderer.camera.position.setValues(math.cos(elapsed / 1000) * 5, 1.0, math.sin(elapsed / 1000) * 5);
+//    renderer.camera.lookAt(new Vector3.zero());
+//    renderer.camera.updateMatrix();
+    
     renderer.prepare();
     meshes.forEach((m) => renderer.draw(m));
 

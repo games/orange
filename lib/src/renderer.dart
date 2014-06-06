@@ -47,6 +47,10 @@ class Renderer {
 
   draw(Node node) {
     node.updateMatrix();
+
+    var shader = pass.shader;
+    shader.uniform(ctx, Semantics.useTextures, false);
+
     if (node is Light) {
       _drawLight(node);
     } else if (node is Mesh) {
@@ -101,7 +105,8 @@ class Renderer {
   _drawMesh(Mesh mesh) {
     var shader = pass.shader;
     shader.uniform(ctx, Semantics.modelMat, mesh.worldMatrix.storage);
-    shader.uniform(ctx, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().transpose());
+    shader.uniform(ctx, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
+
     if (mesh.geometry != null) {
       var geometry = mesh.geometry;
       shader.attributes.forEach((semantic, attrib) {
@@ -113,12 +118,17 @@ class Renderer {
         }
       });
     }
+
     if (mesh.material != null) {
       var material = mesh.material;
       if (mesh.material.texture != null) {
         ctx.activeTexture(gl.TEXTURE0);
         ctx.bindTexture(material.texture.target, material.texture.data);
         shader.uniform(ctx, Semantics.texture, 0);
+        shader.uniform(ctx, Semantics.useTextures, true);
+      } else if (mesh.material.surfaceColor != null) {
+        shader.uniform(ctx, Semantics.useTextures, false);
+        shader.uniform(ctx, Semantics.uSurfaceColor, mesh.material.surfaceColor.storage);
       }
       if (material.shininess != null) {
         shader.uniform(ctx, Semantics.shininess, material.shininess);
@@ -154,9 +164,6 @@ class Renderer {
   }
 
 }
-
-
-
 
 
 

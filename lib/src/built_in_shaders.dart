@@ -29,6 +29,7 @@ uniform mat4 uViewMat;
 uniform mat4 uModelMat;
 uniform mat4 uProjectionMat;
 uniform mat3 uNormalMat;
+uniform bool uUseTextures;
 
 varying vec4 vPosition;
 varying vec2 vTexcoords;
@@ -40,7 +41,7 @@ void main(void) {
    gl_Position = uProjectionMat * vPosition;
 
    vTexcoords = aTexcoords;
-   vNormal = normalize(aNormal * uNormalMat);
+   vNormal = uNormalMat * aNormal;
 }
 """;
 
@@ -48,7 +49,9 @@ void main(void) {
 const String lightingModelFS = """
 precision highp float;
 uniform sampler2D uTexture;
+uniform bool uUseTextures;
 // material
+uniform vec3 uSurfaceColor;
 uniform float shininess;
 uniform vec3 specularColor;
 uniform vec3 diffuseColor;
@@ -69,7 +72,11 @@ void main() {
                  computeLight(vPosition.xyz, vNormal, light2, shininess) + 
                  computeLight(vPosition.xyz, vNormal, light3, shininess);
 
-  gl_FragColor = clamp(vec4(lighting, 1.0), 0.0, 1.0);
+  highp vec4 textureColor = vec4(uSurfaceColor, 1.0);
+  if(uUseTextures) {
+    textureColor = texture2D(uTexture, vTexcoords);
+  }
+  gl_FragColor = vec4(textureColor.rgb * lighting, textureColor.a);
 }
 
 """;
@@ -161,7 +168,8 @@ void main(void) {
    gl_Position = uProjectionMat * vPosition;
 
    vTexcoords = aTexcoords;
-   vNormal = normalize(aNormal * normalMat);
+   //vNormal = normalize(aNormal * normalMat);
+   vNormal = normalMat * aNormal;
 //   vLightDir = normalize(uLightPos - vPosition.xyz);
 //   vEyeDir = normalize(-vPosition.xyz);
 }
@@ -209,7 +217,7 @@ void main(void) {
 //                   ambientColor + 
 //                   (diffuseColor * lighting * lightFactor) + 
 //                   (specularColor * lighting * specularFactor);
- gl_FragColor = vec4(color.rgb * lighting, 1.0);
+ gl_FragColor = vec4(color.rgb * lighting, color.a);
 }
 """;
 

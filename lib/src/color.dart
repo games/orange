@@ -2,6 +2,7 @@ part of orange;
 
 
 class Color {
+  
   final Float32List storage = new Float32List(3);
   
   Color(int r, int g, int b, [double alpha = 1.0]) {

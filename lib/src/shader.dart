@@ -72,7 +72,7 @@ class Shader {
           ctx.uniformMatrix2fv(property.location, false, value);
           break;
         case gl.FLOAT_MAT3:
-          ctx.uniformMatrix3fv(property.location, false, value.storage);
+          ctx.uniformMatrix3fv(property.location, false, value);
           break;
         case gl.FLOAT_MAT4:
           ctx.uniformMatrix4fv(property.location, false, value);
@@ -98,6 +98,8 @@ class Shader {
         case gl.SAMPLER_CUBE:
           ctx.uniform1i(property.location, value);
           break;
+        case gl.BOOL:
+          ctx.uniform1f(property.location, value ? 1.0 : 0.0);
       }
     }
   }

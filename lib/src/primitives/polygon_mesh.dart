@@ -25,7 +25,7 @@ class PolygonMesh extends Mesh {
   
   setTexCoords(List texCoords) {
     _texCoords = new Float32List.fromList(texCoords);
-    geometry.buffers[Semantics.texture] = new BufferView(2, gl.FLOAT, 0, 0, count: _texCoords.length ~/ 2, data: _texCoords);
+    geometry.buffers[Semantics.texcoords] = new BufferView(2, gl.FLOAT, 0, 0, count: _texCoords.length ~/ 2, data: _texCoords);
   }
   
   setFaces(List indices) {

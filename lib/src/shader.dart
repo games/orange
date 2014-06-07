@@ -99,7 +99,7 @@ class Shader {
           ctx.uniform1i(property.location, value);
           break;
         case gl.BOOL:
-          ctx.uniform1f(property.location, value ? 1.0 : 0.0);
+          ctx.uniform1i(property.location, value ? 1 : 0);
       }
     }
   }

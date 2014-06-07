@@ -113,7 +113,7 @@ class TestLighting {
 
     meshes.forEach((m) => renderer.draw(m));
 
-    renderer.lights.forEach((l) => renderer.draw(l));
+//    renderer.lights.forEach((l) => renderer.draw(l));
 
     renderer.draw(ground);
 

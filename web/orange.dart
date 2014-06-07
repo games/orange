@@ -12,9 +12,9 @@ import 'test_lighting2.dart';
 void main() {
 //  new TestAnimation().run();
 //  new TestPrimitives().run();
-//  new TestLighting().run();
+  new TestLighting().run();
 //  new TestShadow().run();
-  new TestLighting2().run();
+//  new TestLighting2().run();
 }
 
 

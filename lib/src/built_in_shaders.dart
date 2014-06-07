@@ -41,7 +41,7 @@ void main(void) {
    gl_Position = uProjectionMat * vPosition;
 
    vTexcoords = aTexcoords;
-   vNormal = uNormalMat * aNormal;
+   vNormal = normalize(uNormalMat * aNormal);
 }
 """;
 
@@ -86,24 +86,6 @@ void main() {
 
 
 
-const String _shadows_vertex_projection = """
-void drawShadow(in vec3 l, in vec4 v) {
-  float slopeX = (l.y - v.y) / (l.x - v.x);
-  float slopeZ = (l.y - v.y) / (l.z - v.z);
- 
-  v.y = 0.0;
-  v.x = l.x - (l.y / slopeX);
-  v.z = l.z - (l.y / slopeZ);
- 
-  gl_Position = pMatrix * mVMatrix * v;
-  frontColor = vec4(0.0, 0.0, 0.0, 1.0);
-}
-
-""";
-
-
-
-
 
 
 
@@ -139,6 +121,7 @@ uniform mat4 uViewMat;
 uniform mat4 uModelMat;
 uniform mat4 uProjectionMat;
 uniform mat4 uJointMat[$MAX_JOINTS_PER_MESH];
+uniform mat3 uNormalMat;
 
 varying vec4 vPosition;
 varying vec2 vTexcoords;
@@ -163,13 +146,14 @@ void main(void) {
    mat4 modelViewMat = uViewMat * uModelMat;
    mat4 skinMat = modelViewMat * accumulateSkinMat();
    mat3 normalMat = getNormalMat(skinMat);
+   normalMat = uNormalMat;
 
    vPosition = skinMat * vec4(aPosition, 1.0);
    gl_Position = uProjectionMat * vPosition;
 
    vTexcoords = aTexcoords;
-   //vNormal = normalize(aNormal * normalMat);
-   vNormal = normalMat * aNormal;
+   vNormal = normalize(normalMat * aNormal);
+//   vNormal =  aNormal * normalMat;
 //   vLightDir = normalize(uLightPos - vPosition.xyz);
 //   vEyeDir = normalize(-vPosition.xyz);
 }
@@ -320,7 +304,7 @@ void main(void) {
   gl_Position = uProjectionMat * vPosition;
 
   mat3 normalMat = getNormalMat(modelViewMat);
-  vec3 normal = normalize(aNormal * normalMat);
+  vec3 normal = normalize(normalMat * aNormal);
 
   highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
   highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);

@@ -6,8 +6,6 @@ class Renderer {
   html.CanvasElement canvas;
   gl.RenderingContext ctx;
   PerspectiveCamera camera;
-  double fov;
-  Matrix4 projectionMatrix;
   Pass pass;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   List<Light> lights = [];
@@ -16,10 +14,6 @@ class Renderer {
     this.canvas = canvas;
     ctx = canvas.getContext3d();
     camera = new PerspectiveCamera(canvas.width / canvas.height);
-    //    camera.distance = 4.0;
-    //    camera.center = new Vector3.zero();
-    fov = 45.0;
-    //    projectionMatrix = new Matrix4.perspective(fov, canvas.width / canvas.height, 1.0, 4096.0);
 
     ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
     ctx.clearDepth(1.0);
@@ -31,7 +25,8 @@ class Renderer {
 
   resize() {
     ctx.viewport(0, 0, canvas.width, canvas.height);
-    projectionMatrix = new Matrix4.perspective(fov, canvas.width / canvas.height, 1.0, 4096.0);
+    camera.aspect = canvas.width / canvas.height;
+    camera.updateProjection();
   }
 
   bool prepare() {
@@ -39,8 +34,8 @@ class Renderer {
     var shader = pass.shader;
     if (!shader.ready) return false;
     pass.prepare(ctx);
-    if (shader.uniforms.containsKey(Semantics.viewMat)) ctx.uniformMatrix4fv(shader.uniforms[Semantics.viewMat].location, false, camera.viewMatrix.storage);
-    if (shader.uniforms.containsKey(Semantics.projectionMat)) ctx.uniformMatrix4fv(shader.uniforms[Semantics.projectionMat].location, false, camera.projectionMatrix.storage);
+    shader.uniform(ctx, Semantics.viewMat, camera.viewMatrix.storage);
+    shader.uniform(ctx, Semantics.projectionMat, camera.projectionMatrix.storage);
     _setupLights();
     return true;
   }
@@ -52,7 +47,7 @@ class Renderer {
     shader.uniform(ctx, Semantics.useTextures, false);
 
     if (node is Light) {
-      _drawLight(node);
+      //      _drawLight(node);
     } else if (node is Mesh) {
       _drawMesh(node);
     }
@@ -77,14 +72,14 @@ class Renderer {
       if (i < lights.length) {
         var light = lights[i];
         light.updateMatrix();
-        ctx.uniform1i(shader.uniforms[lt].location, light.type);
-        ctx.uniform1f(shader.uniforms["light${i}.intensity"].location, light.intensity);
-        ctx.uniform3fv(shader.uniforms["light${i}.direction"].location, light.direction.storage);
-        ctx.uniform3fv(shader.uniforms["light${i}.color"].location, light.color.storage);
-        ctx.uniform3fv(shader.uniforms["light${i}.position"].location, light.position.storage);
-        ctx.uniform1f(shader.uniforms["light${i}.constantAttenuation"].location, light.constantAttenuation);
-        ctx.uniform1f(shader.uniforms["light${i}.linearAttenuation"].location, light.linearAttenuation);
-        ctx.uniform1f(shader.uniforms["light${i}.quadraticAttenuation"].location, light.quadraticAttenuation);
+        shader.uniform(ctx, lt, light.type);
+        shader.uniform(ctx, "light${i}.intensity", light.intensity);
+        shader.uniform(ctx, "light${i}.direction", light.direction.storage);
+        shader.uniform(ctx, "light${i}.color", light.color.storage);
+        shader.uniform(ctx, "light${i}.position", light.position.storage);
+        shader.uniform(ctx, "light${i}.constantAttenuation", light.constantAttenuation);
+        shader.uniform(ctx, "light${i}.linearAttenuation", light.linearAttenuation);
+        shader.uniform(ctx, "light${i}.quadraticAttenuation", light.quadraticAttenuation);
         if (light.spotExponent != null) ctx.uniform1f(shader.uniforms["light${i}.spotExponent"].location, light.spotExponent);
         if (light.spotCutoff != null) ctx.uniform1f(shader.uniforms["light${i}.spotCosCutoff"].location, light.spotCosCutoff);
       } else {
@@ -164,7 +159,6 @@ class Renderer {
   }
 
 }
-
 
 
 

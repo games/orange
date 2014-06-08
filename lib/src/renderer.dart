@@ -66,16 +66,7 @@ class Renderer {
       if (i < lights.length) {
         var light = lights[i];
         light.updateMatrix();
-        shader.uniform(ctx, lt, light.type);
-        shader.uniform(ctx, "light${i}.intensity", light.intensity);
-        shader.uniform(ctx, "light${i}.direction", light.direction.storage);
-        shader.uniform(ctx, "light${i}.color", light.color.storage);
-        shader.uniform(ctx, "light${i}.position", light.position.storage);
-        shader.uniform(ctx, "light${i}.constantAttenuation", light.constantAttenuation);
-        shader.uniform(ctx, "light${i}.linearAttenuation", light.linearAttenuation);
-        shader.uniform(ctx, "light${i}.quadraticAttenuation", light.quadraticAttenuation);
-        shader.uniform(ctx, "light${i}.spotExponent", light.spotExponent);
-        if (light.spotCutoff != null) shader.uniform(ctx, "light${i}.spotCosCutoff", light.spotCosCutoff);
+        light.bind(ctx, shader, i);
       } else {
         shader.uniform(ctx, lt, Light.NONE);
       }

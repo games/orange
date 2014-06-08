@@ -68,6 +68,12 @@ class Shader {
     if (uniforms.containsKey(symbol) && value != null) {
       var property = uniforms[symbol];
       switch (property.type) {
+        case gl.BYTE:
+        case gl.UNSIGNED_BYTE:
+        case gl.SHORT:
+        case gl.UNSIGNED_SHORT:
+          ctx.uniform1i(property.location, value);
+          break;
         case gl.FLOAT_MAT2:
           ctx.uniformMatrix2fv(property.location, false, value);
           break;

@@ -74,12 +74,13 @@ class Renderer {
   }
 
   _drawLight(Light light) {
-    var coordinate = new Coordinate();
-    coordinate.position = light.position;
-    coordinate.rotation = light.rotation;
-    coordinate.updateMatrix();
-    coordinate.worldMatrix.invert();
-    _drawMesh(coordinate);
+//    var coordinate = new Coordinate();
+//    coordinate.position = light.position;
+//    coordinate.rotation = light.rotation;
+//    coordinate.updateMatrix();
+//    coordinate.worldMatrix.invert();
+//    _drawMesh(coordinate);
+    _drawMesh(light.view);
   }
 
   _drawMesh(Mesh mesh) {

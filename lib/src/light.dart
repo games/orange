@@ -39,11 +39,11 @@ abstract class Light extends Node {
   Mesh get view {
     if (_view == null) {
       _view = new Coordinate();
-      _view.position = position;
-      _view.rotation = rotation;
-      _view.updateMatrix();
-      _view.worldMatrix.invert();
+//      _view.worldMatrix.invert();
     }
+    _view.position = position;
+    _view.rotation = rotation;
+    _view.updateMatrix();
     return _view;
   }
 }
@@ -100,15 +100,23 @@ class SpotLight extends PointLight {
   double spotExponent;
   double get spotCosCutoff => math.cos(spotCutoff);
 
-  SpotLight(num hexColor, {Vector3 direction, spotCutoff: math.PI / 2, spotExponent: 10.0, constantAttenuation: 1.0, linearAttenuation: 0.045, quadraticAttenuation: 0.0075, double intensity: 1.0})
+  SpotLight(num hexColor, {Vector3 direction, 
+    spotCutoff: math.PI / 4, 
+    spotExponent: 3.0, 
+    constantAttenuation: 0.1, 
+    linearAttenuation: 0.05, 
+    quadraticAttenuation: 0.11, double intensity: 1.0})
       : super(hexColor, constantAttenuation: constantAttenuation, linearAttenuation: linearAttenuation, quadraticAttenuation: quadraticAttenuation, intensity: intensity) {
     type = Light.SPOTLIGHT;
+    this.spotCutoff = spotCutoff;
+    this.spotExponent = spotExponent;
     if (direction == null) this.direction = new Vector3(0.0, 0.0, -1.0);
   }
 
   @override
   void bind(gl.RenderingContext ctx, Shader shader, int i) {
     super.bind(ctx, shader, i);
+    shader.uniform(ctx, "light${i}.direction", direction.storage);
     shader.uniform(ctx, "light${i}.spotExponent", spotExponent);
     shader.uniform(ctx, "light${i}.spotCosCutoff", spotCosCutoff);
   }

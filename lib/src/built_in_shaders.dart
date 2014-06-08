@@ -25,32 +25,30 @@ uniform LightSource light2;
 uniform LightSource light3;
 uniform vec3 uCameraPosition;
 
-vec3 phong(vec3 position, vec3 normal, LightSource ls, float shininess) {
-  vec3 P = normalize(position);
-  vec3 lightPosition = ls.position;
-  vec3 towardLight = lightPosition - position;
+vec3 phong(vec4 position, vec3 normal, LightSource ls, float shininess) {
   vec3 lightDirection;
   // point light
   if(ls.type == 1){
     lightDirection = -ls.direction;
   } else {
-    lightDirection = normalize(towardLight);
+    lightDirection = normalize(vec3(uViewMat * vec4(ls.position, 1.0) - position));
   }
 
   //diffuse term
   float diffuseAngle = max(dot(normal, lightDirection), 0.0);
-  vec3 diffuse = diffuseColor * diffuseAngle;
+  vec3 diffuse = diffuseColor * ls.color * diffuseAngle;
 
   //specular term
   vec3 specular = vec3(0.0, 0.0, 0.0);
-  if(diffuseAngle > 0.0){
-    vec3 viewDirection = normalize(uCameraPosition - position);
-    vec3 H = normalize(viewDirection + towardLight);
-    float specAngle = max(dot(normal, H), 0.0);
-    specular = specularColor * pow(specAngle, shininess);
+  if(diffuseAngle > 0.0 && shininess > 0.0) {
+    vec3 Eye = normalize(vec3(uViewMat * vec4(uCameraPosition, 1.0) - position));
+    vec3 H = normalize(Eye + lightDirection);
+    float NdotHV = max(dot(normal, H), 0.0);
+    specular = specularColor * ls.color * pow(NdotHV, shininess);
   }
   float attenuation = 1.0;
-  float dist = length(towardLight);
+  float dist;// = distance(position, ls.position);
+  dist = length(lightDirection);
   if(ls.type == 2) {
     attenuation = 1.0 / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
   } else if(ls.type == 3) {
@@ -63,10 +61,10 @@ vec3 phong(vec3 position, vec3 normal, LightSource ls, float shininess) {
     }
   }
 
-  return diffuse * ls.intensity * attenuation  + specular * attenuation;
+  return diffuse * ls.intensity * attenuation + specular * ls.intensity * attenuation;
 }
 
-vec3 computeLight(vec3 position, vec3 normal, LightSource ls, float shininess) {
+vec3 computeLight(vec4 position, vec3 normal, LightSource ls, float shininess) {
   if(ls.type < 0 || ls.type > 5)
     return vec3(0.0, 0.0, 0.0);
   if(ls.type == 0)
@@ -94,11 +92,10 @@ varying vec2 vTexcoords;
 varying vec3 vNormal;
 
 void main(void) {
-   mat4 modelViewMat = uViewMat * uModelMat;
-   vPosition = modelViewMat * vec4(aPosition, 1.0);
+   vPosition = uViewMat * uModelMat * vec4(aPosition, 1.0);
    gl_Position = uProjectionMat * vPosition;
 
-   vTexcoords = aTexcoords;
+   //vTexcoords = aTexcoords;
    vNormal = normalize(uNormalMat * aNormal);
 }
 """;
@@ -106,6 +103,7 @@ void main(void) {
 
 const String lightingModelFS = """
 precision highp float;
+uniform mat4 uViewMat;
 uniform sampler2D uTexture;
 uniform bool uUseTextures;
 // material
@@ -124,15 +122,16 @@ varying vec3 vNormal;
 
 void main() {
   vec3 lighting = emissiveColor + ambientColor +
-                 computeLight(vPosition.xyz, vNormal, light0, shininess) + 
-                 computeLight(vPosition.xyz, vNormal, light1, shininess) + 
-                 computeLight(vPosition.xyz, vNormal, light2, shininess) + 
-                 computeLight(vPosition.xyz, vNormal, light3, shininess);
+                 computeLight(vPosition, vNormal, light0, shininess) + 
+                 computeLight(vPosition, vNormal, light1, shininess) + 
+                 computeLight(vPosition, vNormal, light2, shininess) + 
+                 computeLight(vPosition, vNormal, light3, shininess);
 
   highp vec4 textureColor = vec4(1.0, 1.0, 1.0, 1.0);
   if(uUseTextures) {
-    textureColor = texture2D(uTexture, vTexcoords);
+    //textureColor = texture2D(uTexture, vTexcoords);
   }
+
   gl_FragColor = vec4(textureColor.rgb * lighting, textureColor.a);
 }
 
@@ -219,6 +218,7 @@ void main(void) {
 
 const String skinnedModelFS = """
 precision highp float;
+uniform mat4 uViewMat;
 uniform sampler2D uTexture;
 // material
 uniform float shininess;
@@ -246,10 +246,10 @@ void main(void) {
 // vec3 reflectDir = reflect(-lightDir, normal);
 
  vec3 lighting = emissiveColor + ambientColor +
-                 computeLight(vPosition.xyz, vNormal, light0, shininess) + 
-                 computeLight(vPosition.xyz, vNormal, light1, shininess) + 
-                 computeLight(vPosition.xyz, vNormal, light2, shininess) + 
-                 computeLight(vPosition.xyz, vNormal, light3, shininess);
+                 computeLight(vPosition, vNormal, light0, shininess) + 
+                 computeLight(vPosition, vNormal, light1, shininess) + 
+                 computeLight(vPosition, vNormal, light2, shininess) + 
+                 computeLight(vPosition, vNormal, light3, shininess);
 
 // float specularLevel = color.a;
 // float specularFactor = pow(clamp(dot(reflectDir, eyeDir), 0.0, 1.0), shininess) * specularLevel;

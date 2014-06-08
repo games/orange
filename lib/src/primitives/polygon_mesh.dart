@@ -59,6 +59,9 @@ class PolygonMesh extends Mesh {
   
   Vector3 getVertex(int index) {
     index *= 3;
+    if(index + 2 >= _vertices.length) {
+      print(index);
+    }
     return new Vector3(_vertices[index], _vertices[index + 1], _vertices[index + 2]);
   }
   
@@ -67,6 +70,12 @@ class PolygonMesh extends Mesh {
     _vertices[index] = vertex[0];
     _vertices[index + 1] = vertex[1];
     _vertices[index + 2] = vertex[2];
+  }
+  
+  addVertex(vertex) {
+    _vertices.add(vertex[0]);
+    _vertices.add(vertex[1]);
+    _vertices.add(vertex[2]);
   }
   
   Vector3 getNormal(int index) {
@@ -81,6 +90,12 @@ class PolygonMesh extends Mesh {
     _normals[index + 2] = normal[2];
   }
   
+  addNormal(normal) {
+    _normals.add(normal[0]);
+    _normals.add(normal[1]);
+    _normals.add(normal[2]);
+  }
+  
   Vector2 getTexCoord(int index) {
     index *= 2;
     return new Vector2(_texCoords[index], _texCoords[index + 1]);
@@ -90,6 +105,17 @@ class PolygonMesh extends Mesh {
     index *= 2;
     _texCoords[index] = uv[0];
     _texCoords[index + 1] = uv[1];
+  }
+  
+  addTexCoord(uv) {
+    _texCoords.add(uv[0]);
+    _texCoords.add(uv[1]);
+  }
+  
+  addFace(face) {
+    _indices.add(face[0]);
+    _indices.add(face[1]);
+    _indices.add(face[2]);
   }
 
   int get vertexesCount => geometry.buffers[Semantics.position].count;

@@ -69,12 +69,12 @@ class TestPrimitives {
     coordinate.position.setValues(-2.5, 1.5, 0.0);
     meshes.add(coordinate);
     
-    _directionalLight = new Light(0xffffff, Light.DIRECT);
+    _directionalLight = new DirectionalLight(0xffffff);
     _directionalLight.rotation.rotateX(-PI);
     _directionalLight.intensity = 1.0;
-    renderer.lights.add(_directionalLight);
+//    renderer.lights.add(_directionalLight);
     
-    _pointLight = new Light(0xffffff, Light.POINT);
+    _pointLight = new PointLight(0xffffff);
     _pointLight.position = new Vector3(5.0, 5.0, 5.0);
     _pointLight.intensity = 2.0;
     renderer.lights.add(_pointLight);
@@ -87,11 +87,18 @@ class TestPrimitives {
     var interval = elapsed - _lastElapsed;
     stats.begin();
     
-    meshes.forEach((m){
-      m.rotation.rotateX(interval / 500);
-      m.rotation.rotateY(interval / 1000);
-      m.rotation.rotateZ(interval / 800);
-    });
+//    meshes.forEach((m){
+//      m.rotation.rotateX(interval / 500);
+//      m.rotation.rotateY(interval / 1000);
+//      m.rotation.rotateZ(interval / 800);
+//    });
+    
+//    renderer.camera.update(interval);
+//    renderer.camera.position.setValues(cos(elapsed / 1000) * 5, 1.0, sin(elapsed / 1000) * 5);
+//    renderer.camera.lookAt(new Vector3.zero());
+//    renderer.camera.updateMatrix();
+    
+    _pointLight.position.setValues(cos(elapsed / 1000) * 5, 2.0, sin(elapsed / 1000) * 5);
     
     renderer.camera.update(interval);
     renderer.camera.updateMatrix();

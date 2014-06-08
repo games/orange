@@ -37,7 +37,6 @@ class Semantics {
   static const String cameraPosition = "uCameraPosition";
   
   static const String texture = "uTexture";
-  static const String uSurfaceColor = "uSurfaceColor";
   static const String useTextures = "uUseTextures";
   static const String emissiveColor = "emissiveColor";
   static const String specularColor = "specularColor";

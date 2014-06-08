@@ -18,6 +18,64 @@ struct LightSource {
 };
 """;
 
+const String shader_lights = """
+uniform LightSource light0;
+uniform LightSource light1;
+uniform LightSource light2;
+uniform LightSource light3;
+uniform vec3 uCameraPosition;
+
+vec3 phong(vec3 position, vec3 normal, LightSource ls, float shininess) {
+  vec3 P = normalize(position);
+  vec3 lightPosition = ls.position;
+  vec3 towardLight = lightPosition - position;
+  vec3 lightDirection;
+  // point light
+  if(ls.type == 1){
+    lightDirection = -ls.direction;
+  } else {
+    lightDirection = normalize(towardLight);
+  }
+
+  //diffuse term
+  float diffuseAngle = max(dot(normal, lightDirection), 0.0);
+  vec3 diffuse = diffuseColor * diffuseAngle;
+
+  //specular term
+  vec3 specular = vec3(0.0, 0.0, 0.0);
+  if(diffuseAngle > 0.0){
+    vec3 viewDirection = normalize(uCameraPosition - position);
+    vec3 H = normalize(viewDirection + towardLight);
+    float specAngle = max(dot(normal, H), 0.0);
+    specular = specularColor * pow(specAngle, shininess);
+  }
+  float attenuation = 1.0;
+  float dist = length(towardLight);
+  if(ls.type == 2) {
+    attenuation = 1.0 / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
+  } else if(ls.type == 3) {
+    float spotEffect = dot(-ls.direction, lightDirection);
+    if(spotEffect > ls.spotCosCutoff){
+      spotEffect = pow(spotEffect, ls.spotExponent);
+      attenuation = spotEffect / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
+    } else {
+      attenuation = 0.0;
+    }
+  }
+
+  return diffuse * ls.intensity * attenuation  + specular * attenuation;
+}
+
+vec3 computeLight(vec3 position, vec3 normal, LightSource ls, float shininess) {
+  if(ls.type < 0 || ls.type > 5)
+    return vec3(0.0, 0.0, 0.0);
+  if(ls.type == 0)
+    return ls.color * ls.intensity;
+  return phong(position, normal, ls, shininess);
+}
+
+""";
+
 
 const String lightingModelVS = """
 precision highp float;
@@ -51,7 +109,6 @@ precision highp float;
 uniform sampler2D uTexture;
 uniform bool uUseTextures;
 // material
-uniform vec3 uSurfaceColor;
 uniform float shininess;
 uniform vec3 specularColor;
 uniform vec3 diffuseColor;
@@ -72,7 +129,7 @@ void main() {
                  computeLight(vPosition.xyz, vNormal, light2, shininess) + 
                  computeLight(vPosition.xyz, vNormal, light3, shininess);
 
-  highp vec4 textureColor = vec4(uSurfaceColor, 1.0);
+  highp vec4 textureColor = vec4(1.0, 1.0, 1.0, 1.0);
   if(uUseTextures) {
     textureColor = texture2D(uTexture, vTexcoords);
   }
@@ -209,63 +266,7 @@ void main(void) {
 
 
 
-const String shader_lights = """
-uniform LightSource light0;
-uniform LightSource light1;
-uniform LightSource light2;
-uniform LightSource light3;
-uniform vec3 uCameraPosition;
 
-vec3 phong(vec3 position, vec3 normal, LightSource ls, float shininess) {
-  vec3 P = normalize(position);
-  vec3 lightPosition = ls.position;
-  vec3 towardLight = lightPosition - position;
-  vec3 lightDirection;
-  // point light
-  if(ls.type == 1){
-    lightDirection = -ls.direction;
-  } else {
-    lightDirection = normalize(towardLight);
-  }
-
-  //diffuse term
-  float diffuseAngle = max(dot(normal, lightDirection), 0.0);
-  vec3 diffuse = diffuseColor * diffuseAngle;
-
-  //specular term
-  vec3 specular = vec3(0.0, 0.0, 0.0);
-  if(diffuseAngle > 0.0){
-    vec3 viewDirection = normalize(uCameraPosition - position);
-    vec3 H = normalize(viewDirection + towardLight);
-    float specAngle = max(dot(normal, H), 0.0);
-    specular = specularColor * pow(specAngle, shininess);
-  }
-  float attenuation = 1.0;
-  float dist = length(towardLight);
-  if(ls.type == 2) {
-    attenuation = 1.0 / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
-  } else if(ls.type == 3) {
-    float spotEffect = dot(-ls.direction, lightDirection);
-    if(spotEffect > ls.spotCosCutoff){
-      spotEffect = pow(spotEffect, ls.spotExponent);
-      attenuation = spotEffect / (ls.constantAttenuation + ls.linearAttenuation * dist + ls.quadraticAttenuation * dist * dist);
-    } else {
-      attenuation = 0.0;
-    }
-  }
-
-  return diffuse * ls.intensity * attenuation  + specular * attenuation;
-}
-
-vec3 computeLight(vec3 position, vec3 normal, LightSource ls, float shininess) {
-  if(ls.type < 0 || ls.type > 5)
-    return vec3(0.0, 0.0, 0.0);
-  if(ls.type == 0)
-    return ls.color * ls.intensity;
-  return phong(position, normal, ls, shininess);
-}
-
-""";
 
 
 

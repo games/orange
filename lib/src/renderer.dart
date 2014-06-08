@@ -47,18 +47,12 @@ class Renderer {
     shader.uniform(ctx, Semantics.useTextures, false);
 
     if (node is Light) {
-      //      _drawLight(node);
+      _drawLight(node);
     } else if (node is Mesh) {
       _drawMesh(node);
     }
 
-    // TODO : should be disable all attributes and uniforms in the end draw.
-    //    shader.attributes.forEach((semantic, attrib) {
-    //      ctx.disableVertexAttribArray(attrib.location);
-    //    });
-    //    shader.uniforms.forEach((semantic, uniform) {
-    //      shader.uniform(ctx, semantic, null);
-    //    });
+    // TODO : every node should have a pass itself.
     ctx.activeTexture(gl.TEXTURE0);
     ctx.bindTexture(gl.TEXTURE_2D, null);
   }
@@ -80,8 +74,8 @@ class Renderer {
         shader.uniform(ctx, "light${i}.constantAttenuation", light.constantAttenuation);
         shader.uniform(ctx, "light${i}.linearAttenuation", light.linearAttenuation);
         shader.uniform(ctx, "light${i}.quadraticAttenuation", light.quadraticAttenuation);
-        if (light.spotExponent != null) ctx.uniform1f(shader.uniforms["light${i}.spotExponent"].location, light.spotExponent);
-        if (light.spotCutoff != null) ctx.uniform1f(shader.uniforms["light${i}.spotCosCutoff"].location, light.spotCosCutoff);
+        shader.uniform(ctx, "light${i}.spotExponent", light.spotExponent);
+        if (light.spotCutoff != null) shader.uniform(ctx, "light${i}.spotCosCutoff", light.spotCosCutoff);
       } else {
         shader.uniform(ctx, lt, Light.NONE);
       }
@@ -100,7 +94,8 @@ class Renderer {
   _drawMesh(Mesh mesh) {
     var shader = pass.shader;
     shader.uniform(ctx, Semantics.modelMat, mesh.worldMatrix.storage);
-    shader.uniform(ctx, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
+    var nm = (camera.viewMatrix * mesh.worldMatrix).normalMatrix3();
+    if (nm != null) shader.uniform(ctx, Semantics.normalMat, nm.storage);
 
     if (mesh.geometry != null) {
       var geometry = mesh.geometry;
@@ -121,9 +116,8 @@ class Renderer {
         ctx.bindTexture(material.texture.target, material.texture.data);
         shader.uniform(ctx, Semantics.texture, 0);
         shader.uniform(ctx, Semantics.useTextures, true);
-      } else if (mesh.material.surfaceColor != null) {
+      } else {
         shader.uniform(ctx, Semantics.useTextures, false);
-        shader.uniform(ctx, Semantics.uSurfaceColor, mesh.material.surfaceColor.storage);
       }
       if (material.shininess != null) {
         shader.uniform(ctx, Semantics.shininess, material.shininess);
@@ -159,7 +153,6 @@ class Renderer {
   }
 
 }
-
 
 
 

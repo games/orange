@@ -205,38 +205,38 @@ class TestLighting2 {
     var interval = elapsed - _lastElapsed;
     stats.begin();
 
-//    meshes.forEach((m) {
-//      m.rotation.rotateY(interval / 1000);
-//    });
+    //    meshes.forEach((m) {
+    //      m.rotation.rotateY(interval / 1000);
+    //    });
 
     //    renderer.camera.update(interval);
     //    renderer.camera.position.setValues(cos(elapsed / 1000) * 5, 2.0, sin(elapsed / 1000) * 5);
     //    renderer.camera.lookAt(new Vector3.zero());
     //    renderer.camera.updateMatrix();
 
-    renderer.pass.shader=shader;
+    renderer.pass.shader = shader;
     renderer.prepare();
     meshes.forEach((m) => renderer.draw(m));
     renderer.draw(ground);
-    
-    ctx.bindFramebuffer(gl.FRAMEBUFFER, lightFramebuffer);
-      ctx
-          ..viewport(0, 0, depthWidth, depthHeight)
-          ..clearColor(1, 1, 1, 1)
-          ..clearDepth(1)
-          ..cullFace(gl.FRONT);
-      renderer.pass.shader = lightShader;
-      if (renderer.prepare()) {
-        lightShader
-            ..uniform(ctx, "lightView", lightView.storage)
-            ..uniform(ctx, "lightProj", lightProj.storage)
-            ..uniform(ctx, "lightRot", lightRot);
-        meshes.forEach((m) => renderer.draw(m));
-        renderer.draw(ground);
-      }
 
-      ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
-    
+    ctx.bindFramebuffer(gl.FRAMEBUFFER, lightFramebuffer);
+    ctx
+        ..viewport(0, 0, depthWidth, depthHeight)
+        ..clearColor(1, 1, 1, 1)
+        ..clearDepth(1)
+        ..cullFace(gl.FRONT);
+    renderer.pass.shader = lightShader;
+    if (renderer.prepare()) {
+      lightShader
+          ..uniform(ctx, "lightView", lightView.storage)
+          ..uniform(ctx, "lightProj", lightProj.storage)
+          ..uniform(ctx, "lightRot", lightRot);
+      meshes.forEach((m) => renderer.draw(m));
+      renderer.draw(ground);
+    }
+
+    ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
+
 
     stats.end();
     _lastElapsed = elapsed;
@@ -298,7 +298,6 @@ Texture _createTexture(num width, num height) {
   //  ctx.bindTexture(texture.target, null);
   return texture;
 }
-
 
 
 

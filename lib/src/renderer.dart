@@ -9,6 +9,9 @@ class Renderer {
   Pass pass;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   List<Light> lights = [];
+  int _textureIndex = -1;
+  int _newMaxEnabledArray = -1;
+  int _lastMaxEnabledArray = -1;
 
   Renderer(html.CanvasElement canvas) {
     this.canvas = canvas;
@@ -45,16 +48,13 @@ class Renderer {
 
     var shader = pass.shader;
     shader.uniform(ctx, Semantics.useTextures, false);
-
+    _textureIndex = -1;
+    _newMaxEnabledArray = -1;
     if (node is Light) {
       _drawLight(node);
     } else if (node is Mesh) {
       _drawMesh(node);
     }
-
-    // TODO : every node should have a pass itself.
-//    ctx.activeTexture(gl.TEXTURE0);
-//    ctx.bindTexture(gl.TEXTURE_2D, null);
   }
 
   _setupLights() {
@@ -74,12 +74,6 @@ class Renderer {
   }
 
   _drawLight(Light light) {
-//    var coordinate = new Coordinate();
-//    coordinate.position = light.position;
-//    coordinate.rotation = light.rotation;
-//    coordinate.updateMatrix();
-//    coordinate.worldMatrix.invert();
-//    _drawMesh(coordinate);
     _drawMesh(light.view);
   }
 
@@ -97,16 +91,24 @@ class Renderer {
           bufferView.bindBuffer(ctx);
           ctx.enableVertexAttribArray(attrib.location);
           ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
+          if (attrib.location > _newMaxEnabledArray) {
+            _newMaxEnabledArray = attrib.location;
+          }
         }
       });
     }
+    for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
+      ctx.disableVertexAttribArray(i);
+    }
+    _lastMaxEnabledArray = _newMaxEnabledArray;
 
     if (mesh.material != null) {
       var material = mesh.material;
       if (mesh.material.texture != null) {
-        ctx.activeTexture(gl.TEXTURE0);
+        _textureIndex++;
+        ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
         ctx.bindTexture(material.texture.target, material.texture.data);
-        shader.uniform(ctx, Semantics.texture, 0);
+        shader.uniform(ctx, Semantics.texture, _textureIndex);
         shader.uniform(ctx, Semantics.useTextures, true);
       } else {
         shader.uniform(ctx, Semantics.useTextures, false);
@@ -130,8 +132,8 @@ class Renderer {
     if (mesh.skeleton != null) {
       mesh.skeleton.updateMatrix();
       var jointMat = mesh.skeleton.jointMatrices;
-      ctx.uniformMatrix4fv(shader.uniforms["uJointMat"].location, false, jointMat);
-      shader.uniform(ctx, "uJointMat", jointMat);
+      ctx.uniformMatrix4fv(shader.uniforms[Semantics.jointMat].location, false, jointMat);
+      shader.uniform(ctx, Semantics.jointMat, jointMat);
     }
     if (mesh.faces != null) {
       mesh.faces.bindBuffer(ctx);
@@ -145,9 +147,6 @@ class Renderer {
   }
 
 }
-
-
-
 
 
 

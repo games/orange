@@ -34,6 +34,7 @@ class Semantics {
   static const String projectionMat = "uProjectionMat";
   static const String modelMat = "uModelMat";
   static const String normalMat = "uNormalMat";
+  static const String jointMat = "uJointMat";
   static const String cameraPosition = "uCameraPosition";
   
   static const String texture = "uTexture";

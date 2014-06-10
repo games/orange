@@ -10,4 +10,7 @@ class Material {
   Color diffuseColor;
   Color ambientColor;
   Color emissiveColor;
+  
+  // NEW
+  Technique technique;
 }

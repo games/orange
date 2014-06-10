@@ -72,6 +72,7 @@ class PolygonMesh extends Mesh {
     _vertices[index + 2] = vertex[2];
   }
   
+  //TODO : fixme
   addVertex(vertex) {
     _vertices.add(vertex[0]);
     _vertices.add(vertex[1]);

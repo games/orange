@@ -38,7 +38,7 @@ class PerspectiveCamera extends Node {
   lookAt(Vector3 target) {
     viewMatrix.lookAt(position, target, new Vector3(0.0, 1.0, 0.0));
     rotation.setFromRotation(viewMatrix);
-    //    viewMatrix.decompose(position, rotation);
+//    viewMatrix.decompose(position, rotation);
   }
 
   update(double interval) {
@@ -225,7 +225,6 @@ class FlyingCamera extends Camera {
     }
   }
 }
-
 
 
 

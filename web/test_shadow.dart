@@ -105,7 +105,7 @@ void main(void) {
    gl_Position = uProjectionMat * vPosition;
    vNormal = normalize(uNormalMat * aNormal);
 
-   vLightPosition = ScaleMatrix * uProjectionMat * lightView * uModelMat * vec4(aPosition, 1.0);
+   vLightPosition = uProjectionMat * lightView * uModelMat * vec4(aPosition, 1.0);
 }
 """;
 
@@ -136,55 +136,33 @@ vec3 gamma(vec3 color){
     return pow(color, vec3(2.2));
 }
 
+float computeShadow(vec4 vPositionFromLight, sampler2D shadowSampler, float darkness)
+{
+  vec3 depth = vPositionFromLight.xyz / vPositionFromLight.w;
+  vec2 uv = 0.5 * depth.xy + vec2(0.5, 0.5);
+
+  if (uv.x < 0. || uv.x > 1.0 || uv.y < 0. || uv.y > 1.0)
+  {
+    return 1.0;
+  }
+
+  float shadow = unpack(texture2D(shadowSampler, uv));
+
+  if (depth.z > shadow)
+  {
+    return darkness;
+  }
+  return 1.;
+}
+
 void main() {
   vec3 lighting = computeLight(vPosition, vNormal, light0, shininess) + 
                  computeLight(vPosition, vNormal, light1, shininess) + 
                  computeLight(vPosition, vNormal, light2, shininess) + 
                  computeLight(vPosition, vNormal, light3, shininess);
 
-  vec3 depth = vLightPosition.xyz / vLightPosition.w;
-  depth.z -= 0.0003;
-  if ( (depth.x < 0.0) || (depth.x > 1.0) || (depth.y < 0.0) || (depth.y > 1.0) || (depth.z < 0.0) || (depth.z > 1.0) ){
-    gl_FragColor = vec4(lighting, 1.0);
-    gl_FragColor.w = 1.0;
-  } else {
-    float texelSize = 1.0 / 512.0;
-    vec3 colour = vec3(0.0, 0.0, 0.0);
-    float shadow = 0.0;
-    
-    // Filter
-    int count = 0;
-    for (int y = -1; y <= 1; ++y)
-    {
-      for (int x = -1; x <= 1; ++x)
-      {
-        vec2 offset = depth.xy + vec2(float(x) * texelSize, float(y) * texelSize);
-        if ( (offset.x >= 0.0) && (offset.x <= 1.0) && (offset.y >= 0.0) && (offset.y <= 1.0) )
-        {
-          // Decode from RGBA to float
-          shadow = unpack(texture2D(sLightDepth, offset));
-
-          if ( depth.z > shadow )
-            colour += lighting.xyz * vec3(0.1, 0.1, 0.1);
-          else
-            colour += lighting.xyz;
-          
-          ++count;
-        }
-      }
-    }
-    
-    if ( count > 0 )
-      colour /= float(count);
-    else
-      colour = lighting.xyz;
-    
-    // Clip
-    gl_FragColor.x = max(0.0, min(1.0, colour.x));
-    gl_FragColor.y = max(0.0, min(1.0, colour.y));
-    gl_FragColor.z = max(0.0, min(1.0, colour.z));
-    gl_FragColor.w = 1.0;
-  }
+  float shadow = computeShadow(vLightPosition, sLightDepth, 0.2);
+  gl_FragColor = vec4(lighting * shadow, 1.0);
 }
 """;
 
@@ -195,22 +173,19 @@ var lightComm =
         uniform mat4 uModelMat;
         uniform mat3 uNormalMat;
 
-        varying vec4 vposition;
+        varying vec4 vPosition;
 """;
 var lightVS = """
         attribute vec3 aPosition;
         void main(){
-            gl_Position = lightProj * lightView * uModelMat * vec4(aPosition, 1.0);
+            vPosition = lightProj * lightView * uModelMat * vec4(aPosition, 1.0);
+            gl_Position = vPosition;
         }
 """;
 var lightFS =
     """
-      varying vec4 vPosition;
       void main (void) {
-        gl_FragColor = pack(gl_FragCoord.z);
-//        float depth = gl_FragCoord.z;
-//        depth = pow(depth, 64.0);
-//        gl_FragColor = vec4(depth, depth, depth, 1.0);
+        gl_FragColor = pack(vPosition.z / vPosition.w);
       }
 """;
 
@@ -314,7 +289,7 @@ class TestShadow {
 
     var plane = new Plane(width: 10, height: 10);
     plane.rotation.rotateX(-PI / 2);
-    plane.rotation.rotateZ(PI / 4);
+//    plane.rotation.rotateZ(PI / 4);
     plane.position.setValues(0.0, -1.0, 0.0);
     plane.material = new Material();
     plane.material.shininess = 64.0;
@@ -426,7 +401,7 @@ class TestShadow {
           ..uniform(ctx, "lightRot", lightRot.storage)
           ..uniform(ctx, "sLightDepth", 0);
 
-      //      displayPass.shader.uniform(ctx, Semantics.viewMat, lightView.storage);
+//            displayPass.shader.uniform(ctx, Semantics.viewMat, lightView.storage);
       //      displayPass.shader.uniform(ctx, Semantics.projectionMat, lightProj.storage);
 
       meshes.forEach((m) => renderer.draw(m));

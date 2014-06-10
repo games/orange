@@ -53,8 +53,8 @@ class Renderer {
     }
 
     // TODO : every node should have a pass itself.
-    ctx.activeTexture(gl.TEXTURE0);
-    ctx.bindTexture(gl.TEXTURE_2D, null);
+//    ctx.activeTexture(gl.TEXTURE0);
+//    ctx.bindTexture(gl.TEXTURE_2D, null);
   }
 
   _setupLights() {

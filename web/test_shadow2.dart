@@ -43,6 +43,8 @@ void main() {
   html.querySelector("#rotate_camera").onChange.listen((e) => rotateCamera = !rotateCamera);
   html.querySelector("#non_filter").onChange.listen((e) => filterType = 0);
   html.querySelector("#pcm_filter").onChange.listen((e) => filterType = 1);
+  html.querySelector("#vsm_filter").onChange.listen((e) => filterType = 2);
+  html.querySelector("#esm_filter").onChange.listen((e) => filterType = 3);
 
   canvas = html.querySelector("#container");
   ctx = canvas.getContext3d();
@@ -86,7 +88,7 @@ void main() {
     teapot.material.diffuseColor = new Color.fromList([0.5, 0.0, 0.0]);
   });
 
-  mappingBoard = _createPlane(50.0);
+  mappingBoard = _createPlane(1.0);
 
   _render();
 }
@@ -167,12 +169,13 @@ void _renderMapping() {
   ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   ctx.cullFace(gl.BACK);
 
-  camera.position.setValues(0.0, _cameraY, _cameraZ);
+  camera.position.setValues(0.0, 0.0, 3.5);
   camera.lookAt(new Vector3.zero());
   camera.updateMatrix();
 
   showMappingShader.uniform(ctx, Semantics.viewMat, camera.viewMatrix.storage);
   showMappingShader.uniform(ctx, Semantics.projectionMat, camera.projectionMatrix.storage);
+  showMappingShader.uniform(ctx, "FilterType", filterType);
   ctx.activeTexture(gl.TEXTURE0);
   ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
   showMappingShader.uniform(ctx, "depthMapping", 0);
@@ -314,6 +317,22 @@ vec3 computeLight(vec3 normal) {
   return ambientLight + (directionalLightColor * directional);
 }
 
+float ChebychevInequality (vec2 moments, float t) {
+  // No shadow if depth of fragment is in front
+  if ( t <= moments.x )
+    return 1.0;
+
+  // Calculate variance, which is actually the amount of
+  // error due to precision loss from fp32 to RG/BA
+  // (moment1 / moment2)
+  float variance = moments.y - (moments.x * moments.x);
+  variance = max(variance, 0.02);
+  
+  // Calculate the upper bound
+  float d = t - moments.x;
+  return variance / (variance + d * d);
+}
+
 """;
 
 const vertSrc =
@@ -368,8 +387,15 @@ void main(void) {
         }
       }
     }
+  } else if (FilterType == 2) {
+    vec4 texel = texture2D(depthMapping, projCoords.xy);
+    vec2 moments = vec2(unpackHalf(texel.xy), unpackHalf(texel.zw));
+    illuminated = ChebychevInequality(moments, projCoords.z);
+  } else if (FilterType == 3) {
+    float c = 4.0;
+    vec4 texel = texture2D(depthMapping, projCoords.xy);
+    illuminated = clamp(exp(-c * (projCoords.z - unpack(texel))), 0.0, 1.0);
   }
-  
   
   gl_FragColor = vec4(texelColor.rgb * lighting * illuminated, texelColor.a);
 }
@@ -426,8 +452,11 @@ varying vec2 vTexcoords;
 uniform sampler2D depthMapping;
 
 void main (void) {
-  float depth = unpack(texture2D(depthMapping, vTexcoords));
-  depth = pow(depth, 64.0);
+  float depth = 0.0;
+  if(FilterType == 2)
+    depth = unpackHalf(texture2D(depthMapping, vTexcoords).xy);
+  else
+    depth = unpack(texture2D(depthMapping, vTexcoords));
   gl_FragColor = vec4(depth, depth, depth, 1.0);
 }
 """;

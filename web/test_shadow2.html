@@ -29,9 +29,22 @@
             <input type="radio" id="non_filter" checked="checked" name="filters" value="0">
             <label for="non_filter">None</label>
             <br />
-            <input type="radio" id="pcm_filter" name="filters" value="0">
+            <input type="radio" id="pcm_filter" name="filters" value="1">
             <label for="pcm_filter">PCM</label>
             <br />
+            <input type="radio" id="vsm_filter" name="filters" value="2">
+            <label for="vsm_filter">VSM</label>
+            <br />
+            <input type="radio" id="esm_filter" name="filters" value="3">
+            <label for="esm_filter">ESM</label>
+            <br />
+          </fieldset>
+          
+          <fieldset>
+            <legend>Parameters</legend>
+            <input type="range" id="darkness" min="0.0" max="1.0" step="0.1" value="0.5" disabled="disabled">
+            <label for="darkness">Darkness(0.0 ~ 1.0)</label>
+            
           </fieldset>
           
           <br /><br />

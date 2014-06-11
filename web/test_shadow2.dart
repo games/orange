@@ -323,7 +323,7 @@ vec3 computeLight(vec3 normal) {
 }
 
 float PCF() {
-
+  return 1.0;
 }
 
 """;

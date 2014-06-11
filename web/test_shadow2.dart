@@ -355,7 +355,7 @@ void main(void) {
     }
   } else if (FilterType == 1){
     // Percentage closer algorithm
-    projCoords.z *= 0.96;
+    // projCoords.z *= 0.96;
     float texelSize = 1.0 / 512.0;
     for (int y = -1; y <= 1; ++y) {
       for (int x = -1; x <= 1; ++x) {

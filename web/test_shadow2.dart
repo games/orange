@@ -33,17 +33,16 @@ double _cameraZ = 13.0;
 
 //controllers
 int viewType = 0;
+int filterType = 0;
 bool rotateCamera = false;
 
 void main() {
-  var input = html.querySelector("#scene_view");
-  input.onChange.listen((e) => viewType = 0);
-  input = html.querySelector("#light_view");
-  input.onChange.listen((e) => viewType = 1);
-  input = html.querySelector("#depth_view");
-  input.onChange.listen((e) => viewType = 2);
-  input = html.querySelector("#rotate_camera");
-  input.onChange.listen((e) => rotateCamera = !rotateCamera);
+  html.querySelector("#scene_view").onChange.listen((e) => viewType = 0);
+  html.querySelector("#light_view").onChange.listen((e) => viewType = 1);
+  html.querySelector("#depth_view").onChange.listen((e) => viewType = 2);
+  html.querySelector("#rotate_camera").onChange.listen((e) => rotateCamera = !rotateCamera);
+  html.querySelector("#non_filter").onChange.listen((e) => filterType = 0);
+  html.querySelector("#pcm_filter").onChange.listen((e) => filterType = 1);
 
   canvas = html.querySelector("#container");
   ctx = canvas.getContext3d();
@@ -115,6 +114,7 @@ void _renderDepth() {
   ctx.cullFace(gl.FRONT);
   depthShader.uniform(ctx, "lightView", lightView.storage);
   depthShader.uniform(ctx, "lightProj", lightProj.storage);
+  depthShader.uniform(ctx, "FilterType", filterType);
 
   ctx.activeTexture(gl.TEXTURE0);
   ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
@@ -147,6 +147,7 @@ void _renderScene() {
   sceneShader.uniform(ctx, "lightView", lightView.storage);
   sceneShader.uniform(ctx, "lightProj", lightProj.storage);
   sceneShader.uniform(ctx, "lightPos", light.position.storage);
+  sceneShader.uniform(ctx, "FilterType", filterType);
   ctx.activeTexture(gl.TEXTURE0);
   ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
   sceneShader.uniform(ctx, "depthMapping", 0);
@@ -235,13 +236,28 @@ void _draw(Mesh mesh, Matrix4 viewMatrix, Shader shader) {
   }
 }
 
+/// 
+/// refer : http://www.nutty.ca/?page_id=352&link=shadow_map
+/// 
 const comm =
     """
-precision highp float;
+#ifdef GL_FRAGMENT_PRECISION_HIGH    
+    precision highp int;
+    precision highp float;
+#else
+    precision mediump int;
+    precision mediump float;
+#endif
 
 const float Near = 1.0;
 const float Far = 100.0;
 const float LinearDepthConstant = 1.0 / (Far - Near);
+
+/// 0 = None
+/// 1 = PCM
+/// 2 = VSM
+/// 3 = ESM
+uniform int FilterType;
 
 vec4 pack(float depth) {
   const vec4 bias = vec4(1.0 / 255.0,
@@ -262,6 +278,16 @@ float unpack(vec4 colour) {
           1.0 / (255.0 * 255.0),
           1.0 / (255.0 * 255.0 * 255.0));
   return dot(colour, bitShifts);
+}
+
+vec2 packHalf (float depth) {
+  const vec2 bias = vec2(1.0 / 255.0, 0.0);
+  vec2 colour = vec2(depth, fract(depth * 255.0));
+  return colour - (colour.yy * bias);
+}
+
+float unpackHalf (vec2 colour) {
+  return colour.x + (colour.y / 255.0);
 }
 """;
 
@@ -286,10 +312,6 @@ vec3 computeLight(vec3 normal) {
   highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
   highp float directional = max(dot(normal, directionalVector), 0.0);
   return ambientLight + (directionalLightColor * directional);
-}
-
-float PCF() {
-  return 1.0;
 }
 
 """;
@@ -322,16 +344,29 @@ void main(void) {
   // shadow calculation
   vec3 projCoords = vLightClipPos.xyz / vLightClipPos.w;
   projCoords.z = length(vPosition.xyz - lightPos) * LinearDepthConstant;
-  projCoords.z *= 0.96;
 
-  vec2 uv = projCoords.xy;
-  float illuminated = 1.0; 
-  if (uv.x < 0. || uv.x > 1.0 || uv.y < 0. || uv.y > 1.0) {
-    illuminated = 1.0;
-  } else {
-    float shadow = unpack(texture2D(depthMapping, uv));
-    if (projCoords.z > shadow) {
-      illuminated = 0.2;
+  float illuminated = 1.0;
+
+  if(FilterType == 0){
+    projCoords.z *= 0.96;
+    float depth = unpack(texture2D(depthMapping, projCoords.xy));
+    if (projCoords.z > depth) {
+      illuminated = 0.5;
+    }
+  } else if (FilterType == 1){
+    // Percentage closer algorithm
+    projCoords.z *= 0.96;
+    float texelSize = 1.0 / 512.0;
+    for (int y = -1; y <= 1; ++y) {
+      for (int x = -1; x <= 1; ++x) {
+        vec2 offset = projCoords.xy + vec2(float(x) * texelSize, float(y) * texelSize);
+        if ( (offset.x >= 0.0) && (offset.x <= 1.0) && (offset.y >= 0.0) && (offset.y <= 1.0) ) {
+          // Decode from RGBA to float
+          float depth = unpack(texture2D(depthMapping, offset));
+          if (projCoords.z > depth)
+            illuminated *= 0.9;
+        }
+      }
     }
   }
   
@@ -362,7 +397,13 @@ void main(){
 const depthMapFS = """
 void main(){
     float linearDepth = length(vPosition) * LinearDepthConstant;
-    gl_FragColor = pack(linearDepth);
+    if(FilterType == 2){
+      float moment1 = linearDepth;
+      float moment2 = moment1 * moment1;
+      gl_FragColor = vec4(packHalf(moment1), packHalf(moment2));
+    } else {
+      gl_FragColor = pack(linearDepth);
+    }
 }
 """;
 

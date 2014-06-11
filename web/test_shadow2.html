@@ -12,13 +12,31 @@
       <tr>
         <td><canvas id="container" width="800" height="500" style="border: 1px solid #333333;"></canvas></td>
         <td id="controllers" valign="top">
-          <input type="radio" id="scene_view" checked="checked" name="view_type" value="0">Scene
-          <br />
-          <input type="radio" id="light_view" name="view_type" value="1">Light
-          <br />
-          <input type="radio" id="depth_view" name="view_type" value="0">Depth Mapping
+          <fieldset>
+            <legend>View Type</legend>
+            <input type="radio" id="scene_view" checked="checked" name="view_type" value="0">
+            <label for="scene_view">Scene</label>
+            <br />
+            <input type="radio" id="light_view" name="view_type" value="1">
+            <label for="light_view">Light</label>
+            <br />
+            <input type="radio" id="depth_view" name="view_type" value="0">
+            <label for="depth_view">Depth Mapping</label>
+          </fieldset>
+          
+          <fieldset>
+            <legend>Filters</legend>
+            <input type="radio" id="non_filter" checked="checked" name="filters" value="0">
+            <label for="non_filter">None</label>
+            <br />
+            <input type="radio" id="pcm_filter" name="filters" value="0">
+            <label for="pcm_filter">PCM</label>
+            <br />
+          </fieldset>
+          
           <br /><br />
-          <input type="checkbox" id="rotate_camera" value="0" /> Rotate Camera
+          <input type="checkbox" id="rotate_camera" value="0" /> 
+          <label for="rotate_camera">Rotate Camera</label>
         </td>
       </tr>
     </table>

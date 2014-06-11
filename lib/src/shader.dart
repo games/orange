@@ -65,6 +65,7 @@ class Shader {
   }
 
   uniform(gl.RenderingContext ctx, String symbol, value) {
+    if(!ready) return;
     if (uniforms.containsKey(symbol) && value != null) {
       var property = uniforms[symbol];
       switch (property.type) {

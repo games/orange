@@ -146,6 +146,7 @@ void _renderScene() {
   sceneShader.uniform(ctx, Semantics.projectionMat, projMat.storage);
   sceneShader.uniform(ctx, "lightView", lightView.storage);
   sceneShader.uniform(ctx, "lightProj", lightProj.storage);
+  sceneShader.uniform(ctx, "lightPos", light.position.storage);
   ctx.activeTexture(gl.TEXTURE0);
   ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
   sceneShader.uniform(ctx, "depthMapping", 0);
@@ -238,6 +239,10 @@ const comm =
     """
 precision highp float;
 
+const float Near = 1.0;
+const float Far = 100.0;
+const float LinearDepthConstant = 1.0 / (Far - Near);
+
 vec4 pack(float depth) {
   const vec4 bias = vec4(1.0 / 255.0,
         1.0 / 255.0,
@@ -270,6 +275,7 @@ uniform highp mat4 uProjectionMat;
 uniform mat4 lightProj;
 uniform mat4 lightView; 
 uniform mat3 lightRot;
+uniform vec3 lightPos;
 const mat4 offsetMat = mat4(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 varying highp vec3 vNormal;
 varying highp vec4 vPosition;
@@ -315,7 +321,8 @@ void main(void) {
 
   // shadow calculation
   vec3 projCoords = vLightClipPos.xyz / vLightClipPos.w;
-  projCoords.z -= 0.00001;
+  projCoords.z = length(vPosition.xyz - lightPos) * LinearDepthConstant;
+  projCoords.z *= 0.96;
 
   vec2 uv = projCoords.xy;
   float illuminated = 1.0; 
@@ -347,14 +354,15 @@ const depthMapVS =
 attribute highp vec3 aNormal;
 attribute highp vec3 aPosition;
 void main(){
-    vPosition = lightProj * lightView * uModelMat * vec4(aPosition, 1.0);
-    gl_Position = vPosition;
+    vPosition = lightView * uModelMat * vec4(aPosition, 1.0);
+    gl_Position = lightProj * vPosition;
 }
 """;
 
 const depthMapFS = """
 void main(){
-    gl_FragColor = pack(gl_FragCoord.z);
+    float linearDepth = length(vPosition) * LinearDepthConstant;
+    gl_FragColor = pack(linearDepth);
 }
 """;
 

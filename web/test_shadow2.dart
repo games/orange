@@ -8,30 +8,51 @@ Color backgroundColor = new Color.fromHex(0x84A6EE);
 html.CanvasElement canvas;
 gl.RenderingContext ctx;
 Texture lightDepthTexture;
-num depthWidth = 512,
-    depthHeight = 512;
+num depthWidth = 512;
+num depthHeight = 512;
 gl.Framebuffer lightFramebuffer;
 Matrix4 lightProj;
 Matrix4 lightView;
 Matrix3 lightRot;
 Shader sceneShader;
 Shader depthShader;
+Shader showMappingShader;
 Mesh ground;
 Mesh mesh1;
 Mesh mesh2;
+Mesh mesh3;
+Mesh teapot;
 Mesh light;
+Mesh mappingBoard;
 PerspectiveCamera camera;
 int _newMaxEnabledArray = -1;
 int _lastMaxEnabledArray = -1;
+double _lastElapsed = 0.0;
+double _cameraY = 7.0;
+double _cameraZ = 13.0;
+
+//controllers
+int viewType = 0;
+bool rotateCamera = false;
 
 void main() {
+  var input = html.querySelector("#scene_view");
+  input.onChange.listen((e) => viewType = 0);
+  input = html.querySelector("#light_view");
+  input.onChange.listen((e) => viewType = 1);
+  input = html.querySelector("#depth_view");
+  input.onChange.listen((e) => viewType = 2);
+  input = html.querySelector("#rotate_camera");
+  input.onChange.listen((e) => rotateCamera = !rotateCamera);
+
   canvas = html.querySelector("#container");
   ctx = canvas.getContext3d();
   camera = new PerspectiveCamera(canvas.width / canvas.height);
-  camera.position.setValues(0.0, 50.0, 110.0);
+  camera.position.setValues(0.0, _cameraY, _cameraZ);
   camera.lookAt(new Vector3.zero());
   sceneShader = new Shader(ctx, vertSrc, fragSrc, common: commSrc);
   depthShader = new Shader(ctx, depthMapVS, depthMapFS, common: depthMapComm);
+  showMappingShader = new Shader(ctx, showMappingVS, showMappingFS, common: commSrc);
 
   lightDepthTexture = _createTexture(depthWidth, depthHeight);
   lightFramebuffer = ctx.createFramebuffer();
@@ -39,81 +60,149 @@ void main() {
   ctx.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, lightDepthTexture.target, lightDepthTexture.data, 0);
   ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-  light = new Cube(width: 5, height: 5, depth: 5);
-  light.position.setValues(0.0, 20.0, 10.0);
-  lightProj = new Matrix4.ortho(-10.0, 10.0, -10.0, 10.0, -10.0, 20.0);
-  lightView = new Matrix4.identity().lookAt(-light.position, new Vector3.zero(), new Vector3(0.0, 1.0, 0.0));
-//  lightView = new Matrix4.identity().lookAt(light.position, new Vector3(-0.3, -2.0, 0.0), new Vector3(0.0, 0.0, 1.0));
+  light = new Cube(width: 10, height: 2, depth: 5);
+  light.position.setValues(5.0, 8.0, 8.0);
+  lightProj = new Matrix4.perspective(90.0, 1.0, 0.01, 100.0);
+  lightView = new Matrix4.identity().lookAt(light.position, new Vector3.zero(), new Vector3(0.0, 1.0, 0.0));
   lightRot = new Matrix3.fromMatrix4(lightView);
-  
-  ground = _createPlane(50.0);
+
+  ground = _createPlane(10.0);
+  ground.position.setValues(0.0, -0.9, 0.0);
   ground.rotation.rotateX(-Math.PI / 2);
 
-  mesh1 = new Cylinder(topRadius: 20, bottomRadius: 20, height: 10);
-  mesh1.position.setValues(0.0, 10.0, 0.0);
+  mesh1 = new Cylinder(topRadius: 1, bottomRadius: 1, height: 5);
+  mesh1.position.setValues(-3.0, 0.0, -1.0);
 
-  mesh2 = new Cone(bottomRadius: 10, height: 15);
-  mesh2.position.setValues(0.0, 30.0, 0.0);
+  mesh2 = new Cone(bottomRadius: 1, height: 2);
+  mesh2.position.setValues(3.0, 4.0, 0.0);
+
+  var objLoader = new ObjLoader();
+  objLoader.load("../models/obj/teapot.obj").then((m) {
+    teapot = m;
+    teapot.material = new Material();
+    teapot.position.setValues(0.0, 0.0, 2.0);
+    teapot.material.shininess = 64.0;
+    teapot.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
+    teapot.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
+    teapot.material.diffuseColor = new Color.fromList([0.5, 0.0, 0.0]);
+  });
+
+  mappingBoard = _createPlane(50.0);
 
   _render();
 }
 
 void _render() {
-  ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
-  ctx.clearDepth(1.0);
+  //  ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
+  //  ctx.clearDepth(1.0);
+  //  ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   ctx.enable(gl.DEPTH_TEST);
   ctx.enable(gl.CULL_FACE);
   ctx.depthFunc(gl.LEQUAL);
-  ctx.depthMask(true);
-  ctx.viewport(0, 0, canvas.width, canvas.height);
-  _animate(0);
+  //    ctx.depthMask(true);
+  //  ctx.viewport(0, 0, canvas.width, canvas.height);
+  _animate(0.0);
 }
 
 void _renderDepth() {
   ctx.bindFramebuffer(gl.FRAMEBUFFER, lightFramebuffer);
+
+  ctx.useProgram(depthShader.program);
   ctx.viewport(0, 0, depthWidth.toInt(), depthHeight.toInt());
   ctx.clearColor(1.0, 1.0, 1.0, 1.0);
   ctx.clearDepth(1.0);
+  ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   ctx.cullFace(gl.FRONT);
-  ctx.useProgram(depthShader.program);
   depthShader.uniform(ctx, "lightView", lightView.storage);
   depthShader.uniform(ctx, "lightProj", lightProj.storage);
+
+  ctx.activeTexture(gl.TEXTURE0);
+  ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
 
   _draw(ground, lightView, depthShader);
   _draw(mesh1, lightView, depthShader);
   _draw(mesh2, lightView, depthShader);
-  
+  _draw(teapot, lightView, depthShader);
+
   ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
 }
 
 void _renderScene() {
   ctx.useProgram(sceneShader.program);
   ctx.viewport(0, 0, canvas.width, canvas.height);
-  ctx.clearColor(0.0, 0.0, 0.0, 0.0);
+  ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
   ctx.clearDepth(1.0);
-  camera.updateMatrix();
-  sceneShader.uniform(ctx, Semantics.viewMat, camera.viewMatrix.storage);
-  sceneShader.uniform(ctx, Semantics.projectionMat, camera.projectionMatrix.storage);
+  ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  ctx.cullFace(gl.BACK);
+
+  var viewMat = camera.viewMatrix;
+  var projMat = camera.projectionMatrix;
+  if (viewType == 1) {
+    viewMat = lightView;
+    projMat = lightProj;
+  }
+
+  sceneShader.uniform(ctx, Semantics.viewMat, viewMat.storage);
+  sceneShader.uniform(ctx, Semantics.projectionMat, projMat.storage);
   sceneShader.uniform(ctx, "lightView", lightView.storage);
   sceneShader.uniform(ctx, "lightProj", lightProj.storage);
   ctx.activeTexture(gl.TEXTURE0);
   ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
   sceneShader.uniform(ctx, "depthMapping", 0);
-  _draw(ground, camera.viewMatrix, sceneShader);
-  _draw(mesh1, camera.viewMatrix, sceneShader);
-  _draw(mesh2, camera.viewMatrix, sceneShader);
-  _draw(light, camera.viewMatrix, sceneShader);
+  _draw(ground, viewMat, sceneShader);
+  _draw(teapot, viewMat, sceneShader);
+  _draw(mesh1, viewMat, sceneShader);
+  _draw(mesh2, viewMat, sceneShader);
+  _draw(light, viewMat, sceneShader);
   ctx.bindTexture(lightDepthTexture.target, null);
 }
 
-void _animate(num) {
-  html.window.requestAnimationFrame(_animate);
+void _renderMapping() {
+  ctx.useProgram(showMappingShader.program);
+  ctx.viewport(0, 0, canvas.width, canvas.height);
+  ctx.clearColor(backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
+  ctx.clearDepth(1.0);
   ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  ctx.cullFace(gl.BACK);
 
-  _renderScene();
+  camera.position.setValues(0.0, _cameraY, _cameraZ);
+  camera.lookAt(new Vector3.zero());
+  camera.updateMatrix();
+
+  showMappingShader.uniform(ctx, Semantics.viewMat, camera.viewMatrix.storage);
+  showMappingShader.uniform(ctx, Semantics.projectionMat, camera.projectionMatrix.storage);
+  ctx.activeTexture(gl.TEXTURE0);
+  ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
+  showMappingShader.uniform(ctx, "depthMapping", 0);
+  _draw(mappingBoard, camera.viewMatrix, showMappingShader);
+  ctx.bindTexture(lightDepthTexture.target, null);
+}
+
+void _animate(num elapsed) {
+  html.window.requestAnimationFrame(_animate);
+  var interval = elapsed - _lastElapsed;
+  if (rotateCamera) {
+    camera.update(interval);
+    camera.position.setValues(Math.cos(elapsed / 1000) * _cameraZ, _cameraY, Math.sin(elapsed / 1000) * _cameraZ);
+    camera.lookAt(new Vector3.zero());
+  } else {
+    camera.position.setValues(0.0, _cameraY, _cameraZ);
+    camera.lookAt(new Vector3.zero());
+  }
+  camera.updateMatrix();
+
+  _renderDepth();
+  if (viewType == 2) {
+    _renderMapping();
+  } else {
+    _renderScene();
+  }
+
+  _lastElapsed = elapsed;
 }
 
 void _draw(Mesh mesh, Matrix4 viewMatrix, Shader shader) {
+  if (mesh == null) return;
   _newMaxEnabledArray = -1;
   mesh.updateMatrix();
   shader.uniform(ctx, Semantics.modelMat, mesh.worldMatrix.storage);
@@ -145,26 +234,30 @@ void _draw(Mesh mesh, Matrix4 viewMatrix, Shader shader) {
   }
 }
 
-const comm = """
+const comm =
+    """
 precision highp float;
 
 vec4 pack(float depth) {
-  const vec4 bitSh = vec4(256 * 256 * 256, 
-                          256 * 256,
-                          256, 
-                          1.0);
-  const vec4 bitMsk = vec4(0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);
-  vec4 comp = fract(depth * bitSh);
-  comp -= comp.xxyz * bitMsk;
-  return comp;
+  const vec4 bitSh = vec4(256 * 256 * 256,
+                256 * 256,
+                256,
+                1.0);
+    const vec4 bitMsk = vec4(0,
+                 1.0 / 256.0,
+                 1.0 / 256.0,
+                 1.0 / 256.0);
+    vec4 comp = fract(depth * bitSh);
+    comp -= comp.xxyz * bitMsk;
+    return comp;
 }
 
 float unpack(vec4 colour) {
   const vec4 bitShifts = vec4(1.0 / (256.0 * 256.0 * 256.0),
                       1.0 / (256.0 * 256.0),
                       1.0 / 256.0,
-                      1.0);
-  return dot(colour, bitShifts);
+                      1);
+        return dot(colour , bitShifts);
 }
 """;
 
@@ -207,10 +300,8 @@ void main() {
  */
 
 
-///http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping/
-
-
-const commSrc = """
+const commSrc =
+    """
 $comm
 uniform highp mat3 uNormalMat;
 uniform highp mat4 uViewMat;
@@ -219,6 +310,7 @@ uniform highp mat4 uProjectionMat;
 uniform mat4 lightProj;
 uniform mat4 lightView; 
 uniform mat3 lightRot;
+const mat4 offsetMat = mat4(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 varying highp vec3 vNormal;
 varying highp vec4 vPosition;
 
@@ -230,21 +322,31 @@ vec3 computeLight(vec3 normal) {
   return ambientLight + (directionalLightColor * directional);
 }
 
+float PCF() {
+
+}
+
 """;
 
-const vertSrc = """
+const vertSrc =
+    """
 attribute highp vec3 aNormal;
 attribute highp vec3 aPosition;
+varying vec4 vLightClipPos;
 
 void main(void) {
   vPosition = uModelMat * vec4(aPosition, 1.0);
-  gl_Position = uProjectionMat * uViewMat * vPosition;
   vNormal = normalize(uNormalMat * aNormal);
+  vLightClipPos = offsetMat * lightProj * lightView * vPosition;
+
+  gl_Position = uProjectionMat * uViewMat * vPosition;
 }
 """;
 
-const fragSrc = """
+const fragSrc =
+    """
 uniform sampler2D depthMapping;
+varying vec4 vLightClipPos;
       
 void main(void) {
   mediump vec4 texelColor = vec4(0.6, 0.6, 0.6, 1.0);
@@ -252,10 +354,10 @@ void main(void) {
   vec3 lighting = computeLight(vNormal);
 
   // shadow calculation
-  vec4 lightClipPos = lightProj * lightView * vPosition;
-  vec3 projCoords = lightClipPos.xyz / lightClipPos.w;
-  projCoords.z -= 0.0003;
-  vec2 uv = 0.5 * projCoords.xy + vec2(0.5, 0.5);
+  vec3 projCoords = vLightClipPos.xyz / vLightClipPos.w;
+  projCoords.z -= 0.00001;
+
+  vec2 uv = projCoords.xy;
   float illuminated = 1.0; 
   if (uv.x < 0. || uv.x > 1.0 || uv.y < 0. || uv.y > 1.0) {
     illuminated = 1.0;
@@ -273,40 +375,53 @@ void main(void) {
 
 const depthMapComm = """
 $comm
-
-varying vec3 vWorldNormal; varying vec4 vWorldPosition;
-uniform mat4 lightProj, lightView; uniform mat3 lightRot;
+uniform mat4 lightProj;
+uniform mat4 lightView; 
 uniform mat4 uModelMat;
+uniform mat3 lightRot;
 varying vec4 vPosition;
 """;
 
-const depthMapVS = """
+const depthMapVS =
+    """
 attribute highp vec3 aNormal;
 attribute highp vec3 aPosition;
 void main(){
-    vWorldNormal = aNormal;
-    vWorldPosition = uModelMat * vec4(aPosition, 1.0);
     vPosition = lightProj * lightView * uModelMat * vec4(aPosition, 1.0);
-    gl_Position = lightProj * lightView * vWorldPosition;
+    gl_Position = vPosition;
 }
 """;
 
 const depthMapFS = """
 void main(){
-    gl_FragColor = pack(vPosition.z / vPosition.w);
+    gl_FragColor = pack(gl_FragCoord.z);
 }
 """;
 
+const showMappingVS =
+    """
+attribute vec3 aPosition;
+attribute vec2 aTexcoords;
+attribute vec3 aNormal;
+varying vec2 vTexcoords;
+ 
+void main (void) {
+  gl_Position = uProjectionMat * uViewMat * uModelMat * vec4(aPosition, 1.0);
+  vTexcoords = aTexcoords;
+}
+""";
 
+const showMappingFS =
+    """
+varying vec2 vTexcoords;
+uniform sampler2D depthMapping;
 
-
-
-
-
-
-
-
-
+void main (void) {
+  float depth = unpack(texture2D(depthMapping, vTexcoords));
+  depth = pow(depth, 64.0);
+  gl_FragColor = vec4(depth, depth, depth, 1.0);
+}
+""";
 
 
 
@@ -317,7 +432,6 @@ Texture _createTexture(num width, num height) {
   texture.internalFormat = gl.RGBA;
   texture.format = gl.RGBA;
   texture.data = ctx.createTexture();
-  ctx.getExtension("OES_texture_float");
   ctx.activeTexture(gl.TEXTURE0);
   ctx.bindTexture(texture.target, texture.data);
   ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -327,98 +441,6 @@ Texture _createTexture(num width, num height) {
   ctx.texImage2D(texture.target, 0, texture.internalFormat, width, height, 0, texture.format, gl.UNSIGNED_BYTE, null);
   ctx.bindTexture(texture.target, null);
   return texture;
-}
-
-
-
-// 50, 8, 0, pi*2
-Mesh _createCircle2(radius, segments, thetaStart, thetaLength) {
-  PolygonMesh circle = new PolygonMesh();
-  var vertices = [],
-      uvs = [],
-      normals = [],
-      faces = [];
-
-  var center = new Vector3.zero();
-  var centerUV = new Vector2(0.5, 0.5);
-  vertices.addAll(center.storage);
-  uvs.addAll(centerUV.storage);
-
-  for (var i = 0; i <= segments; i++) {
-    var segment = thetaStart + i / segments * thetaLength;
-    var vx = radius * Math.cos(segment);
-    var vy = radius * Math.sin(segment);
-
-    vertices.add(vx);
-    vertices.add(vy);
-    vertices.add(0.0);
-
-    uvs.add((vx / radius + 1) / 2);
-    uvs.add((vy / radius + 1) / 2);
-  }
-
-  var n = new Vector3(0.0, 0.0, 1.0);
-
-  for (var i = 1; i <= segments; i++) {
-    faces.add(i);
-    faces.add(i + 1);
-    faces.add(0);
-    uvs.add(uvs[i]);
-    uvs.add(uvs[i + 1]);
-    uvs.add(uvs[i + 2]);
-    uvs.add(uvs[i + 3]);
-    uvs.add(centerUV.x);
-    uvs.add(centerUV.y);
-  }
-
-  circle.setVertices(vertices);
-  circle.setTexCoords(uvs);
-  circle.setFaces(faces);
-  circle.calculateSurfaceNormals();
-  return circle;
-}
-
-Mesh _createCircle(int dots, num scale) {
-  PolygonMesh circle = new PolygonMesh();
-  var p = [],
-      n = [];
-  var f = (i, j) {
-    var ra = 0.4,
-        rb = 0.2,
-        a = Math.PI * 2 * i / dots,
-        b = Math.PI * 2 * j / dots,
-        sa = Math.sin(a),
-        sb = Math.sin(b),
-        ca = Math.cos(a),
-        cb = Math.cos(b),
-        l = sb * rb + ra,
-        y = cb * rb,
-        x = sa * l,
-        z = ca * l,
-        x0 = sa * ra,
-        z0 = ca * ra;
-    p
-        ..add(x * scale)
-        ..add(y * scale)
-        ..add(z * scale);
-    n
-        ..add(x - x0)
-        ..add(y)
-        ..add(z - z0);
-  };
-  for (var i = 1; i <= dots; i++) {
-    for (var j = 1; j <= dots; j++) {
-      f(i, j);
-      f(i - 1, j);
-      f(i, j - 1);
-      f(i, j - 1);
-      f(i - 1, j);
-      f(i - 1, j - 1);
-    }
-  }
-  circle.setVertices(p);
-  circle.setNormals(n);
-  return circle;
 }
 
 Mesh _createPlane([double scale = 1.0]) {

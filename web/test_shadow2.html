@@ -11,7 +11,14 @@
     <table>
       <tr>
         <td><canvas id="container" width="800" height="500" style="border: 1px solid #333333;"></canvas></td>
-        <td id="controllers">
+        <td id="controllers" valign="top">
+          <input type="radio" id="scene_view" checked="checked" name="view_type" value="0">Scene
+          <br />
+          <input type="radio" id="light_view" name="view_type" value="1">Light
+          <br />
+          <input type="radio" id="depth_view" name="view_type" value="0">Depth Mapping
+          <br /><br />
+          <input type="checkbox" id="rotate_camera" value="0" /> Rotate Camera
         </td>
       </tr>
     </table>

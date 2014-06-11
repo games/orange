@@ -13,7 +13,6 @@ num depthHeight = 512;
 gl.Framebuffer lightFramebuffer;
 Matrix4 lightProj;
 Matrix4 lightView;
-Matrix3 lightRot;
 Shader sceneShader;
 Shader depthShader;
 Shader showMappingShader;
@@ -35,12 +34,14 @@ double _cameraZ = 13.0;
 int viewType = 0;
 int filterType = 0;
 bool rotateCamera = false;
+bool rotateLight = false;
 
 void main() {
   html.querySelector("#scene_view").onChange.listen((e) => viewType = 0);
   html.querySelector("#light_view").onChange.listen((e) => viewType = 1);
   html.querySelector("#depth_view").onChange.listen((e) => viewType = 2);
   html.querySelector("#rotate_camera").onChange.listen((e) => rotateCamera = !rotateCamera);
+  html.querySelector("#rotate_light").onChange.listen((e) => rotateLight = !rotateLight);
   html.querySelector("#non_filter").onChange.listen((e) => filterType = 0);
   html.querySelector("#pcm_filter").onChange.listen((e) => filterType = 1);
   html.querySelector("#vsm_filter").onChange.listen((e) => filterType = 2);
@@ -65,7 +66,6 @@ void main() {
   light.position.setValues(5.0, 8.0, 8.0);
   lightProj = new Matrix4.perspective(90.0, 1.0, 0.01, 100.0);
   lightView = new Matrix4.identity().lookAt(light.position, new Vector3.zero(), new Vector3(0.0, 1.0, 0.0));
-  lightRot = new Matrix3.fromMatrix4(lightView);
 
   ground = _createPlane(10.0);
   ground.position.setValues(0.0, -0.9, 0.0);
@@ -99,7 +99,7 @@ void _render() {
   //  ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   ctx.enable(gl.DEPTH_TEST);
   ctx.enable(gl.CULL_FACE);
-  ctx.depthFunc(gl.LEQUAL);
+//  ctx.depthFunc(gl.LESS);
   //    ctx.depthMask(true);
   //  ctx.viewport(0, 0, canvas.width, canvas.height);
   _animate(0.0);
@@ -194,6 +194,12 @@ void _animate(num elapsed) {
     camera.position.setValues(0.0, _cameraY, _cameraZ);
     camera.lookAt(new Vector3.zero());
   }
+  
+  if(rotateLight) {
+    light.position.setValues(Math.cos(elapsed / 1000) * 5.0, 8.0, Math.sin(elapsed / 1000) * 8.0);
+    lightView = new Matrix4.identity().lookAt(light.position, new Vector3.zero(), new Vector3(0.0, 1.0, 0.0));
+  }
+  
   camera.updateMatrix();
 
   _renderDepth();
@@ -239,9 +245,9 @@ void _draw(Mesh mesh, Matrix4 viewMatrix, Shader shader) {
   }
 }
 
-/// 
+///
 /// refer : http://www.nutty.ca/?page_id=352&link=shadow_map
-/// 
+///
 const comm =
     """
 #ifdef GL_FRAGMENT_PRECISION_HIGH    
@@ -312,7 +318,7 @@ varying highp vec4 vPosition;
 vec3 computeLight(vec3 normal) {
   highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
   highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
-  highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
+  highp vec3 directionalVector = normalize(lightPos);//vec3(0.85, 0.8, 0.75);
   highp float directional = max(dot(normal, directionalVector), 0.0);
   return ambientLight + (directionalLightColor * directional);
 }
@@ -420,7 +426,8 @@ void main(){
 }
 """;
 
-const depthMapFS = """
+const depthMapFS =
+    """
 void main(){
     float linearDepth = length(vPosition) * LinearDepthConstant;
     if(FilterType == 2){
@@ -476,7 +483,12 @@ Texture _createTexture(num width, num height) {
   ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   ctx.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   ctx.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  ctx.texImage2D(texture.target, 0, texture.internalFormat, width, height, 0, texture.format, gl.UNSIGNED_BYTE, null);
+  // correct ???
+  if (ctx.getExtension("OES_texture_float") == null) {
+    ctx.texImage2D(texture.target, 0, texture.internalFormat, width, height, 0, texture.format, gl.UNSIGNED_BYTE, null);
+  } else {
+    ctx.texImage2D(texture.target, 0, texture.internalFormat, width, height, 0, texture.format, gl.FLOAT, null);
+  }
   ctx.bindTexture(texture.target, null);
   return texture;
 }

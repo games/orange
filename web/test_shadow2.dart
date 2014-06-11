@@ -239,66 +239,26 @@ const comm =
 precision highp float;
 
 vec4 pack(float depth) {
-  const vec4 bitSh = vec4(256 * 256 * 256,
-                256 * 256,
-                256,
-                1.0);
-    const vec4 bitMsk = vec4(0,
-                 1.0 / 256.0,
-                 1.0 / 256.0,
-                 1.0 / 256.0);
-    vec4 comp = fract(depth * bitSh);
-    comp -= comp.xxyz * bitMsk;
-    return comp;
+  const vec4 bias = vec4(1.0 / 255.0,
+        1.0 / 255.0,
+        1.0 / 255.0,
+        0.0);
+  float r = depth;
+  float g = fract(r * 255.0);
+  float b = fract(g * 255.0);
+  float a = fract(b * 255.0);
+  vec4 colour = vec4(r, g, b, a);
+  return colour - (colour.yzww * bias);
 }
 
 float unpack(vec4 colour) {
-  const vec4 bitShifts = vec4(1.0 / (256.0 * 256.0 * 256.0),
-                      1.0 / (256.0 * 256.0),
-                      1.0 / 256.0,
-                      1);
-        return dot(colour , bitShifts);
+  const vec4 bitShifts = vec4(1.0,
+          1.0 / 255.0,
+          1.0 / (255.0 * 255.0),
+          1.0 / (255.0 * 255.0 * 255.0));
+  return dot(colour, bitShifts);
 }
 """;
-
-
-
-
-/*
- * VS
- * 
- * Offset matrix offsetMatrix, 
- * use to multiplied by the light matrix. 
- * This is to transform the shadow-map texture coordinates 
- * from range [−1, 1] to range [0, 1] without having to add 
- * any extra lines of code for this in the shaders.
- 
- uniform mat4 offsetMat = [0.5f, 0.0f, 0.0f, 0.5f,
-  0.0f, 0.5f, 0.0f, 0.5f,
-  0.0f, 0.0f, 0.5f, 0.5f,
-  0.0f, 0.0f, 0.0f, 1.0f];
-  
-
- uniform mat4 lightMat = offsetMatrix * lightProjectionMatrix * lightModelViewMatrix 
- out vec4 shadowMapCoord;
- void main(){
-   gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-   shadowMapCoord = lightMatrix * gl_Vertex;
- }
- * 
- *   
- * 
- * ￼FS
-in vec4 shadowMapCoord;
-uniform sampler2DShadow shadowMapTex;
-void main() {
-  vec3 color = ...;
-  float visibility = textureProj(shadowMapTex, shadowMapCoord);
-  gl_FragColor = vec4(color * visibility, 1.0);
-}
- * 
- */
-
 
 const commSrc =
     """

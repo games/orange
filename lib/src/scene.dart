@@ -2,51 +2,22 @@ part of orange;
 
 
 class Scene {
-  List<Node> nodes;
+  List<Node> nodes = [];
+  bool lightsEnabled = true;
+  List<Light> lights = [];
   
+  Director director;
   PerspectiveCamera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
+  
+  Scene(this.camera);
   
   enter() {
     
   }
   
-  update(num elapsed) {
+  update(num elapsed, num interval) {
     
-  }
-  
-  render() {
-    // 1. befor render
-    
-    // 2. physics
-    
-    // 3. clear
-    //    engine.clear(color, backBuffer, depthStencil)
-    //    
-    
-    // 4. shadows
-    //    put in renderTargets
-    
-    // 5. render for camera
-    //    viewport
-    //    camera
-    //    meshes
-    //    skeletons
-    //    render targets
-    //    Restore back buffer
-    //    prepare frame
-    //    backgrounds
-    //    render
-    //    bounding boxes
-    //    lens flares
-    //    foregrounds
-    //    finalize frame
-    //    update camera
-    //    reset some special array
-    
-    // 6. after render
-    
-    // 7. cleaning
   }
   
   exit() {

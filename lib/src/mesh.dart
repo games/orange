@@ -9,5 +9,11 @@ class Mesh extends Node {
   Material material;
   Skeleton skeleton;
   AnimationController animator;
-  bool wireframe = false;
+  
+  bool receiveShadows = false;
+  
+  int get vertexesCount {
+    if (geometry == null || !geometry.buffers.containsKey(Semantics.position)) return 0;
+    return geometry.buffers[Semantics.position].count;
+  }
 }

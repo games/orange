@@ -5,214 +5,140 @@ class Renderer2 {
   html.CanvasElement _canvas;
   gl.RenderingContext ctx;
   int _lastMaxEnabledArray = -1;
-  
+  int _textureIndex = -1;
+  int _newMaxEnabledArray = -1;
+
   Renderer2(this._canvas) {
     ctx = _canvas.getContext3d(preserveDrawingBuffer: true);
     ctx.enable(gl.DEPTH_TEST);
     ctx.frontFace(gl.CCW);
     ctx.cullFace(gl.BACK);
     ctx.enable(gl.CULL_FACE);
+    ctx.clearDepth(1.0);
   }
-  
+
   prepare() {
-    ctx.viewport(0, 0, _canvas.width, _canvas.height);
-    ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
-  
+
   render(Scene scene) {
+    ctx.viewport(0, 0, _canvas.width, _canvas.height);
     ctx.clearColor(scene.backgroundColor.red, scene.backgroundColor.green, scene.backgroundColor.blue, scene.backgroundColor.alpha);
+    ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     scene.camera.updateMatrix();
     scene.nodes.forEach((node) {
       node.updateMatrix();
       _renderNode(scene, node);
     });
   }
-  
-  _drawMesh(Scene scene, Mesh mesh) {
-    var camera = scene.camera;
-    var material = mesh.material;
-    var technique = material.technique;
-    
-  }
-  
+
   _renderNode(Scene scene, Node node) {
-    if(node is Mesh) {
+    _textureIndex = -1;
+    _newMaxEnabledArray = -1;
+    if (node is Mesh) {
       _drawMesh(scene, node);
     }
+  }
+
+  _drawMesh(Scene scene, Mesh mesh) {
+    var material = mesh.material;
+    if(!material.ready(mesh)) return;
     
-    
-    
-    node.meshes.forEach((mesh) {
-      mesh.primitives.forEach((primitive) {
-        if(primitive.ready) {
-          var material = primitive.material;
-//          material = new ColorMaterial(new Color.fromHex(0x0000ff));
-          var technique = material.technique;
-          technique = techniqueForTextureMaterial;
-          var pass = technique.passes[material.technique.pass];
-          var program = pass.program;
-          program.build(ctx);
-          
-          if(program.ready) {
-            ctx.useProgram(program.program);
-            var blending = 0;
-            var depthTest = 1;
-            var depthMask = 1;
-            var cullFaceEnable = 1;
-            var blendEquation = gl.FUNC_ADD;
-            var sfactor = gl.SRC_ALPHA;
-            var dfactor = gl.ONE_MINUS_SRC_ALPHA;
-            if(pass.states != null) {
-              if(pass.states["blendEnable"] != null)
-                blending = pass.states["blendEnable"];
-              if(pass.states["depthTestEnable"] != null)
-                depthTest = pass.states["depthTestEnable"];
-              if(pass.states["depthMask"] != null)
-                depthMask = pass.states["depthMask"];
-              if(pass.states["cullFaceEnable"] != null)
-                cullFaceEnable = pass.states["cullFaceEnable"];
-              if(pass.states["blendEquation"] != null) {
-                var blendFunc = pass.states["blendFunc"];
-                if(blendFunc != null) {
-                  if(blendFunc["sfactor"] != null) sfactor = blendFunc["sfactor"];
-                  if(blendFunc["dfactor"] != null) dfactor = blendFunc["dfactor"]; 
-                }
-              }
-            }
-            setState(gl.DEPTH_TEST, depthTest != 0);
-            setState(gl.CULL_FACE, cullFaceEnable != 0);
-            ctx.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);
-            ctx.depthMask(depthMask == 1);
-            
-            setState(gl.BLEND, blending != 0);
-            if(blending > 0) {
-              ctx.blendEquation(blendEquation);
-              ctx.blendFunc(sfactor, dfactor);
-            }
-            var globalIntensity = 1;
-            var transparency = technique.parameters["transparency"];
-            if(transparency != null && transparency["value"] != null) {
-              globalIntensity *= transparency["value"];
-            }
-            var filterColor = technique.parameters["filterColor"];
-            if(filterColor != null && filterColor["value"] != null) {
-              globalIntensity *= filterColor["value"][3];
-            }
-            if(globalIntensity < 0.00001)
-              return;
-            if(globalIntensity < 1 && blending == 0) {
-              setState(gl.BLEND, true);
-              ctx.blendEquation(gl.FUNC_ADD);
-              ctx.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-            }
-            
-            var currentTexture = 0;
-            var newMaxEnabledArray = -1;
-            // bind uniforms
-            program.uniformSymbols.forEach((symbol) {
-              var value;
-              var parameterName = pass.instanceProgram["uniforms"][symbol];
-              var parameter = technique.parameters[parameterName];
-              if(parameter != null) {
-                var semantic = parameter["semantic"];
-                if(semantic != null) {
-                  if(semantic == "PROJECTION") {
-                    value = camera.projectionMatrix;
-                  } else if (semantic == "MODELVIEW") {
-                    value = camera.matrixWorld * node.matrixWorld;
-                  } else if (semantic == "MODELVIEWINVERSETRANSPOSE") {
-                    value = (camera.matrixWorld * node.matrixWorld).normalMatrix3();
-                  }
-                }
-              }
-              if(value == null && parameter != null) {
-                // find the node be named {source}
-                if(parameter["source"] != null) {
-                  var node = scene.resources[parameter["source"]];
-                  value = node.matrixWorld;
-                } else if(parameter["value"] != null) {
-                  value = parameter["value"];
-                } else {
-                  value = material.instanceTechnique["values"][parameterName];
-                }
-              }
-              
-              if(value != null) {
-                var type = program.getTypeForSymbol(symbol);
-                if(type == gl.SAMPLER_CUBE || type == gl.SAMPLER_2D) {
-                  Texture texture = scene.resources[value];
-                  if(texture.ready) {
-                    ctx.activeTexture(gl.TEXTURE0 + currentTexture);
-                    ctx.bindTexture(texture.target, texture.texture);
-                    var location = program.symbolToLocation[symbol];
-                    if(location != null) {
-                      program.setValueForSymbol(ctx, symbol, currentTexture);
-                      currentTexture++;
-                    }
-                  } else {
-                    texture.setup(ctx);
-                  }
-                } else {
-                  program.setValueForSymbol(ctx, symbol, value);
-                }
-              }
-            });     
-            
-            // bind attributes
-            var attributes = pass.instanceProgram["attributes"];
-            program.attributeSymbols.forEach((symbol) {
-              var parameter = technique.parameters[attributes[symbol]];
-              var semantic = parameter["semantic"];
-              
-              var accessor = primitive.attributes[semantic];
-              
-              ctx.bindBuffer(accessor.bufferView.target, accessor.buffer);
-              var location = program.symbolToLocation[symbol];
-              if(location != null) {
-                if(location > newMaxEnabledArray) {
-                  newMaxEnabledArray = location;
-                }
-                ctx.enableVertexAttribArray(location);
-                ctx.vertexAttribPointer(location, accessor.byteStride ~/ 4, gl.FLOAT, false, 0, 0);
-              }
-            });
-            
-            for(var i = (newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
-              ctx.disableVertexAttribArray(i);              
-            }
-            _lastMaxEnabledArray = newMaxEnabledArray;
-            
-            ctx.bindBuffer(primitive.indices.bufferView.target, primitive.indices.buffer);
-            ctx.drawElements(primitive.primitive, primitive.indices.count, primitive.indices.type, 0);
-            
-            if(globalIntensity < 1 && blending == 0) {
-              setState(gl.BLEND, false);
-            }
+    var shader = material.technique.pass.shader;
+    material.bind(this, scene, mesh);
+    if (mesh.geometry != null) {
+      var geometry = mesh.geometry;
+      shader.attributes.forEach((semantic, attrib) {
+        if (geometry.buffers.containsKey(semantic)) {
+          var bufferView = geometry.buffers[semantic];
+          bufferView.bindBuffer(ctx);
+          ctx.enableVertexAttribArray(attrib.location);
+          ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
+          if (attrib.location > _newMaxEnabledArray) {
+            _newMaxEnabledArray = attrib.location;
           }
-        } else {
-          primitive.setupBuffer(ctx);
         }
       });
-    });
-    node.children.forEach((n) => _renderNode(scene, n));
+    }
+    for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
+      ctx.disableVertexAttribArray(i);
+    }
+    _lastMaxEnabledArray = _newMaxEnabledArray;
+    if (mesh.faces != null) {
+      mesh.faces.bindBuffer(ctx);
+      if (material.wireframe) {
+        ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
+      } else {
+        ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+      }
+    } else {
+      ctx.drawArrays(gl.TRIANGLES, 0, mesh.vertexesCount);
+    }
+    mesh.children.forEach((c) => _drawMesh(scene, c));
   }
-  
-  
-  
-  
-  
-  
+
+  use(Pass pass) {
+    pass.bind(ctx);
+  }
+
+  bindUniform(Shader shader, String symbol, value) {
+    if (!shader.ready) return;
+    if (shader.uniforms.containsKey(symbol) && value != null) {
+      var property = shader.uniforms[symbol];
+      switch (property.type) {
+        case gl.BYTE:
+        case gl.UNSIGNED_BYTE:
+        case gl.SHORT:
+        case gl.UNSIGNED_SHORT:
+          ctx.uniform1i(property.location, value);
+          break;
+        case gl.FLOAT_MAT2:
+          ctx.uniformMatrix2fv(property.location, false, value);
+          break;
+        case gl.FLOAT_MAT3:
+          ctx.uniformMatrix3fv(property.location, false, value);
+          break;
+        case gl.FLOAT_MAT4:
+          ctx.uniformMatrix4fv(property.location, false, value);
+          break;
+        case gl.FLOAT:
+          ctx.uniform1f(property.location, value);
+          break;
+        case gl.FLOAT_VEC2:
+          ctx.uniform2fv(property.location, value.storage);
+          break;
+        case gl.FLOAT_VEC3:
+          ctx.uniform3fv(property.location, value);
+          break;
+        case gl.FLOAT_VEC4:
+          ctx.uniform4fv(property.location, value.storage);
+          break;
+        case gl.INT:
+          ctx.uniform1i(property.location, value);
+          break;
+        case gl.SAMPLER_2D:
+          ctx.uniform1i(property.location, value);
+          break;
+        case gl.SAMPLER_CUBE:
+          ctx.uniform1i(property.location, value);
+          break;
+        case gl.BOOL:
+          ctx.uniform1i(property.location, value ? 1 : 0);
+      }
+    }
+  }
+
+  bindTexture(Shader shader, Texture texture) {
+    _textureIndex++;
+    ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
+    ctx.bindTexture(texture.target, texture.data);
+    bindUniform(shader, Semantics.texture, _textureIndex);
+    bindUniform(shader, Semantics.useTextures, true);
+  }
+
   setState(int cap, bool enable) {
-    if(enable) 
-      ctx.enable(cap);
-    else
-      ctx.disable(cap);
+    if (enable) ctx.enable(cap); else ctx.disable(cap);
   }
 }
-
-
-
-
 
 
 

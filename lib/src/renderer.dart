@@ -137,7 +137,7 @@ class Renderer {
     }
     if (mesh.faces != null) {
       mesh.faces.bindBuffer(ctx);
-      if (mesh.wireframe) {
+      if (mesh.material != null && mesh.material.wireframe) {
         ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
       } else {
         ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
@@ -147,7 +147,6 @@ class Renderer {
   }
 
 }
-
 
 
 

@@ -118,8 +118,6 @@ class PolygonMesh extends Mesh {
     _indices.add(face[1]);
     _indices.add(face[2]);
   }
-
-  int get vertexesCount => geometry.buffers[Semantics.position].count;
 }
 
 

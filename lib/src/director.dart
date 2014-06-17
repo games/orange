@@ -28,6 +28,13 @@ class Director {
     _lastElapsed = elapsed;
     if (_scene != null) {
       _scene.update(elapsed, interval);
+      //actions
+      //befor render
+      //animations
+      //physics
+      //clear
+      //shadows
+      //render
       renderer.prepare();
       renderer.render(_scene);
     }

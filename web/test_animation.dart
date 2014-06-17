@@ -60,7 +60,7 @@ class TestAnimation {
     plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
 //    meshes.add(plane);
     var textureManager = new TextureManager();
-    textureManager.load(renderer.ctx,  {"path": "/orange/models/crate.gif"}).then((t) => plane.material.texture = t);
+    textureManager.load(renderer.ctx,  {"path": "/orange/models/crate.gif"}).then((t) => plane.material.diffuseTexture = t);
 
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();

@@ -104,10 +104,10 @@ class Renderer {
 
     if (mesh.material != null) {
       var material = mesh.material;
-      if (mesh.material.texture != null) {
+      if (mesh.material.diffuseTexture != null) {
         _textureIndex++;
         ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
-        ctx.bindTexture(material.texture.target, material.texture.data);
+        ctx.bindTexture(material.diffuseTexture.target, material.diffuseTexture.data);
         shader.uniform(ctx, Semantics.texture, _textureIndex);
         shader.uniform(ctx, Semantics.useTextures, true);
       } else {

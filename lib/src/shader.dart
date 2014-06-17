@@ -88,13 +88,13 @@ class Shader {
           ctx.uniform1f(property.location, value);
           break;
         case gl.FLOAT_VEC2:
-          ctx.uniform2fv(property.location, value.storage);
+          ctx.uniform2fv(property.location, value);
           break;
         case gl.FLOAT_VEC3:
           ctx.uniform3fv(property.location, value);
           break;
         case gl.FLOAT_VEC4:
-          ctx.uniform4fv(property.location, value.storage);
+          ctx.uniform4fv(property.location, value);
           break;
         case gl.INT:
           ctx.uniform1i(property.location, value);

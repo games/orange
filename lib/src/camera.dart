@@ -48,6 +48,8 @@ class PerspectiveCamera extends Node {
   updateProjection() {
     projectionMatrix = new Matrix4.perspective(radians(fov), aspect, near, far);
   }
+  
+  Matrix4 get viewProjectionMatrix => projectionMatrix * viewMatrix;
 
   //  updateMatrix() {
   //    super.updateMatrix();

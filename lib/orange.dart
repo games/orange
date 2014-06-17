@@ -31,11 +31,10 @@ part 'src/animation/keyframe.dart';
 part 'src/buffer_view.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
-part 'src/pass.dart';
+part 'src/materials/pass.dart';
 part 'src/light.dart';
-part 'src/material.dart';
 part 'src/geometry.dart';
-part 'src/technique.dart';
+part 'src/materials/technique.dart';
 
 part 'src/primitives/polygon_mesh.dart';
 part 'src/primitives/cube.dart';
@@ -62,6 +61,11 @@ part 'src/math/vector3.dart';
 part 'src/math/vector4.dart';
 part 'src/math/quaternion.dart';
 part 'src/math/angle.dart';
+
+part 'src/materials/material.dart';
+part 'src/materials/standard_material.dart';
+
+part 'src/shaders/standard_shader.dart';
 
 
 

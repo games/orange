@@ -206,7 +206,7 @@ class TestLighting {
       "path": "cubetexture.png"
     }).then((t) {
       //      cube.material.texture = t;
-      sphere.material.texture = t;
+      sphere.material.diffuseTexture = t;
     });
 
     _directionalLight = new DirectionalLight(0xffffff);

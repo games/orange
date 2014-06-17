@@ -7,14 +7,33 @@ class Renderer2 {
   int _lastMaxEnabledArray = -1;
   int _textureIndex = -1;
   int _newMaxEnabledArray = -1;
+  DeviceCapabilities _caps;
 
   Renderer2(this._canvas) {
     ctx = _canvas.getContext3d(preserveDrawingBuffer: true);
     ctx.enable(gl.DEPTH_TEST);
+    ctx.depthMask(true);
+    ctx.depthFunc(gl.LEQUAL);
     ctx.frontFace(gl.CCW);
     ctx.cullFace(gl.BACK);
     ctx.enable(gl.CULL_FACE);
     ctx.clearDepth(1.0);
+
+    _caps = new DeviceCapabilities();
+    _caps.maxTexturesImageUnits = ctx.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+    _caps.maxTextureSize = ctx.getParameter(gl.MAX_TEXTURE_SIZE);
+    _caps.maxCubemapTextureSize = ctx.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
+    _caps.maxRenderTextureSize = ctx.getParameter(gl.MAX_RENDERBUFFER_SIZE);
+
+    // extensions
+    _caps.standardDerivatives = (ctx.getExtension('OES_standard_derivatives') != null);
+    _caps.s3tc = ctx.getExtension('WEBGL_compressed_texture_s3tc');
+    _caps.textureFloat = (ctx.getExtension('OES_texture_float') != null);
+    _caps.textureAnisotropicFilterExtension = ctx.getExtension('EXT_texture_filter_anisotropic');
+    if (_caps.textureAnisotropicFilterExtension == null) _caps.textureAnisotropicFilterExtension = ctx.getExtension('WEBKIT_EXT_texture_filter_anisotropic');
+    if (_caps.textureAnisotropicFilterExtension == null) _caps.textureAnisotropicFilterExtension = ctx.getExtension('MOZ_EXT_texture_filter_anisotropic');
+    if (_caps.textureAnisotropicFilterExtension == null) _caps.maxAnisotropy = 0; else _caps.maxAnisotropy = ctx.getParameter(gl.ExtTextureFilterAnisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+    _caps.instancedArrays = ctx.getExtension('ANGLE_instanced_arrays');
   }
 
   prepare() {
@@ -41,8 +60,8 @@ class Renderer2 {
 
   _drawMesh(Scene scene, Mesh mesh) {
     var material = mesh.material;
-    if(!material.ready(mesh)) return;
-    
+    if (!material.ready(mesh)) return;
+
     var shader = material.technique.pass.shader;
     material.bind(this, scene, mesh);
     if (mesh.geometry != null) {
@@ -104,13 +123,13 @@ class Renderer2 {
           ctx.uniform1f(property.location, value);
           break;
         case gl.FLOAT_VEC2:
-          ctx.uniform2fv(property.location, value.storage);
+          ctx.uniform2fv(property.location, value);
           break;
         case gl.FLOAT_VEC3:
           ctx.uniform3fv(property.location, value);
           break;
         case gl.FLOAT_VEC4:
-          ctx.uniform4fv(property.location, value.storage);
+          ctx.uniform4fv(property.location, value);
           break;
         case gl.INT:
           ctx.uniform1i(property.location, value);
@@ -135,10 +154,23 @@ class Renderer2 {
     bindUniform(shader, Semantics.useTextures, true);
   }
 
-  setState(int cap, bool enable) {
+  enableState(int cap, bool enable) {
     if (enable) ctx.enable(cap); else ctx.disable(cap);
   }
+
+  DeviceCapabilities get caps => _caps;
 }
 
 
-
+class DeviceCapabilities {
+  int maxTexturesImageUnits;
+  num maxTextureSize;
+  num maxCubemapTextureSize;
+  num maxRenderTextureSize;
+  bool standardDerivatives;
+  dynamic s3tc;
+  bool textureFloat;
+  dynamic textureAnisotropicFilterExtension;
+  num maxAnisotropy;
+  dynamic instancedArrays;
+}

@@ -42,7 +42,7 @@ class OgreLoader {
       material.emissiveColor = new Color.fromList(m["emissive"]);
       material.ambientColor = new Color.fromList(m["ambient"]);
       material.diffuseColor = new Color.fromList(m["diffuse"]);
-      textureManager.load(_ctx,  {"path": _uri.resolve(m["texture"]).toString()}).then((t) => material.texture = t);
+      textureManager.load(_ctx,  {"path": _uri.resolve(m["texture"]).toString()}).then((t) => material.diffuseTexture = t);
       _materials[material.name] = material;
     });
   }

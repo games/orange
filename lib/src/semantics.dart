@@ -21,28 +21,30 @@ class Semantics {
 //  static const String VIEWPORT = "VIEWPORT";
   
   
-  static const String position = "aPosition";
-  static const String texcoords = "aTexcoords";
-  static const String texcoords2 = "aTexcoords2";
-  static const String normal = "aNormal";
+  static const String position = "position";
+  static const String texcoords = "uv";
+  static const String texcoords2 = "uv2";
+  static const String normal = "normal";
   static const String tangent = "aTangent";
-  static const String color = "aColor";
-  static const String weights = "aWeights";
-  static const String joints = "aJoints";
+  static const String color = "color";
+  // BONES
+  static const String weights = "matricesWeights";
+  static const String joints = "matricesIndices";
   
-  static const String viewMat = "uViewMat";
-  static const String projectionMat = "uProjectionMat";
-  static const String modelMat = "uModelMat";
+  static const String viewMat = "view";
+  static const String viewProjectionMat = "viewProjection";
+  static const String projectionMat = "projectionMat";
+  static const String modelMat = "world";
   static const String normalMat = "uNormalMat";
   static const String jointMat = "uJointMat";
-  static const String cameraPosition = "uCameraPosition";
+  static const String cameraPosition = "vEyePosition";
   
-  static const String texture = "uTexture";
+  static const String texture = "diffuseSampler";
   static const String useTextures = "uUseTextures";
-  static const String emissiveColor = "emissiveColor";
-  static const String specularColor = "specularColor";
-  static const String ambientColor = "ambientColor";
-  static const String diffuseColor = "diffuseColor";
+  static const String emissiveColor = "vEmissiveColor";
+  static const String specularColor = "vSpecularColor";
+  static const String ambientColor = "vAmbientColor";
+  static const String diffuseColor = "vDiffuseColor";
   static const String shininess = "shininess";
 }
 

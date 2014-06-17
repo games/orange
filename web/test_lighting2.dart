@@ -170,7 +170,7 @@ class TestLighting2 {
     textureManager.load(renderer.ctx, {
       "path": "cubetexture.png"
     }).then((t) {
-      cube.material.texture = t;
+      cube.material.diffuseTexture = t;
       //            plane.material.texture = t;
     });
 

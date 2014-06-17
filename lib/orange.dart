@@ -78,6 +78,15 @@ or(expectValue, defaultValue) {
 capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
 
+abstract class Axis {
+  static final Vector3 X = new Vector3(1.0, 0.0, 0.0);
+  static final Vector3 Y = new Vector3(0.0, 1.0, 0.0);
+  static final Vector3 Z = new Vector3(0.0, 0.0, 1.0);
+}
+
+typedef void Callback();
+typedef void Callback1<T>();
+typedef void Callback2<T1, T2>();
 
 
 

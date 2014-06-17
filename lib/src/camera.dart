@@ -27,18 +27,18 @@ class PerspectiveCamera extends Node {
   double fov;
   double aspect;
   Matrix4 projectionMatrix;
-  Matrix4 viewMatrix;
+  Matrix4 _viewMatrix;
 
   PerspectiveCamera(double aspect, {this.near: 1.0, this.far: 1000.0, this.fov: 45.0}) {
     this.aspect = aspect;
-    viewMatrix = new Matrix4.identity();
+    _viewMatrix = new Matrix4.identity();
     updateProjection();
   }
 
   lookAt(Vector3 target) {
-    viewMatrix.lookAt(position, target, new Vector3(0.0, 1.0, 0.0));
+    _viewMatrix.lookAt(position, target, Axis.Y);
     rotation.setFromRotation(viewMatrix);
-//    viewMatrix.decompose(position, rotation);
+    //    viewMatrix.decompose(position, rotation);
   }
 
   update(double interval) {
@@ -48,8 +48,9 @@ class PerspectiveCamera extends Node {
   updateProjection() {
     projectionMatrix = new Matrix4.perspective(radians(fov), aspect, near, far);
   }
-  
+
   Matrix4 get viewProjectionMatrix => projectionMatrix * viewMatrix;
+  Matrix4 get viewMatrix => _viewMatrix;
 
   //  updateMatrix() {
   //    super.updateMatrix();
@@ -227,8 +228,6 @@ class FlyingCamera extends Camera {
     }
   }
 }
-
-
 
 
 

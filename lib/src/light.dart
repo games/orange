@@ -99,7 +99,7 @@ class SpotLight extends PointLight {
   Vector3 direction;
   double spotCutoff;
   double spotExponent;
-  double angle = math.PI / 4;
+  double angle = 0.8;
   double get spotCosCutoff => math.cos(spotCutoff);
 
   SpotLight(num hexColor, {Vector3 direction, spotCutoff: math.PI / 4, spotExponent: 3.0, constantAttenuation: 0.1, linearAttenuation: 0.05, quadraticAttenuation: 0.11, double intensity: 1.0})
@@ -107,7 +107,7 @@ class SpotLight extends PointLight {
     type = Light.SPOTLIGHT;
     this.spotCutoff = spotCutoff;
     this.spotExponent = spotExponent;
-    if (direction == null) this.direction = new Vector3(0.0, 0.0, -1.0);
+    if (direction == null) this.direction = new Vector3(0.0, -1.0, 0.0);
   }
 
   @override

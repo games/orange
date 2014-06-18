@@ -18,9 +18,12 @@ class TestAnimation2 {
 class MyScene extends Scene {
   MyScene(PerspectiveCamera camera): super(camera);
   Mesh mesh;
+  bool rotateCamera = false;
 
   @override
   enter() {
+
+    var controllers = html.querySelector("#controllers");
     camera.position.setValues(0.0, 2.0, 4.0);
     camera.lookAt(new Vector3.zero());
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
@@ -28,7 +31,6 @@ class MyScene extends Scene {
     loader.load(device.ctx, url).then((m) {
       m.position.setValues(0.0, -1.0, -1.0);
       m.animator.switchAnimation("Idle");
-      var controllers = html.querySelector("#controllers");
       m.animator.animations.forEach((n, a) {
         var row = new html.DivElement();
         row.className = "row";
@@ -45,6 +47,22 @@ class MyScene extends Scene {
       m.castShadows = true;
       mesh = m;
     });
+
+    var row = new html.DivElement();
+    row.className = "row";
+    var radio = new html.CheckboxInputElement();
+    radio.id = "rotate_camera";
+    radio.name = "rotate_camera";
+    radio.value = "rotate_camera";
+    radio.onClick.listen((e) {
+      rotateCamera = !rotateCamera;
+    });
+    var label = new html.LabelElement();
+    label.htmlFor = radio.id;
+    label.text = "Rotate Camera";
+    row.children.add(radio);
+    row.children.add(label);
+    controllers.children.add(row);
 
     var plane = _createPlane(6.0);// new Plane(width: 10, height: 10);
     plane.rotation.rotateX(-PI / 2);
@@ -108,14 +126,18 @@ class MyScene extends Scene {
   exit() {
     // TODO: implement exit
   }
+  
+  num _elapsed = 0;
 
   @override
   update(num elapsed, num interval) {
     super.update(elapsed, interval);
 
-    camera.update(interval);
-    camera.position.setValues(cos(elapsed / 1000) * 4.0, 2.0, sin(elapsed / 1000) * 4.0);
-    camera.lookAt(new Vector3.zero());
+    if (rotateCamera) {
+      _elapsed += interval;
+      camera.position.setValues(cos(_elapsed / 1000) * 4.0, 2.0, sin(_elapsed / 1000) * 4.0);
+      camera.lookAt(new Vector3.zero());
+    }
   }
 }
 

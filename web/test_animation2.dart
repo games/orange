@@ -16,7 +16,7 @@ class TestAnimation2 {
 }
 
 class MyScene extends Scene {
-  MyScene(PerspectiveCamera camera) : super(camera);
+  MyScene(PerspectiveCamera camera): super(camera);
   Mesh mesh;
 
   @override
@@ -26,7 +26,7 @@ class MyScene extends Scene {
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(device.ctx, url).then((m) {
-      m.position.setValues(0.0, -1.0, 0.0);
+      m.position.setValues(0.0, -1.0, -1.0);
       m.animator.switchAnimation("Idle");
       var controllers = html.querySelector("#controllers");
       m.animator.animations.forEach((n, a) {
@@ -41,35 +41,43 @@ class MyScene extends Scene {
         controllers.children.add(row);
       });
       add(m);
-      m.receiveShadows = true;
+      m.receiveShadows = false;
+      m.castShadows = true;
       mesh = m;
     });
 
-    var plane = new Plane(width: 10, height: 10);
+    var plane = _createPlane(6.0);// new Plane(width: 10, height: 10);
     plane.rotation.rotateX(-PI / 2);
-    plane.position.setValues(0.0, -1.0, -3.5);
+    plane.position.setValues(0.0, -2.0, -3.5);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     plane.material.diffuseColor = new Color.fromHex(0xFFFFFF);
     plane.receiveShadows = true;
+    plane.castShadows = false;
     add(plane);
-    
-    var textureManager = new TextureManager();
-    textureManager.load(device.ctx, {
-      "path": "cubetexture.png"
-    }).then((t) {
-      plane.material.diffuseTexture = t;
-    });
+
+    //    var textureManager = new TextureManager();
+    //    textureManager.load(device.ctx, {
+    //      "path": "cubetexture.png"
+    //    }).then((t) {
+    //      plane.material.diffuseTexture = t;
+    //    });
 
     var spotLight = new SpotLight(0xffffff);
     spotLight.angle = 3.0;
     spotLight.spotExponent = 2.0;
     spotLight.intensity = 0.1;
-    spotLight.position.setValues(5.0, 2.0, 0.0);
-    spotLight.direction = new Vector3(-2.4, -1.0, 0.0);
+    spotLight.position.setValues(5.0, 2.0, -1.0);
+    spotLight.direction = new Vector3(-2.8, -1.0, -0.3);
     spotLight.diffuse = new Color.fromHex(0x00ff00);
     spotLight.specular = new Color.fromHex(0xffffff);
     add(spotLight);
+
+    var light2 = new DirectionalLight(0x0000ff);
+    light2.position = new Vector3(-5.0, 3.0, 0.0);
+    light2.direction = new Vector3(2.8, -1.0, -0.2);
+    light2.diffuse = new Color.fromHex(0xff0000);
+    add(light2);
   }
 
   html.RadioButtonInputElement _createAnimationSelector(String name, Animation animation) {
@@ -91,5 +99,18 @@ class MyScene extends Scene {
   @override
   update(num elapsed, num interval) {
     super.update(elapsed, interval);
+    
+    camera.update(interval);
+    camera.position.setValues(cos(elapsed / 1000) * 4.0, 2.0, sin(elapsed / 1000) * 4.0);
+    camera.lookAt(new Vector3.zero());
   }
+}
+
+Mesh _createPlane([double scale = 1.0]) {
+  var mesh = new PolygonMesh();
+  mesh.setVertices([-scale, -scale, 1.0, scale, -scale, 1.0, scale, scale, 1.0, -scale, scale, 1.0]);
+  mesh.setFaces([0, 1, 2, 0, 2, 3]);
+  mesh.setTexCoords([0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]);
+  mesh.calculateSurfaceNormals();
+  return mesh;
 }

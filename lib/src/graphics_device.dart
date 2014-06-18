@@ -102,6 +102,7 @@ class GraphicsDevice {
   //render
   void render(Scene scene) {
     scene.camera.updateMatrix();
+    scene._nodes.forEach((n) => n.updateMatrix());
 
     // shadows
     scene.lights.forEach((light) {
@@ -128,7 +129,6 @@ class GraphicsDevice {
   _renderNode(Scene scene, Node node) {
     _textureIndex = -1;
     _newMaxEnabledArray = -1;
-    node.updateMatrix();
     if (node is Mesh) {
       _drawMesh(scene, node);
     }

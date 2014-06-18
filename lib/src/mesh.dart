@@ -10,6 +10,7 @@ class Mesh extends Node {
   Skeleton _skeleton;
   AnimationController animator;
 
+  bool _castShadows = false;
   bool _receiveShadows = false;
 
   @deprecated
@@ -35,6 +36,15 @@ class Mesh extends Node {
 
   void set skeleton(Skeleton val) {
     _skeleton = val;
+  }
+
+  bool get castShadows => _castShadows;
+
+  void set castShadows(bool val) {
+    _castShadows = val;
+    children.forEach((c) {
+      if (c is Mesh) c._castShadows = val;
+    });
   }
 
   bool get receiveShadows => _receiveShadows;

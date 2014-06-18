@@ -9,7 +9,7 @@ class ShadowGenerator implements Renderer {
   DirectionalLight light;
   bool useVarianceShadowMap = true;
 
-  double _darkness = 0.5;
+  double _darkness = 0.0;
   RenderTargetTexture _shadowMap;
   Pass _pass;
   String _cachedDefines;
@@ -17,8 +17,8 @@ class ShadowGenerator implements Renderer {
   Matrix4 _projectionMatrix;
   Matrix4 _transformMatrix;
 
-  ShadowGenerator(int size, this.light, GraphicsDevice renderer) {
-    _shadowMap = RenderTargetTexture.create(renderer, size, size);
+  ShadowGenerator(int size, this.light, GraphicsDevice device) {
+    _shadowMap = RenderTargetTexture.create(device, size, size);
     _shadowMap.renderDelegate = this;
     _pass = new Pass();
   }
@@ -49,6 +49,7 @@ class ShadowGenerator implements Renderer {
   }
 
   void _renderMesh(Scene scene, Mesh mesh) {
+    if(!mesh.castShadows) return;
     var device = scene.device;
     var ctx = device.ctx;
     if (ready(mesh, device)) {
@@ -56,7 +57,7 @@ class ShadowGenerator implements Renderer {
       device.use(_pass);
       device.bindUniform(shader, "viewProjection", transformMatrix.storage);
       _renderSubmesh(scene, mesh);
-      mesh.children.forEach((m) => _renderSubmesh(scene, m));
+      mesh.children.forEach((m) => _renderMesh(scene, m));
     }
   }
 
@@ -70,6 +71,7 @@ class ShadowGenerator implements Renderer {
     if (skeleton != null) {
       device.bindUniform(shader, "mBones", skeleton.jointMatrices);
     }
+    device.bindUniform(shader, "world", mesh.worldMatrix.storage);
     if (mesh.geometry != null) {
       var geometry = mesh.geometry;
       shader.attributes.forEach((semantic, attrib) {
@@ -91,7 +93,8 @@ class ShadowGenerator implements Renderer {
     var lightPos = light.position;
     var lightDir = light.direction;
     _viewMatrix = new Matrix4.identity().lookAt(lightPos, lightPos + lightDir, Axis.UP);
-    _projectionMatrix = new Matrix4.perspective(90.0, 1.0, 0.01, 100.0);
+//    _viewMatrix = new Matrix4.identity().lookAt(lightPos, new Vector3.zero(), Axis.UP);
+    _projectionMatrix = new Matrix4.perspective(radians(90.0), 1.0, 0.01, 100.0);
     _transformMatrix = _projectionMatrix * _viewMatrix;
     return _transformMatrix;
   }

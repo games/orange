@@ -135,8 +135,6 @@ class StandardMaterial extends Material {
           device.bindUniform(shader, "lightMatrix${i}", shadowGenerator.transformMatrix.storage);
           device.bindTexture(shader, "shadowSampler${i}", shadowGenerator.shadowMap);
           device.bindUniform(shader, "darkness${i}", shadowGenerator.darkness);
-
-          device.bindTexture(shader, Semantics.texture, shadowGenerator.shadowMap);
         }
       }
     }

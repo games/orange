@@ -28,6 +28,12 @@ abstract class Scene {
   Scene(this.camera);
 
   enter();
-  update(num elapsed, num interval);
+  
+  update(num elapsed, num interval) {
+    nodes.forEach((node) {
+      if (node is Mesh && node.animator != null) node.animator.evaluate(interval);
+    });
+  }
+  
   exit();
 }

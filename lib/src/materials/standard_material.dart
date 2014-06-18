@@ -5,35 +5,35 @@ part of orange;
 
 
 class StandardMaterial extends Material {
-  Scene _scene;
+//  Scene _scene;
   String _cachedDefines;
 
-  StandardMaterial(this._scene) {
+  StandardMaterial() {
     technique = new Technique();
     technique.pass = new Pass();
   }
 
-  bool ready(Mesh mesh) {
+  bool ready(Scene scene, Mesh mesh) {
     var defines = [];
-    if (_scene.texturesEnabled) {
+    if (scene.texturesEnabled) {
       if (diffuseTexture != null) {
         defines.add("#define DIFFUSE");
       }
       // TODO ambient, opacity, reflection, emissive, specular, bump
     }
-    var renderer = _scene.renderer;
+    var renderer = scene.renderer;
     if (renderer.caps.standardDerivatives && bumpTexture != null) {
       defines.add("#define BUMP");
     }
     // FOG
-    if (_scene.fogMode != Scene.FOGMODE_NONE) {
+    if (scene.fogMode != Scene.FOGMODE_NONE) {
       defines.add("#define FOG");
     }
     var shadowsActivated = false;
-    if (_scene.lightsEnabled) {
-      for (var i = 0; i < _scene.lights.length && i < MAX_LIGHTS; i++) {
+    if (scene.lightsEnabled) {
+      for (var i = 0; i < scene.lights.length && i < MAX_LIGHTS; i++) {
         defines.add("#define LIGHT$i");
-        var light = _scene.lights[i];
+        var light = scene.lights[i];
         if (light.type == Light.SPOTLIGHT) {
           defines.add("#define SPOTLIGHT$i");
         } else {

@@ -34,7 +34,7 @@ class OgreLoader {
     var textureManager = new TextureManager();
     _materials = {};
     doc.forEach((String n, Map m) {
-      var material = new Material();
+      var material = new StandardMaterial();
       material.name = m["name"];
       var specular = m["specular"];
       material.shininess = specular[3];

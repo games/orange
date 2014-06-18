@@ -31,26 +31,26 @@ class MyScene extends Scene {
 
     box = new Cube();
     box.position.setValues(-1.0, 0.5, 0.0);
-    box.material = new StandardMaterial(this);
+    box.material = new StandardMaterial();
     box.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     box.material.diffuseColor = new Color.fromHex(0xffffff);
     nodes.add(box);
 
     sphere = new Sphere();
     sphere.position.setValues(2.0, 1.0, 0.0);
-    sphere.material = new StandardMaterial(this);
+    sphere.material = new StandardMaterial();
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
     nodes.add(sphere);
 
     sphere2 = new Sphere(radius: 0.2);
-    sphere2.material = new StandardMaterial(this);
+    sphere2.material = new StandardMaterial();
     sphere2.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere2.material.diffuseColor = new Color.fromHex(0x0000ff);
     nodes.add(sphere2);
 
     sphere3 = new Sphere(radius: 0.2);
-    sphere3.material = new StandardMaterial(this);
+    sphere3.material = new StandardMaterial();
     sphere3.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere3.material.diffuseColor = new Color.fromHex(0xff0000);
     nodes.add(sphere3);
@@ -58,7 +58,7 @@ class MyScene extends Scene {
     plane = new Plane(width: 10, height: 10);
     plane.rotation.rotateX(-PI / 2);
     plane.position.setValues(0.0, 0.0, 0.0);
-    plane.material = new StandardMaterial(this);
+    plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
     nodes.add(plane);
@@ -89,12 +89,13 @@ class MyScene extends Scene {
 
   @override
   update(num elapsed, num interval) {
-    
+    super.update(elapsed, interval);
+
     pointLight0.position.setValues(cos(elapsed / 1000) * 5.0, 3.0, sin(elapsed / 1000) * 5.0);
 
     sphere2.position = spotLight.position;
     sphere3.position = pointLight0.position;
-    
+
     box.rotation.rotateY(interval / 1000);
     sphere.rotation.rotateY(interval / 1000);
     //    camera.update(interval);

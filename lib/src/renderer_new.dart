@@ -41,7 +41,6 @@ class Renderer2 {
   }
 
   render(Scene scene) {
-
     //actions
     //befor render
     //animations
@@ -55,7 +54,6 @@ class Renderer2 {
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     scene.camera.updateMatrix();
     scene.nodes.forEach((node) {
-      node.updateMatrix();
       _renderNode(scene, node);
     });
   }
@@ -63,57 +61,44 @@ class Renderer2 {
   _renderNode(Scene scene, Node node) {
     _textureIndex = -1;
     _newMaxEnabledArray = -1;
+    node.updateMatrix();
     if (node is Mesh) {
       _drawMesh(scene, node);
     }
   }
 
   _drawMesh(Scene scene, Mesh mesh) {
-    //    if(mesh.material == null) {
-    //      if(defaultMaterial == null) defaultMaterial = new StandartMaterial(scene);
-    //      mesh.material = defaultMaterial;
-    //    }
-
     var material = mesh.material;
-    
-    if (material == null && mesh.parent is Mesh) {
-      material = (mesh.parent as Mesh).material;
-    } else {
-      if (!material.ready(mesh)) return;
-    }
-    if(material == null) return;
-    
-    var shader = material.technique.pass.shader;
-    material.bind(this, scene, mesh);
-    if (mesh.geometry != null) {
-      var geometry = mesh.geometry;
-      shader.attributes.forEach((semantic, attrib) {
-        if (geometry.buffers.containsKey(semantic)) {
-          var bufferView = geometry.buffers[semantic];
-          bufferView.bindBuffer(ctx);
-          ctx.enableVertexAttribArray(attrib.location);
-          ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
-          if (attrib.location > _newMaxEnabledArray) {
-            _newMaxEnabledArray = attrib.location;
+    if (material != null && material.ready(scene, mesh)) {
+      var shader = material.technique.pass.shader;
+      material.bind(this, scene, mesh);
+      if (mesh.geometry != null) {
+        var geometry = mesh.geometry;
+        shader.attributes.forEach((semantic, attrib) {
+          if (geometry.buffers.containsKey(semantic)) {
+            var bufferView = geometry.buffers[semantic];
+            bufferView.bindBuffer(ctx);
+            ctx.enableVertexAttribArray(attrib.location);
+            ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
+            if (attrib.location > _newMaxEnabledArray) {
+              _newMaxEnabledArray = attrib.location;
+            }
           }
+        });
+      }
+      for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
+        ctx.disableVertexAttribArray(i);
+      }
+      _lastMaxEnabledArray = _newMaxEnabledArray;
+      if (mesh.faces != null) {
+        mesh.faces.bindBuffer(ctx);
+        if (material.wireframe) {
+          ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
+        } else {
+          ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
         }
-      });
-    }
-    for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
-      ctx.disableVertexAttribArray(i);
-    }
-    _lastMaxEnabledArray = _newMaxEnabledArray;
-    if (mesh.faces != null) {
-      mesh.faces.bindBuffer(ctx);
-      if (material.wireframe) {
-        ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
-      } else {
-        ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
       }
     }
-    //    else {
-    //      ctx.drawArrays(gl.TRIANGLES, 0, mesh.vertexesCount);
-    //    }
     mesh.children.forEach((c) => _drawMesh(scene, c));
   }
 
@@ -173,7 +158,7 @@ class Renderer2 {
     ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
     ctx.bindTexture(texture.target, texture.data);
     bindUniform(shader, Semantics.texture, _textureIndex);
-//    bindUniform(shader, Semantics.useTextures, true);
+    //    bindUniform(shader, Semantics.useTextures, true);
   }
 
   enableState(int cap, bool enable) {
@@ -190,9 +175,9 @@ class DeviceCapabilities {
   num maxCubemapTextureSize;
   num maxRenderTextureSize;
   bool standardDerivatives;
-  dynamic s3tc;
+  gl.CompressedTextureS3TC s3tc;
   bool textureFloat;
-  dynamic textureAnisotropicFilterExtension;
+  gl.ExtTextureFilterAnisotropic textureAnisotropicFilterExtension;
   num maxAnisotropy;
-  dynamic instancedArrays;
+  gl.AngleInstancedArrays instancedArrays;
 }

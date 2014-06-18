@@ -27,9 +27,6 @@ class Director {
     final interval = elapsed - _lastElapsed;
     _lastElapsed = elapsed;
     if (_scene != null) {
-//      _scene.nodes.forEach((node) {
-//        if (node is Mesh && node.animator != null) node.animator.evaluate(interval);
-//      });
       _scene.update(elapsed, interval);
       renderer.prepare();
       renderer.render(_scene);

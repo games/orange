@@ -2,7 +2,7 @@ part of orange;
 
 const int MAX_LIGHTS = 4;
 
-class Renderer {
+class RendererOld {
   html.CanvasElement canvas;
   gl.RenderingContext ctx;
   PerspectiveCamera camera;
@@ -13,7 +13,7 @@ class Renderer {
   int _newMaxEnabledArray = -1;
   int _lastMaxEnabledArray = -1;
 
-  Renderer(html.CanvasElement canvas) {
+  RendererOld(html.CanvasElement canvas) {
     this.canvas = canvas;
     ctx = canvas.getContext3d();
     camera = new PerspectiveCamera(canvas.width / canvas.height);

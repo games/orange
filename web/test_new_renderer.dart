@@ -8,7 +8,7 @@ class TestNewRenderer {
 
   run() {
     var canvas = html.querySelector("#container");
-    var renderer = new Renderer2(canvas);
+    var renderer = new GraphicsDevice(canvas);
     var director = new Director(renderer);
     director.replace(new MyScene(new PerspectiveCamera(canvas.width / canvas.height)));
     director.run();
@@ -34,26 +34,26 @@ class MyScene extends Scene {
     box.material = new StandardMaterial();
     box.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     box.material.diffuseColor = new Color.fromHex(0xffffff);
-    nodes.add(box);
+    add(box);
 
     sphere = new Sphere();
     sphere.position.setValues(2.0, 1.0, 0.0);
     sphere.material = new StandardMaterial();
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
-    nodes.add(sphere);
+    add(sphere);
 
     sphere2 = new Sphere(radius: 0.2);
     sphere2.material = new StandardMaterial();
     sphere2.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere2.material.diffuseColor = new Color.fromHex(0x0000ff);
-    nodes.add(sphere2);
+    add(sphere2);
 
     sphere3 = new Sphere(radius: 0.2);
     sphere3.material = new StandardMaterial();
     sphere3.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere3.material.diffuseColor = new Color.fromHex(0xff0000);
-    nodes.add(sphere3);
+    add(sphere3);
 
     plane = new Plane(width: 10, height: 10);
     plane.rotation.rotateX(-PI / 2);
@@ -61,10 +61,10 @@ class MyScene extends Scene {
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
-    nodes.add(plane);
+    add(plane);
 
     var textureManager = new TextureManager();
-    textureManager.load(renderer.ctx, {
+    textureManager.load(device.ctx, {
       "path": "cubetexture.png"
     }).then((t) {
       box.material.diffuseTexture = t;

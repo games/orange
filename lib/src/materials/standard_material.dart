@@ -5,7 +5,7 @@ part of orange;
 
 
 class StandardMaterial extends Material {
-//  Scene _scene;
+  //  Scene _scene;
   String _cachedDefines;
 
   StandardMaterial() {
@@ -21,7 +21,7 @@ class StandardMaterial extends Material {
       }
       // TODO ambient, opacity, reflection, emissive, specular, bump
     }
-    var renderer = scene.renderer;
+    var renderer = scene.device;
     if (renderer.caps.standardDerivatives && bumpTexture != null) {
       defines.add("#define BUMP");
     }
@@ -40,7 +40,17 @@ class StandardMaterial extends Material {
           defines.add("#define POINTDIRLIGHT$i");
         }
         // shadows
-        // TODO
+        if (mesh.receiveShadows && light is DirectionalLight) {
+          var shadowGenerator = light.shadowGenerator;
+          defines.add("#define SHADOW${i}");
+          if (!shadowsActivated) {
+            defines.add("#define SHADOWS");
+            shadowsActivated = true;
+          }
+          if (shadowGenerator.useVarianceShadowMap) {
+            defines.add("#define SHADOWVSM${i}");
+          }
+        }
       }
     }
     if (mesh.geometry != null) {
@@ -67,45 +77,45 @@ class StandardMaterial extends Material {
   }
 
   @override
-  void bind(Renderer2 renderer, Scene scene, Mesh mesh) {
+  void bind(GraphicsDevice device, Scene scene, Mesh mesh) {
     var pass = technique.pass;
     var shader = pass.shader;
-    var ctx = renderer.ctx;
+    var ctx = device.ctx;
     var camera = scene.camera;
 
-    renderer.use(pass);
-    renderer.bindUniform(shader, Semantics.modelMat, mesh.worldMatrix.storage);
-    renderer.bindUniform(shader, Semantics.viewMat, camera.viewMatrix.storage);
-    renderer.bindUniform(shader, Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
-    renderer.bindUniform(shader, Semantics.projectionMat, camera.projectionMatrix.storage);
-    renderer.bindUniform(shader, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
+    device.use(pass);
+    device.bindUniform(shader, Semantics.modelMat, mesh.worldMatrix.storage);
+    device.bindUniform(shader, Semantics.viewMat, camera.viewMatrix.storage);
+    device.bindUniform(shader, Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
+    device.bindUniform(shader, Semantics.projectionMat, camera.projectionMatrix.storage);
+    device.bindUniform(shader, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
 
     //textures
     // TODO ambient, opacity, reflection, emissive, specular, bump
     if (diffuseTexture != null) {
-      renderer.bindTexture(shader, diffuseTexture);
+      device.bindTexture(shader, Semantics.texture, diffuseTexture);
       // x: uv or uv2; y: alpha of texture
-      renderer.bindUniform(shader, "vDiffuseInfos", new Float32List.fromList([0.0, 1.0]));
-      renderer.bindUniform(shader, "diffuseMatrix", new Matrix4.identity().storage);
+      device.bindUniform(shader, "vDiffuseInfos", new Float32List.fromList([0.0, 1.0]));
+      device.bindUniform(shader, "diffuseMatrix", new Matrix4.identity().storage);
     }
 
     // colors
-    renderer.bindUniform(shader, Semantics.cameraPosition, camera.position.storage);
+    device.bindUniform(shader, Semantics.cameraPosition, camera.position.storage);
     if (shininess != null) {
-      renderer.bindUniform(shader, Semantics.shininess, shininess);
+      device.bindUniform(shader, Semantics.shininess, shininess);
     }
     if (specularColor != null) {
-      renderer.bindUniform(shader, Semantics.specularColor, specularColor.storage);
+      device.bindUniform(shader, Semantics.specularColor, specularColor.storage);
     }
     if (ambientColor != null) {
       // TODO should multipy to global ambient color
-      renderer.bindUniform(shader, Semantics.ambientColor, ambientColor.rgb.storage);
+      device.bindUniform(shader, Semantics.ambientColor, ambientColor.rgb.storage);
     }
     if (diffuseColor != null) {
-      renderer.bindUniform(shader, Semantics.diffuseColor, diffuseColor.storage);
+      device.bindUniform(shader, Semantics.diffuseColor, diffuseColor.storage);
     }
     if (emissiveColor != null) {
-      renderer.bindUniform(shader, Semantics.emissiveColor, emissiveColor.rgb.storage);
+      device.bindUniform(shader, Semantics.emissiveColor, emissiveColor.rgb.storage);
     }
 
     //lights
@@ -117,20 +127,24 @@ class StandardMaterial extends Material {
         light.bind(ctx, shader, i);
         var diffuse = light.diffuse.scaled(light.intensity);
         // [color + range]
-        renderer.bindUniform(shader, "vLightDiffuse${i}", new Float32List.fromList([diffuse.red, diffuse.green, diffuse.blue, light.range]));
-        renderer.bindUniform(shader, "vLightSpecular${i}", light.specular.scaled(light.intensity).rgb.storage);
+        device.bindUniform(shader, "vLightDiffuse${i}", new Float32List.fromList([diffuse.red, diffuse.green, diffuse.blue, light.range]));
+        device.bindUniform(shader, "vLightSpecular${i}", light.specular.scaled(light.intensity).rgb.storage);
         //TODO shadows
-        if (mesh.receiveShadows) {
-          // light matrix
-          // shadowSampler
-          // darkness
+        if (mesh.receiveShadows && light is DirectionalLight) {
+          var shadowGenerator = light.shadowGenerator;
+          device.bindUniform(shader, "lightMatrix${i}", shadowGenerator.transformMatrix.storage);
+          device.bindTexture(shader, "shadowSampler${i}", shadowGenerator.shadowMap);
+          device.bindUniform(shader, "darkness${i}", shadowGenerator.darkness);
+
+          device.bindTexture(shader, Semantics.texture, shadowGenerator.shadowMap);
         }
       }
     }
 
-    if (mesh.skeleton != null) {
-      mesh.skeleton.updateMatrix();
-      renderer.bindUniform(shader, Semantics.jointMat, mesh.skeleton.jointMatrices);
+    var skeleton = mesh.skeleton;
+    if (skeleton != null) {
+      skeleton.updateMatrix();
+      device.bindUniform(shader, Semantics.jointMat, skeleton.jointMatrices);
     }
 
     //TODO fog

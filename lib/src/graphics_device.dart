@@ -1,24 +1,34 @@
 part of orange;
 
 
-class Renderer2 {
-  html.CanvasElement _canvas;
+class GraphicsDevice {
+  html.CanvasElement _renderingCanvas;
   gl.RenderingContext ctx;
   int _lastMaxEnabledArray = -1;
   int _textureIndex = -1;
   int _newMaxEnabledArray = -1;
   DeviceCapabilities _caps;
   StandardMaterial defaultMaterial;
+  bool _depthMask = false;
 
-  Renderer2(this._canvas) {
-    ctx = _canvas.getContext3d(preserveDrawingBuffer: true);
-    ctx.enable(gl.DEPTH_TEST);
-    ctx.depthMask(true);
+  html.Rectangle<int> _cachedViewport;
+  RenderTargetTexture _currentRenderTarget;
+  List<RenderTargetTexture> _renderTargets = [];
+
+  GraphicsDevice(this._renderingCanvas) {
+    ctx = _renderingCanvas.getContext3d(preserveDrawingBuffer: true);
+    //    ctx.enable(gl.DEPTH_TEST);
+    //    ctx.depthMask(true);
+    //    ctx.depthFunc(gl.LEQUAL);
+    //    ctx.frontFace(gl.CCW);
+    //    ctx.cullFace(gl.BACK);
+    //    ctx.enable(gl.CULL_FACE);
+    //    ctx.clearDepth(1.0);
+
+    depthWrite = true;
+    depthBuffer = true;
     ctx.depthFunc(gl.LEQUAL);
-    ctx.frontFace(gl.CCW);
-    ctx.cullFace(gl.BACK);
-    ctx.enable(gl.CULL_FACE);
-    ctx.clearDepth(1.0);
+    viewport(0, 0, _renderingCanvas.width, _renderingCanvas.height);
 
     _caps = new DeviceCapabilities();
     _caps.maxTexturesImageUnits = ctx.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
@@ -37,25 +47,82 @@ class Renderer2 {
     _caps.instancedArrays = ctx.getExtension('ANGLE_instanced_arrays');
   }
 
-  prepare() {
+  void clear(Color color, {bool backBuffer: false, bool depthStencil: false}) {
+    ctx.clearColor(color.red, color.green, color.blue, color.alpha);
+    if (_depthMask) ctx.clearDepth(1.0);
+    var mode = 0;
+    if (backBuffer) mode |= gl.COLOR_BUFFER_BIT;
+    if (depthStencil && _depthMask) mode |= gl.DEPTH_BUFFER_BIT;
+    ctx.clear(mode);
   }
 
-  render(Scene scene) {
-    //actions
-    //befor render
-    //animations
-    //physics
-    //clear
-    //shadows
-    //render
+  void set depthWrite(bool enable) {
+    ctx.depthMask(enable);
+    _depthMask = enable;
+  }
 
-    ctx.viewport(0, 0, _canvas.width, _canvas.height);
-    ctx.clearColor(scene.backgroundColor.red, scene.backgroundColor.green, scene.backgroundColor.blue, scene.backgroundColor.alpha);
-    ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  void set depthBuffer(bool enable) {
+    if (enable) ctx.enable(gl.DEPTH_TEST); else ctx.disable(gl.DEPTH_TEST);
+  }
+
+  void viewport(int x, int y, int width, int height) {
+    _cachedViewport = new html.Rectangle(x, y, width, height);
+    ctx.viewport(x, y, width, height);
+  }
+
+  void bindFramebuffer(RenderTargetTexture texture) {
+    _currentRenderTarget = texture;
+    ctx.bindFramebuffer(gl.FRAMEBUFFER, texture.framebuffer);
+    ctx.viewport(0, 0, texture.width, texture.height);
+    wipeCaches();
+  }
+
+  void unbindFramebuffer() {
+    _currentRenderTarget = null;
+    ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
+
+  void restoreDefaultFramebuffer() {
+    ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
+    viewport(_cachedViewport.left, _cachedViewport.top, _cachedViewport.width, _cachedViewport.height);
+    wipeCaches();
+  }
+
+  void wipeCaches() {
+    // TODO
+  }
+
+
+  //actions
+  //befor render
+  //animations
+  //physics
+  //clear
+  //shadows
+  //render
+  void render(Scene scene) {
     scene.camera.updateMatrix();
-    scene.nodes.forEach((node) {
+
+    // shadows
+    scene.lights.forEach((light) {
+      if (light is DirectionalLight && light.enabled) {
+        if(light.shadowGenerator == null) light.shadowGenerator = new ShadowGenerator(512, light, this);
+        _renderTargets.add(light.shadowGenerator.shadowMap);
+      }
+    });
+
+    _renderTargets.forEach((renderTarget) {
+      renderTarget.render(scene, scene._opaqueMeshes);
+    });
+
+    if (_renderTargets.length > 0) restoreDefaultFramebuffer();
+    clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
+    scene._nodes.forEach((node) {
       _renderNode(scene, node);
     });
+
+    // reset
+    _renderTargets.clear();
   }
 
   _renderNode(Scene scene, Node node) {
@@ -106,6 +173,7 @@ class Renderer2 {
     pass.bind(ctx);
   }
 
+  // TODO should not pass the shader again.
   bindUniform(Shader shader, String symbol, value) {
     if (!shader.ready) return;
     if (shader.uniforms.containsKey(symbol) && value != null) {
@@ -153,12 +221,11 @@ class Renderer2 {
     }
   }
 
-  bindTexture(Shader shader, Texture texture) {
+  bindTexture(Shader shader, String sampler, Texture texture) {
     _textureIndex++;
     ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
     ctx.bindTexture(texture.target, texture.data);
-    bindUniform(shader, Semantics.texture, _textureIndex);
-    //    bindUniform(shader, Semantics.useTextures, true);
+    bindUniform(shader, sampler, _textureIndex);
   }
 
   enableState(int cap, bool enable) {

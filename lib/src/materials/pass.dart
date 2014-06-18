@@ -27,7 +27,7 @@ class Pass {
     setState(ctx, gl.DEPTH_TEST, depthTest);
     setState(ctx, gl.CULL_FACE, cullFaceEnable);
     setState(ctx, gl.SAMPLE_ALPHA_TO_COVERAGE, true);
-    ctx.depthMask(depthMask);
+//    ctx.depthMask(depthMask);
     setState(ctx, gl.BLEND, blending);
     if (blending) {
       ctx.blendEquation(blendEquation);

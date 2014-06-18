@@ -18,7 +18,7 @@ class Material {
   bool wireframe = false;
   bool ready(Scene scene, Mesh mesh) => false;
 
-  void bind(Renderer2 renderer, Scene scene, Mesh mesh) {}
+  void bind(GraphicsDevice renderer, Scene scene, Mesh mesh) {}
 }
 
 

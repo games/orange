@@ -36,7 +36,7 @@ class PerspectiveCamera extends Node {
   }
 
   lookAt(Vector3 target) {
-    _viewMatrix.lookAt(position, target, Axis.Y);
+    _viewMatrix.lookAt(position, target, Axis.UP);
     rotation.setFromRotation(viewMatrix);
     //    viewMatrix.decompose(position, rotation);
   }

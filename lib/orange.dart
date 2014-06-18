@@ -22,19 +22,15 @@ part 'src/camera.dart';
 part 'src/scene.dart';
 part 'src/node.dart';
 part 'src/shader.dart';
-part 'src/texture.dart';
 part 'src/mesh.dart';
 part 'src/renderer.dart';
-part 'src/renderer_new.dart';
+part 'src/graphics_device.dart';
 part 'src/built_in_shaders.dart';
 part 'src/animation/keyframe.dart';
 part 'src/buffer_view.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
-part 'src/materials/pass.dart';
-part 'src/light.dart';
 part 'src/geometry.dart';
-part 'src/materials/technique.dart';
 
 part 'src/primitives/polygon_mesh.dart';
 part 'src/primitives/cube.dart';
@@ -64,8 +60,16 @@ part 'src/math/angle.dart';
 
 part 'src/materials/material.dart';
 part 'src/materials/standard_material.dart';
+part 'src/materials/technique.dart';
+part 'src/materials/pass.dart';
+part 'src/materials/texture.dart';
+part 'src/materials/render_target_texture.dart';
 
 part 'src/shaders/standard_shader.dart';
+part 'src/shaders/shadowmap_shader.dart';
+
+part 'src/lights/light.dart';
+part 'src/lights/shadow_generator.dart';
 
 
 
@@ -79,9 +83,9 @@ capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
 
 abstract class Axis {
-  static final Vector3 X = new Vector3(1.0, 0.0, 0.0);
-  static final Vector3 Y = new Vector3(0.0, 1.0, 0.0);
-  static final Vector3 Z = new Vector3(0.0, 0.0, 1.0);
+  static final Vector3 RIGHT = new Vector3(1.0, 0.0, 0.0);
+  static final Vector3 UP = new Vector3(0.0, 1.0, 0.0);
+  static final Vector3 BACK = new Vector3(0.0, 0.0, 1.0);
 }
 
 typedef void Callback();

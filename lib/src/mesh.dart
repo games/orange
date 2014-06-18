@@ -10,7 +10,7 @@ class Mesh extends Node {
   Skeleton _skeleton;
   AnimationController animator;
 
-  bool receiveShadows = false;
+  bool _receiveShadows = false;
 
   @deprecated
   int get vertexesCount {
@@ -35,6 +35,15 @@ class Mesh extends Node {
 
   void set skeleton(Skeleton val) {
     _skeleton = val;
+  }
+
+  bool get receiveShadows => _receiveShadows;
+
+  void set receiveShadows(bool val) {
+    _receiveShadows = val;
+    children.forEach((c) {
+      if (c is Mesh) c.receiveShadows = val;
+    });
   }
 }
 

@@ -137,7 +137,7 @@ void main(void) {
 
 class TestLighting3 {
   double _lastElapsed = 0.0;
-  Renderer renderer;
+  RendererOld renderer;
   Pass pass;
   List<Mesh> meshes = [];
   Mesh ground;
@@ -153,7 +153,7 @@ class TestLighting3 {
     html.document.body.children.add(stats.container);
 
     var canvas = html.querySelector("#container");
-    renderer = new Renderer(canvas);
+    renderer = new RendererOld(canvas);
     //    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
     renderer.camera.near = 1.0;
     renderer.camera.far = 5000.00;

@@ -106,7 +106,7 @@ Shader lightShader;
 
 class TestLighting2 {
   double _lastElapsed = 0.0;
-  Renderer renderer;
+  RendererOld renderer;
   Pass pass;
   List<Mesh> meshes = [];
   Plane ground;
@@ -122,7 +122,7 @@ class TestLighting2 {
     html.document.body.children.add(stats.container);
 
     var canvas = html.querySelector("#container");
-    renderer = new Renderer(canvas);
+    renderer = new RendererOld(canvas);
     ctx = renderer.ctx;
     //    renderer.camera.center = new Vector3(0.0, -1.0, 0.0);
     renderer.camera.position = new Vector3(0.0, 3.0, 5.0);

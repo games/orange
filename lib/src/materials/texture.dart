@@ -9,6 +9,9 @@ class Texture {
   int format;
   int internalFormat;
   int target;
+  int references = 0;
+  int width;
+  int height;
 }
 
 
@@ -42,15 +45,13 @@ class TextureManager {
           texture.internalFormat = or(descripton["internalFormat"], gl.RGBA);
           texture.format = or(descripton["format"], gl.RGBA);
           texture.data = ctx.createTexture();
-          // TODO: duplicated ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-          ctx.bindTexture(texture.target, texture.data);
-
+          texture.width = image.width;
+          texture.height = image.height;
           var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
               (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
           if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
             image = _ensureImage(image);
           }
-          // TODO: duplicated ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
           ctx.bindTexture(texture.target, texture.data);
           ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_S, sampler.wrapS);
           ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, sampler.wrapT);

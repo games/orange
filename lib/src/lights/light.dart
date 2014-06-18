@@ -59,6 +59,8 @@ class AmbientLight extends Light {
 
 class DirectionalLight extends Light {
   Vector3 direction;
+  ShadowGenerator shadowGenerator;
+  
   DirectionalLight(num hexColor, {Vector3 direction, double intensity: 1.0})
       : super(hexColor, intensity, Light.DIRECT) {
     if (direction == null) this.direction = new Vector3(0.0, 0.0, -1.0);
@@ -95,15 +97,14 @@ class PointLight extends Light {
   }
 }
 
-class SpotLight extends PointLight {
-  Vector3 direction;
+class SpotLight extends DirectionalLight {
   double spotCutoff;
   double spotExponent;
   double angle = 0.8;
   double get spotCosCutoff => math.cos(spotCutoff);
 
   SpotLight(num hexColor, {Vector3 direction, spotCutoff: math.PI / 4, spotExponent: 3.0, constantAttenuation: 0.1, linearAttenuation: 0.05, quadraticAttenuation: 0.11, double intensity: 1.0})
-      : super(hexColor, constantAttenuation: constantAttenuation, linearAttenuation: linearAttenuation, quadraticAttenuation: quadraticAttenuation, intensity: intensity) {
+      : super(hexColor, intensity: intensity) {
     type = Light.SPOTLIGHT;
     this.spotCutoff = spotCutoff;
     this.spotExponent = spotExponent;

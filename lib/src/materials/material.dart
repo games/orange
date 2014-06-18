@@ -4,14 +4,19 @@ part of orange;
 
 class Material {
   String name;
+  Color diffuseColor;
   Texture diffuseTexture;
-  // TODO
   Texture bumpTexture;
   double shininess;
   Color specularColor;
-  Color diffuseColor;
   Color ambientColor;
+  Texture ambientTexture;
   Color emissiveColor;
+  // TODO
+  Texture opacityTexture;
+  Texture reflectionTexture;
+  Texture emissiveTexture;
+  Texture specularTexture;
 
   // TODO : should be multi technique and multi pass per technique
   Technique technique;
@@ -20,7 +25,6 @@ class Material {
 
   void bind(GraphicsDevice renderer, Scene scene, Mesh mesh) {}
 }
-
 
 
 

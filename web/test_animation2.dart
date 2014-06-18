@@ -56,12 +56,25 @@ class MyScene extends Scene {
     plane.castShadows = false;
     add(plane);
 
-    //    var textureManager = new TextureManager();
-    //    textureManager.load(device.ctx, {
-    //      "path": "cubetexture.png"
-    //    }).then((t) {
-    //      plane.material.diffuseTexture = t;
-    //    });
+    var sphere = new Sphere(radius: 0.5);
+    sphere.position.setValues(2.0, 1.0, 0.0);
+    sphere.material = new StandardMaterial();
+    sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
+    sphere.material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
+    add(sphere);
+
+    var textureManager = new TextureManager();
+    textureManager.load(device.ctx, {
+      "path": "bump.png"
+    }).then((t) {
+      sphere.material.bumpTexture = t;
+      plane.material.bumpTexture = t;
+    });
+    textureManager.load(device.ctx, {
+      "path": "cubetexture.png"
+    }).then((t) {
+      sphere.material.diffuseTexture = t;
+    });
 
     var spotLight = new SpotLight(0xffffff);
     spotLight.angle = 3.0;
@@ -99,7 +112,7 @@ class MyScene extends Scene {
   @override
   update(num elapsed, num interval) {
     super.update(elapsed, interval);
-    
+
     camera.update(interval);
     camera.position.setValues(cos(elapsed / 1000) * 4.0, 2.0, sin(elapsed / 1000) * 4.0);
     camera.lookAt(new Vector3.zero());

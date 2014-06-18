@@ -8,6 +8,7 @@ class Renderer2 {
   int _textureIndex = -1;
   int _newMaxEnabledArray = -1;
   DeviceCapabilities _caps;
+  StandardMaterial defaultMaterial;
 
   Renderer2(this._canvas) {
     ctx = _canvas.getContext3d(preserveDrawingBuffer: true);
@@ -40,6 +41,15 @@ class Renderer2 {
   }
 
   render(Scene scene) {
+
+    //actions
+    //befor render
+    //animations
+    //physics
+    //clear
+    //shadows
+    //render
+
     ctx.viewport(0, 0, _canvas.width, _canvas.height);
     ctx.clearColor(scene.backgroundColor.red, scene.backgroundColor.green, scene.backgroundColor.blue, scene.backgroundColor.alpha);
     ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -59,9 +69,20 @@ class Renderer2 {
   }
 
   _drawMesh(Scene scene, Mesh mesh) {
-    var material = mesh.material;
-    if (!material.ready(mesh)) return;
+    //    if(mesh.material == null) {
+    //      if(defaultMaterial == null) defaultMaterial = new StandartMaterial(scene);
+    //      mesh.material = defaultMaterial;
+    //    }
 
+    var material = mesh.material;
+    
+    if (material == null && mesh.parent is Mesh) {
+      material = (mesh.parent as Mesh).material;
+    } else {
+      if (!material.ready(mesh)) return;
+    }
+    if(material == null) return;
+    
     var shader = material.technique.pass.shader;
     material.bind(this, scene, mesh);
     if (mesh.geometry != null) {
@@ -89,9 +110,10 @@ class Renderer2 {
       } else {
         ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
       }
-    } else {
-      ctx.drawArrays(gl.TRIANGLES, 0, mesh.vertexesCount);
     }
+    //    else {
+    //      ctx.drawArrays(gl.TRIANGLES, 0, mesh.vertexesCount);
+    //    }
     mesh.children.forEach((c) => _drawMesh(scene, c));
   }
 
@@ -151,7 +173,7 @@ class Renderer2 {
     ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
     ctx.bindTexture(texture.target, texture.data);
     bindUniform(shader, Semantics.texture, _textureIndex);
-    bindUniform(shader, Semantics.useTextures, true);
+//    bindUniform(shader, Semantics.useTextures, true);
   }
 
   enableState(int cap, bool enable) {

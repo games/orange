@@ -20,12 +20,18 @@ class MyScene extends Scene {
 
   @override
   enter() {
+    camera.position.setValues(0.0, 2.0, 4.0);
+    camera.lookAt(new Vector3.zero());
+    
+    var mm = new StandardMaterial(this);
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(renderer.ctx, url).then((m) {
-      m.position.setValues(0.0, -1.0, 0.0);
+      m.material = mm;
+      m.position.setValues(0.0, 0.0, 0.0);
       m.animator.switchAnimation("Idle");
       m.animator.animations.forEach((n, a) => print(n));
+      m.children.forEach((c)=>c.material = null);
       nodes.add(m);
     });
   }

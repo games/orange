@@ -21,20 +21,16 @@ class Director {
   }
 
   run() => html.window.requestAnimationFrame(_animate);
-  
+
   _animate(num elapsed) {
     run();
     final interval = elapsed - _lastElapsed;
     _lastElapsed = elapsed;
     if (_scene != null) {
+//      _scene.nodes.forEach((node) {
+//        if (node is Mesh && node.animator != null) node.animator.evaluate(interval);
+//      });
       _scene.update(elapsed, interval);
-      //actions
-      //befor render
-      //animations
-      //physics
-      //clear
-      //shadows
-      //render
       renderer.prepare();
       renderer.render(_scene);
     }

@@ -30,13 +30,13 @@ class Semantics {
   // BONES
   static const String weights = "matricesWeights";
   static const String joints = "matricesIndices";
+  static const String jointMat = "mBones";
   
   static const String viewMat = "view";
   static const String viewProjectionMat = "viewProjection";
   static const String projectionMat = "projectionMat";
   static const String modelMat = "world";
   static const String normalMat = "uNormalMat";
-  static const String jointMat = "uJointMat";
   static const String cameraPosition = "vEyePosition";
   
   static const String texture = "diffuseSampler";

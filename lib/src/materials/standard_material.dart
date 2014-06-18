@@ -4,11 +4,11 @@ part of orange;
 
 
 
-class StandartMaterial extends Material {
+class StandardMaterial extends Material {
   Scene _scene;
   String _cachedDefines;
 
-  StandartMaterial(this._scene) {
+  StandardMaterial(this._scene) {
     technique = new Technique();
     technique.pass = new Pass();
   }

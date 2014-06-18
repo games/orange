@@ -69,7 +69,7 @@ part 'src/shaders/standard_shader.dart';
 part 'src/shaders/shadowmap_shader.dart';
 
 part 'src/lights/light.dart';
-part 'src/lights/shadow_generator.dart';
+part 'src/lights/shadow_renderer.dart';
 
 
 

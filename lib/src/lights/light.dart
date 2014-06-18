@@ -59,7 +59,7 @@ class AmbientLight extends Light {
 
 class DirectionalLight extends Light {
   Vector3 direction;
-  ShadowGenerator shadowGenerator;
+  ShadowRenderer shadowRenderer;
   
   DirectionalLight(num hexColor, {Vector3 direction, double intensity: 1.0})
       : super(hexColor, intensity, Light.DIRECT) {

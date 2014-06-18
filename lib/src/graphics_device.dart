@@ -107,8 +107,8 @@ class GraphicsDevice {
     // shadows
     scene.lights.forEach((light) {
       if (light is DirectionalLight && light.enabled) {
-        if(light.shadowGenerator == null) light.shadowGenerator = new ShadowGenerator(512, light, this);
-        _renderTargets.add(light.shadowGenerator.shadowMap);
+        if (light.shadowRenderer == null) light.shadowRenderer = new ShadowRenderer(512, light, this);
+        _renderTargets.add(light.shadowRenderer.shadowMap);
       }
     });
 
@@ -136,28 +136,29 @@ class GraphicsDevice {
 
   _drawMesh(Scene scene, Mesh mesh) {
     var material = mesh.material;
-    if (material != null && material.ready(scene, mesh)) {
-      var shader = material.technique.pass.shader;
-      material.bind(this, scene, mesh);
-      if (mesh.geometry != null) {
-        var geometry = mesh.geometry;
-        shader.attributes.forEach((semantic, attrib) {
-          if (geometry.buffers.containsKey(semantic)) {
-            var bufferView = geometry.buffers[semantic];
-            bufferView.bindBuffer(ctx);
-            ctx.enableVertexAttribArray(attrib.location);
-            ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
-            if (attrib.location > _newMaxEnabledArray) {
-              _newMaxEnabledArray = attrib.location;
+    if (mesh.faces != null) {
+      if (material != null && material.ready(scene, mesh)) {
+        var shader = material.technique.pass.shader;
+        material.bind(this, scene, mesh);
+        if (mesh.geometry != null) {
+          var geometry = mesh.geometry;
+          shader.attributes.forEach((semantic, attrib) {
+            if (geometry.buffers.containsKey(semantic)) {
+              var bufferView = geometry.buffers[semantic];
+              bufferView.bindBuffer(ctx);
+              ctx.enableVertexAttribArray(attrib.location);
+              ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
+              if (attrib.location > _newMaxEnabledArray) {
+                _newMaxEnabledArray = attrib.location;
+              }
             }
-          }
-        });
-      }
-      for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
-        ctx.disableVertexAttribArray(i);
-      }
-      _lastMaxEnabledArray = _newMaxEnabledArray;
-      if (mesh.faces != null) {
+          });
+        }
+        for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
+          ctx.disableVertexAttribArray(i);
+        }
+        _lastMaxEnabledArray = _newMaxEnabledArray;
+
         mesh.faces.bindBuffer(ctx);
         if (material.wireframe) {
           ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);

@@ -4,7 +4,7 @@ part of orange;
 
 
 
-class ShadowGenerator implements Renderer {
+class ShadowRenderer implements Renderer {
 
   DirectionalLight light;
   bool useVarianceShadowMap = true;
@@ -17,7 +17,7 @@ class ShadowGenerator implements Renderer {
   Matrix4 _projectionMatrix;
   Matrix4 _transformMatrix;
 
-  ShadowGenerator(int size, this.light, GraphicsDevice device) {
+  ShadowRenderer(int size, this.light, GraphicsDevice device) {
     _shadowMap = RenderTargetTexture.create(device, size, size);
     _shadowMap.renderDelegate = this;
     _pass = new Pass();
@@ -49,51 +49,50 @@ class ShadowGenerator implements Renderer {
   }
 
   void _renderMesh(Scene scene, Mesh mesh) {
-    if(!mesh.castShadows) return;
-    var device = scene.device;
-    var ctx = device.ctx;
-    if (ready(mesh, device)) {
-      var shader = _pass.shader;
-      device.use(_pass);
-      device.bindUniform(shader, "viewProjection", transformMatrix.storage);
-      _renderSubmesh(scene, mesh);
-      mesh.children.forEach((m) => _renderMesh(scene, m));
+    if (!mesh.castShadows) return;
+    if (mesh.faces != null) {
+      var device = scene.device;
+      var ctx = device.ctx;
+      if (ready(mesh, device)) {
+        var shader = _pass.shader;
+        device.use(_pass);
+        device.bindUniform(shader, "viewProjection", transformMatrix.storage);
+        // TODO alpha test
+        // bones
+        var skeleton = mesh.skeleton;
+        if (skeleton != null) {
+          device.bindUniform(shader, "mBones", skeleton.jointMatrices);
+        }
+        device.bindUniform(shader, "world", mesh.worldMatrix.storage);
+        if (mesh.geometry != null) {
+          var geometry = mesh.geometry;
+          shader.attributes.forEach((semantic, attrib) {
+            if (geometry.buffers.containsKey(semantic)) {
+              var bufferView = geometry.buffers[semantic];
+              bufferView.bindBuffer(ctx);
+              ctx.enableVertexAttribArray(attrib.location);
+              ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
+            }
+          });
+        }
+        mesh.faces.bindBuffer(ctx);
+        ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+      }
     }
+    mesh.children.forEach((m) => _renderMesh(scene, m));
   }
 
   void _renderSubmesh(Scene scene, Mesh mesh) {
     var device = scene.device;
     var ctx = device.ctx;
     var shader = _pass.shader;
-    // TODO alpha test
-    // bones
-    var skeleton = mesh.skeleton;
-    if (skeleton != null) {
-      device.bindUniform(shader, "mBones", skeleton.jointMatrices);
-    }
-    device.bindUniform(shader, "world", mesh.worldMatrix.storage);
-    if (mesh.geometry != null) {
-      var geometry = mesh.geometry;
-      shader.attributes.forEach((semantic, attrib) {
-        if (geometry.buffers.containsKey(semantic)) {
-          var bufferView = geometry.buffers[semantic];
-          bufferView.bindBuffer(ctx);
-          ctx.enableVertexAttribArray(attrib.location);
-          ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
-        }
-      });
-    }
-    if (mesh.faces != null) {
-      mesh.faces.bindBuffer(ctx);
-      ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
-    }
+
   }
 
   Matrix4 get transformMatrix {
     var lightPos = light.position;
     var lightDir = light.direction;
     _viewMatrix = new Matrix4.identity().lookAt(lightPos, lightPos + lightDir, Axis.UP);
-//    _viewMatrix = new Matrix4.identity().lookAt(lightPos, new Vector3.zero(), Axis.UP);
     _projectionMatrix = new Matrix4.perspective(radians(90.0), 1.0, 0.01, 100.0);
     _transformMatrix = _projectionMatrix * _viewMatrix;
     return _transformMatrix;

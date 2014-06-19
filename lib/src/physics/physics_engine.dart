@@ -66,9 +66,9 @@ abstract class PhysicsEnginePlugin {
   initialize([int iterations = 10]);
   void setGravity(Vector3 gravity);
   void runOneStep(double delta);
-  registerMesh(Mesh mesh, int impostor, PhysicsBodyCreationOptions options);
+  registerMesh(mesh, int impostor, PhysicsBodyCreationOptions options);
   registerMeshesAsCompound(List<PhysicsCompoundBodyPart> parts, PhysicsBodyCreationOptions options);
-  unregisterMesh(Mesh mesh);
+  unregisterMesh(mesh);
   void applyImpulse(Mesh mesh, Vector3 force, Vector3 contactPoint);
   bool createLink(Mesh mesh1, Mesh mesh2, Vector3 pivot1, Vector3 pivot2);
   void dispose();

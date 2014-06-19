@@ -12,6 +12,26 @@ class Mesh extends Node {
 
   bool _castShadows = false;
   bool _receiveShadows = false;
+  BoundingInfo _boundingInfo;
+
+  @override
+  updateMatrix() {
+    super.updateMatrix();
+    _updateBoundingInfo();
+  }
+
+  void _updateBoundingInfo() {
+    if (_boundingInfo == null) {
+      var pos = worldMatrix.getTranslation();
+      _boundingInfo = new BoundingInfo(pos, pos);
+    }
+    _boundingInfo._update(worldMatrix);
+    //    children.forEach((c) {
+    //      if (c is Mesh) c._updateBoundingInfo();
+    //    });
+  }
+
+  BoundingInfo get boundingInfo => _boundingInfo;
 
   Geometry get geometry {
     if (_geometry == null && parent != null && parent is Mesh) return (parent as Mesh).geometry;
@@ -20,6 +40,7 @@ class Mesh extends Node {
 
   void set geometry(Geometry val) {
     _geometry = val;
+    _boundingInfo = _geometry.boundingInfo;
   }
 
   Skeleton get skeleton {
@@ -49,4 +70,3 @@ class Mesh extends Node {
     });
   }
 }
-

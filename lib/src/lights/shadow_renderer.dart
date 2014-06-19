@@ -37,6 +37,8 @@ class ShadowRenderer implements Renderer {
     var finalDefines = defines.join("\n");
     if (_cachedDefines != finalDefines) {
       _cachedDefines = finalDefines;
+      // TODO cache ??
+      if (_pass.shader != null) _pass.shader.dispose();
       _pass.shader = new Shader(device.ctx, SHADER_SHADOW_VS, SHADER_SHADOW_FS, common: finalDefines);
     }
     return _pass.shader.ready;

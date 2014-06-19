@@ -157,7 +157,10 @@ class StandardMaterial extends Material {
       device.bindUniform(shader, Semantics.jointMat, skeleton.jointMatrices);
     }
 
-    //TODO fog
+    if(scene.fogMode != Scene.FOGMODE_NONE) {
+      device.bindUniform(shader, "vFogInfos", new Float32List.fromList([scene.fogMode.toDouble(), scene.fogStart, scene.fogEnd, scene.fogDensity]));
+      device.bindUniform(shader, "vFogColor", scene.fogColor.rgb.storage);
+    }
   }
 
 

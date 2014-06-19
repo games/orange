@@ -29,8 +29,21 @@ abstract class Scene {
   PerspectiveCamera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   GraphicsDevice get graphicsDevice => director != null ? director.graphicsDevice : null;
+  
+  PhysicsEngine _physicsEngine;
 
   Scene(this.camera);
+  
+  bool enablePhysics({Vector3 gravity, PhysicsEnginePlugin plugin}) {
+    if(_physicsEngine != null) return true;
+    _physicsEngine = new PhysicsEngine(plugin);
+    if(!_physicsEngine.supported) {
+      _physicsEngine = null;
+      return false;
+    }
+    _physicsEngine._initialize(gravity);
+    return true;
+  }
 
   add(Node node) {
     node.scene = this;

@@ -109,6 +109,8 @@ class MyScene extends Scene {
     light2.direction = new Vector3(2.8, -1.0, -0.2);
     light2.diffuse = new Color.fromHex(0xff0000);
     add(light2);
+    
+    enablePhysics();
   }
 
   html.RadioButtonInputElement _createAnimationSelector(String name, Animation animation) {

@@ -13,6 +13,7 @@ import 'dart:typed_data';
 //import 'package:vector_math/vector_math.dart';
 import 'dart:async';
 import 'dart:mirrors';
+import 'dart:js' as JS;
 
 
 part 'src/director.dart';
@@ -69,6 +70,9 @@ part 'src/shaders/shadowmap_shader.dart';
 
 part 'src/lights/light.dart';
 part 'src/lights/shadow_renderer.dart';
+
+part 'src/physics/physics_engine.dart';
+part 'src/physics/plugins/cannonjs.dart';
 
 
 

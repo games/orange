@@ -8,7 +8,7 @@ import 'test_animation.dart';
 
 void main() {
   //  new TestShadow().run();
-  //  new TestRenderer().run();
+//    new TestRenderer().run();
   new TestAnimation().run();
 }
 

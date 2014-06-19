@@ -13,15 +13,16 @@ class StandardMaterial extends Material {
     technique.pass = new Pass();
   }
 
-  bool ready(Scene scene, Mesh mesh) {
+  bool ready(Mesh mesh) {
+    var scene = mesh.scene;
     var defines = [];
     if (scene.texturesEnabled) {
       if (diffuseTexture != null) {
         defines.add("#define DIFFUSE");
       }
-      // TODO ambient, opacity, reflection, emissive, specular, bump
+      // TODO ambient, opacity, reflection, emissive, specular
     }
-    var renderer = scene.device;
+    var renderer = scene.graphicsDevice;
     if (renderer.caps.standardDerivatives && bumpTexture != null) {
       defines.add("#define BUMP");
     }
@@ -31,9 +32,9 @@ class StandardMaterial extends Material {
     }
     var shadowsActivated = false;
     if (scene.lightsEnabled) {
-      for (var i = 0; i < scene.lights.length && i < Light.MAX_LIGHTS; i++) {
+      for (var i = 0; i < scene._lights.length && i < Light.MAX_LIGHTS; i++) {
         defines.add("#define LIGHT$i");
-        var light = scene.lights[i];
+        var light = scene._lights[i];
         if (light.type == Light.SPOTLIGHT) {
           defines.add("#define SPOTLIGHT$i");
         } else {
@@ -77,10 +78,12 @@ class StandardMaterial extends Material {
   }
 
   @override
-  void bind(GraphicsDevice device, Scene scene, Mesh mesh) {
+  void bind(Mesh mesh) {
+    var scene = mesh.scene;
+    var device = scene.graphicsDevice;
+    var ctx = device.ctx;
     var pass = technique.pass;
     var shader = pass.shader;
-    var ctx = device.ctx;
     var camera = scene.camera;
 
     device.use(pass);
@@ -99,12 +102,12 @@ class StandardMaterial extends Material {
       // TODO offset, scale, ang
       device.bindUniform(shader, "diffuseMatrix", new Matrix4.identity().storage);
     }
-    if(bumpTexture != null && device.caps.standardDerivatives) {
+    if (bumpTexture != null && device.caps.standardDerivatives) {
       device.bindTexture(shader, "bumpSampler", bumpTexture);
       // TODO x: uv or uv2; y: alpha of texture
-      device.bindUniform(shader,"vBumpInfos", new Float32List.fromList([0.0, 1.0]));
+      device.bindUniform(shader, "vBumpInfos", new Float32List.fromList([0.0, 1.0]));
       // TODO offset, scale, ang
-      device.bindUniform(shader,"bumpMatrix", new Matrix4.identity().storage);
+      device.bindUniform(shader, "bumpMatrix", new Matrix4.identity().storage);
     }
 
     // colors
@@ -128,7 +131,7 @@ class StandardMaterial extends Material {
 
     //lights
     if (scene.lightsEnabled) {
-      var lights = scene.lights;
+      var lights = scene._lights;
       for (var i = 0; i < lights.length && i < Light.MAX_LIGHTS; i++) {
         var light = lights[i];
         light.updateMatrix();

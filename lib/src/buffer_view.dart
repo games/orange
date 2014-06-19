@@ -13,16 +13,21 @@ class BufferView {
   int target;
   gl.Buffer buffer;
   TypedData data;
-  
-  BufferView(this.size, this.type, this.stride, this.offset,
-      {int count: 0, TypedData data: null, int target: gl.ARRAY_BUFFER}) {
+
+  BufferView(this.size, this.type, this.stride, this.offset, {int count: 0, TypedData data: null, int target: gl.ARRAY_BUFFER}) {
     this.count = count;
     this.data = data;
     this.target = target;
   }
-  
-  bindBuffer(gl.RenderingContext ctx) {
-    if(buffer == null) {
+
+  enable(gl.RenderingContext ctx, ShaderProperty attrib) {
+    bind(ctx);
+    ctx.enableVertexAttribArray(attrib.location);
+    ctx.vertexAttribPointer(attrib.location, size, type, normalized, stride, offset);
+  }
+
+  bind(gl.RenderingContext ctx) {
+    if (buffer == null) {
       buffer = ctx.createBuffer();
       ctx.bindBuffer(target, buffer);
       ctx.bufferDataTyped(target, data, gl.STATIC_DRAW);

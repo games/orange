@@ -51,7 +51,7 @@ class ShadowRenderer implements Renderer {
   void _renderMesh(Scene scene, Mesh mesh) {
     if (!mesh.castShadows) return;
     if (mesh.faces != null) {
-      var device = scene.device;
+      var device = scene.graphicsDevice;
       var ctx = device.ctx;
       if (ready(mesh, device)) {
         var shader = _pass.shader;
@@ -68,14 +68,11 @@ class ShadowRenderer implements Renderer {
           var geometry = mesh.geometry;
           shader.attributes.forEach((semantic, attrib) {
             if (geometry.buffers.containsKey(semantic)) {
-              var bufferView = geometry.buffers[semantic];
-              bufferView.bindBuffer(ctx);
-              ctx.enableVertexAttribArray(attrib.location);
-              ctx.vertexAttribPointer(attrib.location, bufferView.size, bufferView.type, bufferView.normalized, bufferView.stride, bufferView.offset);
+              geometry.buffers[semantic].enable(ctx, attrib);
             }
           });
         }
-        mesh.faces.bindBuffer(ctx);
+        mesh.faces.bind(ctx);
         ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
       }
     }
@@ -83,7 +80,7 @@ class ShadowRenderer implements Renderer {
   }
 
   void _renderSubmesh(Scene scene, Mesh mesh) {
-    var device = scene.device;
+    var device = scene.graphicsDevice;
     var ctx = device.ctx;
     var shader = _pass.shader;
 

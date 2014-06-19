@@ -28,7 +28,7 @@ class MyScene extends Scene {
     camera.lookAt(new Vector3.zero());
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();
-    loader.load(device.ctx, url).then((m) {
+    loader.load(graphicsDevice.ctx, url).then((m) {
       m.position.setValues(0.0, -1.0, -1.0);
       m.animator.switchAnimation("Idle");
       m.animator.animations.forEach((n, a) {
@@ -82,13 +82,13 @@ class MyScene extends Scene {
     add(sphere);
 
     var textureManager = new TextureManager();
-    textureManager.load(device.ctx, {
+    textureManager.load(graphicsDevice.ctx, {
       "path": "bump.png"
     }).then((t) {
       sphere.material.bumpTexture = t;
       plane.material.bumpTexture = t;
     });
-    textureManager.load(device.ctx, {
+    textureManager.load(graphicsDevice.ctx, {
       "path": "cubetexture.png"
     }).then((t) {
       sphere.material.diffuseTexture = t;

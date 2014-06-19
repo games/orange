@@ -21,8 +21,8 @@ class Material {
   // TODO : should be multi technique and multi pass per technique
   Technique technique;
   bool wireframe = false;
-  bool ready(Scene scene, Mesh mesh) => false;
-  void bind(GraphicsDevice renderer, Scene scene, Mesh mesh) {}
+  bool ready(Mesh mesh) => false;
+  void bind(Mesh mesh) {}
 }
 
 

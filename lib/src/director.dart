@@ -5,11 +5,11 @@ part of orange;
 
 class Director {
 
-  GraphicsDevice device;
+  GraphicsDevice graphicsDevice;
   Scene _scene;
   num _lastElapsed = 0.0;
 
-  Director(this.device);
+  Director(this.graphicsDevice);
 
   replace(Scene scene) {
     if (_scene != null) {
@@ -28,7 +28,7 @@ class Director {
     _lastElapsed = elapsed;
     if (_scene != null) {
       _scene.update(elapsed, interval);
-      device.render(_scene);
+      graphicsDevice.render(_scene);
     }
   }
 

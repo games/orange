@@ -15,7 +15,7 @@ class RenderTargetTexture extends Texture implements Renderer {
   @override
   void render(Scene scene, List<Mesh> opaqueMeshes, {List<Mesh> alphaTestMeshes, List<Mesh> transparentMeshes}) {
     if (renderDelegate == null) return;
-    var device = scene.device;
+    var device = scene.graphicsDevice;
     device.bindFramebuffer(this);
     device.clear(new Color(0, 0, 0), backBuffer: true, depthStencil: true);
     renderDelegate.render(scene, opaqueMeshes, alphaTestMeshes: alphaTestMeshes, transparentMeshes: transparentMeshes);

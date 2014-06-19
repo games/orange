@@ -64,7 +64,7 @@ class MyScene extends Scene {
     add(plane);
 
     var textureManager = new TextureManager();
-    textureManager.load(device.ctx, {
+    textureManager.load(graphicsDevice.ctx, {
       "path": "cubetexture.png"
     }).then((t) {
       box.material.diffuseTexture = t;
@@ -74,7 +74,7 @@ class MyScene extends Scene {
     pointLight0 = new PointLight(0xffffff);
     pointLight0.position = new Vector3(-5.0, 3.0, 0.0);
     pointLight0.diffuse = new Color.fromHex(0xff0000);
-    lights.add(pointLight0);
+    add(pointLight0);
 
     spotLight = new SpotLight(0xffffff);
     spotLight.angle = 18.0;
@@ -84,7 +84,7 @@ class MyScene extends Scene {
     spotLight.direction = new Vector3(-1.4, -1.0, 0.0);
     spotLight.diffuse = new Color.fromHex(0x00ff00);
     spotLight.specular = new Color.fromHex(0xffffff);
-    lights.add(spotLight);
+    add(spotLight);
   }
 
   @override

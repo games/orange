@@ -6,6 +6,7 @@ part of orange;
 
 class Node {
   String name;
+  Scene _scene;
   Vector3 position;
   Quaternion rotation;
   Matrix4 _localMatrix;
@@ -13,7 +14,7 @@ class Node {
   Node parent;
   List<Node> children;
   bool _needsUpdateLocalMatrix;
-  
+
   Node() {
     position = new Vector3.zero();
     rotation = new Quaternion.identity();
@@ -22,45 +23,49 @@ class Node {
     worldMatrix = new Matrix4.identity();
     children = [];
   }
-  
+
   destroy() {
     //TODO destroy buffers
   }
-  
+
   add(Node child) {
     child.removeFromParent();
     child.parent = this;
     children.add(child);
   }
-  
+
   removeFromParent() {
-    if(parent != null) {
+    if (parent != null) {
       parent.children.remove(this);
       parent = null;
     }
   }
-  
+
   applyMatrix(Matrix4 m) {
     _localMatrix.multiply(m);
     _localMatrix.decompose(position, rotation);
     _needsUpdateLocalMatrix = true;
   }
-  
+
   updateMatrix() {
-    if(_needsUpdateLocalMatrix) {
+    if (_needsUpdateLocalMatrix) {
       _localMatrix.fromRotationTranslation(rotation, position);
     }
-    if(parent != null) {
+    if (parent != null) {
       worldMatrix = parent.worldMatrix * _localMatrix;
     } else {
       worldMatrix = _localMatrix.clone();
     }
     children.forEach((c) => c.updateMatrix());
   }
+
+  Scene get scene => _scene;
+
+  void set scene(Scene val) {
+    _scene = val;
+    children.forEach((c) => c._scene = val);
+  }
 }
-
-
-
 
 
 

@@ -18,7 +18,7 @@ abstract class Scene {
   List<Mesh> _opaqueMeshes = [];
   List<Mesh> _alphaTestMeshes = [];
   List<Mesh> _transparentMeshes = [];
-  List<Light> lights = [];
+  List<Light> _lights = [];
 
   bool lightsEnabled = true;
   bool texturesEnabled = true;
@@ -28,17 +28,31 @@ abstract class Scene {
   Director director;
   PerspectiveCamera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
-  GraphicsDevice get device => director != null ? director.device : null;
+  GraphicsDevice get graphicsDevice => director != null ? director.graphicsDevice : null;
 
   Scene(this.camera);
 
   add(Node node) {
+    node.scene = this;
     if (node is Mesh) {
       _opaqueMeshes.add(node);
     } else if (node is Light) {
-      lights.add(node);
+      _lights.add(node);
     }
     _nodes.add(node);
+    if (node.name == null) {
+      node.name = "Node${_nodes.length}";
+    }
+  }
+
+  remove(Node node) {
+    if (node is Mesh) {
+      _opaqueMeshes.remove(node);
+    } else if (node is Light) {
+      _lights.remove(node);
+    }
+    _nodes.remove(node);
+    node.scene = null;
   }
 
   enter();

@@ -2,6 +2,7 @@ import 'dart:html' as html;
 import '../lib/orange.dart';
 import 'package:stats/stats.dart';
 import 'dart:math';
+import 'package:vector_math/vector_math.dart';
 
 
 class TestAnimation {
@@ -65,7 +66,7 @@ class MyScene extends Scene {
     controllers.children.add(row);
 
     var plane = _createPlane(6.0);// new Plane(width: 10, height: 10);
-    plane.rotation.rotateX(-PI / 2);
+    plane.rotation.setAxisAngle(Axis.X, -PI/2);
     plane.position.setValues(0.0, -2.0, -3.5);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
@@ -74,7 +75,7 @@ class MyScene extends Scene {
     plane.castShadows = false;
     add(plane);
 
-    var sphere = new Sphere(radius: 0.5);
+    var sphere = new SphereMesh(radius: 0.5);
     sphere.position.setValues(2.0, 1.0, 0.0);
     sphere.material = new StandardMaterial();
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);

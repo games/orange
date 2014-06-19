@@ -92,7 +92,7 @@ class OgreLoader {
         joint.parentId = -1;
       }
       joint.name = j["name"];
-      joint.position = new Vector3.fromList(j["position"]);
+      joint.position = new Vector3.array(j["position"]);
       joint.rotation = _parseRotation(j["rotation"]);
       skeleton.joints.add(joint);
     });
@@ -113,7 +113,7 @@ class OgreLoader {
         var keyframe = new Keyframe();
         keyframe.time = k["time"].toDouble();
         keyframe.rotate = _parseRotation(k["rotate"]);
-        keyframe.translate = new Vector3.fromList(k["translate"]);
+        keyframe.translate = new Vector3.array(k["translate"]);
         track.keyframes.add(keyframe);
       });
       animation.tracks.add(track);
@@ -122,7 +122,7 @@ class OgreLoader {
     return animation;
   }
   
-  _parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.fromList(rot["axis"]), rot["angle"].toDouble());
+  _parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.array(rot["axis"]), rot["angle"].toDouble());
   
   _createBufferView(TypedData data, int size, int type) {
     return new BufferView(size, type, 0, 0, count: 0, data: data);

@@ -10,7 +10,7 @@ import 'dart:convert' show JSON;
 import 'dart:web_gl' as gl;
 import 'dart:math' as math;
 import 'dart:typed_data';
-//import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math.dart';
 import 'dart:async';
 import 'dart:mirrors';
 import 'dart:js' as JS;
@@ -50,13 +50,14 @@ part 'src/loaders/gltf_loader.dart';
 part 'src/loaders/ogre_loader.dart';
 part 'src/loaders/obj_loader.dart';
 
-part 'src/math/matrix4.dart';
-part 'src/math/matrix3.dart';
-part 'src/math/vector2.dart';
-part 'src/math/vector3.dart';
-part 'src/math/vector4.dart';
-part 'src/math/quaternion.dart';
-part 'src/math/angle.dart';
+//part 'src/math/matrix4.dart';
+//part 'src/math/matrix3.dart';
+//part 'src/math/vector2.dart';
+//part 'src/math/vector3.dart';
+//part 'src/math/vector4.dart';
+//part 'src/math/quaternion.dart';
+//part 'src/math/angle.dart';
+part 'src/math/utils.dart';
 
 part 'src/materials/material.dart';
 part 'src/materials/standard_material.dart';
@@ -88,9 +89,13 @@ capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
 
 abstract class Axis {
-  static final Vector3 RIGHT = new Vector3(1.0, 0.0, 0.0);
+  static final Vector3 LEFT = new Vector3(1.0, 0.0, 0.0);
   static final Vector3 UP = new Vector3(0.0, 1.0, 0.0);
-  static final Vector3 BACK = new Vector3(0.0, 0.0, 1.0);
+  static final Vector3 FRONT = new Vector3(0.0, 0.0, 1.0);
+  
+  static final Vector3 X = LEFT;
+  static final Vector3 Y = UP;
+  static final Vector3 Z = FRONT;
 }
 
 typedef void Callback();

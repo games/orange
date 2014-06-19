@@ -24,9 +24,9 @@ class AnimationController {
     var skeleton = _animation.skeleton;
     _duration += interval * 0.001;
     _duration = _duration % _animation.length;
+    Keyframe startframe, endframe;
     _animation.tracks.forEach((track) {
       var joint = skeleton.joints[track.jointId];
-      var startframe, endframe;
       for(var i = 0; i < track.keyframes.length - 1; i++) {
         startframe = track.keyframes[i];
         endframe = track.keyframes[i + 1];
@@ -34,13 +34,11 @@ class AnimationController {
           break;
         }
       }
-      
       var percent = (_duration - startframe.time) / (endframe.time - startframe.time);
       var pos = lerp(startframe.translate, endframe.translate, percent);
       var rot = slerp(startframe.rotate, endframe.rotate, percent);
-      
       joint._needsUpdateLocalMatrix = false;
-      joint._localMatrix = joint._bindPoseMatrix * _emptyMatrix.fromRotationTranslation(rot, pos);
+      joint._localMatrix = joint._bindPoseMatrix * _emptyMatrix.setFromTranslationRotation(pos, rot);
     });
     skeleton._dirtyJoints = true;
     _mesh.skeleton = skeleton;

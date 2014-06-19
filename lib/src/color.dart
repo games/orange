@@ -43,7 +43,7 @@ class Color {
     storage[3] = 1.0;
   }
 
-  Vector3 get rgb => new Vector3.fromList(storage);
+  Vector3 get rgb => new Vector3.array(storage);
   double get red => storage[0];
   double get green => storage[1];
   double get blue => storage[2];

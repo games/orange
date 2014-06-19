@@ -36,9 +36,7 @@ class PerspectiveCamera extends Node {
   }
 
   lookAt(Vector3 target) {
-    _viewMatrix.lookAt(position, target, Axis.UP);
-    rotation.setFromRotation(viewMatrix);
-    //    viewMatrix.decompose(position, rotation);
+    _viewMatrix = makeViewMatrix(position, target, Axis.UP);
   }
 
   update(double interval) {
@@ -46,17 +44,11 @@ class PerspectiveCamera extends Node {
   }
 
   updateProjection() {
-    projectionMatrix = new Matrix4.perspective(radians(fov), aspect, near, far);
+    projectionMatrix = makePerspectiveMatrix(radians(fov), aspect, near, far);
   }
 
   Matrix4 get viewProjectionMatrix => projectionMatrix * viewMatrix;
   Matrix4 get viewMatrix => _viewMatrix;
-
-  //  updateMatrix() {
-  //    super.updateMatrix();
-  //    viewMatrix = worldMatrix.clone();
-  //    viewMatrix.invert();
-  //  }
 }
 
 
@@ -222,7 +214,7 @@ class FlyingCamera extends Camera {
       dir[1] -= speed;
     }
     if (dir[0] != 0 || dir[1] != 0 || dir[2] != 0) {
-      dir = _rotMatrix.multiplyVector3(dir);
+      dir = _rotMatrix * dir;
       _position = _position + dir;
       _dirty = true;
     }

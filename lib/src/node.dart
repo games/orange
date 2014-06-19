@@ -43,13 +43,15 @@ class Node {
 
   applyMatrix(Matrix4 m) {
     _localMatrix.multiply(m);
-    _localMatrix.decompose(position, rotation);
+    position = _localMatrix.getTranslation();
+    rotation = new Quaternion.fromRotation(_localMatrix.getRotation());
+    
     _needsUpdateLocalMatrix = true;
   }
 
   updateMatrix() {
     if (_needsUpdateLocalMatrix) {
-      _localMatrix.fromRotationTranslation(rotation, position);
+      _localMatrix.setFromTranslationRotation(position, rotation);
     }
     if (parent != null) {
       worldMatrix = parent.worldMatrix * _localMatrix;

@@ -93,7 +93,7 @@ class StandardMaterial extends Material {
     device.bindUniform(shader, Semantics.viewMat, camera.viewMatrix.storage);
     device.bindUniform(shader, Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
     device.bindUniform(shader, Semantics.projectionMat, camera.projectionMatrix.storage);
-    device.bindUniform(shader, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
+//    device.bindUniform(shader, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
 
     //textures
     // TODO ambient, opacity, reflection, emissive, specular, bump

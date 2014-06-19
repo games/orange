@@ -22,7 +22,6 @@ class Material {
   Technique technique;
   bool wireframe = false;
   bool ready(Scene scene, Mesh mesh) => false;
-
   void bind(GraphicsDevice renderer, Scene scene, Mesh mesh) {}
 }
 

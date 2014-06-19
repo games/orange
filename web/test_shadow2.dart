@@ -117,7 +117,7 @@ void _renderDepth() {
   depthShader.uniform(ctx, "lightView", lightView.storage);
   depthShader.uniform(ctx, "lightProj", lightProj.storage);
   depthShader.uniform(ctx, "FilterType", filterType);
-
+  
   ctx.activeTexture(gl.TEXTURE0);
   ctx.bindTexture(lightDepthTexture.target, lightDepthTexture.data);
 

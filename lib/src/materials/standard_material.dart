@@ -31,7 +31,7 @@ class StandardMaterial extends Material {
     }
     var shadowsActivated = false;
     if (scene.lightsEnabled) {
-      for (var i = 0; i < scene.lights.length && i < MAX_LIGHTS; i++) {
+      for (var i = 0; i < scene.lights.length && i < Light.MAX_LIGHTS; i++) {
         defines.add("#define LIGHT$i");
         var light = scene.lights[i];
         if (light.type == Light.SPOTLIGHT) {
@@ -129,7 +129,7 @@ class StandardMaterial extends Material {
     //lights
     if (scene.lightsEnabled) {
       var lights = scene.lights;
-      for (var i = 0; i < lights.length && i < MAX_LIGHTS; i++) {
+      for (var i = 0; i < lights.length && i < Light.MAX_LIGHTS; i++) {
         var light = lights[i];
         light.updateMatrix();
         light.bind(ctx, shader, i);

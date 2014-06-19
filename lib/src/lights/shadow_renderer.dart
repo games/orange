@@ -89,10 +89,12 @@ class ShadowRenderer implements Renderer {
 
   }
 
+  // TODO cache
   Matrix4 get transformMatrix {
     var lightPos = light.position;
     var lightDir = light.direction;
     _viewMatrix = new Matrix4.identity().lookAt(lightPos, lightPos + lightDir, Axis.UP);
+    // TODO near and far should be from camera
     _projectionMatrix = new Matrix4.perspective(radians(90.0), 1.0, 0.01, 100.0);
     _transformMatrix = _projectionMatrix * _viewMatrix;
     return _transformMatrix;

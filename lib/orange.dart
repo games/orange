@@ -23,10 +23,8 @@ part 'src/scene.dart';
 part 'src/node.dart';
 part 'src/shader.dart';
 part 'src/mesh.dart';
-part 'src/renderer.dart';
 part 'src/graphics_device.dart';
 part 'src/built_in_shaders.dart';
-part 'src/animation/keyframe.dart';
 part 'src/buffer_view.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
@@ -39,6 +37,7 @@ part 'src/primitives/plane.dart';
 part 'src/primitives/cylinder.dart';
 part 'src/primitives/coordinate.dart';
 
+part 'src/animation/keyframe.dart';
 part 'src/animation/joint.dart';
 part 'src/animation/animation_controller.dart';
 part 'src/animation/skeleton.dart';

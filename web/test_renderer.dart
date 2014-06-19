@@ -4,7 +4,7 @@ import 'package:stats/stats.dart';
 import 'dart:math';
 
 
-class TestNewRenderer {
+class TestRenderer {
 
   run() {
     var canvas = html.querySelector("#container");
@@ -78,7 +78,7 @@ class MyScene extends Scene {
 
     spotLight = new SpotLight(0xffffff);
     spotLight.angle = 18.0;
-    spotLight.spotExponent = 2.0;
+    spotLight.exponent = 2.0;
     spotLight.intensity = 0.5;
     spotLight.position.setValues(5.0, 2.0, 0.0);
     spotLight.direction = new Vector3(-1.4, -1.0, 0.0);

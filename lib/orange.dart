@@ -33,8 +33,8 @@ part 'src/geometry.dart';
 
 part 'src/primitives/polygon_mesh.dart';
 part 'src/primitives/cube.dart';
-part 'src/primitives/sphere.dart';
-part 'src/primitives/plane.dart';
+part 'src/primitives/sphere_mesh.dart';
+part 'src/primitives/plane_mesh.dart';
 part 'src/primitives/cylinder.dart';
 part 'src/primitives/coordinate.dart';
 
@@ -73,6 +73,8 @@ part 'src/lights/shadow_renderer.dart';
 
 part 'src/physics/physics_engine.dart';
 part 'src/physics/plugins/cannonjs.dart';
+
+part 'src/culling/bounding_info.dart';
 
 
 

@@ -2,9 +2,9 @@ part of orange;
 
 
 
-class Plane extends PolygonMesh {
+class PlaneMesh extends PolygonMesh {
   
-  Plane({num width: 1.0, num height: 1.0, int widthSegments: 1, int heightSegments: 1}) {
+  PlaneMesh({num width: 1.0, num height: 1.0, int widthSegments: 1, int heightSegments: 1}) {
     var vertices = [];
     var texcoords = [];
     var faces = [];

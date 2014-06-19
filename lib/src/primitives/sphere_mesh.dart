@@ -2,9 +2,9 @@ part of orange;
 
 
 
-class Sphere extends PolygonMesh {
+class SphereMesh extends PolygonMesh {
   
-  Sphere({int widthSegments: 20, int heightSegments: 20, 
+  SphereMesh({int widthSegments: 20, int heightSegments: 20, 
           num phiStart: 0, num phiLength: math.PI * 2, 
           num thetaStart: 0, thetaLength: math.PI, 
           radius: 1}) {

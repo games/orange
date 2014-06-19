@@ -5,6 +5,9 @@ part of orange;
 
 class Director {
 
+  static const double Epsilon = 0.001;
+  static const double CollisionsEpsilon = 0.001;
+
   GraphicsDevice graphicsDevice;
   Scene _scene;
   num _lastElapsed = 0.0;

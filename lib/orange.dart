@@ -76,6 +76,8 @@ part 'src/physics/physics_engine.dart';
 part 'src/physics/plugins/cannonjs.dart';
 
 part 'src/culling/bounding_info.dart';
+part 'src/culling/bounding_box.dart';
+part 'src/culling/bounding_sphere.dart';
 
 
 

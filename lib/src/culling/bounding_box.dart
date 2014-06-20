@@ -6,6 +6,8 @@ part of orange;
 
 class BoundingBox {
   List<Vector3> vectors = [];
+  Vector3 minimum;
+  Vector3 maximum;
   Vector3 center;
   Vector3 extend;
   List<Vector3> directions;
@@ -15,7 +17,7 @@ class BoundingBox {
 
   Matrix4 _worldMatrix;
 
-  BoundingBox(Vector3 minimum, Vector3 maximum) {
+  BoundingBox(this.minimum, this.maximum) {
     // Bounding vectors
     vectors.add(minimum.clone());
     vectors.add(maximum.clone());

@@ -14,7 +14,7 @@ abstract class Scene {
   num fogStart = 0.0;
   num fogEnd = 1000.0;
 
-  List<Node> _nodes = [];
+  List<Node> nodes = [];
   List<Mesh> _opaqueMeshes = [];
   List<Mesh> _alphaTestMeshes = [];
   List<Mesh> _transparentMeshes = [];
@@ -35,11 +35,9 @@ abstract class Scene {
   PhysicsEngine _physicsEngine;
   PhysicsEngine get physicsEngine => _physicsEngine;
   bool get physicsEnabled => _physicsEngine != null;
-  BoundingBoxRenderer _boundingBoxRenderer;
-  BoundingBoxRenderer get boundingBoxRenderer => _boundingBoxRenderer;
 
   Scene(this.camera) {
-    _boundingBoxRenderer = new BoundingBoxRenderer(Director.instance.graphicsDevice);
+    
   }
 
   bool enablePhysics({Vector3 gravity, PhysicsEnginePlugin plugin}) {
@@ -66,9 +64,9 @@ abstract class Scene {
     } else if (node is Light) {
       _lights.add(node);
     }
-    _nodes.add(node);
+    nodes.add(node);
     if (node.name == null) {
-      node.name = "Node${_nodes.length}";
+      node.name = "Node${nodes.length}";
     }
   }
 
@@ -78,34 +76,21 @@ abstract class Scene {
     } else if (node is Light) {
       _lights.remove(node);
     }
-    _nodes.remove(node);
+    nodes.remove(node);
     node.scene = null;
   }
 
   void enter();
 
   void enterFrame(num elapsed, num interval) {
-    // animations
-    _nodes.forEach((node) {
-      if (node is Mesh) {
-        if (node.animator != null) node.animator.evaluate(interval);
-        if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
-      }
-    });
-    //physics
-    if (_physicsEngine != null) {
-      _physicsEngine._runOneStep(interval / 1000.0);
-    }
-    graphicsDevice.render(this);
-    // bounding boxes
-    _boundingBoxRenderer.render();
+    
+  }
+
+  void exitFrame() {
+    
   }
 
   void exit() {
     // TODO release all resources
-  }
-
-  void exitFrame() {
-    _boundingBoxRenderer._renderList.clear();
   }
 }

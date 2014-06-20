@@ -107,10 +107,62 @@ class Cube extends PolygonMesh {
 
 
 
+class Box extends PolygonMesh {
 
+  Box([num size = 1.0]) {
 
+    var normalsSource = [new Vector3(0.0, 0.0, 1.0), new Vector3(0.0, 0.0, -1.0), new Vector3(1.0, 0.0, 0.0), new Vector3(-1.0, 0.0, 0.0), new Vector3(0.0, 1.0, 0.0), new Vector3(0.0, -1.0, 0.0)];
+    var indices = [];
+    var positions = [];
+    var normals = [];
+    var uvs = [];
 
+    // Create each face in turn.
+    for (var index = 0; index < normalsSource.length; index++) {
+      var normal = normalsSource[index];
 
+      // Get two vectors perpendicular to the face normal and to each other.
+      var side1 = new Vector3(normal.y, normal.z, normal.x);
+      var side2 = normal.cross(side1);
+
+      // Six indices (two triangles) per face.
+      var verticesLength = positions.length ~/ 3;
+      indices.add(verticesLength);
+      indices.add(verticesLength + 1);
+      indices.add(verticesLength + 2);
+
+      indices.add(verticesLength);
+      indices.add(verticesLength + 2);
+      indices.add(verticesLength + 3);
+
+      // Four vertices per face.
+      var vertex = (normal - side1 - side2).scaled(size / 2);
+      positions.addAll([vertex.x, vertex.y, vertex.z]);
+      normals.addAll([normal.x, normal.y, normal.z]);
+      uvs.addAll([1.0, 1.0]);
+
+      vertex = (normal - side1 + side2).scaled(size / 2);
+      positions.addAll([vertex.x, vertex.y, vertex.z]);
+      normals.addAll([normal.x, normal.y, normal.z]);
+      uvs.addAll([0.0, 1.0]);
+
+      vertex = (normal + side1 + side2).scaled(size / 2);
+      positions.addAll([vertex.x, vertex.y, vertex.z]);
+      normals.addAll([normal.x, normal.y, normal.z]);
+      uvs.addAll([0.0, 0.0]);
+
+      vertex = (normal + side1 - side2).scaled(size / 2);
+      positions.addAll([vertex.x, vertex.y, vertex.z]);
+      normals.addAll([normal.x, normal.y, normal.z]);
+      uvs.addAll([1.0, 0.0]);
+    }
+
+    setFaces(indices);
+    setVertices(positions);
+    setNormals(normals);
+    setTexCoords(uvs);
+  }
+}
 
 
 

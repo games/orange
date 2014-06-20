@@ -92,6 +92,9 @@ class GraphicsDevice {
     // TODO
   }
 
+  use(Pass pass) {
+    pass.bind(ctx);
+  }
 
   //actions
   //befor render
@@ -102,7 +105,7 @@ class GraphicsDevice {
   //render
   void render(Scene scene) {
     scene.camera.updateMatrix();
-    scene._nodes.forEach((n) => n.updateMatrix());
+    scene.nodes.forEach((n) => n.updateMatrix());
 
     // shadows
     scene._lights.forEach((light) {
@@ -118,7 +121,7 @@ class GraphicsDevice {
 
     if (_renderTargets.length > 0) restoreDefaultFramebuffer();
     clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
-    scene._nodes.forEach((node) {
+    scene.nodes.forEach((node) {
       _renderNode(node);
     });
 
@@ -167,10 +170,6 @@ class GraphicsDevice {
       material.unbind();
     }
     mesh.children.forEach((c) => _drawMesh(c));
-  }
-
-  use(Pass pass) {
-    pass.bind(ctx);
   }
 
   // TODO should not pass the shader again.

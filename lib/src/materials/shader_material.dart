@@ -31,6 +31,9 @@ class ShaderMaterial extends Material {
     device.bindUniform(shader, Semantics.viewMat, camera.viewMatrix.storage);
     device.bindUniform(shader, Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
     device.bindUniform(shader, Semantics.projectionMat, camera.projectionMatrix.storage);
+    if (shader.uniforms.containsKey("worldViewProjection")) {
+      device.bindUniform(shader, "worldViewProjection", (camera.projectionMatrix * camera.viewMatrix * worldMatrix).storage);
+    }
 
     // TODO
     // other things

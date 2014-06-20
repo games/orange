@@ -13,13 +13,17 @@ class Director {
   GraphicsDevice graphicsDevice;
   Scene _scene;
   num _lastElapsed = 0.0;
+  BoundingBoxRenderer _boundingBoxRenderer;
+  BoundingBoxRenderer get boundingBoxRenderer => _boundingBoxRenderer;
 
   factory Director(GraphicsDevice graphicsDevice) {
     if (_instance == null) _instance = new Director._(graphicsDevice);
     return _instance;
   }
 
-  Director._(this.graphicsDevice);
+  Director._(this.graphicsDevice) {
+    _boundingBoxRenderer = new BoundingBoxRenderer(graphicsDevice);
+  }
 
   replace(Scene scene) {
     if (_scene != null) {
@@ -38,9 +42,25 @@ class Director {
     _lastElapsed = elapsed;
     if (_scene != null) {
       _scene.enterFrame(elapsed, interval);
+      // animations
+      _scene.nodes.forEach((node) {
+        if (node is Mesh) {
+          if (node.animator != null) node.animator.evaluate(interval);
+          if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
+        }
+      });
+      //physics
+      if (_scene._physicsEngine != null) {
+        _scene._physicsEngine._runOneStep(interval / 1000.0);
+      }
+      graphicsDevice.render(_scene);
+      // bounding boxes
+      _boundingBoxRenderer.render();
+
       _scene.exitFrame();
+      _boundingBoxRenderer._renderList.clear();
     }
   }
-  
+
   Scene get scene => _scene;
 }

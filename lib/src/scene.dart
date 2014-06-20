@@ -25,15 +25,22 @@ abstract class Scene {
   bool autoClear = true;
   bool forceWireframe = false;
 
+  @deprecated
   Director director;
+  @deprecated
+  GraphicsDevice get graphicsDevice => director != null ? director.graphicsDevice : null;
+
   PerspectiveCamera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
-  GraphicsDevice get graphicsDevice => director != null ? director.graphicsDevice : null;
   PhysicsEngine _physicsEngine;
   PhysicsEngine get physicsEngine => _physicsEngine;
   bool get physicsEnabled => _physicsEngine != null;
+  BoundingBoxRenderer _boundingBoxRenderer;
+  BoundingBoxRenderer get boundingBoxRenderer => _boundingBoxRenderer;
 
-  Scene(this.camera);
+  Scene(this.camera) {
+    _boundingBoxRenderer = new BoundingBoxRenderer(Director.instance.graphicsDevice);
+  }
 
   bool enablePhysics({Vector3 gravity, PhysicsEnginePlugin plugin}) {
     if (_physicsEngine != null) return true;
@@ -77,18 +84,28 @@ abstract class Scene {
 
   void enter();
 
-  void update(num elapsed, num interval) {
+  void enterFrame(num elapsed, num interval) {
     // animations
     _nodes.forEach((node) {
-      if (node is Mesh && node.animator != null) node.animator.evaluate(interval);
+      if (node is Mesh) {
+        if (node.animator != null) node.animator.evaluate(interval);
+        if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
+      }
     });
     //physics
     if (_physicsEngine != null) {
       _physicsEngine._runOneStep(interval / 1000.0);
     }
+    graphicsDevice.render(this);
+    // bounding boxes
+    _boundingBoxRenderer.render();
   }
 
   void exit() {
     // TODO release all resources
+  }
+
+  void exitFrame() {
+    _boundingBoxRenderer._renderList.clear();
   }
 }

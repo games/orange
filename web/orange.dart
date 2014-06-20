@@ -9,9 +9,9 @@ import 'test_physics.dart';
 
 void main() {
   //  new TestShadow().run();
-  //  new TestRenderer().run();
-  //  new TestAnimation().run();
-  testPhysics();
+    new TestRenderer().run();
+//    new TestAnimation().run();
+//  testPhysics();
 }
 
 

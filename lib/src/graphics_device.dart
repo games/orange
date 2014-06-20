@@ -141,7 +141,7 @@ class GraphicsDevice {
     if (mesh.faces != null && material != null && material.ready(mesh)) {
       var shader = material.technique.pass.shader;
       use(material.technique.pass);
-      material.bind(mesh);
+      material.bind(mesh: mesh);
       if (mesh.geometry != null) {
         var geometry = mesh.geometry;
         shader.attributes.forEach((semantic, attrib) {

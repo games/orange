@@ -60,6 +60,7 @@ part 'src/loaders/obj_loader.dart';
 part 'src/math/utils.dart';
 
 part 'src/materials/material.dart';
+part 'src/materials/shader_material.dart';
 part 'src/materials/standard_material.dart';
 part 'src/materials/technique.dart';
 part 'src/materials/pass.dart';
@@ -68,6 +69,7 @@ part 'src/materials/render_target_texture.dart';
 
 part 'src/shaders/standard_shader.dart';
 part 'src/shaders/shadowmap_shader.dart';
+part 'src/shaders/color_shader.dart';
 
 part 'src/lights/light.dart';
 part 'src/lights/shadow_renderer.dart';
@@ -78,12 +80,12 @@ part 'src/physics/plugins/cannonjs.dart';
 part 'src/culling/bounding_info.dart';
 part 'src/culling/bounding_box.dart';
 part 'src/culling/bounding_sphere.dart';
+part 'src/culling/bounding_box_renderer.dart';
 
 
 
 or(expectValue, defaultValue) {
-  if(expectValue == null) 
-    return defaultValue;
+  if (expectValue == null) return defaultValue;
   return expectValue;
 }
 
@@ -94,7 +96,7 @@ abstract class Axis {
   static final Vector3 LEFT = new Vector3(1.0, 0.0, 0.0);
   static final Vector3 UP = new Vector3(0.0, 1.0, 0.0);
   static final Vector3 FRONT = new Vector3(0.0, 0.0, 1.0);
-  
+
   static final Vector3 X = LEFT;
   static final Vector3 Y = UP;
   static final Vector3 Z = FRONT;
@@ -103,7 +105,6 @@ abstract class Axis {
 typedef void Callback();
 typedef void Callback1<T>();
 typedef void Callback2<T1, T2>();
-
 
 
 

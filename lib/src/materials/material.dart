@@ -22,7 +22,7 @@ class Material {
   Technique technique;
   bool wireframe = false;
   bool ready([Mesh mesh]) => false;
-  void bind(Mesh mesh) {}
+  void bind({Mesh mesh, Matrix4 worldMatrix}) {}
   void unbind() {}
 }
 

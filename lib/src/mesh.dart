@@ -12,6 +12,7 @@ class Mesh extends Node {
 
   bool _castShadows = false;
   bool _receiveShadows = false;
+  bool showBoundingBox = false;
   BoundingInfo _boundingInfo;
 
   Mesh({String name}) : super(name: name);
@@ -23,6 +24,7 @@ class Mesh extends Node {
   }
 
   void _updateBoundingInfo() {
+    if(_geometry == null) return;
     if (_boundingInfo == null) {
       _boundingInfo = _geometry.boundingInfo;
       if (_boundingInfo == null) {

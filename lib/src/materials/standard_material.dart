@@ -81,7 +81,7 @@ class StandardMaterial extends Material {
   }
 
   @override
-  void bind(Mesh mesh) {
+  void bind({Mesh mesh, Matrix4 worldMatrix}) {
     var scene = mesh.scene;
     var device = scene.graphicsDevice;
     var ctx = device.ctx;

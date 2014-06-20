@@ -46,6 +46,7 @@ class MyScene extends Scene {
       add(m);
       m.receiveShadows = false;
       m.castShadows = true;
+      m.showBoundingBox = true;
       mesh = m;
     });
 
@@ -133,8 +134,8 @@ class MyScene extends Scene {
   num _elapsed = 0;
 
   @override
-  update(num elapsed, num interval) {
-    super.update(elapsed, interval);
+  enterFrame(num elapsed, num interval) {
+    super.enterFrame(elapsed, interval);
 
     if (rotateCamera) {
       _elapsed += interval;

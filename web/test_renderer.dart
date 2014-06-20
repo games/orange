@@ -2,7 +2,7 @@ import 'dart:html' as html;
 import '../lib/orange.dart';
 import 'package:stats/stats.dart';
 import 'dart:math';
-import '../packages/vector_math/vector_math.dart';
+import 'package:vector_math/vector_math.dart';
 
 
 class TestRenderer {
@@ -35,6 +35,7 @@ class MyScene extends Scene {
     box.material = new StandardMaterial();
     box.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     box.material.diffuseColor = new Color.fromHex(0xffffff);
+    box.showBoundingBox = true;
     add(box);
 
     sphere = new SphereMesh();
@@ -89,8 +90,8 @@ class MyScene extends Scene {
   }
 
   @override
-  update(num elapsed, num interval) {
-    super.update(elapsed, interval);
+  enterFrame(num elapsed, num interval) {
+    super.enterFrame(elapsed, interval);
 
     pointLight0.position.setValues(cos(elapsed / 1000) * 5.0, 3.0, sin(elapsed / 1000) * 5.0);
 

@@ -21,10 +21,10 @@ class Material {
   // TODO : should be multi technique and multi pass per technique
   Technique technique;
   bool wireframe = false;
-  bool ready(Mesh mesh) => false;
+  bool ready([Mesh mesh]) => false;
   void bind(Mesh mesh) {}
+  void unbind() {}
 }
-
 
 
 

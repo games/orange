@@ -140,6 +140,7 @@ class GraphicsDevice {
     var material = mesh.material;
     if (mesh.faces != null && material != null && material.ready(mesh)) {
       var shader = material.technique.pass.shader;
+      use(material.technique.pass);
       material.bind(mesh);
       if (mesh.geometry != null) {
         var geometry = mesh.geometry;
@@ -163,6 +164,7 @@ class GraphicsDevice {
       } else {
         ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
       }
+      material.unbind();
     }
     mesh.children.forEach((c) => _drawMesh(c));
   }

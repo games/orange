@@ -13,7 +13,8 @@ class StandardMaterial extends Material {
     technique.pass = new Pass();
   }
 
-  bool ready(Mesh mesh) {
+  bool ready([Mesh mesh]) {
+    if (mesh == null) return false;
     var scene = mesh.scene;
     var defines = [];
     if (scene.texturesEnabled) {
@@ -84,16 +85,14 @@ class StandardMaterial extends Material {
     var scene = mesh.scene;
     var device = scene.graphicsDevice;
     var ctx = device.ctx;
-    var pass = technique.pass;
-    var shader = pass.shader;
+    var shader = technique.pass.shader;
     var camera = scene.camera;
 
-    device.use(pass);
     device.bindUniform(shader, Semantics.modelMat, mesh.worldMatrix.storage);
     device.bindUniform(shader, Semantics.viewMat, camera.viewMatrix.storage);
     device.bindUniform(shader, Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
     device.bindUniform(shader, Semantics.projectionMat, camera.projectionMatrix.storage);
-//    device.bindUniform(shader, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
+    //    device.bindUniform(shader, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
 
     //textures
     // TODO ambient, opacity, reflection, emissive, specular, bump
@@ -157,7 +156,7 @@ class StandardMaterial extends Material {
       device.bindUniform(shader, Semantics.jointMat, skeleton.jointMatrices);
     }
 
-    if(scene.fogMode != Scene.FOGMODE_NONE) {
+    if (scene.fogMode != Scene.FOGMODE_NONE) {
       device.bindUniform(shader, "vFogInfos", new Float32List.fromList([scene.fogMode.toDouble(), scene.fogStart, scene.fogEnd, scene.fogDensity]));
       device.bindUniform(shader, "vFogColor", scene.fogColor.rgb.storage);
     }

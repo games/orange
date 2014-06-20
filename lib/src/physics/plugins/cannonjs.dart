@@ -6,7 +6,7 @@ class CannonMesh {
   Mesh mesh;
   JS.JsObject body;
   JS.JsObject material;
-  CannonMesh(mesh, body, material);
+  CannonMesh(this.mesh, this.body, this.material);
 }
 
 
@@ -31,7 +31,6 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
 
   @override
   void applyImpulse(Mesh mesh, Vector3 force, Vector3 contactPoint) {
-    var cannon = JS.context["CANNON"];
     var worldPos = _cannonVec3(contactPoint.x, contactPoint.z, contactPoint.y);
     var impulse = _cannonVec3(force.x, force.z, force.y);
     _registeredMeshes.forEach((CannonMesh rm) {
@@ -103,7 +102,7 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
   }
 
   _createBox(num x, num y, num z, Mesh mesh, [PhysicsBodyCreationOptions options]) {
-    var shape = new JS.JsObject(JS.context["CANNON"]["Box"], [_cannonVec3(x, y, z)]);
+    var shape = new JS.JsObject(JS.context["CANNON"]["Box"], [_cannonVec3(x, z, y)]);
     if (options == null) return shape;
     return _createRigidBodyFromShape(shape, mesh, options.mass, options.friction, options.restitution);
   }
@@ -168,7 +167,7 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
     var mat;
     for (index = 0; index < _physicsMaterials.length; index++) {
       mat = _physicsMaterials[index];
-      if (mat.friction == friction && mat.restitution == restitution) {
+      if (mat["friction"] == friction && mat["restitution"] == restitution) {
         return mat;
       }
     }
@@ -190,22 +189,22 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
   void runOneStep(double delta) {
     _world.callMethod("step", [delta]);
     _registeredMeshes.forEach((CannonMesh mesh) {
-      mesh.mesh.position.x = mesh.body["position"]["x"];
-      mesh.mesh.position.y = mesh.body["position"]["y"];
-      mesh.mesh.position.z = mesh.body["position"]["z"];
+      mesh.mesh.position.x = mesh.body["position"]["x"].toDouble();
+      mesh.mesh.position.y = mesh.body["position"]["z"].toDouble();
+      mesh.mesh.position.z = mesh.body["position"]["y"].toDouble();
       if (mesh.mesh.rotation == null) {
         mesh.mesh.rotation = new Quaternion.identity();
       }
-      mesh.mesh.rotation.x = mesh.body["quaternion"]["x"];
-      mesh.mesh.rotation.y = mesh.body["quaternion"]["z"];
-      mesh.mesh.rotation.z = mesh.body["quaternion"]["y"];
-      mesh.mesh.rotation.w = -mesh.body["quaternion"]["w"];
+      mesh.mesh.rotation.x = mesh.body["quaternion"]["x"].toDouble();
+      mesh.mesh.rotation.y = mesh.body["quaternion"]["z"].toDouble();
+      mesh.mesh.rotation.z = mesh.body["quaternion"]["y"].toDouble();
+      mesh.mesh.rotation.w = -mesh.body["quaternion"]["w"].toDouble();
     });
   }
 
   @override
   void setGravity(Vector3 gravity) {
-    _world["gravity"].callMethod("set", gravity.storage);
+    _world["gravity"].callMethod("set", [gravity.x, gravity.z, gravity.y]);
   }
 
   @override

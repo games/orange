@@ -3,12 +3,13 @@ part of orange;
 
 
 class Cylinder extends PolygonMesh {
-  
-  Cylinder({num topRadius: 1, num bottomRadius: 1, num height: 2, int capSegments: 50, int heightSegments: 1}) {
+
+  Cylinder({String name, num topRadius: 1, num bottomRadius: 1, num height: 2, int capSegments: 50, int heightSegments: 1})
+      : super(name: name) {
     var vertexes = [];
     var texcoords = [];
     var faces = [];
-    
+
     // Top cap
     var capSegRadial = math.PI * 2 / capSegments;
     var topCap = [];
@@ -25,7 +26,7 @@ class Cylinder extends PolygonMesh {
       topCap.add(x);
       topCap.add(y);
       topCap.add(z);
-      
+
       x = r2 * math.sin(theta);
       z = r2 * math.cos(theta);
       bottomCap.add(x);
@@ -39,13 +40,13 @@ class Cylinder extends PolygonMesh {
     // TODO
     texcoords.add(0.0);
     texcoords.add(0.0);
-    
+
     var n = capSegments;
     for (var i = 0; i < n; i++) {
       vertexes.add(topCap[i * 3]);
       vertexes.add(topCap[i * 3 + 1]);
       vertexes.add(topCap[i * 3 + 2]);
-      
+
       // TODO
       texcoords.add(i / n);
       texcoords.add(0.0);
@@ -63,7 +64,7 @@ class Cylinder extends PolygonMesh {
 
     texcoords.add(0.0);
     texcoords.add(1.0);
-    
+
     for (var i = 0; i < n; i++) {
       vertexes.add(bottomCap[i * 3]);
       vertexes.add(bottomCap[i * 3 + 1]);
@@ -83,13 +84,12 @@ class Cylinder extends PolygonMesh {
     for (var i = 0; i < n; i++) {
       for (var j = 0; j < n2 + 1; j++) {
         var v = j / n2;
-        var v3 = lerp(new Vector3(topCap[i * 3], topCap[i * 3 + 1], topCap[i * 3 + 2]), 
-            new Vector3(bottomCap[i * 3], bottomCap[i * 3 + 1], bottomCap[i * 3 + 2]), v);
+        var v3 = lerp(new Vector3(topCap[i * 3], topCap[i * 3 + 1], topCap[i * 3 + 2]), new Vector3(bottomCap[i * 3], bottomCap[i * 3 + 1], bottomCap[i * 3 + 2]), v);
 
         vertexes.add(v3.x);
         vertexes.add(v3.y);
         vertexes.add(v3.z);
-        
+
         texcoords.add(i / n);
         texcoords.add(v);
       }
@@ -100,17 +100,17 @@ class Cylinder extends PolygonMesh {
         var i2 = ((i + 1) % n) * (n2 + 1) + j;
         var i3 = ((i + 1) % n) * (n2 + 1) + j + 1;
         var i4 = i * (n2 + 1) + j + 1;
-        
+
         faces.add(offset + i2);
         faces.add(offset + i1);
         faces.add(offset + i4);
-        
+
         faces.add(offset + i4);
         faces.add(offset + i3);
         faces.add(offset + i2);
       }
     }
-    
+
     setVertices(vertexes);
     setTexCoords(texcoords);
     setFaces(faces);
@@ -121,13 +121,9 @@ class Cylinder extends PolygonMesh {
 
 
 class Cone extends Cylinder {
-  Cone({num bottomRadius: 1, num height: 2, int capSegments: 50, int heightSegments: 1})
-      :super(topRadius: 0, bottomRadius: bottomRadius, height: height, capSegments: capSegments, heightSegments: heightSegments);
+  Cone({String name, num bottomRadius: 1, num height: 2, int capSegments: 50, int heightSegments: 1})
+      : super(name: name, topRadius: 0, bottomRadius: bottomRadius, height: height, capSegments: capSegments, heightSegments: heightSegments);
 }
-
-
-
-
 
 
 

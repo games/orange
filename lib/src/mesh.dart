@@ -14,6 +14,8 @@ class Mesh extends Node {
   bool _receiveShadows = false;
   BoundingInfo _boundingInfo;
 
+  Mesh({String name}) : super(name: name);
+
   @override
   updateMatrix() {
     super.updateMatrix();
@@ -22,8 +24,11 @@ class Mesh extends Node {
 
   void _updateBoundingInfo() {
     if (_boundingInfo == null) {
-      var pos = worldMatrix.getTranslation();
-      _boundingInfo = new BoundingInfo(pos, pos);
+      _boundingInfo = _geometry.boundingInfo;
+      if (_boundingInfo == null) {
+        var pos = worldMatrix.getTranslation();
+        _boundingInfo = new BoundingInfo(pos, pos);
+      }
     }
     _boundingInfo._update(worldMatrix);
     //    children.forEach((c) {
@@ -32,6 +37,16 @@ class Mesh extends Node {
   }
 
   BoundingInfo get boundingInfo => _boundingInfo;
+
+  void setPhysicsState(int impostor, [PhysicsBodyCreationOptions options]) {
+    if (!scene.physicsEnabled) return;
+    var physics = scene.physicsEngine;
+    if (impostor == PhysicsEngine.NoImpostor) {
+      physics._unregisterMesh(this);
+      return;
+    }
+    physics._registerMesh(this, impostor, options);
+  }
 
   Geometry get geometry {
     if (_geometry == null && parent != null && parent is Mesh) return (parent as Mesh).geometry;

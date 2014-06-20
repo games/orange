@@ -9,7 +9,7 @@ class BoundingBox {
   Vector3 center;
   Vector3 extend;
   List<Vector3> directions;
-  List<Vector3> vectorsWorld = [];
+  List<Vector3> vectorsWorld;
   Vector3 minimumWorld;
   Vector3 maximumWorld;
 
@@ -44,8 +44,9 @@ class BoundingBox {
     directions = [new Vector3.zero(), new Vector3.zero(), new Vector3.zero()];
 
     // World
+    vectorsWorld = [];
     for (var index = 0; index < vectors.length; index++) {
-      vectorsWorld[index] = new Vector3.zero();
+      vectorsWorld.add(new Vector3.zero());
     }
     minimumWorld = new Vector3.zero();
     maximumWorld = new Vector3.zero();
@@ -76,17 +77,12 @@ class BoundingBox {
     }
 
     // OBB
-    // maximumWorld.addToRef(minimumWorld, center);
     center = maximumWorld + minimumWorld;
     center.scale(0.5);
 
     directions[0].copyFromArray(world.storage);
     directions[1].copyFromArray(world.storage, 4);
     directions[2].copyFromArray(world.storage, 8);
-
-    //    Vector3.FromFloatArrayToRef(world.m, 0, directions[0]);
-    //    Vector3.FromFloatArrayToRef(world.m, 4, directions[1]);
-    //    Vector3.FromFloatArrayToRef(world.m, 8, directions[2]);
 
     _worldMatrix = world;
   }

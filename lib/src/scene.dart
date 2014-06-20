@@ -29,15 +29,16 @@ abstract class Scene {
   PerspectiveCamera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   GraphicsDevice get graphicsDevice => director != null ? director.graphicsDevice : null;
-  
   PhysicsEngine _physicsEngine;
+  PhysicsEngine get physicsEngine => _physicsEngine;
+  bool get physicsEnabled => _physicsEngine != null;
 
   Scene(this.camera);
-  
+
   bool enablePhysics({Vector3 gravity, PhysicsEnginePlugin plugin}) {
-    if(_physicsEngine != null) return true;
+    if (_physicsEngine != null) return true;
     _physicsEngine = new PhysicsEngine(plugin);
-    if(!_physicsEngine.supported) {
+    if (!_physicsEngine.supported) {
       _physicsEngine = null;
       return false;
     }
@@ -45,7 +46,13 @@ abstract class Scene {
     return true;
   }
 
-  add(Node node) {
+  void disablePhysics() {
+    if (_physicsEngine == null) return;
+    _physicsEngine.dispose();
+    _physicsEngine = null;
+  }
+
+  void add(Node node) {
     node.scene = this;
     if (node is Mesh) {
       _opaqueMeshes.add(node);
@@ -58,7 +65,7 @@ abstract class Scene {
     }
   }
 
-  remove(Node node) {
+  void remove(Node node) {
     if (node is Mesh) {
       _opaqueMeshes.remove(node);
     } else if (node is Light) {
@@ -68,13 +75,20 @@ abstract class Scene {
     node.scene = null;
   }
 
-  enter();
+  void enter();
 
-  update(num elapsed, num interval) {
+  void update(num elapsed, num interval) {
+    // animations
     _nodes.forEach((node) {
       if (node is Mesh && node.animator != null) node.animator.evaluate(interval);
     });
+    //physics
+    if (_physicsEngine != null) {
+      _physicsEngine._runOneStep(interval / 1000.0);
+    }
   }
 
-  exit();
+  void exit() {
+    // TODO release all resources
+  }
 }

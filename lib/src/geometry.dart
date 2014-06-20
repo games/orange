@@ -9,7 +9,7 @@ class Geometry {
   BoundingInfo _boundingInfo;
 
   BoundingInfo get boundingInfo {
-    if (_boundingInfo == null) {
+    if (_boundingInfo == null && buffers.containsKey(Semantics.position)) {
       var minimum = new Vector3.all(double.MAX_FINITE);
       var maximum = new Vector3.all(-double.MAX_FINITE);
       var positions = buffers[Semantics.position].data as Float32List;

@@ -15,7 +15,7 @@ class Node {
   List<Node> children;
   bool _needsUpdateLocalMatrix;
 
-  Node() {
+  Node({this.name}) {
     position = new Vector3.zero();
     rotation = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();
@@ -45,7 +45,7 @@ class Node {
     _localMatrix.multiply(m);
     position = _localMatrix.getTranslation();
     rotation = new Quaternion.fromRotation(_localMatrix.getRotation());
-    
+
     _needsUpdateLocalMatrix = true;
   }
 
@@ -68,7 +68,6 @@ class Node {
     children.forEach((c) => c._scene = val);
   }
 }
-
 
 
 

@@ -223,5 +223,3 @@ class FlyingCamera extends Camera {
 
 
 
-
-

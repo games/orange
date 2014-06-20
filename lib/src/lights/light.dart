@@ -3,7 +3,7 @@ part of orange;
 
 abstract class Light extends Node {
   static const int MAX_LIGHTS = 4;
-  
+
   static const int NONE = -1;
   static const int AMBIENT = 0;
   static const int DIRECT = 1;
@@ -76,5 +76,4 @@ class SpotLight extends DirectionalLight {
     ctx.uniform4f(shader.uniforms["vLightDirection$i"].location, direction.x, direction.y, direction.z, math.cos(angle * 0.5));
   }
 }
-
 

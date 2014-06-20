@@ -39,7 +39,7 @@ class PhysicsEngine {
     return _plugin.createLink(mesh1, mesh2, pivot1, pivot2);
   }
 
-  void _dispose() {
+  void dispose() {
     _plugin.dispose();
   }
 
@@ -75,10 +75,11 @@ abstract class PhysicsEnginePlugin {
   bool get supported;
 }
 
-abstract class PhysicsBodyCreationOptions {
+class PhysicsBodyCreationOptions {
   double mass;
   double friction;
   double restitution;
+  PhysicsBodyCreationOptions({this.mass: 0.0, this.friction: 0.2, this.restitution: 0.9});
 }
 
 abstract class PhysicsCompoundBodyPart {

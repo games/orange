@@ -3,12 +3,13 @@ part of orange;
 
 
 class PlaneMesh extends PolygonMesh {
-  
-  PlaneMesh({num width: 1.0, num height: 1.0, int widthSegments: 1, int heightSegments: 1}) {
+
+  PlaneMesh({String name, num width: 1.0, num height: 1.0, int widthSegments: 1, int heightSegments: 1})
+      : super(name: name) {
     var vertices = [];
     var texcoords = [];
     var faces = [];
-    
+
     var ix, iz;
     var width_half = width / 2;
     var height_half = height / 2;
@@ -33,40 +34,40 @@ class PlaneMesh extends PolygonMesh {
     }
 
     for (iz = 0; iz < gridZ; iz++) {
-      for ( ix = 0; ix < gridX; ix ++ ) {
+      for (ix = 0; ix < gridX; ix++) {
         var a = ix + gridX1 * iz;
         var b = ix + gridX1 * (iz + 1);
         var c = (ix + 1) + gridX1 * (iz + 1);
         var d = (ix + 1) + gridX1 * iz;
-        
+
         faces.add(a);
         faces.add(b);
         faces.add(d);
-        
+
         texcoords.add(ix / gridX);
         texcoords.add(1 - iz / gridZ);
-        
+
         texcoords.add(ix / gridX);
-        texcoords.add(1 - ( iz + 1 ) / gridZ);
-        
-        texcoords.add(( ix + 1 ) / gridX);
+        texcoords.add(1 - (iz + 1) / gridZ);
+
+        texcoords.add((ix + 1) / gridX);
         texcoords.add(1 - iz / gridZ);
-        
+
         faces.add(b);
         faces.add(c);
         faces.add(d);
-        
+
         texcoords.add(ix / gridX);
-        texcoords.add(1 - ( iz + 1 ) / gridZ);
-        
-        texcoords.add(( ix + 1 ) / gridX);
-        texcoords.add(1 - ( iz + 1 ) / gridZ);
-        
-        texcoords.add(( ix + 1 ) / gridX);
+        texcoords.add(1 - (iz + 1) / gridZ);
+
+        texcoords.add((ix + 1) / gridX);
+        texcoords.add(1 - (iz + 1) / gridZ);
+
+        texcoords.add((ix + 1) / gridX);
         texcoords.add(1 - iz / gridZ);
       }
     }
-    
+
     setVertices(vertices);
     setTexCoords(texcoords);
     setFaces(faces);

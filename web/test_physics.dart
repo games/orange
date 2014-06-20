@@ -30,7 +30,7 @@ class PhysicsScene extends Scene {
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
     add(sphere);
-    sphere.setPhysicsState(PhysicsEngine.SphereImpostor, new PhysicsBodyCreationOptions(mass: 0.0));
+    sphere.setPhysicsState(PhysicsEngine.SphereImpostor, new PhysicsBodyCreationOptions(mass: 1.0));
 
     var sphere1 = new SphereMesh(radius: 0.5);
     sphere1.position.setValues(0.0, 2.0, -1.0);
@@ -40,16 +40,26 @@ class PhysicsScene extends Scene {
     add(sphere1);
     sphere1.setPhysicsState(PhysicsEngine.SphereImpostor, new PhysicsBodyCreationOptions(mass: 1.0));
 
-    var plane = _createPlane(6.0);//  new PlaneMesh(width: 10, height: 10);
-    plane.rotation.setAxisAngle(Axis.X, -PI / 2);
-    plane.position.setValues(0.0, -2.0, -3.5);
-    plane.material = new StandardMaterial();
-    plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
-    plane.material.diffuseColor = new Color.fromHex(0xFFFFFF);
-    plane.receiveShadows = true;
-    plane.castShadows = false;
-    add(plane);
-    plane.setPhysicsState(PhysicsEngine.PlaneImpostor, new PhysicsBodyCreationOptions(mass: 0.0, friction: 0.5, restitution: 0.7));
+//    var plane = _createPlane(6.0);//  new PlaneMesh(width: 10, height: 10);
+//    plane.rotation.setAxisAngle(Axis.X, -PI / 2);
+//    plane.position.setValues(0.0, -2.0, -1.0);
+//    plane.material = new StandardMaterial();
+//    plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
+//    plane.material.diffuseColor = new Color.fromHex(0xFFFFFF);
+//    plane.receiveShadows = true;
+//    plane.castShadows = false;
+//    add(plane);
+//    plane.setPhysicsState(PhysicsEngine.PlaneImpostor, new PhysicsBodyCreationOptions(mass: 0.0, friction: 0.5, restitution: 0.7));
+
+    var gound = new Cube(width: 10, height: 1, depth: 10);
+    gound.position.setValues(0.0, -2.0, -1.0);
+    gound.material = new StandardMaterial();
+    gound.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
+    gound.material.diffuseColor = new Color.fromHex(0xFFFFFF);
+    gound.receiveShadows = true;
+    gound.castShadows = false;
+    add(gound);
+    gound.setPhysicsState(PhysicsEngine.BoxImpostor, new PhysicsBodyCreationOptions(mass: 0.0, friction: 0.5, restitution: 0.7));
 
     var textureManager = new TextureManager();
     textureManager.load(graphicsDevice.ctx, {
@@ -59,9 +69,14 @@ class PhysicsScene extends Scene {
       sphere1.material.diffuseTexture = t;
     });
     textureManager.load(graphicsDevice.ctx, {
+      "path": "cubetexture.png"
+    }).then((t) {
+      gound.material.diffuseTexture = t;
+    });
+    textureManager.load(graphicsDevice.ctx, {
       "path": "bump.png"
     }).then((t) {
-      plane.material.bumpTexture = t;
+      gound.material.bumpTexture = t;
     });
 
     var light0 = new PointLight(0xffffff);
@@ -71,7 +86,7 @@ class PhysicsScene extends Scene {
 
   @override
   exit() {
-    // TODO: implement exit
+    super.exit();
   }
 }
 

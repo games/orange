@@ -21,7 +21,10 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
     var cannon = JS.context["CANNON"];
     _world = new JS.JsObject(cannon["World"]);
     _world["broadphase"] = new JS.JsObject(cannon["NaiveBroadphase"]);
-    _world["solver"]["iterations"] = iterations;
+    
+    var solver = new JS.JsObject(cannon["GSSolver"]);
+    solver["iterations"] = iterations;
+    _world["solver"] = solver;
   }
 
   num _checkWithEpsilon(num val) {
@@ -63,10 +66,20 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
   }
 
   @override
-  void dispose() {
-    while (_registeredMeshes.length > 0) {
-      unregisterMesh(_registeredMeshes[0].mesh);
-    }
+  void runOneStep(double delta) {
+    _world.callMethod("step", [delta]);
+    _registeredMeshes.forEach((CannonMesh mesh) {
+      mesh.mesh.position.x = mesh.body["position"]["x"].toDouble();
+      mesh.mesh.position.y = mesh.body["position"]["z"].toDouble();
+      mesh.mesh.position.z = mesh.body["position"]["y"].toDouble();
+      if (mesh.mesh.rotation == null) {
+        mesh.mesh.rotation = new Quaternion.identity();
+      }
+      mesh.mesh.rotation.x = mesh.body["quaternion"]["x"].toDouble();
+      mesh.mesh.rotation.y = mesh.body["quaternion"]["z"].toDouble();
+      mesh.mesh.rotation.z = mesh.body["quaternion"]["y"].toDouble();
+      mesh.mesh.rotation.w = -mesh.body["quaternion"]["w"].toDouble();
+    });
   }
 
   @override
@@ -186,23 +199,6 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
   }
 
   @override
-  void runOneStep(double delta) {
-    _world.callMethod("step", [delta]);
-    _registeredMeshes.forEach((CannonMesh mesh) {
-      mesh.mesh.position.x = mesh.body["position"]["x"].toDouble();
-      mesh.mesh.position.y = mesh.body["position"]["z"].toDouble();
-      mesh.mesh.position.z = mesh.body["position"]["y"].toDouble();
-      if (mesh.mesh.rotation == null) {
-        mesh.mesh.rotation = new Quaternion.identity();
-      }
-      mesh.mesh.rotation.x = mesh.body["quaternion"]["x"].toDouble();
-      mesh.mesh.rotation.y = mesh.body["quaternion"]["z"].toDouble();
-      mesh.mesh.rotation.z = mesh.body["quaternion"]["y"].toDouble();
-      mesh.mesh.rotation.w = -mesh.body["quaternion"]["w"].toDouble();
-    });
-  }
-
-  @override
   void setGravity(Vector3 gravity) {
     _world["gravity"].callMethod("set", [gravity.x, gravity.z, gravity.y]);
   }
@@ -227,6 +223,13 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
     _registeredMeshes.forEach((CannonMesh mesh) {
       if (mesh.body == body) mesh.body = null;
     });
+  }
+
+  @override
+  void dispose() {
+    while (_registeredMeshes.length > 0) {
+      unregisterMesh(_registeredMeshes[0].mesh);
+    }
   }
 
   @override

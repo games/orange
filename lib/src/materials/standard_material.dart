@@ -43,13 +43,13 @@ class StandardMaterial extends Material {
         }
         // shadows
         if (mesh.receiveShadows && light is DirectionalLight) {
-          var shadowGenerator = light.shadowRenderer;
+          var shadowRenderer = light.shadowRenderer;
           defines.add("#define SHADOW${i}");
           if (!shadowsActivated) {
             defines.add("#define SHADOWS");
             shadowsActivated = true;
           }
-          if (shadowGenerator.useVarianceShadowMap) {
+          if (shadowRenderer.useVarianceShadowMap) {
             defines.add("#define SHADOWVSM${i}");
           }
         }
@@ -142,10 +142,10 @@ class StandardMaterial extends Material {
         device.bindUniform(shader, "vLightDiffuse${i}", new Float32List.fromList([diffuse.red, diffuse.green, diffuse.blue, light.range]));
         device.bindUniform(shader, "vLightSpecular${i}", light.specular.scaled(light.intensity).rgb.storage);
         if (mesh.receiveShadows && light is DirectionalLight) {
-          var shadowGenerator = light.shadowRenderer;
-          device.bindUniform(shader, "lightMatrix${i}", shadowGenerator.transformMatrix.storage);
-          device.bindTexture(shader, "shadowSampler${i}", shadowGenerator.shadowMap);
-          device.bindUniform(shader, "darkness${i}", shadowGenerator.darkness);
+          var shadowRenderer = light.shadowRenderer;
+          device.bindUniform(shader, "lightMatrix${i}", shadowRenderer.transformMatrix.storage);
+          device.bindTexture(shader, "shadowSampler${i}", shadowRenderer.shadowMap);
+          device.bindUniform(shader, "darkness${i}", shadowRenderer.darkness);
         }
       }
     }

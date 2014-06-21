@@ -29,9 +29,9 @@ class Director {
     if (_scene != null) {
       _scene.exit();
     }
-    scene.director = this;
-    scene.enter();
     _scene = scene;
+    _scene.director = this;
+    _scene.enter();
   }
 
   run() => html.window.requestAnimationFrame(_animate);

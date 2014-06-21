@@ -14,8 +14,9 @@ class Mesh extends Node {
   bool _receiveShadows = false;
   bool showBoundingBox = false;
   BoundingInfo _boundingInfo;
+  int _physicImpostor = PhysicsEngine.NoImpostor;
 
-  Mesh({String name}) : super(name: name);
+  Mesh({String name}): super(name: name);
 
   @override
   updateMatrix() {
@@ -24,7 +25,7 @@ class Mesh extends Node {
   }
 
   void _updateBoundingInfo() {
-    if(_geometry == null) return;
+    if (_geometry == null) return;
     if (_boundingInfo == null) {
       _boundingInfo = _geometry.boundingInfo;
       if (_boundingInfo == null) {
@@ -41,13 +42,25 @@ class Mesh extends Node {
   BoundingInfo get boundingInfo => _boundingInfo;
 
   void setPhysicsState(int impostor, [PhysicsBodyCreationOptions options]) {
+    var scene = Director.instance.scene;
     if (!scene.physicsEnabled) return;
     var physics = scene.physicsEngine;
+    _physicImpostor = impostor;
     if (impostor == PhysicsEngine.NoImpostor) {
       physics._unregisterMesh(this);
       return;
     }
     physics._registerMesh(this, impostor, options);
+  }
+
+  void setPhysicsLinkWith(Mesh other, Vector3 pivot1, Vector3 pivot2) {
+    if (_physicImpostor == PhysicsEngine.NoImpostor) return;
+    Director.instance.scene.physicsEngine._createLink(this, other, pivot1, pivot2);
+  }
+
+  void applyImpulse(Vector3 force, Vector3 contactPoint) {
+    if (_physicImpostor == PhysicsEngine.NoImpostor) return;
+    Director.instance.scene.physicsEngine._applyImpulse(this, force, contactPoint);
   }
 
   Geometry get geometry {

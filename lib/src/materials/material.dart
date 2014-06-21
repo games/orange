@@ -4,7 +4,7 @@ part of orange;
 
 class Material {
   String name;
-  Color diffuseColor;
+  Color diffuseColor = new Color.fromHex(0xFFFFFF);
   Texture diffuseTexture;
   Texture bumpTexture;
   double shininess;

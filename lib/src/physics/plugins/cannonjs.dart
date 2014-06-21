@@ -168,7 +168,8 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
       body["quaternion"]["z"] = initialRotation.y;
       body["quaternion"]["w"] = -initialRotation.w;
     }
-    body["position"].callMethod("set", [mesh.position.x, mesh.position.z, mesh.position.y]);
+    var wordPos = mesh.worldMatrix.getTranslation();
+    body["position"].callMethod("set", [wordPos.x, wordPos.z, wordPos.y]);
     _world.callMethod("add", [body]);
     _registeredMeshes.add(new CannonMesh(mesh, body, material));
     return body;

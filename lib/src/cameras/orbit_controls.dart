@@ -4,6 +4,7 @@ part of orange;
 
 //
 // from : http://tileableart.com/code/natureof/js/three/js/controls/OrbitControls.js
+// TODO : update from https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js
 //
 class OrbitControls implements CameraController {
 

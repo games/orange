@@ -164,8 +164,8 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
     var body = new JS.JsObject(cannon["RigidBody"], [mass, shape, material]);
     if (initialRotation != null) {
       body["quaternion"]["x"] = initialRotation.x;
-      body["quaternion"]["z"] = initialRotation.y;
       body["quaternion"]["y"] = initialRotation.z;
+      body["quaternion"]["z"] = initialRotation.y;
       body["quaternion"]["w"] = -initialRotation.w;
     }
     body["position"].callMethod("set", [mesh.position.x, mesh.position.z, mesh.position.y]);
@@ -237,5 +237,5 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
 }
 
 JS.JsObject _cannonVec3(num x, num y, num z) {
-  return new JS.JsObject(JS.context["CANNON"]["Vec3"], [0, 0, 0]);
+  return new JS.JsObject(JS.context["CANNON"]["Vec3"], [x, y, z]);
 }

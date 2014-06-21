@@ -11,7 +11,16 @@
     <table>
       <tr>
         <td><canvas id="container" width="800" height="500" style="border: 1px solid #333333;"></canvas></td>
-        <td id="controllers" valign="top">
+        <td valign="top">
+          <div >
+            <select id="scenes">
+              <option value="0">Animation</option>
+              <option value="1">Bounding Box</option>
+              <option value="2">Lighting</option>
+              <option value="3">Physics</option>
+            </select>
+          </div>
+          <div id="controllers"></div>
         </td>
       </tr>
     </table>

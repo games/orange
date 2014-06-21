@@ -15,6 +15,7 @@ class Director {
   num _lastElapsed = 0.0;
   BoundingBoxRenderer _boundingBoxRenderer;
   BoundingBoxRenderer get boundingBoxRenderer => _boundingBoxRenderer;
+  List<Callback> afterRenders = [];
 
   factory Director(GraphicsDevice graphicsDevice) {
     if (_instance == null) _instance = new Director._(graphicsDevice);
@@ -59,6 +60,8 @@ class Director {
 
       _scene.exitFrame();
       _boundingBoxRenderer._renderList.clear();
+      //after render callbacks
+      afterRenders.forEach((c) => c());
     }
   }
 

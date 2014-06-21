@@ -1,23 +1,14 @@
 import 'dart:html' as html;
-import '../lib/orange.dart';
+import 'package:orange/orange.dart';
 import 'package:stats/stats.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math.dart';
 
 
-class TestAnimation {
 
-  run() {
-    var canvas = html.querySelector("#container");
-    var renderer = new GraphicsDevice(canvas);
-    var director = new Director(renderer);
-    director.replace(new MyScene(new PerspectiveCamera(canvas.width / canvas.height)));
-    director.run();
-  }
-}
 
-class MyScene extends Scene {
-  MyScene(PerspectiveCamera camera): super(camera);
+class TestAnimationScene extends Scene {
+  TestAnimationScene(PerspectiveCamera camera): super(camera);
   Mesh mesh;
   bool rotateCamera = false;
 
@@ -67,7 +58,7 @@ class MyScene extends Scene {
     controllers.children.add(row);
 
     var plane = _createPlane(6.0);// new Plane(width: 10, height: 10);
-    plane.rotation.setAxisAngle(Axis.X, -PI/2);
+    plane.rotation.setAxisAngle(Axis.X, -PI / 2);
     plane.position.setValues(0.0, -2.0, -3.5);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
@@ -111,7 +102,7 @@ class MyScene extends Scene {
     light2.direction = new Vector3(2.8, -1.0, -0.2);
     light2.diffuse = new Color.fromHex(0xff0000);
     add(light2);
-    
+
     enablePhysics();
   }
 
@@ -128,9 +119,10 @@ class MyScene extends Scene {
 
   @override
   exit() {
-    // TODO: implement exit
+    super.exit();
+    removeChildren();
   }
-  
+
   num _elapsed = 0;
 
   @override

@@ -5,6 +5,8 @@ part of orange;
 
 
 class BoundingBoxRenderer {
+  static final indices = new Uint16List.fromList([0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 7, 1, 6, 2, 5, 3, 4]);
+  
   bool showBackLines = true;
   Color backColor = new Color(100, 100, 100);
   Color frontColor = new Color(255, 255, 255);
@@ -17,8 +19,7 @@ class BoundingBoxRenderer {
   BoundingBoxRenderer(this._graphicsDevice) {
     _material = new ShaderMaterial(_graphicsDevice);
     _renderList = [];
-    _vertices = new Box().geometry.buffers[Semantics.position];
-    var indices = new Uint16List.fromList([0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 7, 1, 6, 2, 5, 3, 4]);
+    _vertices = new Cube().geometry.buffers[Semantics.position];
     _indices = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: indices.length, data: indices, target: gl.ELEMENT_ARRAY_BUFFER);
   }
 

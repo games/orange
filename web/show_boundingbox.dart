@@ -22,7 +22,7 @@ class ShowBoundingBoxScene extends Scene {
     material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
 
-    box = new Cube(width: 1, height: 0.2, depth: 2);
+    box = new Cube(width: 0.5, height: 0.2, depth: 1);
     box.position.setValues(0.0, 0.0, -3.0);
     box.material = material;
     box.showBoundingBox = true;

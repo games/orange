@@ -1,6 +1,5 @@
 import 'dart:html' as html;
 import 'package:orange/orange.dart';
-import 'package:stats/stats.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math.dart';
 import 'dart:async';

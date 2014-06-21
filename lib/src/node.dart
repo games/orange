@@ -65,7 +65,7 @@ class Node {
 
   void set scene(Scene val) {
     _scene = val;
-    children.forEach((c) => c._scene = val);
+    children.forEach((c) => c.scene = val);
   }
 }
 

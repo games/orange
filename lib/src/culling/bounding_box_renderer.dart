@@ -6,7 +6,7 @@ part of orange;
 
 class BoundingBoxRenderer {
   bool showBackLines = true;
-  Color backColor = new Color(25, 25, 25);
+  Color backColor = new Color(100, 100, 100);
   Color frontColor = new Color(255, 255, 255);
   GraphicsDevice _graphicsDevice;
   ShaderMaterial _material;
@@ -39,7 +39,7 @@ class BoundingBoxRenderer {
       var diff = max - min;
       var median = min + diff.scaled(0.5);
 
-      var worldMatrix = new Matrix4.diagonal3(diff) * new Matrix4.translation(median) * boundingBox.worldMatrix;
+      var worldMatrix = boundingBox.worldMatrix * new Matrix4.translation(median) * new Matrix4.diagonal3(diff);
 
       _vertices.enable(_graphicsDevice.ctx, shader.attributes[Semantics.position]);
       _indices.bind(ctx);

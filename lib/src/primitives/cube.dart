@@ -107,6 +107,7 @@ class Cube extends PolygonMesh {
 
 
 
+// TODO BUG
 class Box extends PolygonMesh {
 
   Box([num size = 1.0]) {

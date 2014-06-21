@@ -4,6 +4,7 @@ import 'package:stats/stats.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math.dart';
 import 'show_boundingbox.dart';
+import 'test_physics.dart';
 
 
 
@@ -17,7 +18,8 @@ void main() {
       
   var director = new Director(renderer);
   
-  director.replace(new ShowBoundingBoxScene(camera));
+//  director.replace(new ShowBoundingBoxScene(camera));
+  director.replace(new PhysicsScene(camera));
   director.run();
 
 

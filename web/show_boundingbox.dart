@@ -10,6 +10,7 @@ class ShowBoundingBoxScene extends Scene {
 
   ShowBoundingBoxScene(PerspectiveCamera camera): super(camera);
 
+  Mesh box;
 
   @override
   void enter() {
@@ -18,7 +19,7 @@ class ShowBoundingBoxScene extends Scene {
     material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
 
-    var box = new Cube();
+    box = new Cube(width: 1, height: 0.2, depth: 2);
     box.position.setValues(0.0, 0.0, -3.0);
     box.material = material;
     box.showBoundingBox = true;
@@ -50,9 +51,10 @@ class ShowBoundingBoxScene extends Scene {
   void enterFrame(num elapsed, num interval) {
     nodes.forEach((node) {
       if(node is Mesh) {
-//        node.position.setValues(cos(elapsed / 1000) * 1.0, 0.0, sin(elapsed / 1000) * 1.0);
         node.rotation.setAxisAngle(Axis.Y, sin(elapsed / 1000) * 2 * PI);
       }
     });
+    
+    box.position.setValues(0.0, 0.0, sin(elapsed / 1000) * 2.0);
   }
 }

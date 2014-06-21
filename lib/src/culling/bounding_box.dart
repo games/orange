@@ -68,7 +68,6 @@ class BoundingBox {
       var v = vectorsWorld[index];
       (world * vectors[index] as Vector3).copyInto(v);
 
-
       if (v.x < minimumWorld.x) minimumWorld.x = v.x;
       if (v.y < minimumWorld.y) minimumWorld.y = v.y;
       if (v.z < minimumWorld.z) minimumWorld.z = v.z;

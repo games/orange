@@ -34,12 +34,12 @@ class PhysicsScene extends Scene {
     add(sphere1);
     sphere1.setPhysicsState(PhysicsEngine.SphereImpostor, new PhysicsBodyCreationOptions(mass: 1.0));
 
-    var plane = _createPlane(2.0);//  new PlaneMesh(width: 10, height: 10);
-    plane.rotation.setAxisAngle(Axis.X, -PI / 2);
+    var plane = new PlaneMesh(width: 10, height: 10, ground: true);
     plane.position.setValues(0.0, -2.0, -1.0);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     plane.material.diffuseColor = new Color.fromHex(0xFFFFFF);
+    plane.material.wireframe = false;
     plane.receiveShadows = true;
     plane.castShadows = false;
     plane.showBoundingBox = true;
@@ -47,7 +47,7 @@ class PhysicsScene extends Scene {
     plane.setPhysicsState(PhysicsEngine.PlaneImpostor, new PhysicsBodyCreationOptions(mass: 0.0, friction: 0.5, restitution: 0.7));
 
     var gound = new Cube(width: 5, height: 0.2, depth: 5);
-    gound.position.setValues(0.0, -1.0, -1.0);
+    gound.position.setValues(0.0, -1.0, -3.6);
     gound.material = new StandardMaterial();
     gound.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     gound.material.diffuseColor = new Color.fromHex(0xFFFFFF);
@@ -67,7 +67,7 @@ class PhysicsScene extends Scene {
     textureManager.load(graphicsDevice.ctx, {
       "path": "cubetexture.png"
     }).then((t) {
-//      plane.material.diffuseTexture = t;
+      plane.material.diffuseTexture = t;
     });
     textureManager.load(graphicsDevice.ctx, {
       "path": "bump.png"

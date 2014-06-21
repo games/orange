@@ -57,7 +57,7 @@ class PhysicsScene extends Scene {
     var controllers = html.querySelector("#controllers");
     var label = new html.DivElement();
     label.innerHtml = "${balls.length + 2} Balls";
-    
+
     var btn = new html.ButtonElement();
     btn.text = "New Balls";
     btn.onClick.listen((e) {
@@ -71,7 +71,7 @@ class PhysicsScene extends Scene {
     btn.onClick.listen((e) {
       balls.forEach((b) => remove(b));
       balls.clear();
-      label.innerHtml = "0 Balls";
+      label.innerHtml = "2 Balls";
     });
     controllers.children.add(btn);
 
@@ -87,11 +87,11 @@ class PhysicsScene extends Scene {
     cube.setPhysicsState(PhysicsEngine.BoxImpostor, new PhysicsBodyCreationOptions(mass: 1.0));
     add(cube);
 
-    sphere1.setPhysicsLinkWith(cube, new Vector3(0.0, 1.5, 0.0), new Vector3(0.0, -1.5, 0.0));
+    //    sphere1.setPhysicsLinkWith(cube, new Vector3(0.0, 1.5, 0.0), new Vector3(0.0, -1.5, 0.0));
 
     timer = new Timer.periodic(new Duration(seconds: 3), (t) {
-      cube.applyImpulse(new Vector3(rnd.nextDouble() * 10, rnd.nextDouble() * 10, rnd.nextDouble() * 10), new Vector3(rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble()));
-      //      sphere1.applyImpulse(new Vector3(rnd.nextDouble() * 2, rnd.nextDouble() * 2, rnd.nextDouble() * 2), new Vector3(rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble()));
+      cube.applyImpulse(new Vector3(rnd.nextDouble() * 2, rnd.nextDouble() * 2, rnd.nextDouble() * 2), new Vector3(rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble()));
+      sphere1.applyImpulse(new Vector3(rnd.nextDouble() * 10, rnd.nextDouble() * 10, rnd.nextDouble() * 10), new Vector3(rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble()));
     });
 
     var groundMaterial = new StandardMaterial();

@@ -37,7 +37,7 @@ abstract class Scene {
   bool get physicsEnabled => _physicsEngine != null;
 
   Scene(this.camera) {
-    
+
   }
 
   bool enablePhysics({Vector3 gravity, PhysicsEnginePlugin plugin}) {
@@ -73,6 +73,7 @@ abstract class Scene {
   void remove(Node node) {
     if (node is Mesh) {
       _opaqueMeshes.remove(node);
+      if (_physicsEngine != null && node._physicImpostor != PhysicsEngine.NoImpostor) _physicsEngine._unregisterMesh(node);
     } else if (node is Light) {
       _lights.remove(node);
     }
@@ -80,14 +81,21 @@ abstract class Scene {
     node.scene = null;
   }
 
+  void removeChildren() {
+    nodes.clear();
+    _lights.clear();
+    _opaqueMeshes.clear();
+    _transparentMeshes.clear();
+  }
+
   void enter();
 
   void enterFrame(num elapsed, num interval) {
-    
+
   }
 
   void exitFrame() {
-    
+
   }
 
   void exit() {

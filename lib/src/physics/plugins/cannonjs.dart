@@ -210,7 +210,7 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
       var registeredMesh = _registeredMeshes[index];
       if (registeredMesh.mesh == mesh) {
         // Remove body
-        if (registeredMesh.body) {
+        if (registeredMesh.body != null) {
           _world.callMethod("remove", [registeredMesh.body]);
           _unbindBody(registeredMesh.body);
         }

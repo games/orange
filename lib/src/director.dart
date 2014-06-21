@@ -43,6 +43,8 @@ class Director {
     _lastElapsed = elapsed;
     if (_scene != null) {
       _scene.enterFrame(elapsed, interval);
+      _scene.camera.update();
+//      _scene.camera.updateMatrix();
       // animations
       _scene.nodes.forEach((node) {
         if (node is Mesh) {

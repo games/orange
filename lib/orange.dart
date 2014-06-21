@@ -19,7 +19,6 @@ import 'dart:js' as JS;
 part 'src/director.dart';
 part 'src/once.dart';
 part 'src/color.dart';
-part 'src/camera.dart';
 part 'src/scene.dart';
 part 'src/node.dart';
 part 'src/shader.dart';
@@ -30,6 +29,9 @@ part 'src/buffer_view.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
 part 'src/geometry.dart';
+
+part 'src/cameras/camera.dart';
+part 'src/cameras/orbit_controls.dart';
 
 part 'src/primitives/polygon_mesh.dart';
 part 'src/primitives/cube.dart';

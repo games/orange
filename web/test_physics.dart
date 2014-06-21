@@ -8,13 +8,13 @@ import 'dart:async';
 
 class PhysicsScene extends Scene {
 
-  PhysicsScene(PerspectiveCamera camera): super(camera);
+  PhysicsScene(Camera camera): super(camera);
   Timer timer;
 
   @override
   enter() {
     camera.position.setValues(0.0, 2.0, 10.0);
-    camera.lookAt(new Vector3.zero());
+//    camera.lookAt(new Vector3.zero());
 
     enablePhysics();
 

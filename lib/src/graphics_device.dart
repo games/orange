@@ -104,7 +104,6 @@ class GraphicsDevice {
   //shadows
   //render
   void render(Scene scene) {
-    scene.camera.updateMatrix();
     scene.nodes.forEach((n) => n.updateMatrix());
 
     // shadows

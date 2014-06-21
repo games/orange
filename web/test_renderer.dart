@@ -10,7 +10,7 @@ import 'package:vector_math/vector_math.dart';
 
 class TestLightingScene extends Scene {
 
-  TestLightingScene(PerspectiveCamera camera) : super(camera);
+  TestLightingScene(Camera camera) : super(camera);
 
   Mesh box, sphere, plane, sphere2, sphere3;
   PointLight pointLight0;
@@ -19,7 +19,7 @@ class TestLightingScene extends Scene {
   @override
   enter() {
     camera.position.setValues(0.0, 5.0, 8.0);
-    camera.lookAt(new Vector3.zero());
+//    camera.lookAt(new Vector3.zero());
 
     box = new Cube();
     box.position.setValues(-1.0, 0.5, 0.0);

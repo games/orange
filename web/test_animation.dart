@@ -1,6 +1,5 @@
 import 'dart:html' as html;
 import 'package:orange/orange.dart';
-import 'package:stats/stats.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math.dart';
 
@@ -8,7 +7,7 @@ import 'package:vector_math/vector_math.dart';
 
 
 class TestAnimationScene extends Scene {
-  TestAnimationScene(PerspectiveCamera camera): super(camera);
+  TestAnimationScene(Camera camera): super(camera);
   Mesh mesh;
   bool rotateCamera = false;
 
@@ -17,7 +16,7 @@ class TestAnimationScene extends Scene {
 
     var controllers = html.querySelector("#controllers");
     camera.position.setValues(0.0, 2.0, 4.0);
-    camera.lookAt(new Vector3.zero());
+//    camera.lookAt(new Vector3.zero());
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(graphicsDevice.ctx, url).then((m) {
@@ -132,7 +131,7 @@ class TestAnimationScene extends Scene {
     if (rotateCamera) {
       _elapsed += interval;
       camera.position.setValues(cos(_elapsed / 1000) * 4.0, 2.0, sin(_elapsed / 1000) * 4.0);
-      camera.lookAt(new Vector3.zero());
+//      camera.lookAt(new Vector3.zero());
     }
   }
 }

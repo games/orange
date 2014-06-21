@@ -8,7 +8,7 @@ import 'dart:math';
 
 class ShowBoundingBoxScene extends Scene {
 
-  ShowBoundingBoxScene(PerspectiveCamera camera): super(camera);
+  ShowBoundingBoxScene(Camera camera): super(camera);
 
   Mesh box;
 
@@ -16,7 +16,7 @@ class ShowBoundingBoxScene extends Scene {
   void enter() {
 
     camera.position.setValues(0.0, 2.0, 4.0);
-    camera.lookAt(new Vector3.zero());
+//    camera.lookAt(new Vector3.zero());
 
     var material = new StandardMaterial();
     material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);

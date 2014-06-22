@@ -11,17 +11,24 @@ class TestGLTFScene extends Scene {
   @override
   void enter() {
 
-    camera.position.setValues(0.0, 200.0, 300.0);
+//    camera.position.setValues(-20.0, 2600.0, 1000.0);
+    camera.position.setValues(100.0, 100.0, 300.0);
     camera.lookAt(new Vector3.zero());
 
+    var url = "../models/duck/duck.json";
+//    url = "../models/SuperMurdoch/SuperMurdoch.json";
+//    url = "../models/rambler/rambler.json";
+    
     var loader = new GltfLoader2();
-    loader.load(graphicsDevice.ctx, "../models/duck/duck.json").then((m) {
-      add(m);
+    loader.load(graphicsDevice.ctx, url).then((nodes) {
+      nodes.forEach((node) {
+        add(node);
+      });
     });
 
     var light0 = new PointLight(0xffffff);
     light0.intensity = 0.9;
-    light0.position = new Vector3(-100.0, 300.0, 300.0);
+    light0.position = new Vector3(-100.0, 300.0, 3000.0);
     add(light0);
 
     var light1 = new DirectionalLight(0xffffff);
@@ -32,6 +39,10 @@ class TestGLTFScene extends Scene {
     add(light1);
   }
   
+  @override
+  void enterFrame(num elapsed, num interval) {
+  }
+
   @override
   void exit() {
     super.exit();

@@ -10,6 +10,7 @@ class GraphicsDevice {
   DeviceCapabilities _caps;
   StandardMaterial defaultMaterial;
   bool _depthMask = false;
+  Pass _previousPass;
 
   html.Rectangle<int> _cachedViewport;
   RenderTargetTexture _currentRenderTarget;
@@ -93,18 +94,14 @@ class GraphicsDevice {
   }
 
   use(Pass pass) {
-    pass.bind(ctx);
+    if (_previousPass == null || _previousPass.shader.program != pass.shader.program) {
+      pass.bind(ctx);
+      _previousPass = pass;
+    }
   }
 
-  //actions
-  //befor render
-  //animations
-  //physics
-  //clear
-  //shadows
-  //render
   void render(Scene scene) {
-    scene.nodes.forEach((n) => n.updateMatrix());
+//    scene.nodes.forEach((n) => n.updateMatrix());
 
     // shadows
     scene._lights.forEach((light) {
@@ -135,10 +132,10 @@ class GraphicsDevice {
     if (node is Mesh) {
       _drawMesh(node);
     }
+    node.children.forEach((c) => _renderNode(c));
   }
 
   _drawMesh(Mesh mesh) {
-    var scene = mesh.scene;
     var material = mesh.material;
     if (mesh.faces != null && material != null && material.ready(mesh)) {
       var shader = material.technique.pass.shader;
@@ -168,7 +165,6 @@ class GraphicsDevice {
       }
       material.unbind();
     }
-    mesh.children.forEach((c) => _drawMesh(c));
   }
 
   // TODO should not pass the shader again.

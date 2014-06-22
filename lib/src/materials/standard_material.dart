@@ -135,7 +135,7 @@ class StandardMaterial extends Material {
       var lights = scene._lights;
       for (var i = 0; i < lights.length && i < Light.MAX_LIGHTS; i++) {
         var light = lights[i];
-        light.updateMatrix();
+//        light.updateMatrix();
         light.bind(ctx, shader, i);
         var diffuse = light.diffuse.scaled(light.intensity);
         // [color + range]

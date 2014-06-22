@@ -45,8 +45,8 @@ class Node {
     _localMatrix.multiply(m);
     position = _localMatrix.getTranslation();
     rotation = new Quaternion.fromRotation(_localMatrix.getRotation());
-
-    _needsUpdateLocalMatrix = true;
+    // TODO
+    // _needsUpdateLocalMatrix = false;
   }
 
   updateMatrix() {

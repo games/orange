@@ -6,7 +6,7 @@ part of orange;
 
 class GltfLoader2 {
   gl.RenderingContext _ctx;
-  Mesh _root;
+  Node _root;
   Uri _uri;
   Map<String, dynamic> _resources;
   Map<String, Joint> _joints;
@@ -15,43 +15,108 @@ class GltfLoader2 {
 
   Map<String, VertexBuffer> _bufferViews;
 
-  Future<Mesh> load(gl.RenderingContext ctx, String url) {
+  Future<List<Node>> load(gl.RenderingContext ctx, String url) {
     _ctx = ctx;
     _uri = Uri.parse(url);
-    _root = new Mesh();
+    _root = new Node();
     _resources = {};
     _joints = {};
     _childrenOfNode = {};
     _jointsOfSkeleton = {};
-    var completer = new Completer();
+    var completer = new Completer<List<Node>>();
     html.HttpRequest.getString(url).then((rsp) {
       var json = JSON.decode(rsp);
       var loadBufferFutures = [];
       json["buffers"].forEach((k, v) => loadBufferFutures.add(_loadBuffer(k, v)));
       Future.wait(loadBufferFutures).then((List buffers) {
-        _handleNodes(json);
-        completer.complete(_root);
+        _makeNodes(json);
+        var nodes = _makeScene(json);
+        completer.complete(nodes);
       });
     }).catchError((Error e) => print([e, e.stackTrace]));
     return completer.future;
   }
 
-  void _handleNodes(Map doc) {
-    var nodes = doc["nodes"];
-    nodes.forEach((String k, Map v) {
-      if (v.containsKey("meshes")) {
-        var node = new Mesh(name: v["name"]);
-        if (v.containsKey("matrix")) {
-          node.applyMatrix(_mat4FromList(v["matrix"]));
-        } else {
-          node.applyMatrix(_newMatrix4FromSQT(v["scale"], v["rotation"], v["translation"]));
-        }
-        v["meshes"].forEach((m) {
-          node.children.add(_handleMesh(doc, m));
-        });
-        _root.children.add(node);
+  List<Node> _makeScene(Map doc) {
+    var s = doc["scenes"][doc["scene"]];
+    var nodes = [];
+    s["nodes"].forEach((String name) {
+      var key = "Node_${name}";
+      if (_resources.containsKey(key)) {
+        var node = _resources[key] as Node;
+        nodes.add(node);
       }
     });
+    nodes.forEach((node) => _buildNodeHierarchy(node));
+    return nodes;
+  }
+
+  _buildNodeHierarchy(Node node) {
+    var childNames = _childrenOfNode[node.name];
+    childNames.forEach((name) {
+      var child = _resources["Node_${name}"];
+      node.add(child);
+      _buildNodeHierarchy(child);
+    });
+  }
+
+  void _makeNodes(Map doc) {
+    var nodes = doc["nodes"];
+    nodes.forEach((String k, Map v) {
+      var node;
+      if (v.containsKey("jointId")) {
+        return;
+      } else if (v.containsKey("light")) {
+        return;
+      } else if (v.containsKey("camera")) {
+        return;
+      } else if (v.containsKey("meshes")) {
+        node = new Node(name: v["name"]);
+        v["meshes"].forEach((m) {
+          node.add(_getMesh(doc, m));
+        });
+      } else {
+        node = new Node(name: v["name"]);
+      }
+      if (v.containsKey("matrix")) {
+        node.applyMatrix(_mat4FromList(v["matrix"]));
+      } else if (v.containsKey("translation")) {
+        node.applyMatrix(_newMatrix4FromSQT(v["scale"], v["rotation"], v["translation"]));
+      }
+      if (v.containsKey("children")) {
+        _childrenOfNode[node.name] = v["children"];
+      }
+      _resources["Node_$k"] = node;
+    });
+  }
+
+  Node _getMesh(Map doc, String name) {
+    var key = "Mesh_${name}";
+    if (_resources.containsKey(key)) {
+      return _resources[key];
+    } else {
+      var m = doc["meshes"][name];
+      var node = new Node(name: m["name"]);
+      m["primitives"].forEach((p) {
+        var child = new Mesh();
+        child._geometry = new Geometry();
+        child.indices = _getAttributes(doc, p["indices"]);
+        p["attributes"].forEach((String at, String ar) {
+          if (at == "NORMAL") {
+            child._geometry.normals = _getAttributes(doc, ar);
+          } else if (at == "POSITION") {
+            child._geometry.positions = _getAttributes(doc, ar);
+          } else if (at == "TEXCOORD_0") {
+            child._geometry.texCoords = _getAttributes(doc, ar);
+          }
+        });
+        child.material = _getMaterial(doc, p["material"]);
+        child.primitive = p["primitive"];
+        node.add(child);
+      });
+      _resources[key] = node;
+      return node;
+    }
   }
 
   VertexBuffer _getAttributes(Map doc, String name) {
@@ -64,7 +129,8 @@ class GltfLoader2 {
       var size = 3,
           type = gl.FLOAT,
           stride = attr["byteStride"],
-          offset = attr["byteOffset"];
+          offset = attr["byteOffset"],
+          count = attr["count"];
       switch (attr["type"]) {
         case gl.FLOAT_VEC2:
           size = 2;
@@ -85,11 +151,17 @@ class GltfLoader2 {
           size = 16;
           break;
         case gl.UNSIGNED_SHORT:
-          size = 2;
+          size = 1;
           type = gl.UNSIGNED_SHORT;
           break;
       }
-      var vertexBuffer = new VertexBuffer(size, type, stride, offset, count: attr["count"], data: view["data"], target: view["target"]);
+      var data;
+      if (type == gl.FLOAT) {
+        data = new Float32List.view(view["data"], view["byteOffset"] + offset, count * size);
+      } else {
+        data = new Uint16List.view(view["data"], view["byteOffset"] + offset, count);
+      }
+      var vertexBuffer = new VertexBuffer(size, type, 0, 0, count: count, data: data, target: view["target"]);
       _resources[key] = vertexBuffer;
       return vertexBuffer;
     }
@@ -103,39 +175,10 @@ class GltfLoader2 {
       var bv = doc["bufferViews"][name];
       var bf = _resources["Buffer_${bv["buffer"]}"];
       bv["buffer"] = bf;
-      var t = bv["target"];
-      if (t == gl.ELEMENT_ARRAY_BUFFER) {
-        bv["data"] = new Uint16List.view(bf["data"], bv["byteOffset"], bv["byteLength"] ~/ 2);
-      } else {
-        bv["data"] = new Float32List.view(bf["data"], bv["byteOffset"], bv["byteLength"] ~/ 4);
-      }
+      bv["data"] = bf["data"];
       _resources[key] = bv;
       return bv;
     }
-  }
-
-  Mesh _handleMesh(Map doc, String name) {
-    var m = doc["meshes"][name];
-    var mesh = new Mesh(name: m["name"]);
-    m["primitives"].forEach((p) {
-      var child = new Mesh();
-      child._geometry = new Geometry();
-      child.indices = _getAttributes(doc, p["indices"]);
-      p["attributes"].forEach((String at, String ar) {
-        if (at == "NORMAL") {
-          child._geometry.normals = _getAttributes(doc, ar);
-        } else if (at == "POSITION") {
-          child._geometry.positions = _getAttributes(doc, ar);
-        } else if (at == "TEXCOORD_0") {
-          child._geometry.texCoords = _getAttributes(doc, ar);
-        }
-      });
-      child.material = _getMaterial(doc, p["material"]);
-      child.primitive = p["primitive"];
-      mesh.children.add(child);
-    });
-
-    return mesh;
   }
 
   Material _getMaterial(Map doc, String name) {
@@ -202,27 +245,25 @@ class GltfLoader2 {
   }
 
   Technique _getTechnique(Map doc, String name) {
-    var key = "Technique_$name";
-    if (_resources.containsKey(key)) {
-      return _resources[key];
-    } else {
-      var technique = new Technique();
-      technique.passes = {};
-      doc["techniques"][name]["passes"].forEach((String pn, Map p) {
-        var pass = new Pass();
-        if (p.containsKey("blendEnable")) pass.blending = p["blendEnable"] == 1;
-        if (p.containsKey("cullFaceEnable")) pass.cullFaceEnable = p["cullFaceEnable"] == 1;
-        if (p.containsKey("depthMask")) pass.depthMask = p["depthMask"] == 1;
-        if (p.containsKey("depthTestEnable")) pass.depthTest = p["depthTestEnable"] == 1;
-        // TODO more..
-        technique.passes[pn] = pass;
-      });
-      technique.pass = technique.passes[doc["techniques"][name]["pass"]];
-      _resources[key] = technique;
-      return technique;
-    }
+    var technique = new Technique();
+    technique.passes = {};
+    doc["techniques"][name]["passes"].forEach((String pn, Map p) {
+      var pass = new Pass();
+      if (p.containsKey("blendEnable")) pass.blending = p["blendEnable"] == 1;
+      if (p.containsKey("blendEquation")) pass.blendEquation = p["blendEquation"];
+      if (p.containsKey("blendFunc")) {
+        pass.dfactor = p["blendFunc"]["dfactor"];
+        pass.sfactor = p["blendFunc"]["sfactor"];
+      }
+      if (p.containsKey("cullFaceEnable")) pass.cullFaceEnable = p["cullFaceEnable"] == 1;
+      if (p.containsKey("depthMask")) pass.depthMask = p["depthMask"] == 1;
+      if (p.containsKey("depthTestEnable")) pass.depthTest = p["depthTestEnable"] == 1;
+      // TODO more..
+      technique.passes[pn] = pass;
+    });
+    technique.pass = technique.passes[doc["techniques"][name]["pass"]];
+    return technique;
   }
-
 
   _loadBuffer(String name, Map doc) {
     var completer = new Completer();
@@ -235,6 +276,3 @@ class GltfLoader2 {
     return completer.future;
   }
 }
-
-
-

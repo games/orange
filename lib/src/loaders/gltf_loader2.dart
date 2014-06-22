@@ -151,7 +151,7 @@ class GltfLoader2 {
           size = 16;
           break;
         case gl.UNSIGNED_SHORT:
-          size = 1;
+          size = 2;
           type = gl.UNSIGNED_SHORT;
           break;
       }

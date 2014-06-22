@@ -164,7 +164,7 @@ class GraphicsDevice {
       if (material.wireframe) {
         ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
       } else {
-        ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+        ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
       }
       material.unbind();
     }

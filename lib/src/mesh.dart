@@ -3,12 +3,22 @@ part of orange;
 
 
 class Mesh extends Node {
+
+  static const PRIMITIVE_POINTS = 0;
+  static const PRIMITIVE_LINES = 1;
+  static const PRIMITIVE_LINE_LOOP = 2;
+  static const PRIMITIVE_LINE_STRIP = 3;
+  static const PRIMITIVE_TRIANGLES = 4;
+  static const PRIMITIVE_TRIANGLE_STRIP = 5;
+  static const PRIMITIVE_TRIANGLE_FAN = 6;
+
   String name;
   Geometry _geometry;
   BufferView faces;
   Material material;
   Skeleton _skeleton;
   AnimationController animator;
+  int primitive = PRIMITIVE_TRIANGLES;
 
   bool _castShadows = false;
   bool _receiveShadows = false;
@@ -73,11 +83,15 @@ class Mesh extends Node {
     _boundingInfo = _geometry.boundingInfo;
   }
 
-  set indices(data) {
+  void set indices(data) {
+    if (data is BufferView) {
+      faces = data;
+      return;
+    }
     if (!(data is Uint16List)) data = new Uint16List.fromList(data);
     faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
   }
-  
+
   BufferView get indices => faces;
 
   Skeleton get skeleton {

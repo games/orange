@@ -96,14 +96,14 @@ class StandardMaterial extends Material {
 
     //textures
     // TODO ambient, opacity, reflection, emissive, specular, bump
-    if (diffuseTexture != null) {
+    if (diffuseTexture != null && diffuseTexture.ready) {
       device.bindTexture(shader, Semantics.texture, diffuseTexture);
       // TODO x: uv or uv2; y: alpha of texture
       device.bindUniform(shader, "vDiffuseInfos", new Float32List.fromList([0.0, 1.0]));
       // TODO offset, scale, ang
       device.bindUniform(shader, "diffuseMatrix", new Matrix4.identity().storage);
     }
-    if (bumpTexture != null && device.caps.standardDerivatives) {
+    if (bumpTexture != null && bumpTexture.ready && device.caps.standardDerivatives) {
       device.bindTexture(shader, "bumpSampler", bumpTexture);
       // TODO x: uv or uv2; y: alpha of texture
       device.bindUniform(shader, "vBumpInfos", new Float32List.fromList([0.0, 1.0]));

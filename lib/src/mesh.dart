@@ -18,6 +18,7 @@ class Mesh extends Node {
   Material material;
   Skeleton _skeleton;
   AnimationController animator;
+  // TODO need change to real primitive type
   int primitive = PRIMITIVE_TRIANGLES;
 
   bool _castShadows = false;

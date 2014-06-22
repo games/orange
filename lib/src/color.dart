@@ -17,11 +17,11 @@ class Color {
   }
 
   Color.fromList(List list) {
-    storage[0] = list[0];
-    storage[1] = list[1];
-    storage[2] = list[2];
+    storage[0] = list[0].toDouble();
+    storage[1] = list[1].toDouble();
+    storage[2] = list[2].toDouble();
     if (list.length == 4) {
-      storage[3] = list[3];
+      storage[3] = list[3].toDouble();
     } else {
       storage[3] = 1.0;
     }

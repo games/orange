@@ -26,7 +26,7 @@ class GltfLoader {
       var loadBufferFutures = [];
       json["buffers"].forEach((k, v) => loadBufferFutures.add(_loadBuffer(k, v)));
       Future.wait(loadBufferFutures).then((List buffers) {
-        // TODO remove mirror
+        // TODO remove mirrors
         InstanceMirror mirror = reflect(this);
         var categories = ["bufferViews", "images", "samplers", "textures", "materials", "attributes", "indices", "accessors", "meshes", "skins", "nodes", "scenes"];
         categories.forEach((cat) {
@@ -151,7 +151,7 @@ class GltfLoader {
         var material = _resources[p["material"]];
         textureManager.load(_ctx, material["diffuse"]).then((t) => submesh.material.diffuseTexture = t);
         //        submesh.indicesAttrib = new BufferView(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], indicesAttrib["count"]);
-        submesh.faces = new BufferView(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], count: indicesAttrib["count"], target: gl.ELEMENT_ARRAY_BUFFER);
+        submesh.faces = new VertexBuffer(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], count: indicesAttrib["count"], target: gl.ELEMENT_ARRAY_BUFFER);
         //        submesh.attributes = {};
 
         attributes.forEach((ak, av) {
@@ -159,7 +159,7 @@ class GltfLoader {
           var bufferView = _resources[accessor["bufferView"]];
           var byteOffset = accessor["byteOffset"];
           var size = accessor["byteStride"] ~/ 4;
-          submesh.geometry.buffers[_convertSemantics(ak)] = new BufferView(size, gl.FLOAT, 0, byteOffset);
+          submesh.geometry.buffers[_convertSemantics(ak)] = new VertexBuffer(size, gl.FLOAT, 0, byteOffset);
 
           if (ak == "WEIGHT") {
             var view = new Float32List.view(bufferView["data"].buffer, byteOffset, indicesAttrib["count"]);

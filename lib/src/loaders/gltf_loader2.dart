@@ -75,6 +75,9 @@ class GltfLoader2 {
         v["meshes"].forEach((m) {
           node.add(_getMesh(doc, m));
         });
+      } else if(v.containsKey("instanceSkin")){
+        node = new Node(name: v["name"]);
+        // TODO
       } else {
         node = new Node(name: v["name"]);
       }

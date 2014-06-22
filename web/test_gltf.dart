@@ -8,22 +8,26 @@ class TestGLTFScene extends Scene {
 
   TestGLTFScene(Camera camera) : super(camera);
 
-  List _meshes = [];  
-  
+  List _meshes = [];
+
   @override
   void enter() {
 
     //    camera.position.setValues(-20.0, 2600.0, 1000.0);
-    camera.position.setValues(100.0, 100.0, 300.0);
+//    camera.position.setValues(100.0, 100.0, 300.0);
     camera.lookAt(new Vector3.zero());
 
-    var urls = ["../models/duck/duck.json", "../models/SuperMurdoch/SuperMurdoch.json", "../models/rambler/rambler.json", "../models/wine/wine.json"];
+    var urls = ["../models/duck/duck.json", 
+                "../models/SuperMurdoch/SuperMurdoch.json", 
+                "../models/rambler/rambler.json", 
+                "../models/wine/wine.json",
+                "../models/axe/axe.json"];
 
     var selector = new SelectElement();
     urls.forEach((u) {
       var option = new OptionElement(data: u.split("/").last, value: u);
       selector.children.add(option);
-      
+
     });
     selector.onChange.listen((e) {
       var opt = selector.options[selector.selectedIndex];

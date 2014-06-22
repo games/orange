@@ -135,8 +135,7 @@ class PhysicsScene extends Scene {
     border3.material = groundMaterial;
     border3.receiveShadows = true;
     border3.setPhysicsState(PhysicsEngine.PlaneImpostor, new PhysicsBodyCreationOptions(friction: 0.5, restitution: 0.7));
-    //    add(border3);
-
+    add(border3);
 
 
     var textureManager = new TextureManager();

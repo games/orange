@@ -14,7 +14,7 @@ class Mesh extends Node {
 
   String name;
   Geometry _geometry;
-  BufferView faces;
+  VertexBuffer faces;
   Material material;
   Skeleton _skeleton;
   AnimationController animator;
@@ -84,15 +84,15 @@ class Mesh extends Node {
   }
 
   void set indices(data) {
-    if (data is BufferView) {
+    if (data is VertexBuffer) {
       faces = data;
       return;
     }
     if (!(data is Uint16List)) data = new Uint16List.fromList(data);
-    faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
+    faces = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
   }
 
-  BufferView get indices => faces;
+  VertexBuffer get indices => faces;
 
   Skeleton get skeleton {
     if (_skeleton == null && parent != null && parent is Mesh) return (parent as Mesh)._skeleton;

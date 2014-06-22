@@ -6,38 +6,38 @@ class Geometry {
   @deprecated
   int vertexCount;
 
-  Map<String, BufferView> buffers = {};
+  Map<String, VertexBuffer> buffers = {};
 
-  void set vertices(data) {
-    if (data is BufferView) {
+  void set positions(data) {
+    if (data is VertexBuffer) {
       buffers[Semantics.position] = data;
       return;
     }
     if (!(data is Float32List)) data = new Float32List.fromList(data);
-    buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, count: data.length ~/ 3, data: data);
+    buffers[Semantics.position] = new VertexBuffer(3, gl.FLOAT, 0, 0, count: data.length ~/ 3, data: data);
     _boundingInfo = null;
   }
 
-  BufferView get vertices => buffers[Semantics.position];
+  VertexBuffer get positions => buffers[Semantics.position];
 
   void set normals(data) {
-    if (data is BufferView) {
+    if (data is VertexBuffer) {
       buffers[Semantics.normal] = data;
       return;
     }
     if (!(data is Float32List)) data = new Float32List.fromList(data);
-    buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: data.length ~/ 3, data: data);
+    buffers[Semantics.normal] = new VertexBuffer(3, gl.FLOAT, 0, 0, count: data.length ~/ 3, data: data);
   }
 
-  BufferView get normals => buffers.containsKey(Semantics.normal) ? buffers[Semantics.normal] : null;
+  VertexBuffer get normals => buffers.containsKey(Semantics.normal) ? buffers[Semantics.normal] : null;
 
   void set texCoords(data) {
-    if (data is BufferView) {
+    if (data is VertexBuffer) {
       buffers[Semantics.texcoords] = data;
       return;
     }
     if (!(data is Float32List)) data = new Float32List.fromList(data);
-    buffers[Semantics.texcoords] = new BufferView(2, gl.FLOAT, 0, 0, count: data.length ~/ 2, data: data);
+    buffers[Semantics.texcoords] = new VertexBuffer(2, gl.FLOAT, 0, 0, count: data.length ~/ 2, data: data);
   }
 
   BoundingInfo _boundingInfo;
@@ -46,10 +46,10 @@ class Geometry {
     if (_boundingInfo == null && buffers.containsKey(Semantics.position)) {
       var minimum = new Vector3.all(double.MAX_FINITE);
       var maximum = new Vector3.all(-double.MAX_FINITE);
-      var positions = vertices.data as Float32List;
-      var count = vertices.count;
+      var verts = positions.data as Float32List;
+      var count = positions.count;
       for (var index = 0; index < count; index++) {
-        var current = new Vector3(positions[index * 3], positions[index * 3 + 1], positions[index * 3 + 2]);
+        var current = new Vector3(verts[index * 3], verts[index * 3 + 1], verts[index * 3 + 2]);
         Vector3.min(current, minimum, minimum);
         Vector3.max(current, maximum, maximum);
       }

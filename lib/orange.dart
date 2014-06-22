@@ -25,7 +25,7 @@ part 'src/shader.dart';
 part 'src/mesh.dart';
 part 'src/graphics_device.dart';
 part 'src/built_in_shaders.dart';
-part 'src/buffer_view.dart';
+part 'src/vertex_buffer.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
 part 'src/geometry.dart';
@@ -49,6 +49,7 @@ part 'src/animation/track.dart';
 
 part 'src/loaders/wgl_loader.dart';
 part 'src/loaders/gltf_loader.dart';
+part 'src/loaders/gltf_loader2.dart';
 part 'src/loaders/ogre_loader.dart';
 part 'src/loaders/obj_loader.dart';
 

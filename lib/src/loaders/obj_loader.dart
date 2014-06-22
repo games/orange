@@ -25,8 +25,8 @@ class ObjLoader {
           indices.addAll(line.replaceFirst("f", "").trim().split(" ").map((e) => int.parse(e) - 1));
         }
       });
-      _mesh.setVertices(vertices);
-      _mesh.setFaces(indices);
+      _mesh.setPositions(vertices);
+      _mesh.setIndices(indices);
       _mesh.calculateSurfaceNormals();
       completer.complete(_mesh);
     });

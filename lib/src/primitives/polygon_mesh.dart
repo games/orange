@@ -4,7 +4,7 @@ part of orange;
 
 class PolygonMesh extends Mesh {
 
-  Float32List _vertices;
+  Float32List _positions;
   Float32List _normals;
   Float32List _texCoords;
   Uint16List _indices;
@@ -13,9 +13,9 @@ class PolygonMesh extends Mesh {
     _geometry = new Geometry();
   }
 
-  setVertices(List vertices) {
-    _vertices = new Float32List.fromList(vertices);
-    _geometry.vertices = _vertices;
+  setPositions(List positions) {
+    _positions = new Float32List.fromList(positions);
+    _geometry.positions = _positions;
     _boundingInfo = _geometry.boundingInfo;
   }
 
@@ -29,14 +29,14 @@ class PolygonMesh extends Mesh {
     geometry.texCoords = _texCoords;
   }
 
-  setFaces(List data) {
+  setIndices(List data) {
     _indices = new Uint16List.fromList(data);
     indices = _indices;
   }
 
   calculateSurfaceNormals() {
-    _normals = new Float32List(_vertices.length);
-    geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: _vertices.length ~/ 3, data: _normals);
+    _normals = new Float32List(_positions.length);
+    geometry.buffers[Semantics.normal] = new VertexBuffer(3, gl.FLOAT, 0, 0, count: _positions.length ~/ 3, data: _normals);
 
     var count = _indices.length;
     for (var f = 0; f < count; f += 3) {
@@ -60,24 +60,24 @@ class PolygonMesh extends Mesh {
 
   Vector3 getVertex(int index) {
     index *= 3;
-    if (index + 2 >= _vertices.length) {
+    if (index + 2 >= _positions.length) {
       print(index);
     }
-    return new Vector3(_vertices[index], _vertices[index + 1], _vertices[index + 2]);
+    return new Vector3(_positions[index], _positions[index + 1], _positions[index + 2]);
   }
 
   setVertex(int index, vertex) {
     index *= 3;
-    _vertices[index] = vertex[0];
-    _vertices[index + 1] = vertex[1];
-    _vertices[index + 2] = vertex[2];
+    _positions[index] = vertex[0];
+    _positions[index + 1] = vertex[1];
+    _positions[index + 2] = vertex[2];
   }
 
   //TODO : fixme
   addVertex(vertex) {
-    _vertices.add(vertex[0]);
-    _vertices.add(vertex[1]);
-    _vertices.add(vertex[2]);
+    _positions.add(vertex[0]);
+    _positions.add(vertex[1]);
+    _positions.add(vertex[2]);
   }
 
   Vector3 getNormal(int index) {

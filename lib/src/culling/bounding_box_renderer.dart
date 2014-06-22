@@ -13,14 +13,14 @@ class BoundingBoxRenderer {
   GraphicsDevice _graphicsDevice;
   ShaderMaterial _material;
   List<BoundingBox> _renderList;
-  BufferView _vertices;
-  BufferView _indices;
+  VertexBuffer _vertices;
+  VertexBuffer _indices;
   
   BoundingBoxRenderer(this._graphicsDevice) {
     _material = new ShaderMaterial(_graphicsDevice);
     _renderList = [];
     _vertices = new Cube().geometry.buffers[Semantics.position];
-    _indices = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: indices.length, data: indices, target: gl.ELEMENT_ARRAY_BUFFER);
+    _indices = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: indices.length, data: indices, target: gl.ELEMENT_ARRAY_BUFFER);
   }
 
   void render() {

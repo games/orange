@@ -33,9 +33,9 @@ class PlaneMesh extends PolygonMesh {
       }
     }
 
-    setVertices(vertices);
+    setPositions(vertices);
     setTexCoords(texcoords);
-    setFaces(faces);
+    setIndices(faces);
     calculateSurfaceNormals();
   }
 }

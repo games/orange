@@ -3,7 +3,7 @@ part of orange;
 
 
 
-class BufferView {
+class VertexBuffer {
   int offset;
   int stride;
   int type;
@@ -14,7 +14,7 @@ class BufferView {
   gl.Buffer buffer;
   TypedData data;
 
-  BufferView(this.size, this.type, this.stride, this.offset, {int count: 0, TypedData data: null, int target: gl.ARRAY_BUFFER}) {
+  VertexBuffer(this.size, this.type, this.stride, this.offset, {int count: 0, TypedData data: null, int target: gl.ARRAY_BUFFER}) {
     this.count = count;
     this.data = data;
     this.target = target;

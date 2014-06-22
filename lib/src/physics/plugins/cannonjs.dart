@@ -109,7 +109,7 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
     return null;
   }
 
-  _createConvexPolyhedron(BufferView rawVerts, BufferView rawFaces, Mesh mesh, [PhysicsBodyCreationOptions options]) {
+  _createConvexPolyhedron(VertexBuffer rawVerts, VertexBuffer rawFaces, Mesh mesh, [PhysicsBodyCreationOptions options]) {
     // TODO
     return null;
   }

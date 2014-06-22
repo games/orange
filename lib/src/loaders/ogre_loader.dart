@@ -69,7 +69,7 @@ class OgreLoader {
     }
     if(doc.containsKey("faces")) {
       var data = new Uint16List.fromList(doc["faces"]);
-      mesh.faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
+      mesh.faces = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
     }
     if(doc.containsKey("skeleton")) {
       mesh.skeleton = _parseSkeleton(doc["skeleton"]);
@@ -125,7 +125,7 @@ class OgreLoader {
   _parseRotation(Map rot) => new Quaternion.axisAngle(new Vector3.array(rot["axis"]), rot["angle"].toDouble());
   
   _createBufferView(TypedData data, int size, int type) {
-    return new BufferView(size, type, 0, 0, count: 0, data: data);
+    return new VertexBuffer(size, type, 0, 0, count: 0, data: data);
   }
 }
 

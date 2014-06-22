@@ -495,8 +495,8 @@ Texture _createTexture(num width, num height) {
 
 Mesh _createPlane([double scale = 1.0]) {
   var mesh = new PolygonMesh();
-  mesh.setVertices([-scale, -scale, 1.0, scale, -scale, 1.0, scale, scale, 1.0, -scale, scale, 1.0]);
-  mesh.setFaces([0, 1, 2, 0, 2, 3]);
+  mesh.setPositions([-scale, -scale, 1.0, scale, -scale, 1.0, scale, scale, 1.0, -scale, scale, 1.0]);
+  mesh.setIndices([0, 1, 2, 0, 2, 3]);
   mesh.setTexCoords([0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]);
   mesh.calculateSurfaceNormals();
   return mesh;

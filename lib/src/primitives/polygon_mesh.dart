@@ -15,8 +15,8 @@ class PolygonMesh extends Mesh {
 
   setVertices(List vertices) {
     _vertices = new Float32List.fromList(vertices);
-    geometry.vertices = _vertices;
-    _boundingInfo = geometry.boundingInfo;
+    _geometry.vertices = _vertices;
+    _boundingInfo = _geometry.boundingInfo;
   }
 
   setNormals(List normals) {
@@ -29,9 +29,9 @@ class PolygonMesh extends Mesh {
     geometry.texCoords = _texCoords;
   }
 
-  setFaces(List indices) {
-    _indices = new Uint16List.fromList(indices);
-    faces = new BufferView(0, gl.UNSIGNED_SHORT, 0, 0, count: _indices.length, data: _indices, target: gl.ELEMENT_ARRAY_BUFFER);
+  setFaces(List data) {
+    _indices = new Uint16List.fromList(data);
+    indices = _indices;
   }
 
   calculateSurfaceNormals() {

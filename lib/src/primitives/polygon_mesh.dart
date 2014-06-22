@@ -10,23 +10,23 @@ class PolygonMesh extends Mesh {
   Uint16List _indices;
 
   PolygonMesh({String name}) : super(name: name) {
-    geometry = new Geometry();
+    _geometry = new Geometry();
   }
 
   setVertices(List vertices) {
     _vertices = new Float32List.fromList(vertices);
-    geometry.buffers[Semantics.position] = new BufferView(3, gl.FLOAT, 0, 0, count: _vertices.length ~/ 3, data: _vertices);
+    geometry.vertices = _vertices;
     _boundingInfo = geometry.boundingInfo;
   }
 
   setNormals(List normals) {
     _normals = new Float32List.fromList(normals);
-    geometry.buffers[Semantics.normal] = new BufferView(3, gl.FLOAT, 0, 0, count: _normals.length ~/ 3, data: _normals);
+    geometry.normals = _normals;
   }
 
   setTexCoords(List texCoords) {
     _texCoords = new Float32List.fromList(texCoords);
-    geometry.buffers[Semantics.texcoords] = new BufferView(2, gl.FLOAT, 0, 0, count: _texCoords.length ~/ 2, data: _texCoords);
+    geometry.texCoords = _texCoords;
   }
 
   setFaces(List indices) {

@@ -60,6 +60,8 @@ class TestGLTFScene extends Scene {
       var min = root.boundingInfo.boundingBox.minimumWorld;
       var max = root.boundingInfo.boundingBox.maximumWorld;
       root.position.setValues(-(max.x + min.x) / 2.0, -(max.y + min.y) / 2.0, -(max.z + min.z) / 2.0);
+      
+      
       _meshes = nodes;
     });
   }

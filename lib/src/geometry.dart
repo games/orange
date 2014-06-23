@@ -57,4 +57,12 @@ class Geometry {
     }
     return _boundingInfo;
   }
+  
+  Geometry clone() {
+    var result = new Geometry();
+    buffers.forEach((k, v) {
+      result.buffers[k] = v;
+    });
+    return result;
+  }
 }

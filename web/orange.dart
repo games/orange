@@ -1,7 +1,7 @@
 import 'dart:html' as html;
 import 'package:orange/orange.dart';
 import 'package:stats/stats.dart';
-import 'show_boundingbox.dart';
+import 'test_boundingbox.dart';
 import 'test_physics.dart';
 import 'test_animation.dart';
 import 'test_renderer.dart';
@@ -24,7 +24,7 @@ void main() {
   var director = new Director(renderer);
   
   var scenes = [new TestAnimationScene(camera), 
-                new ShowBoundingBoxScene(camera), 
+                new TestBoundingBoxScene(camera), 
                 new TestLightingScene(camera), 
                 new PhysicsScene(camera),
                 new TestGLTFScene(camera)];

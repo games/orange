@@ -1,14 +1,14 @@
 import 'package:orange/orange.dart';
 import 'package:vector_math/vector_math.dart';
 import 'dart:math';
+import 'dart:html';
 
 
 
 
+class TestBoundingBoxScene extends Scene {
 
-class ShowBoundingBoxScene extends Scene {
-
-  ShowBoundingBoxScene(Camera camera): super(camera);
+  TestBoundingBoxScene(Camera camera): super(camera);
 
   Mesh box;
 
@@ -16,7 +16,7 @@ class ShowBoundingBoxScene extends Scene {
   void enter() {
 
     camera.position.setValues(0.0, 2.0, 4.0);
-//    camera.lookAt(new Vector3.zero());
+    camera.lookAt(new Vector3.zero());
 
     var material = new StandardMaterial();
     material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
@@ -48,6 +48,17 @@ class ShowBoundingBoxScene extends Scene {
     var light0 = new PointLight(0xffffff);
     light0.position = new Vector3(-5.0, 3.0, 0.0);
     add(light0);
+    
+    var duplicateBox = new ButtonElement();
+    duplicateBox.onClick.listen((e) {
+      var rnd = new Random();
+      var newBox = box.clone();
+      newBox.position.setValues(rnd.nextDouble() * 4.0 - 2.0, rnd.nextDouble() * 3.0 - 1.0, rnd.nextDouble() * 2.0 - 1.0);
+      newBox.scaling.scale(rnd.nextDouble());
+      add(newBox);
+    });
+    duplicateBox.text = "Duplicate";
+    querySelector("#controllers").children.add(duplicateBox);
   }
 
   @override

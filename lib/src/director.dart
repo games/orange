@@ -47,11 +47,11 @@ class Director {
 //      _scene.camera.updateMatrix();
       // animations
       _scene.nodes.forEach((node) {
+        node.updateMatrix();
         if (node is Mesh) {
           if (node.animator != null) node.animator.evaluate(interval);
           if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
         }
-        node.updateMatrix();
       });
 
       //physics

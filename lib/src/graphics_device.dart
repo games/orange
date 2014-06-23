@@ -101,8 +101,6 @@ class GraphicsDevice {
   }
 
   void render(Scene scene) {
-//    scene.nodes.forEach((n) => n.updateMatrix());
-
     // shadows
     scene._lights.forEach((light) {
       if (light is DirectionalLight && light.enabled) {

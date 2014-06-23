@@ -48,7 +48,7 @@ class Node {
     position = _localMatrix.getTranslation();
     rotation = new Quaternion.fromRotation(_localMatrix.getRotation());
     // TODO
-    // _needsUpdateLocalMatrix = false;
+    //     _needsUpdateLocalMatrix = false;
   }
 
   updateMatrix() {
@@ -70,8 +70,16 @@ class Node {
     _scene = val;
     children.forEach((c) => c.scene = val);
   }
-}
 
+  Node clone() {
+    var result = new Node();
+    result.name = name;
+    result.applyMatrix(_localMatrix);
+    result.scaling = scaling.clone();
+    children.forEach((c) => result.children.add(c.clone()));
+    return result;
+  }
+}
 
 
 

@@ -5,10 +5,12 @@ part of orange;
 
 
 class BoundingInfo {
+  Vector3 minimum;
+  Vector3 maximum;
   BoundingBox boundingBox;
   BoundingSphere boundingSphere;
 
-  BoundingInfo(Vector3 minimum, Vector3 maximum) {
+  BoundingInfo(this.minimum, this.maximum) {
     boundingBox = new BoundingBox(minimum, maximum);
     boundingSphere = new BoundingSphere(minimum, maximum);
   }
@@ -90,6 +92,10 @@ class BoundingInfo {
 
   bool extentsOverlap(num min0, num max0, num min1, num max1) {
     return !(min0 > max1 || min1 > max0);
+  }
+  
+  BoundingInfo clone() {
+    return new BoundingInfo(minimum.clone(), maximum.clone());
   }
 }
 

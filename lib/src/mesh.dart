@@ -38,7 +38,7 @@ class Mesh extends Node {
   }
 
   BoundingInfo get boundingInfo => _boundingInfo;
-  
+
   void set boundingInfo(BoundingInfo val) {
     _boundingInfo = val;
   }
@@ -112,4 +112,34 @@ class Mesh extends Node {
       if (c is Mesh) c.receiveShadows = val;
     });
   }
+
+  Node clone() {
+    var result = new Mesh();
+    result.name = name;
+    result.applyMatrix(_localMatrix);
+    result.scaling = scaling.clone();
+    if(_geometry != null) result._geometry = _geometry.clone();
+    result.faces = faces;
+    result.material = material;
+    result._skeleton = _skeleton;
+    if (animator != null) result.animator = animator.clone(result);
+    result.primitive = primitive;
+    result._castShadows = _castShadows;
+    result._receiveShadows = _receiveShadows;
+    result.showBoundingBox = showBoundingBox;
+    children.forEach((c) => result.children.add(c.clone()));
+    return result;
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+

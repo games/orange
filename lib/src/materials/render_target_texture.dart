@@ -18,6 +18,7 @@ class RenderTargetTexture extends Texture implements Renderer {
     var device = scene.graphicsDevice;
     device.bindFramebuffer(this);
     device.clear(new Color(0, 0, 0), backBuffer: true, depthStencil: true);
+    device.ctx.viewport(0, 0, width, height);
     renderDelegate.render(scene, opaqueMeshes, alphaTestMeshes: alphaTestMeshes, transparentMeshes: transparentMeshes);
     device.unbindFramebuffer();
   }

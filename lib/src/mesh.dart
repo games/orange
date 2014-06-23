@@ -127,7 +127,7 @@ class Mesh extends Node {
     result._castShadows = _castShadows;
     result._receiveShadows = _receiveShadows;
     result.showBoundingBox = showBoundingBox;
-    children.forEach((c) => result.children.add(c.clone()));
+    children.forEach((c) => result.add(c.clone()));
     return result;
   }
 }

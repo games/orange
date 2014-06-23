@@ -38,69 +38,73 @@ class GltfLoader2 {
   void _parseScene(Map doc) {
     var scene = doc["scenes"][doc["scene"]];
     var nodes = [];
-    scene["nodes"].forEach((String name) {
-      var key = "Node_${name}";
+    scene["nodes"].forEach((String id) {
+      var key = "Node_${id}";
       if (_resources.containsKey(key)) {
         nodes.add(_resources[key]);
       }
     });
     nodes.forEach((node) => _buildNodeHierarchy(node));
-    if(nodes.length == 1) {
+    if (nodes.length == 1) {
       _root = nodes.first;
     } else {
-      nodes.forEach((node) => _root.children.add(node));
+      nodes.forEach((node) => _root.add(node));
     }
   }
 
   void _buildNodeHierarchy(Node node) {
-    var childNames = _childrenOfNode[node.name];
-    childNames.forEach((name) {
-      var child = _resources["Node_${name}"];
-      node.add(child);
+    var childrenIds = _childrenOfNode[node.name];
+    childrenIds.forEach((id) {
+      var child = _resources["Node_${id}"];
+      if (child.parent != null) {
+        node.add(child.clone());
+      } else {
+        node.add(child);
+      }
       _buildNodeHierarchy(child);
     });
   }
 
   void _parseNodes(Map doc) {
     var nodes = doc["nodes"];
-    nodes.forEach((String k, Map v) {
+    nodes.forEach((String id, Map v) {
       var node;
-      if (v.containsKey("jointId")) {
+      if (v.containsKey("joint")) {
         return;
       } else if (v.containsKey("light")) {
         return;
       } else if (v.containsKey("camera")) {
         return;
       } else if (v.containsKey("meshes")) {
-        node = new Mesh(name: v["name"]);
+        node = new Mesh(name: id);
         v["meshes"].forEach((m) {
           node.add(_getMesh(doc, m));
         });
       } else if (v.containsKey("instanceSkin")) {
-        node = new Mesh(name: v["name"]);
+        node = new Mesh(name: id);
         // TODO
       } else {
-        node = new Mesh(name: v["name"]);
+        node = new Mesh(name: id);
       }
       if (v.containsKey("matrix")) {
-        node.applyMatrix(_mat4FromList(v["matrix"]));
+        node.applyMatrix(_newMatrix4FromList(v["matrix"]));
       } else if (v.containsKey("translation")) {
         node.applyMatrix(_newMatrix4FromSQT(v["scale"], v["rotation"], v["translation"]));
       }
       if (v.containsKey("children")) {
         _childrenOfNode[node.name] = v["children"];
       }
-      _resources["Node_$k"] = node;
+      _resources["Node_${node.name}"] = node;
     });
   }
 
-  Node _getMesh(Map doc, String name) {
-    var key = "Mesh_${name}";
+  Node _getMesh(Map doc, String id) {
+    var key = "Mesh_${id}";
     if (_resources.containsKey(key)) {
       return _resources[key];
     } else {
-      var m = doc["meshes"][name];
-      var node = new Node(name: m["name"]);
+      var m = doc["meshes"][id];
+      var node = new Node(name: id);
       m["primitives"].forEach((p) {
         var child = new Mesh();
         child._geometry = new Geometry();
@@ -284,6 +288,21 @@ class GltfLoader2 {
       completer.complete(doc);
     });
     return completer.future;
+  }
+  
+  Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
+    var m = new Matrix4.zero();
+    m.setFromTranslationRotation(new Vector3.fromFloat32List(new Float32List.fromList(t)), new Quaternion.fromFloat32List(new Float32List.fromList(r)));
+    m.scale(s[0].toDouble(), s[1].toDouble(), s[2].toDouble());
+    return m;
+  }
+
+  Matrix4 _newMatrix4FromList(List l) {
+    var tl = new Float32List(l.length);
+    for (var i = 0; i < l.length; i++) {
+      tl[i] = l[i].toDouble();
+    }
+    return new Matrix4.fromFloat32List(tl);
   }
 
   _newVec3FromList(List l) {

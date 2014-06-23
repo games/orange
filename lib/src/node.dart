@@ -45,10 +45,11 @@ class Node {
 
   applyMatrix(Matrix4 m) {
     _localMatrix.multiply(m);
-    position = _localMatrix.getTranslation();
-    rotation = new Quaternion.fromRotation(_localMatrix.getRotation());
+//    position = _localMatrix.getTranslation();
+//    rotation = new Quaternion.fromRotation(_localMatrix.getRotation());
+    decompose(_localMatrix, position, rotation, scaling);
     // TODO
-    //     _needsUpdateLocalMatrix = false;
+         _needsUpdateLocalMatrix = false;
   }
 
   updateMatrix() {
@@ -76,7 +77,7 @@ class Node {
     result.name = name;
     result.applyMatrix(_localMatrix);
     result.scaling = scaling.clone();
-    children.forEach((c) => result.children.add(c.clone()));
+    children.forEach((c) => result.add(c.clone()));
     return result;
   }
 }

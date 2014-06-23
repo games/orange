@@ -44,15 +44,10 @@ class TestGLTFScene extends Scene {
 
   void _loadModel(String url) {
     var loader = new GltfLoader2();
-    loader.load(graphicsDevice.ctx, url).then((nodes) {
+    loader.load(graphicsDevice.ctx, url).then((root) {
       _meshes.forEach((m) => remove(m));
-      // TODO fix me
-      Mesh root;
-      nodes.forEach((node) {
-        root = node;
-        add(node);
-      });
-      root.scaling.scale(0.01);
+      add(root);
+      root.scaling.scale(0.1);
       root.showBoundingBox = true;
       root.updateMatrix();
       var min = new Vector3.all(double.MAX_FINITE);
@@ -76,11 +71,11 @@ class TestGLTFScene extends Scene {
       root.children.forEach(combina);
       root.boundingInfo = new BoundingInfo(min, max);
       var box = root.boundingInfo.boundingBox;
-      var cp = box.center + new Vector3(0.0, root.boundingInfo.boundingSphere.radius, root.boundingInfo.boundingSphere.radius * 3);
-      camera.position.setFrom(cp);
+      var radius = root.boundingInfo.boundingSphere.radius;
+      camera.position.setFrom(box.center + new Vector3(0.0, radius, radius * 3));
       camera.lookAt(box.center);
 
-      _meshes = nodes;
+      _meshes.add(root);
     });
   }
 

@@ -12,6 +12,8 @@ class GltfLoader2 {
   Map<String, Joint> _joints;
   Map<String, List<String>> _childrenOfNode;
   Map<String, List<String>> _jointsOfSkeleton;
+  Vector3 _boundingBoxMin = new Vector3.all(double.MAX_FINITE);
+  Vector3 _boundingBoxMax = new Vector3.all(-double.MAX_FINITE);
 
   Map<String, VertexBuffer> _bufferViews;
 
@@ -48,6 +50,8 @@ class GltfLoader2 {
       }
     });
     nodes.forEach((node) => _buildNodeHierarchy(node));
+    var root = nodes.firstWhere((e) => e is Mesh) as Mesh;
+    root._boundingInfo = new BoundingInfo(_boundingBoxMin, _boundingBoxMax);
     return nodes;
   }
 
@@ -71,15 +75,15 @@ class GltfLoader2 {
       } else if (v.containsKey("camera")) {
         return;
       } else if (v.containsKey("meshes")) {
-        node = new Node(name: v["name"]);
+        node = new Mesh(name: v["name"]);
         v["meshes"].forEach((m) {
           node.add(_getMesh(doc, m));
         });
-      } else if(v.containsKey("instanceSkin")){
-        node = new Node(name: v["name"]);
+      } else if (v.containsKey("instanceSkin")) {
+        node = new Mesh(name: v["name"]);
         // TODO
       } else {
-        node = new Node(name: v["name"]);
+        node = new Mesh(name: v["name"]);
       }
       if (v.containsKey("matrix")) {
         node.applyMatrix(_mat4FromList(v["matrix"]));
@@ -157,6 +161,10 @@ class GltfLoader2 {
           size = 2;
           type = gl.UNSIGNED_SHORT;
           break;
+      }
+      if (attr["type"] == gl.FLOAT_VEC3) {
+        Vector3.min(_newVec3FromList(attr["min"]), _boundingBoxMin, _boundingBoxMin);
+        Vector3.max(_newVec3FromList(attr["max"]), _boundingBoxMax, _boundingBoxMax);
       }
       var data;
       if (type == gl.FLOAT) {
@@ -277,5 +285,9 @@ class GltfLoader2 {
       completer.complete(doc);
     });
     return completer.future;
+  }
+
+  _newVec3FromList(List l) {
+    return new Vector3(l[0].toDouble(), l[1].toDouble(), l[2].toDouble());
   }
 }

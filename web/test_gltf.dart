@@ -14,14 +14,10 @@ class TestGLTFScene extends Scene {
   void enter() {
 
     //    camera.position.setValues(-20.0, 2600.0, 1000.0);
-//    camera.position.setValues(100.0, 100.0, 300.0);
+    //    camera.position.setValues(100.0, 100.0, 300.0);
     camera.lookAt(new Vector3.zero());
 
-    var urls = ["../models/duck/duck.json", 
-                "../models/SuperMurdoch/SuperMurdoch.json", 
-                "../models/rambler/rambler.json", 
-                "../models/wine/wine.json",
-                "../models/axe/axe.json"];
+    var urls = ["../models/duck/duck.json", "../models/SuperMurdoch/SuperMurdoch.json", "../models/rambler/rambler.json", "../models/wine/wine.json", "../models/axe/axe.json"];
 
     var selector = new SelectElement();
     urls.forEach((u) {
@@ -54,9 +50,16 @@ class TestGLTFScene extends Scene {
     var loader = new GltfLoader2();
     loader.load(graphicsDevice.ctx, url).then((nodes) {
       _meshes.forEach((m) => remove(m));
+
+      // TODO fix me
+      Mesh root;
       nodes.forEach((node) {
+        root = node;
         add(node);
       });
+      var min = root.boundingInfo.boundingBox.minimumWorld;
+      var max = root.boundingInfo.boundingBox.maximumWorld;
+      root.position.setValues(-(max.x + min.x) / 2.0, -(max.y + min.y) / 2.0, -(max.z + min.z) / 2.0);
       _meshes = nodes;
     });
   }

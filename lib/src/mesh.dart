@@ -12,7 +12,6 @@ class Mesh extends Node {
   static const PRIMITIVE_TRIANGLE_STRIP = 5;
   static const PRIMITIVE_TRIANGLE_FAN = 6;
 
-  String name;
   Geometry _geometry;
   VertexBuffer faces;
   Material material;

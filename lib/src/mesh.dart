@@ -4,21 +4,12 @@ part of orange;
 
 class Mesh extends Node {
 
-  static const PRIMITIVE_POINTS = 0;
-  static const PRIMITIVE_LINES = 1;
-  static const PRIMITIVE_LINE_LOOP = 2;
-  static const PRIMITIVE_LINE_STRIP = 3;
-  static const PRIMITIVE_TRIANGLES = 4;
-  static const PRIMITIVE_TRIANGLE_STRIP = 5;
-  static const PRIMITIVE_TRIANGLE_FAN = 6;
-
   Geometry _geometry;
   VertexBuffer faces;
   Material material;
   Skeleton _skeleton;
   AnimationController animator;
-  // TODO need change to real primitive type
-  int primitive = PRIMITIVE_TRIANGLES;
+  int primitive = gl.TRIANGLES;
 
   bool _castShadows = false;
   bool _receiveShadows = false;

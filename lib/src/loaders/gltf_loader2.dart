@@ -6,56 +6,53 @@ part of orange;
 
 class GltfLoader2 {
   gl.RenderingContext _ctx;
-  Node _root;
+  Mesh _root;
   Uri _uri;
   Map<String, dynamic> _resources;
   Map<String, Joint> _joints;
   Map<String, List<String>> _childrenOfNode;
   Map<String, List<String>> _jointsOfSkeleton;
-  Vector3 _boundingBoxMin = new Vector3.all(double.MAX_FINITE);
-  Vector3 _boundingBoxMax = new Vector3.all(-double.MAX_FINITE);
 
-  Map<String, VertexBuffer> _bufferViews;
-
-  Future<List<Node>> load(gl.RenderingContext ctx, String url) {
+  Future<Mesh> load(gl.RenderingContext ctx, String url) {
     _ctx = ctx;
     _uri = Uri.parse(url);
-    _root = new Node();
+    _root = new Mesh();
     _resources = {};
     _joints = {};
     _childrenOfNode = {};
     _jointsOfSkeleton = {};
-    var completer = new Completer<List<Node>>();
+    var completer = new Completer<Mesh>();
     html.HttpRequest.getString(url).then((rsp) {
       var json = JSON.decode(rsp);
       var loadBufferFutures = [];
       json["buffers"].forEach((k, v) => loadBufferFutures.add(_loadBuffer(k, v)));
       Future.wait(loadBufferFutures).then((List buffers) {
-        _makeNodes(json);
-        var nodes = _makeScene(json);
-        completer.complete(nodes);
+        _parseNodes(json);
+        _parseScene(json);
+        completer.complete(_root);
       });
     }).catchError((Error e) => print([e, e.stackTrace]));
     return completer.future;
   }
 
-  List<Node> _makeScene(Map doc) {
-    var s = doc["scenes"][doc["scene"]];
+  void _parseScene(Map doc) {
+    var scene = doc["scenes"][doc["scene"]];
     var nodes = [];
-    s["nodes"].forEach((String name) {
+    scene["nodes"].forEach((String name) {
       var key = "Node_${name}";
       if (_resources.containsKey(key)) {
-        var node = _resources[key] as Node;
-        nodes.add(node);
+        nodes.add(_resources[key]);
       }
     });
     nodes.forEach((node) => _buildNodeHierarchy(node));
-    var root = nodes.firstWhere((e) => e is Mesh) as Mesh;
-    root._boundingInfo = new BoundingInfo(_boundingBoxMin, _boundingBoxMax);
-    return nodes;
+    if(nodes.length == 1) {
+      _root = nodes.first;
+    } else {
+      nodes.forEach((node) => _root.children.add(node));
+    }
   }
 
-  _buildNodeHierarchy(Node node) {
+  void _buildNodeHierarchy(Node node) {
     var childNames = _childrenOfNode[node.name];
     childNames.forEach((name) {
       var child = _resources["Node_${name}"];
@@ -64,7 +61,7 @@ class GltfLoader2 {
     });
   }
 
-  void _makeNodes(Map doc) {
+  void _parseNodes(Map doc) {
     var nodes = doc["nodes"];
     nodes.forEach((String k, Map v) {
       var node;
@@ -107,14 +104,14 @@ class GltfLoader2 {
       m["primitives"].forEach((p) {
         var child = new Mesh();
         child._geometry = new Geometry();
-        child.indices = _getAttributes(doc, p["indices"]);
+        child.indices = _getAttribute(doc, p["indices"], Semantics.indices);
         p["attributes"].forEach((String at, String ar) {
           if (at == "NORMAL") {
-            child._geometry.normals = _getAttributes(doc, ar);
+            child._geometry.normals = _getAttribute(doc, ar, Semantics.normal);
           } else if (at == "POSITION") {
-            child._geometry.positions = _getAttributes(doc, ar);
+            child._geometry.positions = _getAttribute(doc, ar, Semantics.position);
           } else if (at == "TEXCOORD_0") {
-            child._geometry.texCoords = _getAttributes(doc, ar);
+            child._geometry.texCoords = _getAttribute(doc, ar, Semantics.texcoords);
           }
         });
         child.material = _getMaterial(doc, p["material"]);
@@ -126,7 +123,7 @@ class GltfLoader2 {
     }
   }
 
-  VertexBuffer _getAttributes(Map doc, String name) {
+  VertexBuffer _getAttribute(Map doc, String name, String semantics) {
     var key = "VertexBuffer_${name}";
     if (_resources.containsKey(key)) {
       return _resources[key];
@@ -139,6 +136,9 @@ class GltfLoader2 {
           offset = attr["byteOffset"],
           count = attr["count"];
       switch (attr["type"]) {
+        case gl.FLOAT:
+          size = 1;
+          break;
         case gl.FLOAT_VEC2:
           size = 2;
           break;
@@ -158,13 +158,12 @@ class GltfLoader2 {
           size = 16;
           break;
         case gl.UNSIGNED_SHORT:
-          size = 2;
+          size = 1;
           type = gl.UNSIGNED_SHORT;
           break;
       }
-      if (attr["type"] == gl.FLOAT_VEC3) {
-        Vector3.min(_newVec3FromList(attr["min"]), _boundingBoxMin, _boundingBoxMin);
-        Vector3.max(_newVec3FromList(attr["max"]), _boundingBoxMax, _boundingBoxMax);
+      if (semantics == Semantics.position) {
+        // TODO bounding box ?
       }
       var data;
       if (type == gl.FLOAT) {

@@ -2,6 +2,7 @@ part of orange;
 
 
 
+// TODO FIXME
 class Pass {
   bool depthTest = true;
   bool depthMask = true;
@@ -14,18 +15,18 @@ class Pass {
 
   bind(gl.RenderingContext ctx) {
     ctx.useProgram(shader.program);
-    setState(ctx, gl.DEPTH_TEST, depthTest);
-    setState(ctx, gl.CULL_FACE, cullFaceEnable);
-    setState(ctx, gl.SAMPLE_ALPHA_TO_COVERAGE, true);
-//    ctx.depthMask(depthMask);
-    setState(ctx, gl.BLEND, blending);
+    enableState(ctx, gl.DEPTH_TEST, depthTest);
+    enableState(ctx, gl.CULL_FACE, cullFaceEnable);
+    enableState(ctx, gl.SAMPLE_ALPHA_TO_COVERAGE, true);
+    enableState(ctx, gl.BLEND, blending);
     if (blending) {
       ctx.blendEquation(blendEquation);
       ctx.blendFunc(sfactor, dfactor);
     }
+    ctx.depthMask(depthMask);
   }
 
-  setState(gl.RenderingContext ctx, int cap, bool enable) {
+  enableState(gl.RenderingContext ctx, int cap, bool enable) {
     if (enable) {
       ctx.enable(cap);
     } else {

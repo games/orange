@@ -14,8 +14,10 @@ class Camera extends Node {
   CameraController controller;
   Matrix4 _projectionMatrix;
   Matrix4 _viewMatrix;
+  Vector3 _target = new Vector3.zero();
 
   void lookAt(Vector3 target) {
+    _target = target;
     _viewMatrix = makeViewMatrix(position, target, Axis.UP);
     rotation = new Quaternion.fromRotation(_viewMatrix.getRotation());
   }
@@ -27,6 +29,7 @@ class Camera extends Node {
   Matrix4 get viewProjectionMatrix => _projectionMatrix * viewMatrix;
   Matrix4 get projectionMatrix => _projectionMatrix;
   Matrix4 get viewMatrix => _viewMatrix;
+  Vector3 get target => _target;
 }
 
 class PerspectiveCamera extends Camera {
@@ -67,7 +70,6 @@ class OrthographicCamera extends Camera {
     _projectionMatrix = makeOrthographicMatrix(left, right, bottom, top, near, far);
   }
 }
-
 
 
 

@@ -13,10 +13,6 @@ class TestGLTFScene extends Scene {
   @override
   void enter() {
 
-    //    camera.position.setValues(-20.0, 2600.0, 1000.0);
-    //    camera.position.setValues(100.0, 100.0, 300.0);
-    camera.lookAt(new Vector3.zero());
-
     var urls = ["../models/duck/duck.json", "../models/SuperMurdoch/SuperMurdoch.json", "../models/rambler/rambler.json", "../models/wine/wine.json", "../models/axe/axe.json"];
 
     var selector = new SelectElement();
@@ -48,21 +44,39 @@ class TestGLTFScene extends Scene {
 
   void _loadModel(String url) {
     var loader = new GltfLoader2();
-    loader.load(graphicsDevice.ctx, url).then((nodes) {
+    loader.load(graphicsDevice.ctx, url).then((root) {
       _meshes.forEach((m) => remove(m));
+      
+      add(root);
+      root.scaling.scale(0.1);
+      root.showBoundingBox = true;
+      root.updateMatrix();
+      var min = new Vector3.all(double.MAX_FINITE);
+      var max = new Vector3.all(-double.MAX_FINITE);
+      var bounding = root.boundingInfo;
+      if (bounding != null) {
+        Vector3.min(min, bounding.boundingBox.minimumWorld, min);
+        Vector3.max(max, bounding.boundingBox.maximumWorld, max);
+      }
+      var combina;
+      combina = (child) {
+        if (child is Mesh) {
+          bounding = child.boundingInfo;
+          if (bounding != null) {
+            Vector3.min(min, bounding.boundingBox.minimumWorld, min);
+            Vector3.max(max, bounding.boundingBox.maximumWorld, max);
+          }
+        }
+        child.children.forEach(combina);
+      };
+      root.children.forEach(combina);
+      root.boundingInfo = new BoundingInfo(min, max);
+      var box = root.boundingInfo.boundingBox;
+      var radius = root.boundingInfo.boundingSphere.radius;
+      camera.position.setFrom(box.center + new Vector3(0.0, radius, radius * 3));
+      camera.lookAt(box.center);
 
-      // TODO fix me
-      Mesh root;
-      nodes.forEach((node) {
-        root = node;
-        add(node);
-      });
-      var min = root.boundingInfo.boundingBox.minimumWorld;
-      var max = root.boundingInfo.boundingBox.maximumWorld;
-      root.position.setValues(-(max.x + min.x) / 2.0, -(max.y + min.y) / 2.0, -(max.z + min.z) / 2.0);
-      
-      
-      _meshes = nodes;
+      _meshes.add(root);
     });
   }
 

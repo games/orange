@@ -13,7 +13,7 @@ class PhysicsScene extends Scene {
   @override
   enter() {
     camera.position.setValues(0.0, 2.0, 10.0);
-//    camera.lookAt(new Vector3.zero());
+    camera.lookAt(new Vector3.zero());
 
     enablePhysics();
 

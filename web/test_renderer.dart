@@ -19,7 +19,7 @@ class TestLightingScene extends Scene {
   @override
   enter() {
     camera.position.setValues(0.0, 5.0, 8.0);
-//    camera.lookAt(new Vector3.zero());
+    camera.lookAt(new Vector3.zero());
 
     box = new Cube();
     box.position.setValues(-1.0, 0.5, 0.0);

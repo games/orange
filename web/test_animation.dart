@@ -16,7 +16,8 @@ class TestAnimationScene extends Scene {
 
     var controllers = html.querySelector("#controllers");
     camera.position.setValues(0.0, 2.0, 4.0);
-//    camera.lookAt(new Vector3.zero());
+    camera.lookAt(new Vector3.zero());
+    
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(graphicsDevice.ctx, url).then((m) {

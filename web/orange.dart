@@ -14,7 +14,7 @@ void main() {
   var canvas = html.querySelector("#container");
   var renderer = new GraphicsDevice(canvas);
   var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 2000.0);
-  camera.position.setValues(0.0, 0.0, 4.0);
+  camera.translate(0.0, 0.0, 4.0);
   var controls = new OrbitControls();
   controls.attach(camera, canvas);
 

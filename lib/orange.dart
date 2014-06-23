@@ -61,6 +61,7 @@ part 'src/loaders/obj_loader.dart';
 //part 'src/math/quaternion.dart';
 //part 'src/math/angle.dart';
 part 'src/math/utils.dart';
+part 'src/math/matrix.dart';
 
 part 'src/materials/material.dart';
 part 'src/materials/shader_material.dart';

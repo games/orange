@@ -31,13 +31,13 @@ class TestGLTFScene extends Scene {
 
     var light0 = new PointLight(0xffffff);
     light0.intensity = 0.9;
-    light0.position = new Vector3(-100.0, 300.0, 3000.0);
+    light0.translate(-100.0, 300.0, 3000.0);
     add(light0);
 
     var light1 = new DirectionalLight(0xffffff);
     light1.intensity = 0.2;
     light1.specular = new Color.fromHex(0xffffff);
-    light1.position = new Vector3(100.0, 300.0, 300.0);
+    light1.translate(100.0, 300.0, 300.0);
     light1.direction = new Vector3(-1.0, -1.0, 0.0).normalize();
     add(light1);
   }
@@ -48,7 +48,7 @@ class TestGLTFScene extends Scene {
       _meshes.forEach((m) => remove(m));
       
       add(root);
-      root.scaling.scale(0.1);
+      root.scale(0.1);
       root.showBoundingBox = true;
       root.updateMatrix();
       var min = new Vector3.all(double.MAX_FINITE);
@@ -73,7 +73,7 @@ class TestGLTFScene extends Scene {
       root.boundingInfo = new BoundingInfo(min, max);
       var box = root.boundingInfo.boundingBox;
       var radius = root.boundingInfo.boundingSphere.radius;
-      camera.position.setFrom(box.center + new Vector3(0.0, radius, radius * 3));
+      camera.translate(box.center + new Vector3(0.0, radius, radius * 3));
       camera.lookAt(box.center);
 
       _meshes.add(root);

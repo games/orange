@@ -15,7 +15,7 @@ class TestAnimationScene extends Scene {
   enter() {
 
     var controllers = html.querySelector("#controllers");
-    camera.position.setValues(0.0, 2.0, 4.0);
+    camera.translate(0.0, 2.0, 4.0);
     camera.lookAt(new Vector3.zero());
     
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
@@ -59,7 +59,7 @@ class TestAnimationScene extends Scene {
 
     var plane = _createPlane(6.0);// new Plane(width: 10, height: 10);
     plane.rotation.setAxisAngle(Axis.X, -PI / 2);
-    plane.position.setValues(0.0, -2.0, -3.5);
+    plane.translate(0.0, -2.0, -3.5);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     plane.material.diffuseColor = new Color.fromHex(0xFFFFFF);
@@ -68,7 +68,7 @@ class TestAnimationScene extends Scene {
     add(plane);
 
     var sphere = new SphereMesh(radius: 0.5);
-    sphere.position.setValues(2.0, 1.0, 0.0);
+    sphere.translate(2.0, 1.0, 0.0);
     sphere.material = new StandardMaterial();
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
@@ -91,7 +91,7 @@ class TestAnimationScene extends Scene {
     spotLight.angle = 3.0;
     spotLight.exponent = 2.0;
     spotLight.intensity = 0.1;
-    spotLight.position.setValues(5.0, 2.0, -1.0);
+    spotLight.translate(5.0, 2.0, -1.0);
     spotLight.direction = new Vector3(-2.8, -1.0, -0.3);
     spotLight.diffuse = new Color.fromHex(0x00ff00);
     spotLight.specular = new Color.fromHex(0xffffff);

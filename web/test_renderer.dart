@@ -64,7 +64,7 @@ class TestLightingScene extends Scene {
     });
 
     pointLight0 = new PointLight(0xffffff);
-    pointLight0.position = new Vector3(-5.0, 3.0, 0.0);
+    pointLight0.translate(new Vector3(-5.0, 3.0, 0.0));
     pointLight0.diffuse = new Color.fromHex(0xff0000);
     add(pointLight0);
 
@@ -72,7 +72,7 @@ class TestLightingScene extends Scene {
     spotLight.angle = 18.0;
     spotLight.exponent = 2.0;
     spotLight.intensity = 0.5;
-    spotLight.position.setValues(5.0, 2.0, 0.0);
+    spotLight.translate(5.0, 2.0, 0.0);
     spotLight.direction = new Vector3(-1.4, -1.0, 0.0);
     spotLight.diffuse = new Color.fromHex(0x00ff00);
     spotLight.specular = new Color.fromHex(0xffffff);
@@ -83,10 +83,14 @@ class TestLightingScene extends Scene {
   enterFrame(num elapsed, num interval) {
     super.enterFrame(elapsed, interval);
 
-    pointLight0.position.setValues(cos(elapsed / 1000) * 5.0, 3.0, sin(elapsed / 1000) * 5.0);
+    pointLight0.translate(cos(elapsed / 1000) * 5.0, 3.0, sin(elapsed / 1000) * 5.0);
 
-    sphere2.position = spotLight.position;
-    sphere3.position = pointLight0.position;
+    // TODO FIXME
+//    sphere2.position = spotLight.position;
+//    sphere3.position = pointLight0.position;
+    
+    
+    
 
 //    box.rotation.rotateY(interval / 1000);
 //    sphere.rotation.rotateY(interval / 1000);

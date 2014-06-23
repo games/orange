@@ -44,12 +44,13 @@ class Mesh extends Node {
       }
     }
     _boundingInfo._update(worldMatrix);
-    //    children.forEach((c) {
-    //      if (c is Mesh) c._updateBoundingInfo();
-    //    });
   }
 
   BoundingInfo get boundingInfo => _boundingInfo;
+  
+  void set boundingInfo(BoundingInfo val) {
+    _boundingInfo = val;
+  }
 
   void setPhysicsState(int impostor, [PhysicsBodyCreationOptions options]) {
     var scene = Director.instance.scene;

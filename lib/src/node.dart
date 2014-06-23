@@ -8,6 +8,7 @@ class Node {
   String name;
   Scene _scene;
   Vector3 position;
+  Vector3 scaling;
   Quaternion rotation;
   Matrix4 _localMatrix;
   Matrix4 worldMatrix;
@@ -17,6 +18,7 @@ class Node {
 
   Node({this.name}) {
     position = new Vector3.zero();
+    scaling = new Vector3.all(1.0);
     rotation = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();
     _needsUpdateLocalMatrix = true;
@@ -52,6 +54,7 @@ class Node {
   updateMatrix() {
     if (_needsUpdateLocalMatrix) {
       _localMatrix.setFromTranslationRotation(position, rotation);
+      _localMatrix.scale(scaling);
     }
     if (parent != null) {
       worldMatrix = parent.worldMatrix * _localMatrix;

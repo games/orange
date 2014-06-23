@@ -18,6 +18,7 @@ class BoundingBoxRenderer {
   
   BoundingBoxRenderer(this._graphicsDevice) {
     _material = new ShaderMaterial(_graphicsDevice);
+    _material.technique.pass.depthMask = false;
     _renderList = [];
     _vertices = new Cube().geometry.buffers[Semantics.position];
     _indices = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: indices.length, data: indices, target: gl.ELEMENT_ARRAY_BUFFER);

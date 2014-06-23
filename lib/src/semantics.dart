@@ -25,6 +25,7 @@ class Semantics {
   static const String texcoords = "uv";
   static const String texcoords2 = "uv2";
   static const String normal = "normal";
+  static const String indices = "indices";
   static const String tangent = "aTangent";
   static const String color = "color";
   // BONES

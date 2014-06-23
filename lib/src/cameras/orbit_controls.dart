@@ -14,7 +14,6 @@ class OrbitControls implements CameraController {
 
   Camera object;
   html.Element element;
-  Vector3 center = new Vector3.zero();
   bool userZoom = true;
   double userZoomSpeed = 1.0;
   bool userRotate = true;
@@ -97,6 +96,8 @@ class OrbitControls implements CameraController {
   }
 
   void update() {
+    if(object == null) return;
+    var center = object.target;
     var position = object.position;
     var offset = position - center;
     // angle from z-axis around y-axis
@@ -182,7 +183,6 @@ class OrbitControls implements CameraController {
   }
 
 }
-
 
 
 

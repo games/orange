@@ -53,6 +53,7 @@ class Director {
         }
         node.updateMatrix();
       });
+
       //physics
       if (_scene._physicsEngine != null) {
         _scene._physicsEngine._runOneStep(interval / 1000.0);

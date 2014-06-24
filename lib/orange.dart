@@ -76,7 +76,6 @@ part 'src/shaders/shadowmap_shader.dart';
 part 'src/shaders/color_shader.dart';
 
 part 'src/lights/light.dart';
-part 'src/lights/shadow_renderer.dart';
 
 part 'src/physics/physics_engine.dart';
 part 'src/physics/plugins/cannonjs.dart';
@@ -84,8 +83,9 @@ part 'src/physics/plugins/cannonjs.dart';
 part 'src/culling/bounding_info.dart';
 part 'src/culling/bounding_box.dart';
 part 'src/culling/bounding_sphere.dart';
-part 'src/culling/bounding_box_renderer.dart';
 
+part 'src/rendering/shadow_renderer.dart';
+part 'src/rendering/bounding_box_renderer.dart';
 part 'src/rendering/rendering_group.dart';
 
 

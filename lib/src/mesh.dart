@@ -20,8 +20,8 @@ class Mesh extends Node {
   Mesh({String name}) : super(name: name);
 
   @override
-  updateMatrix() {
-    super.updateMatrix();
+  updateMatrix([bool updateChildren = true]) {
+    super.updateMatrix(updateChildren);
     _updateBoundingInfo();
   }
 

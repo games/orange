@@ -19,14 +19,6 @@ class GraphicsDevice {
 
   GraphicsDevice(this._renderingCanvas) {
     ctx = _renderingCanvas.getContext3d(preserveDrawingBuffer: true);
-    //    ctx.enable(gl.DEPTH_TEST);
-    //    ctx.depthMask(true);
-    //    ctx.depthFunc(gl.LEQUAL);
-    //    ctx.frontFace(gl.CCW);
-    //    ctx.cullFace(gl.BACK);
-    //    ctx.enable(gl.CULL_FACE);
-    //    ctx.clearDepth(1.0);
-
     depthWrite = true;
     depthBuffer = true;
     ctx.depthFunc(gl.LEQUAL);
@@ -147,47 +139,6 @@ class GraphicsDevice {
     // reset
     // TODO : should dispose the renderTargets ?
     _renderTargets.clear();
-  }
-
-  _renderNode(Node node) {
-    _textureIndex = -1;
-    _newMaxEnabledArray = -1;
-    if (node is Mesh) {
-      _drawMesh(node);
-    }
-    node.children.forEach((c) => _renderNode(c));
-  }
-
-  _drawMesh(Mesh mesh) {
-    var material = mesh.material;
-    if (mesh.faces != null && material != null && material.ready(mesh)) {
-      var shader = material.technique.pass.shader;
-      use(material.technique.pass);
-      material.bind(mesh: mesh);
-      if (mesh.geometry != null) {
-        var geometry = mesh.geometry;
-        shader.attributes.forEach((semantic, attrib) {
-          if (geometry.buffers.containsKey(semantic)) {
-            geometry.buffers[semantic].enable(ctx, attrib);
-            if (attrib.location > _newMaxEnabledArray) {
-              _newMaxEnabledArray = attrib.location;
-            }
-          }
-        });
-      }
-      for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
-        ctx.disableVertexAttribArray(i);
-      }
-      _lastMaxEnabledArray = _newMaxEnabledArray;
-
-      mesh.faces.bind(ctx);
-      if (material.wireframe) {
-        ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
-      } else {
-        ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
-      }
-      material.unbind();
-    }
   }
 
   bindUniform(String symbol, value) {

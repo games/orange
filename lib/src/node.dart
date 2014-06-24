@@ -112,7 +112,7 @@ class Node {
     _needsUpdateLocalMatrix = false;
   }
 
-  updateMatrix() {
+  updateMatrix([bool updateChildren = true]) {
     if (_needsUpdateLocalMatrix) {
       _localMatrix = recompose(_scaling, _rotation, position);
     }
@@ -121,7 +121,7 @@ class Node {
     } else {
       worldMatrix = _localMatrix.clone();
     }
-    children.forEach((c) => c.updateMatrix());
+    if (updateChildren) children.forEach((c) => c.updateMatrix(updateChildren));
   }
 
   Scene get scene => _scene;
@@ -143,8 +143,6 @@ class Node {
   void dispose() {
   }
 }
-
-
 
 
 

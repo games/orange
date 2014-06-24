@@ -39,6 +39,7 @@ class Director {
 
   _prepare(List<Node> nodes, num interval) {
     nodes.forEach((node) {
+      node.updateMatrix(false);
       if (node is Mesh) {
         if (node.animator != null) node.animator.evaluate(interval);
         if (node.material != null) graphicsDevice._renderGroup.register(node);
@@ -61,7 +62,6 @@ class Director {
       if (_scene._physicsEngine != null) {
         _scene._physicsEngine._runOneStep(interval / 1000.0);
       }
-      _scene.nodes.forEach((n) => n.updateMatrix());
 
       // shadows
       scene._lights.forEach((light) {

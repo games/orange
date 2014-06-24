@@ -8,8 +8,9 @@ class Joint extends Node {
   Matrix4 _bindPoseMatrix;
   Matrix4 _inverseBindMatrix;
 
-  updateMatrix() {
-    super.updateMatrix();
+  @override
+  updateMatrix([bool updateChildren = true]) {
+    super.updateMatrix(updateChildren);
     if (_bindPoseMatrix == null) {
       _bindPoseMatrix = _localMatrix.clone();
     }

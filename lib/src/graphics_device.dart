@@ -102,45 +102,82 @@ class GraphicsDevice {
     if (_renderTargets.length > 0) restoreDefaultFramebuffer();
     clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
 
-    var camera = scene.camera;
+    var nonOpaquePasses = {};
     _renderGroup._meshesPerPass.forEach((Pass pass, List<Mesh> meshes) {
-      use(pass);
-
-      var shader = pass.shader;
-      bindUniform(Semantics.viewMat, camera.viewMatrix.storage);
-      bindUniform(Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
-      bindUniform(Semantics.projectionMat, camera.projectionMatrix.storage);
-
-      meshes.forEach((Mesh mesh) {
-        _textureIndex = -1;
-        if (mesh.faces != null) {
-          var material = mesh.material;
-          material.bind(mesh: mesh);
-          if (mesh.geometry != null) {
-            var geometry = mesh.geometry;
-            shader.attributes.forEach((semantic, attrib) {
-              if (geometry.buffers.containsKey(semantic)) {
-                geometry.buffers[semantic].enable(ctx, attrib);
-              }
-            });
-          }
-          mesh.faces.bind(ctx);
-          if (material.wireframe) {
-            ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
-          } else {
-            ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
-          }
-          material.unbind();
-        }
-      });
+      if (pass.blending) {
+        nonOpaquePasses[pass] = meshes;
+      } else {
+        _renderMeshes(scene, pass, meshes);
+      }
     });
-
+    nonOpaquePasses.forEach((Pass pass, List<Mesh> meshes) {
+      // TODO sorting
+      _renderMeshes(scene, pass, meshes);
+    });
 
     // reset
     // TODO : should dispose the renderTargets ?
     _renderTargets.clear();
   }
 
+  _renderMeshes(Scene scene, Pass pass, List<Mesh> meshes) {
+    _lastMaxEnabledArray = -1;
+    use(pass);
+    var camera = scene.camera;
+    var shader = pass.shader;
+    bindUniform(Semantics.viewMat, camera.viewMatrix.storage);
+    bindUniform(Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
+    bindUniform(Semantics.projectionMat, camera.projectionMatrix.storage);
+
+    meshes.forEach((Mesh mesh) {
+      _textureIndex = -1;
+      if (mesh.faces != null) {
+        var material = mesh.material;
+        var globalIntensity = 1.0;
+        globalIntensity *= material.alpha;
+        if (globalIntensity < 0.00001) return;
+        if (globalIntensity < 1.0 && !pass.blending) {
+          ctx.enable(gl.BLEND);
+          ctx.blendEquation(gl.FUNC_ADD);
+          ctx.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+          _renderMesh(mesh, shader);
+          ctx.disable(gl.BLEND);
+        } else {
+          _renderMesh(mesh, shader);
+        }
+      }
+    });
+  }
+
+  _renderMesh(Mesh mesh, Shader shader) {
+    _newMaxEnabledArray = -1;
+    var material = mesh.material;
+    material.bind(mesh: mesh);
+    if (mesh.geometry != null) {
+      var geometry = mesh.geometry;
+      shader.attributes.forEach((semantic, attrib) {
+        if (geometry.buffers.containsKey(semantic)) {
+          geometry.buffers[semantic].enable(ctx, attrib);
+          if (attrib.location > _newMaxEnabledArray) {
+            _newMaxEnabledArray = attrib.location;
+          }
+        }
+      });
+    }
+    for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
+      ctx.disableVertexAttribArray(i);
+    }
+    mesh.faces.bind(ctx);
+    if (material.wireframe) {
+      ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
+    } else {
+      ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+    }
+    _lastMaxEnabledArray = _newMaxEnabledArray;
+    material.unbind();
+  }
+
+  // TODO needs to improve
   bindUniform(String symbol, value) {
     var shader = _currentPass.shader;
     if (!shader.ready) return;

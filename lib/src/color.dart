@@ -48,4 +48,7 @@ class Color {
   double get green => storage[1];
   double get blue => storage[2];
   double get alpha => storage[3];
+  void set alpha(double val) {
+    storage[3] = val;
+  }
 }

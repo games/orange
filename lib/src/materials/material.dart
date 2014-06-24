@@ -12,6 +12,7 @@ class Material {
   Color ambientColor;
   Texture ambientTexture;
   Color emissiveColor;
+  double alpha = 1.0;
   // TODO
   Texture opacityTexture;
   Texture reflectionTexture;
@@ -24,9 +25,9 @@ class Material {
   bool ready([Mesh mesh]) => false;
   void bind({Mesh mesh, Matrix4 worldMatrix}) {}
   void unbind() {}
+
+  bool get needAlphaBlending => alpha < 1.0 || opacityTexture != null;
 }
-
-
 
 
 

@@ -53,8 +53,7 @@ class GltfLoader2 {
   }
 
   void _buildNodeHierarchy(Node node) {
-    var childrenIds = _childrenOfNode[node.name];
-    childrenIds.forEach((id) {
+    _childrenOfNode[node.name].forEach((id) {
       var child = _resources["Node_${id}"];
       if (child.parent != null) {
         node.add(child.clone());
@@ -101,7 +100,7 @@ class GltfLoader2 {
   Node _getMesh(Map doc, String id) {
     var key = "Mesh_${id}";
     if (_resources.containsKey(key)) {
-      return _resources[key];
+      return _resources[key].clone();
     } else {
       var m = doc["meshes"][id];
       var node = new Node(name: id);
@@ -204,12 +203,17 @@ class GltfLoader2 {
       var technique = doc["materials"][name]["instanceTechnique"];
       material.technique = _getTechnique(doc, technique["technique"]);
       var values = technique["values"];
+      var transparency = values["transparency"];
+      if (transparency is num) {
+        material.alpha = transparency;
+      }
       var diffuse = values["diffuse"];
       if (diffuse is String) {
         material.diffuseTexture = _getTexture(doc, diffuse);
       } else if (diffuse is List) {
         material.diffuseColor = new Color.fromList(diffuse);
       }
+      material.diffuseColor.alpha *= material.alpha;
       var ambient = values["ambient"];
       if (ambient is String) {
         material.ambientTexture = _getTexture(doc, ambient);
@@ -267,15 +271,16 @@ class GltfLoader2 {
       technique.passes = {};
       doc["techniques"][name]["passes"].forEach((String pn, Map p) {
         var pass = new Pass();
-        if (p.containsKey("blendEnable")) pass.blending = p["blendEnable"] == 1;
-        if (p.containsKey("blendEquation")) pass.blendEquation = p["blendEquation"];
-        if (p.containsKey("blendFunc")) {
-          pass.dfactor = p["blendFunc"]["dfactor"];
-          pass.sfactor = p["blendFunc"]["sfactor"];
+        var states = p["states"];
+        if (states.containsKey("blendEnable")) pass.blending = states["blendEnable"] == 1;
+        if (states.containsKey("blendEquation")) pass.blendEquation = states["blendEquation"];
+        if (states.containsKey("blendFunc")) {
+          pass.dfactor = states["blendFunc"]["dfactor"];
+          pass.sfactor = states["blendFunc"]["sfactor"];
         }
-        if (p.containsKey("cullFaceEnable")) pass.cullFaceEnable = p["cullFaceEnable"] == 1;
-        if (p.containsKey("depthMask")) pass.depthMask = p["depthMask"] == 1;
-        if (p.containsKey("depthTestEnable")) pass.depthTest = p["depthTestEnable"] == 1;
+        if (states.containsKey("cullFaceEnable")) pass.cullFaceEnable = states["cullFaceEnable"] == 1;
+        if (states.containsKey("depthMask")) pass.depthMask = states["depthMask"] == 1;
+        if (states.containsKey("depthTestEnable")) pass.depthTest = states["depthTestEnable"] == 1;
         // TODO more..
         technique.passes[pn] = pass;
       });

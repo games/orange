@@ -25,8 +25,8 @@ class BoundingBoxRenderer {
   }
 
   void render() {
-    if (!_material.ready()) return;
     if (_renderList.length == 0) return;
+    if (!_material.ready()) return;
 
     var ctx = _graphicsDevice.ctx;
     var shader = _material.technique.pass.shader;

@@ -5,6 +5,22 @@ var defaultSampler = new Sampler();
 
 
 class Texture {
+  static int NEAREST_SAMPLINGMODE = 1;
+  static int BILINEAR_SAMPLINGMODE = 2;
+  static int TRILINEAR_SAMPLINGMODE = 3;
+
+  static int EXPLICIT_MODE = 0;
+  static int SPHERICAL_MODE = 1;
+  static int PLANAR_MODE = 2;
+  static int CUBIC_MODE = 3;
+  static int PROJECTION_MODE = 4;
+  static int SKYBOX_MODE = 5;
+
+  static int CLAMP_ADDRESSMODE = 0;
+  static int WRAP_ADDRESSMODE = 1;
+  static int MIRROR_ADDRESSMODE = 2;
+
+
   String source;
   gl.Texture data;
   int format;
@@ -16,7 +32,13 @@ class Texture {
   int height;
   Sampler sampler;
   bool ready = false;
-  
+
+  bool getAlphaFromRGB = false;
+  bool isCube = false;
+  double coordinatesIndex = 0.0;
+  int coordinatesMode = SPHERICAL_MODE;
+  double level = 1.0;
+
   // TODO
   void dispose() {
     unload(source);

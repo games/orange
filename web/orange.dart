@@ -6,6 +6,7 @@ import 'test_physics.dart';
 import 'test_animation.dart';
 import 'test_lighting.dart';
 import 'test_gltf.dart';
+import 'test_textures.dart';
 
 
 
@@ -27,8 +28,9 @@ void main() {
                 new TestBoundingBoxScene(camera), 
                 new TestLightingScene(camera), 
                 new PhysicsScene(camera),
-                new TestGLTFScene(camera)];
-  var i = 4;
+                new TestGLTFScene(camera),
+                new TestTexturesScene(camera)];
+  var i = 5;
   
   director.replace(scenes[i]);
   director.run();

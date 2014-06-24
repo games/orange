@@ -32,6 +32,7 @@ class GraphicsDevice {
 
     // extensions
     _caps.standardDerivatives = (ctx.getExtension('OES_standard_derivatives') != null);
+    
     _caps.s3tc = ctx.getExtension('WEBGL_compressed_texture_s3tc');
     _caps.textureFloat = (ctx.getExtension('OES_texture_float') != null);
     _caps.textureAnisotropicFilterExtension = ctx.getExtension('EXT_texture_filter_anisotropic');
@@ -114,7 +115,7 @@ class GraphicsDevice {
       // TODO sorting
       _renderMeshes(scene, pass, meshes);
     });
-
+    
     // reset
     // TODO : should dispose the renderTargets ?
     _renderTargets.clear();
@@ -128,6 +129,7 @@ class GraphicsDevice {
     bindUniform(Semantics.viewMat, camera.viewMatrix.storage);
     bindUniform(Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
     bindUniform(Semantics.projectionMat, camera.projectionMatrix.storage);
+    bindUniform(Semantics.cameraPosition, camera.position.storage);
 
     meshes.forEach((Mesh mesh) {
       _textureIndex = -1;

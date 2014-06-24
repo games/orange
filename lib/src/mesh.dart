@@ -117,7 +117,7 @@ class Mesh extends Node {
     var result = new Mesh();
     result.name = name;
     result.applyMatrix(_localMatrix);
-    result.scaling = scaling.clone();
+    result._scaling = _scaling.clone();
     if(_geometry != null) result._geometry = _geometry.clone();
     result.faces = faces;
     result.material = material;
@@ -129,6 +129,11 @@ class Mesh extends Node {
     result.showBoundingBox = showBoundingBox;
     children.forEach((c) => result.add(c.clone()));
     return result;
+  }
+  
+  @override
+  void dispose() {
+    //TODO dispose resources
   }
 }
 

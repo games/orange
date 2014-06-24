@@ -15,7 +15,7 @@ class TestBoundingBoxScene extends Scene {
   @override
   void enter() {
 
-    camera.position.setValues(0.0, 2.0, 4.0);
+    camera.setTranslation(0.0, 2.0, 4.0);
     camera.lookAt(new Vector3.zero());
 
     var material = new StandardMaterial();
@@ -23,13 +23,13 @@ class TestBoundingBoxScene extends Scene {
     material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
 
     box = new Cube(width: 0.5, height: 0.2, depth: 1);
-    box.position.setValues(0.0, 0.0, -3.0);
+    box.setTranslation(0.0, 0.0, -3.0);
     box.material = material;
     box.showBoundingBox = true;
     add(box);
 
     var sphere = new SphereMesh(radius: 0.5);
-    sphere.position.setValues(2.0, 0.0, 0.0);
+    sphere.setTranslation(2.0, 0.0, 0.0);
     sphere.material = new StandardMaterial();
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
@@ -37,8 +37,8 @@ class TestBoundingBoxScene extends Scene {
     add(sphere);
 
     var plane = new PlaneMesh(width: 2, height: 2);
-    plane.rotation.setAxisAngle(Axis.X, -PI / 2);
-    plane.position.setValues(0.0, 0.0, 0.0);
+    plane.rotate(Axis.X, -PI / 2);
+    plane.setTranslation(0.0, 0.0, 0.0);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
@@ -53,8 +53,8 @@ class TestBoundingBoxScene extends Scene {
     duplicateBox.onClick.listen((e) {
       var rnd = new Random();
       var newBox = box.clone();
-      newBox.position.setValues(rnd.nextDouble() * 4.0 - 2.0, rnd.nextDouble() * 3.0 - 1.0, rnd.nextDouble() * 2.0 - 1.0);
-      newBox.scaling.scale(rnd.nextDouble());
+      newBox.setTranslation(rnd.nextDouble() * 4.0 - 2.0, rnd.nextDouble() * 3.0 - 1.0, rnd.nextDouble() * 2.0 - 1.0);
+      newBox.scale(rnd.nextDouble());
       add(newBox);
     });
     duplicateBox.text = "Duplicate";
@@ -65,11 +65,11 @@ class TestBoundingBoxScene extends Scene {
   void enterFrame(num elapsed, num interval) {
     nodes.forEach((node) {
       if (node is Mesh) {
-        node.rotation.setAxisAngle(Axis.Y, sin(elapsed / 1000) * 2 * PI);
+        node.rotate(Axis.Y, sin(elapsed / 1000) * 2 * PI);
       }
     });
 
-    box.position.setValues(0.0, 0.0, sin(elapsed / 1000) * 2.0);
+    box.position = new Vector3(0.0, 0.0, sin(elapsed / 1000) * 2.0);
   }
   
   @override

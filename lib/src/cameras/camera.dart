@@ -18,8 +18,8 @@ class Camera extends Node {
 
   void lookAt(Vector3 target) {
     _target = target;
-    _viewMatrix = makeViewMatrix(position, target, Axis.UP);
-    rotation = new Quaternion.fromRotation(_viewMatrix.getRotation());
+    _viewMatrix = makeViewMatrix(_position, target, Axis.UP);
+    _rotation = new Quaternion.fromRotation(_viewMatrix.getRotation());
   }
 
   void update() {

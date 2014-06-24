@@ -18,18 +18,18 @@ class TestLightingScene extends Scene {
 
   @override
   enter() {
-    camera.position.setValues(0.0, 5.0, 8.0);
+    camera.setTranslation(0.0, 5.0, 8.0);
     camera.lookAt(new Vector3.zero());
 
     box = new Cube();
-    box.position.setValues(-1.0, 0.5, 0.0);
+    box.setTranslation(-1.0, 0.5, 0.0);
     box.material = new StandardMaterial();
     box.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     box.material.diffuseColor = new Color.fromHex(0xffffff);
     add(box);
 
     sphere = new SphereMesh();
-    sphere.position.setValues(2.0, 1.0, 0.0);
+    sphere.setTranslation(2.0, 1.0, 0.0);
     sphere.material = new StandardMaterial();
     sphere.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
     sphere.material.diffuseColor = new Color.fromList([1.0, 1.0, 1.0]);
@@ -48,8 +48,8 @@ class TestLightingScene extends Scene {
     add(sphere3);
 
     plane = new PlaneMesh(width: 10, height: 10);
-    plane.rotation.setAxisAngle(Axis.X, -PI / 2);
-    plane.position.setValues(0.0, 0.0, 0.0);
+    plane.rotate(Axis.X, -PI / 2);
+    plane.setTranslation(0.0, 0.0, 0.0);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
     plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
@@ -82,18 +82,11 @@ class TestLightingScene extends Scene {
   @override
   enterFrame(num elapsed, num interval) {
     super.enterFrame(elapsed, interval);
-
-    pointLight0.translate(cos(elapsed / 1000) * 5.0, 3.0, sin(elapsed / 1000) * 5.0);
-
-    // TODO FIXME
-//    sphere2.position = spotLight.position;
-//    sphere3.position = pointLight0.position;
-    
-    
-    
-
-//    box.rotation.rotateY(interval / 1000);
-//    sphere.rotation.rotateY(interval / 1000);
+    pointLight0.setTranslation(cos(elapsed / 1000) * 5.0, 3.0, sin(elapsed / 1000) * 5.0);
+    sphere2.position = spotLight.position;
+    sphere3.position = pointLight0.position;
+    //    box.rotation.rotateY(interval / 1000);
+    //    sphere.rotation.rotateY(interval / 1000);
     //    camera.update(interval);
     //    camera.position.setValues(cos(elapsed / 1000) * 8.0, 5.0, sin(elapsed / 1000) * 8.0);
     //    camera.lookAt(new Vector3.zero());

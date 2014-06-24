@@ -50,7 +50,7 @@ void main() {
   canvas = html.querySelector("#container");
   ctx = canvas.getContext3d();
   camera = new PerspectiveCamera(canvas.width / canvas.height);
-  camera.position.setValues(0.0, _cameraY, _cameraZ);
+  camera.setTranslation(0.0, _cameraY, _cameraZ);
   camera.lookAt(new Vector3.zero());
   sceneShader = new Shader(ctx, vertSrc, fragSrc, common: commSrc);
   depthShader = new Shader(ctx, depthMapVS, depthMapFS, common: depthMapComm);
@@ -63,25 +63,25 @@ void main() {
   ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
 
   light = new Cube(width: 10, height: 2, depth: 5);
-  light.position.setValues(5.0, 8.0, 8.0);
+  light.setTranslation(5.0, 8.0, 8.0);
   lightProj = new Matrix4.perspective(90.0, 1.0, 0.01, 100.0);
   lightView = new Matrix4.identity().lookAt(light.position, new Vector3.zero(), new Vector3(0.0, 1.0, 0.0));
 
   ground = _createPlane(10.0);
-  ground.position.setValues(0.0, -0.9, 0.0);
-  ground.rotation.rotateX(-Math.PI / 2);
+  ground.setTranslation(0.0, -0.9, 0.0);
+  ground.rotateX(-Math.PI / 2);
 
   mesh1 = new Cylinder(topRadius: 1, bottomRadius: 1, height: 5);
-  mesh1.position.setValues(-3.0, 0.0, -1.0);
+  mesh1.setTranslation(-3.0, 0.0, -1.0);
 
   mesh2 = new Cone(bottomRadius: 1, height: 2);
-  mesh2.position.setValues(3.0, 4.0, 0.0);
+  mesh2.setTranslation(3.0, 4.0, 0.0);
 
   var objLoader = new ObjLoader();
   objLoader.load("../models/obj/teapot.obj").then((m) {
     teapot = m;
     teapot.material = new Material();
-    teapot.position.setValues(0.0, 0.0, 2.0);
+    teapot.setTranslation(0.0, 0.0, 2.0);
     teapot.material.shininess = 64.0;
     teapot.material.specularColor = new Color.fromList([0.8, 0.8, 0.8]);
     teapot.material.ambientColor = new Color.fromList([0.3, 0.3, 0.3]);
@@ -169,7 +169,7 @@ void _renderMapping() {
   ctx.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   ctx.cullFace(gl.BACK);
 
-  camera.position.setValues(0.0, 0.0, 3.5);
+  camera.setTranslation(0.0, 0.0, 3.5);
   camera.lookAt(new Vector3.zero());
   camera.updateMatrix();
 
@@ -188,7 +188,7 @@ void _animate(num elapsed) {
   var interval = elapsed - _lastElapsed;
   if (rotateCamera) {
     camera.update(interval);
-    camera.position.setValues(Math.cos(elapsed / 1000) * _cameraZ, _cameraY, Math.sin(elapsed / 1000) * _cameraZ);
+    camera.setTranslation(Math.cos(elapsed / 1000) * _cameraZ, _cameraY, Math.sin(elapsed / 1000) * _cameraZ);
     camera.lookAt(new Vector3.zero());
   } else {
     camera.position.setValues(0.0, _cameraY, _cameraZ);
@@ -196,7 +196,7 @@ void _animate(num elapsed) {
   }
   
   if(rotateLight) {
-    light.position.setValues(Math.cos(elapsed / 1000) * 5.0, 8.0, Math.sin(elapsed / 1000) * 8.0);
+    light.setTranslation(Math.cos(elapsed / 1000) * 5.0, 8.0, Math.sin(elapsed / 1000) * 8.0);
     lightView = new Matrix4.identity().lookAt(light.position, new Vector3.zero(), new Vector3(0.0, 1.0, 0.0));
   }
   

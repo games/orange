@@ -21,7 +21,7 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
     var cannon = JS.context["CANNON"];
     _world = new JS.JsObject(cannon["World"]);
     _world["broadphase"] = new JS.JsObject(cannon["NaiveBroadphase"]);
-    
+
     var solver = new JS.JsObject(cannon["GSSolver"]);
     solver["iterations"] = iterations;
     _world["solver"] = solver;
@@ -69,16 +69,10 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
   void runOneStep(double delta) {
     _world.callMethod("step", [delta]);
     _registeredMeshes.forEach((CannonMesh mesh) {
-      mesh.mesh.position.x = mesh.body["position"]["x"].toDouble();
-      mesh.mesh.position.y = mesh.body["position"]["z"].toDouble();
-      mesh.mesh.position.z = mesh.body["position"]["y"].toDouble();
-      if (mesh.mesh.rotation == null) {
-        mesh.mesh.rotation = new Quaternion.identity();
-      }
-      mesh.mesh.rotation.x = mesh.body["quaternion"]["x"].toDouble();
-      mesh.mesh.rotation.y = mesh.body["quaternion"]["z"].toDouble();
-      mesh.mesh.rotation.z = mesh.body["quaternion"]["y"].toDouble();
-      mesh.mesh.rotation.w = -mesh.body["quaternion"]["w"].toDouble();
+      var pos = mesh.body["position"];
+      mesh.mesh.setTranslation(pos["x"].toDouble(), pos["z"].toDouble(), pos["y"].toDouble());
+      var rot = mesh.body["quaternion"];
+      mesh.mesh.setQuaternion(rot["x"].toDouble(), rot["z"].toDouble(), rot["y"].toDouble(), -rot["w"].toDouble());
     });
   }
 
@@ -156,9 +150,9 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
   _createRigidBodyFromShape(JS.JsObject shape, Mesh mesh, double mass, double friction, double restitution) {
     var cannon = JS.context["CANNON"];
     Quaternion initialRotation = null;
-    if (mesh.rotation != null) {
-      initialRotation = mesh.rotation.clone();
-      mesh.rotation = new Quaternion.identity();
+    if (mesh._rotation != null) {
+      initialRotation = mesh._rotation.clone();
+      mesh._rotation = new Quaternion.identity();
     }
     var material = _addMaterial(friction, restitution);
     var body = new JS.JsObject(cannon["RigidBody"], [mass, shape, material]);

@@ -113,12 +113,12 @@ class WglLoader {
         joint.parentId = jointDesc["parent"];
         joint.skinned = jointDesc["skinned"];
         joint.position = new Vector3.fromList(jointDesc["pos"]);
-        joint.rotation = new Quaternion.fromList(jointDesc["rot"]);
+        joint._rotation = new Quaternion.fromList(jointDesc["rot"]);
         joint.bindPoseMat = new Matrix4.fromList(jointDesc["bindPoseMat"]);
         joint.jointMat = new Matrix4.identity();
         if(joint.parentId == -1) {
           joint.worldPos = joint.position;
-          joint.worldRot = joint.rotation;
+          joint.worldRot = joint._rotation;
         } else {
           joint.worldPos = new Vector3.zero();
           joint.worldRot = new Quaternion.identity();

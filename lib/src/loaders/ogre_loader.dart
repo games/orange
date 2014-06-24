@@ -93,7 +93,7 @@ class OgreLoader {
       }
       joint.name = j["name"];
       joint.position = new Vector3.array(j["position"]);
-      joint.rotation = _parseRotation(j["rotation"]);
+      joint._rotation = _parseRotation(j["rotation"]);
       skeleton.joints.add(joint);
     });
     skeleton.buildHierarchy();

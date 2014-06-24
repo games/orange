@@ -8,8 +8,8 @@ class Node {
   String name;
   Scene _scene;
   Vector3 _position;
-  Vector3 scaling;
-  Quaternion rotation;
+  Vector3 _scaling;
+  Quaternion _rotation;
   Matrix4 _localMatrix;
   Matrix4 worldMatrix;
   Node parent;
@@ -18,8 +18,8 @@ class Node {
 
   Node({this.name}) {
     _position = new Vector3.zero();
-    scaling = new Vector3.all(1.0);
-    rotation = new Quaternion.identity();
+    _scaling = new Vector3.all(1.0);
+    _rotation = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();
     _needsUpdateLocalMatrix = true;
     worldMatrix = new Matrix4.identity();
@@ -27,39 +27,70 @@ class Node {
   }
 
   Vector3 get position => _position;
+  Vector3 get scaling => _scaling;
+  Quaternion get rotation => _rotation;
+
+  void set position(Vector3 val) {
+    val.copyInto(_position);
+    _needsUpdateLocalMatrix = true;
+  }
 
   void translate(dynamic x, [double y = 0.0, double z = 0.0]) {
     if (x is Vector3) {
-      _position.setFrom(x);
+      _position.add(x);
     } else {
-      _position.setValues(x, y, z);
+      _position.x += x;
+      _position.y += y;
+      _position.z += z;
     }
     _needsUpdateLocalMatrix = true;
   }
 
   void rotate(Vector3 axis, double radians) {
-    //    _localMatrix.setIdentity();
-    //    _localMatrix.rotate(axis, angle);
-
-    rotation.setAxisAngle(axis, radians);
-
+    _rotation.setAxisAngle(axis, radians);
     _needsUpdateLocalMatrix = true;
   }
 
-  void scale(dynamic x, [double y = null, double z = null]) {
-    //    _localMatrix.setIdentity();
-    //    _localMatrix.scale(x, y, z);
-    if (x is Vector3) {
-      scaling.multiply(x);
+  void rotateX(double rad) {
+    MathUtils.rotateX(_rotation, rad);
+    _needsUpdateLocalMatrix = true;
+  }
+
+  void rotateY(double rad) {
+    MathUtils.rotateY(_rotation, rad);
+    _needsUpdateLocalMatrix = true;
+  }
+
+  void rotateZ(double rad) {
+    MathUtils.rotateZ(_rotation, rad);
+    _needsUpdateLocalMatrix = true;
+  }
+
+  void scale(dynamic val) {
+    if (val is Vector3) {
+      _scaling.multiply(val);
     } else {
-      scaling.scale(x);
+      _scaling.scale(val);
     }
-
     _needsUpdateLocalMatrix = true;
   }
 
-  destroy() {
-    //TODO destroy buffers
+  void setTranslation(double x, double y, double z) {
+    _position.setValues(x, y, z);
+    _needsUpdateLocalMatrix = true;
+  }
+
+  void setQuaternion(double x, double y, double z, double w) {
+    _rotation.x = x;
+    _rotation.y = y;
+    _rotation.z = z;
+    _rotation.w = w;
+    _needsUpdateLocalMatrix = true;
+  }
+
+  void setScaling(double x, double y, double z) {
+    _scaling.setValues(x, y, z);
+    _needsUpdateLocalMatrix = true;
   }
 
   add(Node child) {
@@ -77,19 +108,13 @@ class Node {
 
   applyMatrix(Matrix4 m) {
     _localMatrix.multiply(m);
-    //    position = _localMatrix.getTranslation();
-    //    rotation = new Quaternion.fromRotation(_localMatrix.getRotation());
-    //    scaling = getScaleFromMatrix(_localMatrix);
-    decompose(_localMatrix, position, rotation, scaling);
-    // TODO
+    decompose(_localMatrix, position, _rotation, _scaling);
     _needsUpdateLocalMatrix = false;
   }
 
   updateMatrix() {
     if (_needsUpdateLocalMatrix) {
-      //      _localMatrix.setFromTranslationRotation(position, rotation);
-      //      _localMatrix.scale(scaling);
-      _localMatrix = recompose(scaling, rotation, position);
+      _localMatrix = recompose(_scaling, _rotation, position);
     }
     if (parent != null) {
       worldMatrix = parent.worldMatrix * _localMatrix;
@@ -110,19 +135,14 @@ class Node {
     var result = new Node();
     result.name = name;
     result.applyMatrix(_localMatrix);
-    result.scaling = scaling.clone();
+    result._scaling = _scaling.clone();
     children.forEach((c) => result.add(c.clone()));
     return result;
   }
+
+  void dispose() {
+  }
 }
-
-
-
-
-
-
-
-
 
 
 

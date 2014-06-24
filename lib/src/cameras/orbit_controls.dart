@@ -120,8 +120,7 @@ class OrbitControls implements CameraController {
     offset.z = radius * math.sin(phi) * math.cos(theta);
 
     center.copyInto(position);
-//    object.position = position + offset;
-    object.translate(position + offset);
+    object.translate(offset);
     object.lookAt(center);
 
     _thetaDelta = 0.0;

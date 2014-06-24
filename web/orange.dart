@@ -4,7 +4,7 @@ import 'package:stats/stats.dart';
 import 'test_boundingbox.dart';
 import 'test_physics.dart';
 import 'test_animation.dart';
-import 'test_renderer.dart';
+import 'test_lighting.dart';
 import 'test_gltf.dart';
 
 

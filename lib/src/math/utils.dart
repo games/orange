@@ -99,55 +99,6 @@ Vector3 clamp(Vector3 value, Vector3 min, Vector3 max) {
   return new Vector3(x, y, z);
 }
 
-
-
-
-
-decompose(Matrix4 matrix, Vector3 translation, Quaternion rotation, [Vector3 scaling]) {
-  var storage = matrix.storage;
-  translation[0] = storage[12];
-  translation[1] = storage[13];
-  translation[2] = storage[14];
-
-  var xs, ys, zs;
-  if ((storage[0] * storage[1] * storage[2] * storage[3]) < 0) {
-    xs = -1.0;
-  } else {
-    xs = 1.0;
-  }
-
-  if ((storage[4] * storage[5] * storage[6] * storage[7]) < 0) {
-    ys = -1.0;
-  } else {
-    ys = 1.0;
-  }
-
-  if ((storage[8] * storage[9] * storage[10] * storage[11]) < 0) {
-    zs = -1.0;
-  } else {
-    zs = 1.0;
-  }
-  xs = ys = zs = 1.0;
-
-  if (scaling == null) {
-    scaling = new Vector3.zero();
-  }
-
-  scaling[0] = xs * math.sqrt(storage[0] * storage[0] + storage[1] * storage[1] + storage[2] * storage[2]);
-  scaling[1] = ys * math.sqrt(storage[4] * storage[4] + storage[5] * storage[5] + storage[6] * storage[6]);
-  scaling[2] = zs * math.sqrt(storage[8] * storage[8] + storage[9] * storage[9] + storage[10] * storage[10]);
-
-  if (scaling.x == 0.0 || scaling.y == 0.0 || scaling.z == 0.0) {
-    rotation.storage[0] = 0.0;
-    rotation.storage[1] = 0.0;
-    rotation.storage[2] = 0.0;
-    rotation.storage[3] = 1.0;
-  } else {
-    setFromRotation(rotation, new Matrix4(storage[0] / scaling.x, storage[1] / scaling.x, storage[2] / scaling.x, 0.0, storage[4] / scaling.y, storage[5] / scaling.y, storage[6] / scaling.y, 0.0, storage[8] / scaling.z, storage[9] / scaling.z, storage[10] / scaling.z, 0.0, 0.0, 0.0, 0.0, 1.0));
-  }
-}
-
-
 void setFromRotation(Quaternion quaternion, Matrix4 m) {
   // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
   // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
@@ -201,5 +152,55 @@ void setFromRotation(Quaternion quaternion, Matrix4 m) {
     quaternion[0] = (m13 + m31) / s;
     quaternion[1] = (m23 + m32) / s;
     quaternion[2] = 0.25 * s;
+  }
+}
+
+
+class MathUtils {
+
+  static void rotateX(Quaternion quaternion, double rad) {
+    rad *= 0.5;
+    var storage = quaternion.storage;
+    var ax = storage[0],
+        ay = storage[1],
+        az = storage[2],
+        aw = storage[3],
+        bx = math.sin(rad),
+        bw = math.cos(rad);
+    storage[0] = ax * bw + aw * bx;
+    storage[1] = ay * bw + az * bx;
+    storage[2] = az * bw - ay * bx;
+    storage[3] = aw * bw - ax * bx;
+  }
+
+  static void rotateY(Quaternion quaternion, double rad) {
+    rad *= 0.5;
+    var storage = quaternion.storage;
+    var ax = storage[0],
+        ay = storage[1],
+        az = storage[2],
+        aw = storage[3],
+        by = math.sin(rad),
+        bw = math.cos(rad);
+    storage[0] = ax * bw - az * by;
+    storage[1] = ay * bw + aw * by;
+    storage[2] = az * bw + ax * by;
+    storage[3] = aw * bw - ay * by;
+  }
+
+  static void rotateZ(Quaternion quaternion, double rad) {
+    rad *= 0.5;
+    var storage = quaternion.storage;
+    var ax = storage[0],
+        ay = storage[1],
+        az = storage[2],
+        aw = storage[3],
+        bz = math.sin(rad),
+        bw = math.cos(rad);
+
+    storage[0] = ax * bw + ay * bz;
+    storage[1] = ay * bw - ax * bz;
+    storage[2] = az * bw + aw * bz;
+    storage[3] = aw * bw - az * bz;
   }
 }

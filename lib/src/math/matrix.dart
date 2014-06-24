@@ -14,12 +14,55 @@ Vector3 getScaleFromMatrix(Matrix4 matrix) {
   return vec.setValues(sx, sy, sz);
 }
 
+decompose(Matrix4 matrix, Vector3 translation, Quaternion rotation, [Vector3 scaling]) {
+  var storage = matrix.storage;
+  translation[0] = storage[12];
+  translation[1] = storage[13];
+  translation[2] = storage[14];
+
+  var xs, ys, zs;
+  if ((storage[0] * storage[1] * storage[2] * storage[3]) < 0) {
+    xs = -1.0;
+  } else {
+    xs = 1.0;
+  }
+
+  if ((storage[4] * storage[5] * storage[6] * storage[7]) < 0) {
+    ys = -1.0;
+  } else {
+    ys = 1.0;
+  }
+
+  if ((storage[8] * storage[9] * storage[10] * storage[11]) < 0) {
+    zs = -1.0;
+  } else {
+    zs = 1.0;
+  }
+  xs = ys = zs = 1.0;
+
+  if (scaling == null) {
+    scaling = new Vector3.zero();
+  }
+
+  scaling[0] = xs * math.sqrt(storage[0] * storage[0] + storage[1] * storage[1] + storage[2] * storage[2]);
+  scaling[1] = ys * math.sqrt(storage[4] * storage[4] + storage[5] * storage[5] + storage[6] * storage[6]);
+  scaling[2] = zs * math.sqrt(storage[8] * storage[8] + storage[9] * storage[9] + storage[10] * storage[10]);
+
+  if (scaling.x == 0.0 || scaling.y == 0.0 || scaling.z == 0.0) {
+    rotation.storage[0] = 0.0;
+    rotation.storage[1] = 0.0;
+    rotation.storage[2] = 0.0;
+    rotation.storage[3] = 1.0;
+  } else {
+    setFromRotation(rotation, new Matrix4(storage[0] / scaling.x, storage[1] / scaling.x, storage[2] / scaling.x, 0.0, storage[4] / scaling.y, storage[5] / scaling.y, storage[6] / scaling.y, 0.0,
+        storage[8] / scaling.z, storage[9] / scaling.z, storage[10] / scaling.z, 0.0, 0.0, 0.0, 0.0, 1.0));
+  }
+}
 
 Matrix4 recompose(Vector3 scale, Quaternion rotation, Vector3 translation) {
   var matrix = fromQuaternion(rotation).scale(scale);
   matrix.setTranslation(translation);
   return matrix;
-//  return new Matrix4.translation(translation)  * fromQuaternion(rotation) * new Matrix4.diagonal3(scale);
 }
 
 Matrix4 fromQuaternion(Quaternion q) {

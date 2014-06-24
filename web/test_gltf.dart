@@ -73,7 +73,7 @@ class TestGLTFScene extends Scene {
       root.boundingInfo = new BoundingInfo(min, max);
       var box = root.boundingInfo.boundingBox;
       var radius = root.boundingInfo.boundingSphere.radius;
-      camera.translate(box.center + new Vector3(0.0, radius, radius * 3));
+      camera.position = box.center + new Vector3(0.0, radius, radius * 3);
       camera.lookAt(box.center);
 
       _meshes.add(root);

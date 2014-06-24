@@ -15,13 +15,13 @@ class TestAnimationScene extends Scene {
   enter() {
 
     var controllers = html.querySelector("#controllers");
-    camera.translate(0.0, 2.0, 4.0);
+    camera.setTranslation(0.0, 2.0, 4.0);
     camera.lookAt(new Vector3.zero());
     
     var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(graphicsDevice.ctx, url).then((m) {
-      m.position.setValues(0.0, -1.0, -1.0);
+      m.setTranslation(0.0, -1.0, -1.0);
       m.animator.switchAnimation("Idle");
       m.animator.animations.forEach((n, a) {
         var row = new html.DivElement();
@@ -58,7 +58,7 @@ class TestAnimationScene extends Scene {
     controllers.children.add(row);
 
     var plane = _createPlane(6.0);// new Plane(width: 10, height: 10);
-    plane.rotation.setAxisAngle(Axis.X, -PI / 2);
+    plane.rotate(Axis.X, -PI / 2);
     plane.translate(0.0, -2.0, -3.5);
     plane.material = new StandardMaterial();
     plane.material.ambientColor = new Color.fromList([0.5, 0.0, 0.3]);
@@ -131,7 +131,7 @@ class TestAnimationScene extends Scene {
 
     if (rotateCamera) {
       _elapsed += interval;
-      camera.position.setValues(cos(_elapsed / 1000) * 4.0, 2.0, sin(_elapsed / 1000) * 4.0);
+      camera.setTranslation(cos(_elapsed / 1000) * 4.0, 2.0, sin(_elapsed / 1000) * 4.0);
 //      camera.lookAt(new Vector3.zero());
     }
   }

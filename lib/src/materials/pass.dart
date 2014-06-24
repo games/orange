@@ -2,8 +2,10 @@ part of orange;
 
 
 
-// TODO FIXME
 class Pass {
+  static int _globalId = 0;
+
+  String id;
   bool depthTest = true;
   bool depthMask = true;
   bool cullFaceEnable = true;
@@ -13,7 +15,12 @@ class Pass {
   int dfactor = gl.ONE_MINUS_SRC_ALPHA;
   Shader shader;
 
-  bind(gl.RenderingContext ctx) {
+  Pass([this.id]) {
+    if (id == null) id = "Pass${_globalId++}";
+  }
+
+  // TODO FIXME
+  void bind(gl.RenderingContext ctx) {
     ctx.useProgram(shader.program);
     enableState(ctx, gl.DEPTH_TEST, depthTest);
     enableState(ctx, gl.CULL_FACE, cullFaceEnable);
@@ -26,21 +33,22 @@ class Pass {
     ctx.depthMask(depthMask);
   }
 
-  enableState(gl.RenderingContext ctx, int cap, bool enable) {
+  void enableState(gl.RenderingContext ctx, int cap, bool enable) {
     if (enable) {
       ctx.enable(cap);
     } else {
       ctx.disable(cap);
     }
   }
+
+  void render(double time, Map options) {
+    
+  }
+
+  dispose() {
+    if (shader != null) shader.dispose();
+  }
 }
-
-
-
-
-
-
-
 
 
 

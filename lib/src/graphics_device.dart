@@ -10,11 +10,12 @@ class GraphicsDevice {
   DeviceCapabilities _caps;
   StandardMaterial defaultMaterial;
   bool _depthMask = false;
-  Pass _previousPass;
+  Pass _currentPass;
 
   html.Rectangle<int> _cachedViewport;
   RenderTargetTexture _currentRenderTarget;
   List<RenderTargetTexture> _renderTargets = [];
+  RenderingGroup _renderGroup = new RenderingGroup();
 
   GraphicsDevice(this._renderingCanvas) {
     ctx = _renderingCanvas.getContext3d(preserveDrawingBuffer: true);
@@ -94,20 +95,13 @@ class GraphicsDevice {
   }
 
   use(Pass pass) {
-    if (_previousPass == null || _previousPass.shader.program != pass.shader.program) {
+    if (_currentPass == null || _currentPass.shader.program != pass.shader.program) {
       pass.bind(ctx);
-      _previousPass = pass;
+      _currentPass = pass;
     }
   }
 
   void render(Scene scene) {
-    // shadows
-    scene._lights.forEach((light) {
-      if (light is DirectionalLight && light.enabled) {
-        if (light.shadowRenderer == null) light.shadowRenderer = new ShadowRenderer(512, light, this);
-        _renderTargets.add(light.shadowRenderer.shadowMap);
-      }
-    });
 
     _renderTargets.forEach((renderTarget) {
       renderTarget.render(scene, scene._opaqueMeshes);
@@ -115,9 +109,40 @@ class GraphicsDevice {
 
     if (_renderTargets.length > 0) restoreDefaultFramebuffer();
     clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
-    scene.nodes.forEach((node) {
-      _renderNode(node);
+
+    var camera = scene.camera;
+    _renderGroup._meshesPerPass.forEach((Pass pass, List<Mesh> meshes) {
+      use(pass);
+
+      var shader = pass.shader;
+      bindUniform(Semantics.viewMat, camera.viewMatrix.storage);
+      bindUniform(Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
+      bindUniform(Semantics.projectionMat, camera.projectionMatrix.storage);
+
+      meshes.forEach((Mesh mesh) {
+        _textureIndex = -1;
+        if (mesh.faces != null) {
+          var material = mesh.material;
+          material.bind(mesh: mesh);
+          if (mesh.geometry != null) {
+            var geometry = mesh.geometry;
+            shader.attributes.forEach((semantic, attrib) {
+              if (geometry.buffers.containsKey(semantic)) {
+                geometry.buffers[semantic].enable(ctx, attrib);
+              }
+            });
+          }
+          mesh.faces.bind(ctx);
+          if (material.wireframe) {
+            ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
+          } else {
+            ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+          }
+          material.unbind();
+        }
+      });
     });
+
 
     // reset
     // TODO : should dispose the renderTargets ?
@@ -165,8 +190,8 @@ class GraphicsDevice {
     }
   }
 
-  // TODO should not pass the shader again.
-  bindUniform(Shader shader, String symbol, value) {
+  bindUniform(String symbol, value) {
+    var shader = _currentPass.shader;
     if (!shader.ready) return;
     if (shader.uniforms.containsKey(symbol) && value != null) {
       var property = shader.uniforms[symbol];
@@ -213,11 +238,12 @@ class GraphicsDevice {
     }
   }
 
-  bindTexture(Shader shader, String sampler, Texture texture) {
+  bindTexture(String sampler, Texture texture) {
+    if (!_currentPass.shader.ready) return;
     _textureIndex++;
     ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
     ctx.bindTexture(texture.target, texture.data);
-    bindUniform(shader, sampler, _textureIndex);
+    bindUniform(sampler, _textureIndex);
   }
 
   enableState(int cap, bool enable) {

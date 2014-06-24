@@ -54,7 +54,7 @@ abstract class Scene {
     _physicsEngine.dispose();
     _physicsEngine = null;
   }
-
+  
   void add(Node node) {
     node.scene = this;
     if (node is Mesh) {

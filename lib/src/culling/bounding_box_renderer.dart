@@ -49,14 +49,14 @@ class BoundingBoxRenderer {
       if (this.showBackLines) {
         // Back
         _graphicsDevice.ctx.depthFunc(gl.GEQUAL);
-        _graphicsDevice.bindUniform(shader, "color", backColor.rgb.storage);
+        _graphicsDevice.bindUniform("color", backColor.rgb.storage);
         _material.bind(worldMatrix: worldMatrix);
         // Draw order
         ctx.drawElements(gl.LINES, _indices.count, gl.UNSIGNED_SHORT, 0);
       }
       // Front
       _graphicsDevice.ctx.depthFunc(gl.LESS);
-      _graphicsDevice.bindUniform(shader, "color", frontColor.rgb.storage);
+      _graphicsDevice.bindUniform("color", frontColor.rgb.storage);
       _material.bind(worldMatrix: worldMatrix);
       // Draw order
       ctx.drawElements(gl.LINES, _indices.count, gl.UNSIGNED_SHORT, 0);

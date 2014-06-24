@@ -37,6 +37,17 @@ class Director {
 
   run() => html.window.requestAnimationFrame(_animate);
 
+  _prepare(List<Node> nodes, num interval) {
+    nodes.forEach((node) {
+      if (node is Mesh) {
+        if (node.animator != null) node.animator.evaluate(interval);
+        if (node.material != null) graphicsDevice._renderGroup.register(node);
+        if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
+      }
+      _prepare(node.children, interval);
+    });
+  }
+
   _animate(num elapsed) {
     run();
     final interval = elapsed - _lastElapsed;
@@ -44,25 +55,30 @@ class Director {
     if (_scene != null) {
       _scene.enterFrame(elapsed, interval);
       _scene.camera.update();
-//      _scene.camera.updateMatrix();
-      // animations
-      _scene.nodes.forEach((node) {
-        node.updateMatrix();
-        if (node is Mesh) {
-          if (node.animator != null) node.animator.evaluate(interval);
-          if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
-        }
-      });
+      //      _scene.camera.updateMatrix();
 
       //physics
       if (_scene._physicsEngine != null) {
         _scene._physicsEngine._runOneStep(interval / 1000.0);
       }
+      _scene.nodes.forEach((n) => n.updateMatrix());
+
+      // shadows
+      scene._lights.forEach((light) {
+        if (light is DirectionalLight && light.enabled) {
+          if (light.shadowRenderer == null) light.shadowRenderer = new ShadowRenderer(512, light, graphicsDevice);
+          graphicsDevice._renderTargets.add(light.shadowRenderer.shadowMap);
+        }
+      });
+
+      _prepare(_scene.nodes, interval);
+
       graphicsDevice.render(_scene);
       // bounding boxes
       _boundingBoxRenderer.render();
 
       _scene.exitFrame();
+      graphicsDevice._renderGroup.clear();
       _boundingBoxRenderer._renderList.clear();
       //after render callbacks
       afterRenders.forEach((c) => c());

@@ -259,24 +259,30 @@ class GltfLoader2 {
   }
 
   Technique _getTechnique(Map doc, String name) {
-    var technique = new Technique();
-    technique.passes = {};
-    doc["techniques"][name]["passes"].forEach((String pn, Map p) {
-      var pass = new Pass();
-      if (p.containsKey("blendEnable")) pass.blending = p["blendEnable"] == 1;
-      if (p.containsKey("blendEquation")) pass.blendEquation = p["blendEquation"];
-      if (p.containsKey("blendFunc")) {
-        pass.dfactor = p["blendFunc"]["dfactor"];
-        pass.sfactor = p["blendFunc"]["sfactor"];
-      }
-      if (p.containsKey("cullFaceEnable")) pass.cullFaceEnable = p["cullFaceEnable"] == 1;
-      if (p.containsKey("depthMask")) pass.depthMask = p["depthMask"] == 1;
-      if (p.containsKey("depthTestEnable")) pass.depthTest = p["depthTestEnable"] == 1;
-      // TODO more..
-      technique.passes[pn] = pass;
-    });
-    technique.pass = technique.passes[doc["techniques"][name]["pass"]];
-    return technique;
+    var key = "Technique_$name";
+    if (_resources.containsKey(key)) {
+      return _resources[key];
+    } else {
+      var technique = new Technique();
+      technique.passes = {};
+      doc["techniques"][name]["passes"].forEach((String pn, Map p) {
+        var pass = new Pass();
+        if (p.containsKey("blendEnable")) pass.blending = p["blendEnable"] == 1;
+        if (p.containsKey("blendEquation")) pass.blendEquation = p["blendEquation"];
+        if (p.containsKey("blendFunc")) {
+          pass.dfactor = p["blendFunc"]["dfactor"];
+          pass.sfactor = p["blendFunc"]["sfactor"];
+        }
+        if (p.containsKey("cullFaceEnable")) pass.cullFaceEnable = p["cullFaceEnable"] == 1;
+        if (p.containsKey("depthMask")) pass.depthMask = p["depthMask"] == 1;
+        if (p.containsKey("depthTestEnable")) pass.depthTest = p["depthTestEnable"] == 1;
+        // TODO more..
+        technique.passes[pn] = pass;
+      });
+      technique.pass = technique.passes[doc["techniques"][name]["pass"]];
+      _resources[key] = technique;
+      return technique;
+    }
   }
 
   _loadBuffer(String name, Map doc) {
@@ -289,7 +295,7 @@ class GltfLoader2 {
     });
     return completer.future;
   }
-  
+
   Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
     var m = new Matrix4.zero();
     m.setFromTranslationRotation(new Vector3.fromFloat32List(new Float32List.fromList(t)), new Quaternion.fromFloat32List(new Float32List.fromList(r)));

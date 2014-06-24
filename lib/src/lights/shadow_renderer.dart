@@ -58,14 +58,14 @@ class ShadowRenderer implements Renderer {
       if (ready(mesh, device)) {
         var shader = _pass.shader;
         device.use(_pass);
-        device.bindUniform(shader, "viewProjection", transformMatrix.storage);
+        device.bindUniform("viewProjection", transformMatrix.storage);
         // TODO alpha test
         // bones
         var skeleton = mesh.skeleton;
         if (skeleton != null) {
-          device.bindUniform(shader, "mBones", skeleton.jointMatrices);
+          device.bindUniform("mBones", skeleton.jointMatrices);
         }
-        device.bindUniform(shader, "world", mesh.worldMatrix.storage);
+        device.bindUniform("world", mesh.worldMatrix.storage);
         if (mesh.geometry != null) {
           var geometry = mesh.geometry;
           shader.attributes.forEach((semantic, attrib) {

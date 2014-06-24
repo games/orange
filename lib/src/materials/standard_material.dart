@@ -88,46 +88,48 @@ class StandardMaterial extends Material {
     var shader = technique.pass.shader;
     var camera = scene.camera;
 
-    device.bindUniform(shader, Semantics.modelMat, mesh.worldMatrix.storage);
-    device.bindUniform(shader, Semantics.viewMat, camera.viewMatrix.storage);
-    device.bindUniform(shader, Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
-    device.bindUniform(shader, Semantics.projectionMat, camera.projectionMatrix.storage);
-    //    device.bindUniform(shader, Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
+    device.bindUniform(Semantics.modelMat, mesh.worldMatrix.storage);
+    
+//    device.bindUniform(Semantics.viewMat, camera.viewMatrix.storage);
+//    device.bindUniform(Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
+//    device.bindUniform(Semantics.projectionMat, camera.projectionMatrix.storage);
+    
+    //    device.bindUniform(Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
 
     //textures
     // TODO ambient, opacity, reflection, emissive, specular, bump
     if (diffuseTexture != null && diffuseTexture.ready) {
-      device.bindTexture(shader, Semantics.texture, diffuseTexture);
+      device.bindTexture(Semantics.texture, diffuseTexture);
       // TODO x: uv or uv2; y: alpha of texture
-      device.bindUniform(shader, "vDiffuseInfos", new Float32List.fromList([0.0, 1.0]));
+      device.bindUniform("vDiffuseInfos", new Float32List.fromList([0.0, 1.0]));
       // TODO offset, scale, ang
-      device.bindUniform(shader, "diffuseMatrix", new Matrix4.identity().storage);
+      device.bindUniform("diffuseMatrix", new Matrix4.identity().storage);
     }
     if (bumpTexture != null && bumpTexture.ready && device.caps.standardDerivatives) {
-      device.bindTexture(shader, "bumpSampler", bumpTexture);
+      device.bindTexture("bumpSampler", bumpTexture);
       // TODO x: uv or uv2; y: alpha of texture
-      device.bindUniform(shader, "vBumpInfos", new Float32List.fromList([0.0, 1.0]));
+      device.bindUniform("vBumpInfos", new Float32List.fromList([0.0, 1.0]));
       // TODO offset, scale, ang
-      device.bindUniform(shader, "bumpMatrix", new Matrix4.identity().storage);
+      device.bindUniform("bumpMatrix", new Matrix4.identity().storage);
     }
 
     // colors
-    device.bindUniform(shader, Semantics.cameraPosition, camera.position.storage);
+    device.bindUniform(Semantics.cameraPosition, camera.position.storage);
     if (shininess != null) {
-      device.bindUniform(shader, Semantics.shininess, shininess);
+      device.bindUniform(Semantics.shininess, shininess);
     }
     if (specularColor != null) {
-      device.bindUniform(shader, Semantics.specularColor, specularColor.storage);
+      device.bindUniform(Semantics.specularColor, specularColor.storage);
     }
     if (ambientColor != null) {
       // TODO should multipy to global ambient color
-      device.bindUniform(shader, Semantics.ambientColor, ambientColor.rgb.storage);
+      device.bindUniform(Semantics.ambientColor, ambientColor.rgb.storage);
     }
     if (diffuseColor != null) {
-      device.bindUniform(shader, Semantics.diffuseColor, diffuseColor.storage);
+      device.bindUniform(Semantics.diffuseColor, diffuseColor.storage);
     }
     if (emissiveColor != null) {
-      device.bindUniform(shader, Semantics.emissiveColor, emissiveColor.rgb.storage);
+      device.bindUniform(Semantics.emissiveColor, emissiveColor.rgb.storage);
     }
 
     //lights
@@ -139,13 +141,13 @@ class StandardMaterial extends Material {
         light.bind(ctx, shader, i);
         var diffuse = light.diffuse.scaled(light.intensity);
         // [color + range]
-        device.bindUniform(shader, "vLightDiffuse${i}", new Float32List.fromList([diffuse.red, diffuse.green, diffuse.blue, light.range]));
-        device.bindUniform(shader, "vLightSpecular${i}", light.specular.scaled(light.intensity).rgb.storage);
+        device.bindUniform("vLightDiffuse${i}", new Float32List.fromList([diffuse.red, diffuse.green, diffuse.blue, light.range]));
+        device.bindUniform("vLightSpecular${i}", light.specular.scaled(light.intensity).rgb.storage);
         if (mesh.receiveShadows && light is DirectionalLight) {
           var shadowRenderer = light.shadowRenderer;
-          device.bindUniform(shader, "lightMatrix${i}", shadowRenderer.transformMatrix.storage);
-          device.bindTexture(shader, "shadowSampler${i}", shadowRenderer.shadowMap);
-          device.bindUniform(shader, "darkness${i}", shadowRenderer.darkness);
+          device.bindUniform("lightMatrix${i}", shadowRenderer.transformMatrix.storage);
+          device.bindTexture("shadowSampler${i}", shadowRenderer.shadowMap);
+          device.bindUniform("darkness${i}", shadowRenderer.darkness);
         }
       }
     }
@@ -153,12 +155,12 @@ class StandardMaterial extends Material {
     var skeleton = mesh.skeleton;
     if (skeleton != null) {
       skeleton.updateMatrix();
-      device.bindUniform(shader, Semantics.jointMat, skeleton.jointMatrices);
+      device.bindUniform(Semantics.jointMat, skeleton.jointMatrices);
     }
 
     if (scene.fogMode != Scene.FOGMODE_NONE) {
-      device.bindUniform(shader, "vFogInfos", new Float32List.fromList([scene.fogMode.toDouble(), scene.fogStart, scene.fogEnd, scene.fogDensity]));
-      device.bindUniform(shader, "vFogColor", scene.fogColor.rgb.storage);
+      device.bindUniform("vFogInfos", new Float32List.fromList([scene.fogMode.toDouble(), scene.fogStart, scene.fogEnd, scene.fogDensity]));
+      device.bindUniform("vFogColor", scene.fogColor.rgb.storage);
     }
   }
 

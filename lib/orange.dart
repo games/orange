@@ -86,6 +86,8 @@ part 'src/culling/bounding_box.dart';
 part 'src/culling/bounding_sphere.dart';
 part 'src/culling/bounding_box_renderer.dart';
 
+part 'src/rendering/rendering_group.dart';
+
 
 
 or(expectValue, defaultValue) {

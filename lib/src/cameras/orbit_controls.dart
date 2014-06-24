@@ -96,7 +96,7 @@ class OrbitControls implements CameraController {
   }
 
   void update() {
-    if(object == null) return;
+    if (object == null) return;
     var center = object.target;
     var position = object.position;
     var offset = position - center;
@@ -146,6 +146,8 @@ class OrbitControls implements CameraController {
       _state = STATE_ZOOM;
       _zoomStart.setValues(e.client.x.toDouble(), e.client.y.toDouble());
     }
+    if (_mouseMoveSubscription != null) _mouseMoveSubscription.cancel();
+    if (_mouseUpSubscription != null) _mouseUpSubscription.cancel();
     _mouseMoveSubscription = html.document.onMouseMove.listen(_onMouseMove);
     _mouseUpSubscription = html.document.onMouseUp.listen(_onMouseUp);
   }
@@ -183,7 +185,6 @@ class OrbitControls implements CameraController {
   }
 
 }
-
 
 
 

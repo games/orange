@@ -24,6 +24,7 @@ class Texture {
 
   static Map<String, Texture> _texturesCache = {};
 
+  // TODO use named parameters
   static Texture load(gl.RenderingContext ctx, Map descripton) {
     var url = descripton["path"];
     if (_texturesCache.containsKey(url)) {

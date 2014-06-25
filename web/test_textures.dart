@@ -22,10 +22,10 @@ class TestTexturesScene extends Scene {
     sphere.material.specularColor = new Color(255, 255, 255);
     sphere.material.emissiveColor = new Color(255, 0, 0);
     
-//    sphere.material.reflectionTexture = Texture.load(graphicsDevice.ctx, {
-//      "path": "textures/reflectiontexture.jpg"
-//    });
-//    sphere.material.reflectionTexture.coordinatesMode = Texture.SPHERICAL_MODE;
+    sphere.material.reflectionTexture = Texture.load(graphicsDevice.ctx, {
+      "path": "textures/reflectiontexture.jpg"
+    });
+    sphere.material.reflectionTexture.coordinatesMode = Texture.SPHERICAL_MODE;
     
     sphere.material.emissiveTexture = Texture.load(graphicsDevice.ctx, {
       "path": "textures/leaf_textures.jpg"
@@ -40,9 +40,9 @@ class TestTexturesScene extends Scene {
     });
     sphere.material.opacityTexture.getAlphaFromRGB = true;
     
-//    sphere.material.bumpTexture = Texture.load(graphicsDevice.ctx, {
-//      "path": "bump.png"
-//    });
+    sphere.material.bumpTexture = Texture.load(graphicsDevice.ctx, {
+      "path": "textures/bump.png"
+    });
 
     add(sphere);
 

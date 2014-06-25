@@ -14,3 +14,4 @@ web/out/*
 .DS_Store
 .settings                   
 .settings/
+build

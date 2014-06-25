@@ -10,6 +10,7 @@ class Shader {
   gl.Shader _vertexShader, _fragmentShader;
   Map<String, ShaderProperty> attributes;
   Map<String, ShaderProperty> uniforms;
+  List<String> sampers;
 
   Shader(this._ctx, String vertSrc, String fragSrc, {String common: ""}) {
     _initialize(vertSrc, fragSrc, common: common);
@@ -37,6 +38,7 @@ class Shader {
       }
 
       uniforms = {};
+      sampers = [];
       var uniformCount = _ctx.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
       for (var i = 0; i < uniformCount; i++) {
         var uniform = _ctx.getActiveUniform(program, i);
@@ -46,6 +48,9 @@ class Shader {
           name = name.substring(0, ii);
         }
         uniforms[name] = new ShaderProperty(name, _ctx.getUniformLocation(program, name), uniform.type);
+        if(uniform.type == gl.SAMPLER_2D || uniform.type == gl.SAMPLER_CUBE) {
+          sampers.add(name);
+        }
       }
       ready = true;
     }

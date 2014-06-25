@@ -59,17 +59,20 @@ class Texture {
       texture.internalFormat = or(descripton["internalFormat"], gl.RGBA);
       texture.format = or(descripton["format"], gl.RGBA);
       texture.sampler = or(descripton["sampler"], defaultSampler);
+      var flip = or(descripton["FLIP"], false);
       var image = new html.ImageElement(src: url);
       image.onLoad.listen((_) {
         texture.data = ctx.createTexture();
         var sampler = texture.sampler;
         texture.width = image.width;
         texture.height = image.height;
-        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
+        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter
+            == gl.LINEAR_MIPMAP_LINEAR));
         if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
           image = _ensureImage(image);
         }
         ctx.bindTexture(texture.target, texture.data);
+        if (flip) ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_S, sampler.wrapS);
         ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, sampler.wrapT);
         ctx.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
@@ -167,7 +170,8 @@ class TextureManager {
           texture.data = ctx.createTexture();
           texture.width = image.width;
           texture.height = image.height;
-          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
+          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
+              (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
           if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
             image = _ensureImage(image);
           }

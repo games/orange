@@ -5,7 +5,6 @@ class GraphicsDevice {
   html.CanvasElement _renderingCanvas;
   gl.RenderingContext ctx;
   int _lastMaxEnabledArray = -1;
-  int _textureIndex = -1;
   int _newMaxEnabledArray = -1;
   DeviceCapabilities _caps;
   StandardMaterial defaultMaterial;
@@ -32,7 +31,7 @@ class GraphicsDevice {
 
     // extensions
     _caps.standardDerivatives = (ctx.getExtension('OES_standard_derivatives') != null);
-    
+
     _caps.s3tc = ctx.getExtension('WEBGL_compressed_texture_s3tc');
     _caps.textureFloat = (ctx.getExtension('OES_texture_float') != null);
     _caps.textureAnisotropicFilterExtension = ctx.getExtension('EXT_texture_filter_anisotropic');
@@ -89,8 +88,12 @@ class GraphicsDevice {
 
   use(Pass pass) {
     if (_currentPass == null || _currentPass.shader.program != pass.shader.program) {
-      pass.bind(ctx);
       _currentPass = pass;
+      pass.bind(ctx);
+      for (var i = 0; i < pass.shader.sampers.length; i++) {
+        var uniform = pass.shader.uniforms[pass.shader.sampers[i]];
+        ctx.uniform1i(uniform.location, i);
+      }
     }
   }
 
@@ -115,7 +118,7 @@ class GraphicsDevice {
       // TODO sorting
       _renderMeshes(scene, pass, meshes);
     });
-    
+
     // reset
     // TODO : should dispose the renderTargets ?
     _renderTargets.clear();
@@ -132,7 +135,6 @@ class GraphicsDevice {
     bindUniform(Semantics.cameraPosition, camera.position.storage);
 
     meshes.forEach((Mesh mesh) {
-      _textureIndex = -1;
       if (mesh.faces != null) {
         var material = mesh.material;
         var globalIntensity = 1.0;
@@ -230,10 +232,11 @@ class GraphicsDevice {
 
   bindTexture(String sampler, Texture texture) {
     if (!_currentPass.shader.ready) return;
-    _textureIndex++;
-    ctx.activeTexture(gl.TEXTURE0 + _textureIndex);
+    var textureChannel = _currentPass.shader.sampers.indexOf(sampler);
+    if (textureChannel < 0) return;
+    ctx.activeTexture(gl.TEXTURE0 + textureChannel);
     ctx.bindTexture(texture.target, texture.data);
-    bindUniform(sampler, _textureIndex);
+    bindUniform(sampler, textureChannel);
   }
 
   enableState(int cap, bool enable) {

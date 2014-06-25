@@ -19,6 +19,7 @@ class StandardMaterial extends Material {
     var defines = [];
     if (scene.texturesEnabled) {
       if (diffuseTexture != null) {
+        if(!diffuseTexture.ready) return false;
         defines.add("#define DIFFUSE");
       }
       if (ambientTexture != null) {

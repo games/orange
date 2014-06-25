@@ -38,6 +38,24 @@ class Texture {
   double coordinatesIndex = 0.0;
   int coordinatesMode = SPHERICAL_MODE;
   double level = 1.0;
+  double uScale = 1.0;
+  double vScale = 1.0;
+  double uOffset = 0.0;
+  double vOffset = 0.0;
+  double uAng = 0.0;
+  double vAng = 0.0;
+  double wAng = 0.0;
+
+  // TODO
+  Matrix4 get textureMatrix {
+    var matrix = new Matrix4.diagonal3Values(uScale, vScale, 1.0);
+    return matrix;
+  }
+
+  // TODO
+  Matrix4 get reflectionTextureMatrix {
+    return new Matrix4.identity();
+  }
 
   // TODO
   void dispose() {

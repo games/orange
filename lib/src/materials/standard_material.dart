@@ -125,17 +125,17 @@ class StandardMaterial extends Material {
       // TODO x: uv or uv2; y: alpha of texture
       device.bindFloat2("vDiffuseInfos", diffuseTexture.coordinatesIndex, diffuseTexture.level);
       // TODO offset, scale, ang
-      device.bindMatrix4("diffuseMatrix", textureMatrix);
+      device.bindMatrix4("diffuseMatrix", diffuseTexture.textureMatrix);
     }
     if (ambientTexture != null && ambientTexture.ready) {
       device.bindTexture("ambientSampler", ambientTexture);
       device.bindFloat2("vAmbientInfos", ambientTexture.coordinatesIndex, ambientTexture.level);
-      device.bindMatrix4("ambientMatrix", textureMatrix);
+      device.bindMatrix4("ambientMatrix", ambientTexture.textureMatrix);
     }
     if (opacityTexture != null && opacityTexture.ready) {
       device.bindTexture("opacitySampler", opacityTexture);
       device.bindFloat2("vOpacityInfos", opacityTexture.coordinatesIndex, opacityTexture.level);
-      device.bindMatrix4("opacityMatrix", textureMatrix);
+      device.bindMatrix4("opacityMatrix", opacityTexture.textureMatrix);
     }
     if (reflectionTexture != null && reflectionTexture.ready) {
       if (reflectionTexture.isCube) {
@@ -144,24 +144,24 @@ class StandardMaterial extends Material {
         device.bindTexture("reflection2DSampler", reflectionTexture);
       }
       device.bindFloat3("vReflectionInfos", reflectionTexture.coordinatesMode.toDouble(), reflectionTexture.level, reflectionTexture.isCube ? 1.0 : 0.0);
-      device.bindMatrix4("reflectionMatrix", textureMatrix);
+      device.bindMatrix4("reflectionMatrix", reflectionTexture.textureMatrix);
     }
     if (emissiveTexture != null && emissiveTexture.ready) {
       device.bindTexture("emissiveSampler", emissiveTexture);
       device.bindFloat2("vEmissiveInfos", emissiveTexture.coordinatesIndex, emissiveTexture.level);
-      device.bindMatrix4("emissiveMatrix", textureMatrix);
+      device.bindMatrix4("emissiveMatrix", emissiveTexture.textureMatrix);
     }
     if (specularTexture != null && specularTexture.ready) {
       device.bindTexture("specularSampler", specularTexture);
       device.bindFloat2("vSpecularInfos", specularTexture.coordinatesIndex, specularTexture.level);
-      device.bindMatrix4("specularMatrix", textureMatrix);
+      device.bindMatrix4("specularMatrix", specularTexture.textureMatrix);
     }
     if (bumpTexture != null && bumpTexture.ready && device.caps.standardDerivatives) {
       device.bindTexture("bumpSampler", bumpTexture);
       // TODO x: uv or uv2; y: alpha of texture
       device.bindFloat2("vBumpInfos", bumpTexture.coordinatesIndex, bumpTexture.level);
       // TODO offset, scale, ang
-      device.bindMatrix4("bumpMatrix", textureMatrix);
+      device.bindMatrix4("bumpMatrix", bumpTexture.textureMatrix);
     }
 
     // colors

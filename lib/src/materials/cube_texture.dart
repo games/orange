@@ -38,8 +38,11 @@ class CubeTexture extends Texture {
       ctx.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       ctx.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       ctx.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+      target = gl.TEXTURE_CUBE_MAP;
+      data = texture;
       references = 1;
       _isCube = true;
+      _textureMatrix = new Matrix4.identity();
       ready = true;
       Texture._texturesCache["CubeTexture_${root}"] = this;
     });
@@ -53,7 +56,8 @@ class CubeTexture extends Texture {
     });
     return completer.future;
   }
-
-
+  
+  @override
+  Matrix4 get reflectionTextureMatrix  => _textureMatrix;
 
 }

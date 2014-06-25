@@ -111,7 +111,7 @@ class StandardMaterial extends Material {
     var ctx = device.ctx;
     var shader = technique.pass.shader;
     var camera = scene.camera;
-
+    
     device.bindMatrix4(Semantics.modelMat, mesh.worldMatrix);
     if (shader.uniforms.containsKey(Semantics.normalMat)) {
       device.bindMatrix3(Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);

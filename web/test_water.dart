@@ -13,8 +13,15 @@ class TestWaterScene extends Scene {
     camera.setTranslation(-40.0, 40.0, 0.0);
     camera.lookAt(new Vector3.zero());
 
-    //TODO skybox
-
+    var skybox = new Cube(width: 1000, height: 1000, depth: 1000);
+    skybox.material = new StandardMaterial();
+    skybox.material.backFaceCulling = false;
+    skybox.material.reflectionTexture = new CubeTexture("textures/cube/skybox/sky");
+    skybox.material.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+    skybox.material.diffuseColor = new Color.fromList([0.0, 0.0, 0.0]);
+    skybox.material.specularColor = new Color.fromList([0.0, 0.0, 0.0]);
+    add(skybox);
+    
     var ground = new PlaneMesh(width: 10000, height: 10000, ground: true);
     ground.translate(0.0, -10.0);
     ground.material = new StandardMaterial();

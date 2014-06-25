@@ -7,8 +7,9 @@ class GraphicsDevice {
   int _lastMaxEnabledArray = -1;
   int _newMaxEnabledArray = -1;
   DeviceCapabilities _caps;
-  StandardMaterial defaultMaterial;
   bool _depthMask = false;
+  bool _cullingState;
+  bool _cullBackFaces = true;
   Pass _currentPass;
 
   html.Rectangle<int> _cachedViewport;
@@ -37,7 +38,11 @@ class GraphicsDevice {
     _caps.textureAnisotropicFilterExtension = ctx.getExtension('EXT_texture_filter_anisotropic');
     if (_caps.textureAnisotropicFilterExtension == null) _caps.textureAnisotropicFilterExtension = ctx.getExtension('WEBKIT_EXT_texture_filter_anisotropic');
     if (_caps.textureAnisotropicFilterExtension == null) _caps.textureAnisotropicFilterExtension = ctx.getExtension('MOZ_EXT_texture_filter_anisotropic');
-    if (_caps.textureAnisotropicFilterExtension == null) _caps.maxAnisotropy = 0; else _caps.maxAnisotropy = ctx.getParameter(gl.ExtTextureFilterAnisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+    if (_caps.textureAnisotropicFilterExtension == null) {
+      _caps.maxAnisotropy = 0;
+    } else {
+      _caps.maxAnisotropy = ctx.getParameter(gl.ExtTextureFilterAnisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+    }
     _caps.instancedArrays = ctx.getExtension('ANGLE_instanced_arrays');
   }
 
@@ -56,7 +61,11 @@ class GraphicsDevice {
   }
 
   void set depthBuffer(bool enable) {
-    if (enable) ctx.enable(gl.DEPTH_TEST); else ctx.disable(gl.DEPTH_TEST);
+    if (enable) {
+      ctx.enable(gl.DEPTH_TEST);
+    } else {
+      ctx.disable(gl.DEPTH_TEST);
+    }
   }
 
   void viewport(int x, int y, int width, int height) {
@@ -89,7 +98,7 @@ class GraphicsDevice {
   use(Pass pass) {
     if (_currentPass == null || _currentPass.shader.program != pass.shader.program) {
       _currentPass = pass;
-      pass.bind(ctx);
+      pass.bind(this);
       for (var i = 0; i < pass.shader.sampers.length; i++) {
         var uniform = pass.shader.uniforms[pass.shader.sampers[i]];
         ctx.uniform1i(uniform.location, i);
@@ -156,6 +165,7 @@ class GraphicsDevice {
   _renderMesh(Mesh mesh, Shader shader) {
     _newMaxEnabledArray = -1;
     var material = mesh.material;
+    cullingState = material.backFaceCulling;
     material.bind(mesh: mesh);
     if (mesh.geometry != null) {
       var geometry = mesh.geometry;
@@ -232,11 +242,26 @@ class GraphicsDevice {
     if (textureChannel < 0) return;
     ctx.activeTexture(gl.TEXTURE0 + textureChannel);
     ctx.bindTexture(texture.target, texture.data);
-    bindInt(sampler, textureChannel);
   }
 
   enableState(int cap, bool enable) {
-    if (enable) ctx.enable(cap); else ctx.disable(cap);
+    if (enable) {
+      ctx.enable(cap);
+    } else {
+      ctx.disable(cap);
+    }
+  }
+
+  void set cullingState(bool val) {
+    if (_cullingState != val) {
+      if (val) {
+        ctx.cullFace(_cullBackFaces ? gl.BACK : gl.FRONT);
+        ctx.enable(gl.CULL_FACE);
+      } else {
+        ctx.disable(gl.CULL_FACE);
+      }
+      _cullingState = val;
+    }
   }
 
   DeviceCapabilities get caps => _caps;

@@ -19,12 +19,13 @@ class Pass {
     if (id == null) id = "Pass${_globalId++}";
   }
 
-  void bind(gl.RenderingContext ctx) {
+  void bind(GraphicsDevice device) {
+    var ctx = device.ctx;
     ctx.useProgram(shader.program);
-    enableState(ctx, gl.DEPTH_TEST, depthTest);
-    enableState(ctx, gl.CULL_FACE, cullFaceEnable);
-    enableState(ctx, gl.SAMPLE_ALPHA_TO_COVERAGE, true);
-    enableState(ctx, gl.BLEND, blending);
+    device.enableState(gl.DEPTH_TEST, depthTest);
+    device.cullingState = cullFaceEnable;
+    device.enableState(gl.SAMPLE_ALPHA_TO_COVERAGE, true);
+    device.enableState(gl.BLEND, blending);
     if (blending) {
       ctx.blendEquation(blendEquation);
       ctx.blendFunc(sfactor, dfactor);
@@ -32,23 +33,10 @@ class Pass {
     ctx.depthMask(depthMask);
   }
 
-  void enableState(gl.RenderingContext ctx, int cap, bool enable) {
-    if (enable) {
-      ctx.enable(cap);
-    } else {
-      ctx.disable(cap);
-    }
-  }
-
-  void render(double time, Map options) {
-    
-  }
-
   dispose() {
     if (shader != null) shader.dispose();
   }
 }
-
 
 
 

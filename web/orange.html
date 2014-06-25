@@ -12,18 +12,25 @@
       <tr>
         <td><canvas id="container" width="800" height="500" style="border: 1px solid #333333;"></canvas></td>
         <td valign="top">
-          <div >
-            <select id="scenes">
-              <option value="0">Animation</option>
-              <option value="1">Bounding Box</option>
-              <option value="2">Lighting</option>
-              <option value="3">Physics</option>
-              <option value="4">GLTF</option>
-              <option value="5">Textures</option>
-              <option value="6">Water</option>
-            </select>
-          </div>
-          <div id="controllers"></div>
+          <fieldset>
+            <legend>Scenes</legend>
+            
+            <div >
+              <select id="scenes">
+                <option value="0">Animation</option>
+                <option value="1">Bounding Box</option>
+                <option value="2">Lighting</option>
+                <option value="3">Physics</option>
+                <option value="4">GLTF</option>
+                <option value="5">Textures</option>
+                <option value="6">Water</option>
+              </select>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Controls</legend>
+            <div id="controllers"></div>
+          </fieldset>
         </td>
       </tr>
     </table>

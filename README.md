@@ -18,6 +18,7 @@ Is a WebGL based 3D engine for my personal experiments.
 - Fog
 - Skybox
 - Reflection texture (Spheric, planar, cubic and projection)
+- Create mesh from height map
 
 
 ### TODO ###

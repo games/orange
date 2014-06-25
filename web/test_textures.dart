@@ -13,6 +13,15 @@ class TestTexturesScene extends Scene {
 
     camera.setTranslation(0.0, 2.0, 4.0);
     camera.lookAt(new Vector3.zero());
+    
+    var skybox = new Cube(width: 1000, height: 1000, depth: 1000);
+    skybox.material = new StandardMaterial();
+    skybox.material.backFaceCulling = false;
+    skybox.material.reflectionTexture = new CubeTexture("textures/cube/Bridge2/bridge");
+    skybox.material.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+    skybox.material.diffuseColor = new Color.fromList([0.0, 0.0, 0.0]);
+    skybox.material.specularColor = new Color.fromList([0.0, 0.0, 0.0]);
+    add(skybox);
 
     var sphere = new SphereMesh();
     sphere.material = new StandardMaterial();

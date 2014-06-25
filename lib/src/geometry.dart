@@ -8,6 +8,8 @@ class Geometry {
 
   Map<String, VertexBuffer> buffers = {};
 
+  Geometry();
+
   void set positions(data) {
     if (data is VertexBuffer) {
       buffers[Semantics.position] = data;
@@ -57,7 +59,7 @@ class Geometry {
     }
     return _boundingInfo;
   }
-  
+
   Geometry clone() {
     var result = new Geometry();
     buffers.forEach((k, v) {
@@ -65,4 +67,6 @@ class Geometry {
     });
     return result;
   }
+
+
 }

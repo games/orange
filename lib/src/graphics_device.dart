@@ -183,7 +183,7 @@ class GraphicsDevice {
     }
     mesh.faces.bind(ctx);
     if (material.wireframe) {
-      ctx.drawArrays(gl.LINE_LOOP, 0, mesh.geometry.buffers[Semantics.position].count);
+      ctx.drawArrays(gl.LINE_STRIP, 0, mesh.geometry.buffers[Semantics.position].count);
     } else {
       ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
     }

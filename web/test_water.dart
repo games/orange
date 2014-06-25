@@ -22,7 +22,7 @@ class TestWaterScene extends Scene {
       "path": "textures/terrain/grasslight-big.jpg",
       "sampler": new Sampler()
           ..minFilter = gl.NEAREST_MIPMAP_NEAREST
-          ..magFilter = gl.NEAREST_MIPMAP_NEAREST
+          ..magFilter = gl.NEAREST
     });
     ground.material.diffuseTexture.uScale = 60.0;
     ground.material.diffuseTexture.vScale = 60.0;

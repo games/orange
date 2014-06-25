@@ -1,6 +1,4 @@
-import 'package:orange/orange.dart';
-import 'package:vector_math/vector_math.dart';
-
+part of orange_examples;
 
 
 

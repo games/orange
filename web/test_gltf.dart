@@ -1,6 +1,4 @@
-import 'package:orange/orange.dart';
-import 'package:vector_math/vector_math.dart';
-import 'dart:html';
+part of orange_examples;
 
 
 
@@ -15,9 +13,9 @@ class TestGLTFScene extends Scene {
 
     var urls = ["../models/duck/duck.json", "../models/SuperMurdoch/SuperMurdoch.json", "../models/rambler/rambler.json", "../models/wine/wine.json", "../models/axe/axe.json"];
 
-    var selector = new SelectElement();
+    var selector = new html.SelectElement();
     urls.forEach((u) {
-      var option = new OptionElement(data: u.split("/").last, value: u);
+      var option = new html.OptionElement(data: u.split("/").last, value: u);
       selector.children.add(option);
 
     });
@@ -25,7 +23,7 @@ class TestGLTFScene extends Scene {
       var opt = selector.options[selector.selectedIndex];
       _loadModel(opt.value);
     });
-    querySelector("#controllers").children.add(selector);
+    html.querySelector("#controllers").children.add(selector);
 
     _loadModel(urls.first);
 

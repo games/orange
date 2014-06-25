@@ -1,7 +1,4 @@
-import 'package:orange/orange.dart';
-import 'package:vector_math/vector_math.dart';
-import 'dart:math';
-import 'dart:html';
+part of orange_examples;
 
 
 
@@ -49,7 +46,7 @@ class TestBoundingBoxScene extends Scene {
     light0.position = new Vector3(-5.0, 3.0, 0.0);
     add(light0);
     
-    var duplicateBox = new ButtonElement();
+    var duplicateBox = new html.ButtonElement();
     duplicateBox.onClick.listen((e) {
       var rnd = new Random();
       var newBox = box.clone();
@@ -58,7 +55,7 @@ class TestBoundingBoxScene extends Scene {
       add(newBox);
     });
     duplicateBox.text = "Duplicate";
-    querySelector("#controllers").children.add(duplicateBox);
+    html.querySelector("#controllers").children.add(duplicateBox);
   }
 
   @override

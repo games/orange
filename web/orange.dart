@@ -1,12 +1,19 @@
+library orange_examples;
+
 import 'dart:html' as html;
+import 'dart:math';
+import 'dart:async';
 import 'package:orange/orange.dart';
 import 'package:stats/stats.dart';
-import 'test_boundingbox.dart';
-import 'test_physics.dart';
-import 'test_animation.dart';
-import 'test_lighting.dart';
-import 'test_gltf.dart';
-import 'test_textures.dart';
+import 'package:vector_math/vector_math.dart';
+
+part 'test_boundingbox.dart';
+part 'test_physics.dart';
+part 'test_animation.dart';
+part 'test_lighting.dart';
+part 'test_gltf.dart';
+part 'test_textures.dart';
+part 'test_water.dart';
 
 
 
@@ -29,8 +36,9 @@ void main() {
                 new TestLightingScene(camera), 
                 new PhysicsScene(camera),
                 new TestGLTFScene(camera),
-                new TestTexturesScene(camera)];
-  var i = 5;
+                new TestTexturesScene(camera),
+                new TestWaterScene(camera)];
+  var i = 6;
   
   director.replace(scenes[i]);
   director.run();

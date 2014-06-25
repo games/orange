@@ -28,6 +28,7 @@ abstract class Scene {
   @deprecated
   Director director;
   GraphicsDevice get graphicsDevice => Director.instance.graphicsDevice;
+  @deprecated
   Camera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   PhysicsEngine _physicsEngine;

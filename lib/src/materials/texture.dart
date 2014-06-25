@@ -34,7 +34,8 @@ class Texture {
   bool ready = false;
 
   bool getAlphaFromRGB = false;
-  bool isCube = false;
+  bool _isCube = false;
+  bool mipmap = true;
   double coordinatesIndex = 0.0;
   int coordinatesMode = SPHERICAL_MODE;
   double level = 1.0;
@@ -46,15 +47,86 @@ class Texture {
   double vAng = 0.0;
   double wAng = 0.0;
 
+  bool _dirty = true;
+  Matrix4 _textureMatrix;
+  Matrix4 _rowGenerationMatrix;
+  Matrix4 _projectionModeMatrix;
+  Vector4 _t0, _t1, _t2;
+
   // TODO
   Matrix4 get textureMatrix {
-    var matrix = new Matrix4.diagonal3Values(uScale, vScale, 1.0);
-    return matrix;
+    if (!_dirty && _textureMatrix != null) return _textureMatrix;
+    _dirty = false;
+
+    if (_textureMatrix == null) {
+      _textureMatrix = new Matrix4.zero();
+      _rowGenerationMatrix = new Matrix4.identity();
+      _t0 = new Vector4.zero();
+      _t1 = new Vector4.zero();
+      _t2 = new Vector4.zero();
+    }
+    _prepareRowForTextureGeneration(0.0, 0.0, 0.0, _t0);
+    _prepareRowForTextureGeneration(1.0, 0.0, 0.0, _t1);
+    _prepareRowForTextureGeneration(0.0, 1.0, 0.0, _t2);
+
+    _t1.sub(_t0);
+    _t2.sub(_t0);
+    _textureMatrix.setIdentity();
+    _textureMatrix.setColumn(0, _t1);
+    _textureMatrix.setColumn(1, _t2);
+    _textureMatrix.setColumn(2, _t0);
+    return _textureMatrix;
+  }
+
+  void _prepareRowForTextureGeneration(double x, double y, double z, Vector4 t) {
+    x -= uOffset + 0.5;
+    y -= vOffset + 0.5;
+    z -= 0.5;
+    var t1 = _rowGenerationMatrix * new Vector4(x, y, z, 0.0);
+    t1.x *= uScale;
+    t1.y *= vScale;
+    t1.x += 0.5;
+    t1.y += 0.5;
+    t1.z += 0.5;
+    t1.copyInto(t);
   }
 
   // TODO
   Matrix4 get reflectionTextureMatrix {
-    return new Matrix4.identity();
+    if (!_dirty && _textureMatrix != null) return _textureMatrix;
+    _dirty = false;
+
+    if (_textureMatrix == null) {
+      _textureMatrix = new Matrix4.zero();
+      _projectionModeMatrix = new Matrix4.zero();
+    }
+    if (coordinatesMode == SPHERICAL_MODE) {
+      _textureMatrix.setIdentity();
+      _textureMatrix[0] = -0.5 * uScale;
+      _textureMatrix[5] = -0.5 * vScale;
+      _textureMatrix[12] = 0.5 + uOffset;
+      _textureMatrix[13] = 0.5 + vOffset;
+    } else if (coordinatesMode == PLANAR_MODE) {
+      _textureMatrix.setIdentity();
+      _textureMatrix[0] = uScale;
+      _textureMatrix[5] = vScale;
+      _textureMatrix[12] = uOffset;
+      _textureMatrix[13] = vOffset;
+    } else if (coordinatesMode == PROJECTION_MODE) {
+      _projectionModeMatrix.setIdentity();
+      _projectionModeMatrix[0] = 0.5;
+      _projectionModeMatrix[5] = -0.5;
+      _projectionModeMatrix[10] = 0.0;
+      _projectionModeMatrix[12] = 0.5;
+      _projectionModeMatrix[13] = 0.5;
+      _projectionModeMatrix[14] = 1.0;
+      _projectionModeMatrix[15] = 1.0;
+      _textureMatrix = Director.instance.scene.camera.projectionMatrix * _projectionModeMatrix;
+    } else {
+      _textureMatrix.setIdentity();
+    }
+    return _textureMatrix;
+
   }
 
   // TODO
@@ -84,8 +156,7 @@ class Texture {
         var sampler = texture.sampler;
         texture.width = image.width;
         texture.height = image.height;
-        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter
-            == gl.LINEAR_MIPMAP_LINEAR));
+        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
         if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
           image = _ensureImage(image);
         }
@@ -188,8 +259,7 @@ class TextureManager {
           texture.data = ctx.createTexture();
           texture.width = image.width;
           texture.height = image.height;
-          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
-              (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
+          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
           if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
             image = _ensureImage(image);
           }

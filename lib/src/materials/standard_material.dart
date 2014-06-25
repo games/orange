@@ -138,13 +138,13 @@ class StandardMaterial extends Material {
       device.bindMatrix4("opacityMatrix", opacityTexture.textureMatrix);
     }
     if (reflectionTexture != null && reflectionTexture.ready) {
-      if (reflectionTexture.isCube) {
+      if (reflectionTexture._isCube) {
         device.bindTexture("reflectionCubeSampler", reflectionTexture);
       } else {
         device.bindTexture("reflection2DSampler", reflectionTexture);
       }
-      device.bindFloat3("vReflectionInfos", reflectionTexture.coordinatesMode.toDouble(), reflectionTexture.level, reflectionTexture.isCube ? 1.0 : 0.0);
-      device.bindMatrix4("reflectionMatrix", reflectionTexture.textureMatrix);
+      device.bindFloat3("vReflectionInfos", reflectionTexture.coordinatesMode.toDouble(), reflectionTexture.level, reflectionTexture._isCube ? 1.0 : 0.0);
+      device.bindMatrix4("reflectionMatrix", reflectionTexture.reflectionTextureMatrix);
     }
     if (emissiveTexture != null && emissiveTexture.ready) {
       device.bindTexture("emissiveSampler", emissiveTexture);

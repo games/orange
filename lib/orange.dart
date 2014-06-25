@@ -69,6 +69,7 @@ part 'src/materials/standard_material.dart';
 part 'src/materials/technique.dart';
 part 'src/materials/pass.dart';
 part 'src/materials/texture.dart';
+part 'src/materials/cube_texture.dart';
 part 'src/materials/render_target_texture.dart';
 
 part 'src/shaders/standard_shader.dart';

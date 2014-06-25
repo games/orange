@@ -24,15 +24,15 @@ class ShaderMaterial extends Material {
     var shader = technique.pass.shader;
     var camera = scene.camera;
     if (mesh != null) {
-      device.bindUniform(Semantics.modelMat, mesh.worldMatrix.storage);
+      device.bindMatrix4(Semantics.modelMat, mesh.worldMatrix);
     } else {
-      device.bindUniform(Semantics.modelMat, worldMatrix.storage);
+      device.bindMatrix4(Semantics.modelMat, worldMatrix);
     }
-    device.bindUniform(Semantics.viewMat, camera.viewMatrix.storage);
-    device.bindUniform(Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
-    device.bindUniform(Semantics.projectionMat, camera.projectionMatrix.storage);
+    device.bindMatrix4(Semantics.viewMat, camera.viewMatrix);
+    device.bindMatrix4(Semantics.viewProjectionMat, camera.viewProjectionMatrix);
+    device.bindMatrix4(Semantics.projectionMat, camera.projectionMatrix);
     if (shader.uniforms.containsKey("worldViewProjection")) {
-      device.bindUniform("worldViewProjection", (camera.projectionMatrix * camera.viewMatrix * worldMatrix).storage);
+      device.bindMatrix4("worldViewProjection", (camera.projectionMatrix * camera.viewMatrix * worldMatrix));
     }
 
     // TODO

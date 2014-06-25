@@ -19,7 +19,6 @@ class Pass {
     if (id == null) id = "Pass${_globalId++}";
   }
 
-  // TODO FIXME
   void bind(gl.RenderingContext ctx) {
     ctx.useProgram(shader.program);
     enableState(ctx, gl.DEPTH_TEST, depthTest);

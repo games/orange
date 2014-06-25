@@ -129,10 +129,10 @@ class GraphicsDevice {
     use(pass);
     var camera = scene.camera;
     var shader = pass.shader;
-    bindUniform(Semantics.viewMat, camera.viewMatrix.storage);
-    bindUniform(Semantics.viewProjectionMat, camera.viewProjectionMatrix.storage);
-    bindUniform(Semantics.projectionMat, camera.projectionMatrix.storage);
-    bindUniform(Semantics.cameraPosition, camera.position.storage);
+    bindMatrix4(Semantics.viewMat, camera.viewMatrix);
+    bindMatrix4(Semantics.viewProjectionMat, camera.viewProjectionMatrix);
+    bindMatrix4(Semantics.projectionMat, camera.projectionMatrix);
+    bindVector3(Semantics.cameraPosition, camera.position);
 
     meshes.forEach((Mesh mesh) {
       if (mesh.faces != null) {
@@ -181,53 +181,49 @@ class GraphicsDevice {
     material.unbind();
   }
 
-  // TODO needs to improve
-  bindUniform(String symbol, value) {
-    var shader = _currentPass.shader;
-    if (!shader.ready) return;
-    if (shader.uniforms.containsKey(symbol) && value != null) {
-      var property = shader.uniforms[symbol];
-      switch (property.type) {
-        case gl.BYTE:
-        case gl.UNSIGNED_BYTE:
-        case gl.SHORT:
-        case gl.UNSIGNED_SHORT:
-          ctx.uniform1i(property.location, value);
-          break;
-        case gl.FLOAT_MAT2:
-          ctx.uniformMatrix2fv(property.location, false, value);
-          break;
-        case gl.FLOAT_MAT3:
-          ctx.uniformMatrix3fv(property.location, false, value);
-          break;
-        case gl.FLOAT_MAT4:
-          ctx.uniformMatrix4fv(property.location, false, value);
-          break;
-        case gl.FLOAT:
-          ctx.uniform1f(property.location, value);
-          break;
-        case gl.FLOAT_VEC2:
-          ctx.uniform2fv(property.location, value);
-          break;
-        case gl.FLOAT_VEC3:
-          ctx.uniform3fv(property.location, value);
-          break;
-        case gl.FLOAT_VEC4:
-          ctx.uniform4fv(property.location, value);
-          break;
-        case gl.INT:
-          ctx.uniform1i(property.location, value);
-          break;
-        case gl.SAMPLER_2D:
-          ctx.uniform1i(property.location, value);
-          break;
-        case gl.SAMPLER_CUBE:
-          ctx.uniform1i(property.location, value);
-          break;
-        case gl.BOOL:
-          ctx.uniform1i(property.location, value ? 1 : 0);
-      }
-    }
+  ShaderProperty uniform(String symbol) => _currentPass.shader.uniforms[symbol];
+
+  void bindList(String symbol, Float32List value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform1fv(uniform(symbol).location, value);
+  }
+  bindVector3(String symbol, Vector3 value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform3fv(uniform(symbol).location, value.storage);
+  }
+  bindMatrix4(String symbol, Matrix4 value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniformMatrix4fv(uniform(symbol).location, false, value.storage);
+  }
+  bindMatrix4List(String symbol, Float32List value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniformMatrix4fv(uniform(symbol).location, false, value);
+  }
+  bindMatrix3(String symbol, Matrix3 value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniformMatrix3fv(uniform(symbol).location, false, value.storage);
+  }
+  bindMatrix3List(String symbol, Float32List value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniformMatrix3fv(uniform(symbol).location, false, value);
+  }
+  bindFloat(String symbol, num value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform1f(uniform(symbol).location, value);
+  }
+  bindFloat2(String symbol, num x, num y) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform2f(uniform(symbol).location, x, y);
+  }
+  bindFloat3(String symbol, num x, num y, num z) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform3f(uniform(symbol).location, x, y, z);
+  }
+  bindFloat4(String symbol, num x, num y, num z, num w) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform4f(uniform(symbol).location, x, y, z, w);
+  }
+  bindBool(String symbol, bool value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform1i(uniform(symbol).location, value ? 1 : 0);
+  }
+  bindInt(String symbol, int value) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) ctx.uniform1i(uniform(symbol).location, value);
+  }
+  bindColor3(String symbol, Color color) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) bindFloat3(symbol, color.red, color.green, color.blue);
+  }
+  bindColor4(String symbol, Color color) {
+    if (_currentPass.shader.uniforms.containsKey(symbol)) bindFloat4(symbol, color.red, color.green, color.blue, color.alpha);
   }
 
   bindTexture(String sampler, Texture texture) {
@@ -236,7 +232,7 @@ class GraphicsDevice {
     if (textureChannel < 0) return;
     ctx.activeTexture(gl.TEXTURE0 + textureChannel);
     ctx.bindTexture(texture.target, texture.data);
-    bindUniform(sampler, textureChannel);
+    bindInt(sampler, textureChannel);
   }
 
   enableState(int cap, bool enable) {

@@ -76,13 +76,13 @@ class TestAnimationScene extends Scene {
 
     var textureManager = new TextureManager();
     textureManager.load(graphicsDevice.ctx, {
-      "path": "bump.png"
+      "path": "textures/bump.png"
     }).then((t) {
       sphere.material.bumpTexture = t;
       plane.material.bumpTexture = t;
     });
     textureManager.load(graphicsDevice.ctx, {
-      "path": "cubetexture.png"
+      "path": "textures/firefox.png"
     }).then((t) {
       sphere.material.diffuseTexture = t;
     });

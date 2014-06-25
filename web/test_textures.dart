@@ -23,20 +23,20 @@ class TestTexturesScene extends Scene {
     sphere.material.emissiveColor = new Color(255, 0, 0);
     
 //    sphere.material.reflectionTexture = Texture.load(graphicsDevice.ctx, {
-//      "path": "reflectiontexture.jpg"
+//      "path": "textures/reflectiontexture.jpg"
 //    });
 //    sphere.material.reflectionTexture.coordinatesMode = Texture.SPHERICAL_MODE;
     
     sphere.material.emissiveTexture = Texture.load(graphicsDevice.ctx, {
-      "path": "leaf_textures.jpg"
+      "path": "textures/leaf_textures.jpg"
     });
     
     sphere.material.diffuseTexture = Texture.load(graphicsDevice.ctx, {
-      "path": "tree.png"
+      "path": "textures/tree.png"
     });
     
     sphere.material.opacityTexture = Texture.load(graphicsDevice.ctx, {
-      "path": "ani2.jpg"
+      "path": "textures/ani2.jpg"
     });
     sphere.material.opacityTexture.getAlphaFromRGB = true;
     

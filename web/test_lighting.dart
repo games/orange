@@ -57,7 +57,7 @@ class TestLightingScene extends Scene {
 
     var textureManager = new TextureManager();
     textureManager.load(graphicsDevice.ctx, {
-      "path": "cubetexture.png"
+      "path": "textures/firefox.png"
     }).then((t) {
       box.material.diffuseTexture = t;
       sphere.material.diffuseTexture = t;

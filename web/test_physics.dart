@@ -137,12 +137,12 @@ class PhysicsScene extends Scene {
 
     var textureManager = new TextureManager();
     textureManager.load(graphicsDevice.ctx, {
-      "path": "mosaic.jpg"
+      "path": "textures/mosaic.jpg"
     }).then((t) {
       sphereMaterial.diffuseTexture = t;
     });
     textureManager.load(graphicsDevice.ctx, {
-      "path": "wood.jpg"
+      "path": "textures/wood.jpg"
     }).then((t) {
       cube.material.diffuseTexture = t;
     });

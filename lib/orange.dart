@@ -66,6 +66,7 @@ part 'src/math/matrix.dart';
 part 'src/materials/material.dart';
 part 'src/materials/shader_material.dart';
 part 'src/materials/standard_material.dart';
+part 'src/materials/water_material.dart';
 part 'src/materials/technique.dart';
 part 'src/materials/pass.dart';
 part 'src/materials/texture.dart';

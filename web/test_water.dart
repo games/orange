@@ -48,15 +48,48 @@ class TestWaterScene extends Scene {
     add(ground2);
 
     // TODO water
-//    var water = new PlaneMesh(width: 10000, height: 10000, ground: true);
-//    water.translate(0.0, -8.0);
-//    water.material = new ShaderMaterial(graphicsDevice, vs, fs);
-//    add(water);
+    var water = new PlaneMesh(width: 10000, height: 10000, ground: true);
+    water.translate(0.0, -8.0);
+    water.material = new ShaderMaterial(graphicsDevice, vs, fs, afterBinding: _updateWater);
+    water.material.bumpTexture = Texture.load(graphicsDevice.ctx, {
+      "path": "textures/waternormals.jpg"
+    });
+    water.material.bumpTexture.uScale = 2.0;
+    water.material.bumpTexture.vScale = 2.0;
+
+    water.material.reflectionTexture = Texture.load(graphicsDevice.ctx, {
+      "path": "textures/reflectiontexture.jpg"
+    });
+    water.material.refractionTexture = RenderTargetTexture.create(graphicsDevice, 512, 512);
+
+    graphicsDevice.renderTargets.add(water.material.refractionTexture);
+
+    add(water);
 
 
     var light = new DirectionalLight(0xFFFFFF);
     light.direction.setValues(-1.0, -1.0, -1.0);
     add(light);
+  }
+
+  void _updateWater(ShaderMaterial material, Mesh mesh, Matrix4 world) {
+    var waterColorLevel = 0.2;
+    var fresnelLevel = 1.0;
+    var reflectionLevel = 0.6;
+    var refractionLevel = 0.8;
+    var waveLength = 0.1;
+    var waveHeight = 0.15;
+    var waterDirection = new Vector2(0.0, 1.0);
+    var time = elapsed * 0.000001;
+
+    var device = graphicsDevice;
+    device.bindColor3("waterColor", new Color.fromList([0.0, 0.3, 0.1]));
+    device.bindFloat4("vLevels", waterColorLevel, fresnelLevel, reflectionLevel, refractionLevel);
+    device.bindFloat2("waveData", waveLength, waveHeight);
+    device.bindMatrix4("windMatrix", material.bumpTexture.textureMatrix * new Matrix4.translation(new Vector3(waterDirection.x * time, waterDirection.y * time, 0.0)));
+    device.bindTexture("bumpSampler", material.bumpTexture);
+    device.bindTexture("reflectionSampler", material.reflectionTexture);
+    device.bindTexture("refractionSampler", material.refractionTexture);
   }
 
   @override
@@ -69,7 +102,8 @@ class TestWaterScene extends Scene {
 
 
 
-const String vs = """
+const String vs =
+    """
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -105,7 +139,8 @@ void main(void) {
 }
 """;
 
-const String fs = """
+const String fs =
+    """
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -168,12 +203,6 @@ void main(void) {
     gl_FragColor = vec4(finalColor, 1.);
 }
 """;
-
-
-
-
-
-
 
 
 

@@ -25,6 +25,11 @@ abstract class Scene {
   bool autoClear = true;
   bool forceWireframe = false;
 
+  double _elapsed = 0.0;
+  double _interval = 0.0;
+  double get elapsed => _elapsed;
+  double get interval => _interval;
+
   @deprecated
   Director director;
   GraphicsDevice get graphicsDevice => Director.instance.graphicsDevice;
@@ -55,7 +60,7 @@ abstract class Scene {
     _physicsEngine.dispose();
     _physicsEngine = null;
   }
-  
+
   void add(Node node) {
     node.scene = this;
     if (node is Mesh) {

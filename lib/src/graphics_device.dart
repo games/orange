@@ -15,6 +15,8 @@ class GraphicsDevice {
   html.Rectangle<int> _cachedViewport;
   RenderTargetTexture _currentRenderTarget;
   List<RenderTargetTexture> _renderTargets = [];
+  // TODO
+  List<RenderTargetTexture> get renderTargets => _renderTargets;
   RenderingGroup _renderGroup = new RenderingGroup();
 
   GraphicsDevice(this._renderingCanvas) {

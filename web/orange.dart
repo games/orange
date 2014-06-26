@@ -39,7 +39,7 @@ void main() {
                 new TestGLTFScene(camera),
                 new TestTexturesScene(camera),
                 new TestWaterScene(camera)];
-  var i = 0;
+  var i = 6;
   
   director.replace(scenes[i]);
   director.run();

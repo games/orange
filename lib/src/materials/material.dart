@@ -19,6 +19,9 @@ class Material {
   Texture reflectionTexture;
   Texture emissiveTexture;
   Texture specularTexture;
+  
+
+  Texture refractionTexture;
 
   bool wireframe = false;
   bool backFaceCulling = true;

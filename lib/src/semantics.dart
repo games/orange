@@ -36,6 +36,7 @@ class Semantics {
   static const String viewMat = "view";
   static const String viewProjectionMat = "viewProjection";
   static const String projectionMat = "projectionMat";
+  static const String worldViewProjection = "worldViewProjection";
   static const String modelMat = "world";
   static const String normalMat = "uNormalMat";
   static const String cameraPosition = "vEyePosition";

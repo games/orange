@@ -54,6 +54,8 @@ class Director {
     final interval = elapsed - _lastElapsed;
     _lastElapsed = elapsed;
     if (_scene != null) {
+      _scene._elapsed = elapsed;
+      _scene._interval = interval;
       _scene.enterFrame(elapsed, interval);
       _scene.camera.update();
       //      _scene.camera.updateMatrix();

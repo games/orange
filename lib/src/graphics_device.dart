@@ -111,81 +111,18 @@ class GraphicsDevice {
   void render(Scene scene) {
 
     _renderTargets.forEach((renderTarget) {
-      renderTarget.render(scene, scene._opaqueMeshes);
+      renderTarget.render(scene, scene._opaqueMeshes, transparentMeshes: scene._transparentMeshes);
     });
 
     if (_renderTargets.length > 0) restoreDefaultFramebuffer();
     clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
 
-    _renderGroup._opaquePasses.forEach((Pass pass, List<Mesh> meshes) {
-      _renderMeshes(scene, pass, meshes);
-    });
-    _renderGroup._transparentPasses.forEach((Pass pass, List<Mesh> meshes) {
-      // TODO sorting
-      _renderMeshes(scene, pass, meshes);
-    });
+    var camera = scene.camera;
+    _renderGroup.render(this, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
 
     // reset
     // TODO : should dispose the renderTargets ?
     _renderTargets.clear();
-  }
-
-  _renderMeshes(Scene scene, Pass pass, List<Mesh> meshes) {
-    _lastMaxEnabledArray = -1;
-    use(pass);
-    var camera = scene.camera;
-    var shader = pass.shader;
-    bindMatrix4(Semantics.viewMat, camera.viewMatrix);
-    bindMatrix4(Semantics.viewProjectionMat, camera.viewProjectionMatrix);
-    bindMatrix4(Semantics.projectionMat, camera.projectionMatrix);
-    bindVector3(Semantics.cameraPosition, camera.position);
-
-    meshes.forEach((Mesh mesh) {
-      if (mesh.faces != null) {
-        var material = mesh.material;
-        var globalIntensity = 1.0;
-        globalIntensity *= material.alpha;
-        if (globalIntensity < 0.00001) return;
-        if (globalIntensity < 1.0 && !pass.blending) {
-          ctx.enable(gl.BLEND);
-          ctx.blendEquation(gl.FUNC_ADD);
-          ctx.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-          _renderMesh(mesh, shader);
-          ctx.disable(gl.BLEND);
-        } else {
-          _renderMesh(mesh, shader);
-        }
-      }
-    });
-  }
-
-  _renderMesh(Mesh mesh, Shader shader) {
-    _newMaxEnabledArray = -1;
-    var material = mesh.material;
-    cullingState = material.backFaceCulling;
-    material.bind(mesh: mesh);
-    if (mesh.geometry != null) {
-      var geometry = mesh.geometry;
-      shader.attributes.forEach((semantic, attrib) {
-        if (geometry.buffers.containsKey(semantic)) {
-          geometry.buffers[semantic].enable(ctx, attrib);
-          if (attrib.location > _newMaxEnabledArray) {
-            _newMaxEnabledArray = attrib.location;
-          }
-        }
-      });
-    }
-    for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
-      ctx.disableVertexAttribArray(i);
-    }
-    mesh.faces.bind(ctx);
-    if (material.wireframe) {
-      ctx.drawArrays(gl.LINE_STRIP, 0, mesh.geometry.buffers[Semantics.position].count);
-    } else {
-      ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
-    }
-    _lastMaxEnabledArray = _newMaxEnabledArray;
-    material.unbind();
   }
 
   ShaderProperty uniform(String symbol) => _currentPass.shader.uniforms[symbol];

@@ -13,6 +13,8 @@ abstract class Scene {
   num fogDensity = 0.1;
   num fogStart = 0.0;
   num fogEnd = 1000.0;
+  
+  Plane clipPlane;
 
   List<Node> nodes = [];
   List<Mesh> _opaqueMeshes = [];

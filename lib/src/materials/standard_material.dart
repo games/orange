@@ -51,6 +51,9 @@ class StandardMaterial extends Material {
       if (!bumpTexture.ready) return false;
       defines.add("#define BUMP");
     }
+    if (scene.clipPlane != null) {
+      defines.add("#define CLIPPLANE");
+    }
     // FOG
     if (scene.fogMode != Scene.FOGMODE_NONE) {
       defines.add("#define FOG");
@@ -111,19 +114,16 @@ class StandardMaterial extends Material {
     var ctx = device.ctx;
     var shader = technique.pass.shader;
     var camera = scene.camera;
-    
+
     device.bindMatrix4(Semantics.modelMat, mesh.worldMatrix);
     if (shader.uniforms.containsKey(Semantics.normalMat)) {
       device.bindMatrix3(Semantics.normalMat, (camera.viewMatrix * mesh.worldMatrix).normalMatrix3().storage);
     }
 
     //textures
-    // TODO ambient, opacity, reflection, emissive, specular, bump
     if (diffuseTexture != null && diffuseTexture.ready) {
       device.bindTexture(Semantics.texture, diffuseTexture);
-      // TODO x: uv or uv2; y: alpha of texture
       device.bindFloat2("vDiffuseInfos", diffuseTexture.coordinatesIndex, diffuseTexture.level);
-      // TODO offset, scale, ang
       device.bindMatrix4("diffuseMatrix", diffuseTexture.textureMatrix);
     }
     if (ambientTexture != null && ambientTexture.ready) {
@@ -157,9 +157,7 @@ class StandardMaterial extends Material {
     }
     if (bumpTexture != null && bumpTexture.ready && device.caps.standardDerivatives) {
       device.bindTexture("bumpSampler", bumpTexture);
-      // TODO x: uv or uv2; y: alpha of texture
       device.bindFloat2("vBumpInfos", bumpTexture.coordinatesIndex, bumpTexture.level);
-      // TODO offset, scale, ang
       device.bindMatrix4("bumpMatrix", bumpTexture.textureMatrix);
     }
 
@@ -207,12 +205,22 @@ class StandardMaterial extends Material {
       device.bindMatrix4List(Semantics.jointMat, skeleton.jointMatrices);
     }
 
+    if (scene.clipPlane != null) {
+      device.bindFloat4("vClipPlane", scene.clipPlane.normal.x, scene.clipPlane.normal.y, scene.clipPlane.normal.z, scene.clipPlane.constant);
+    }
+
     if (scene.fogMode != Scene.FOGMODE_NONE) {
       device.bindFloat4("vFogInfos", scene.fogMode.toDouble(), scene.fogStart, scene.fogEnd, scene.fogDensity);
       device.bindColor3("vFogColor", scene.fogColor);
     }
   }
 
+  @override
+  void unbind() {
+    if (reflectionTexture != null && reflectionTexture is RenderTargetTexture) {
+      Director.instance.graphicsDevice.unbindTexture("reflection2DSampler", reflectionTexture);
+    }
+  }
 
 
 

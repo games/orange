@@ -178,6 +178,14 @@ class GraphicsDevice {
     ctx.bindTexture(texture.target, texture.data);
   }
 
+  unbindTexture(String sampler, Texture texture) {
+    if (!_currentPass.shader.ready) return;
+    var textureChannel = _currentPass.shader.sampers.indexOf(sampler);
+    if (textureChannel < 0) return;
+    ctx.activeTexture(gl.TEXTURE0 + textureChannel);
+    ctx.bindTexture(texture.target, null);
+  }
+
   enableState(int cap, bool enable) {
     if (enable) {
       ctx.enable(cap);

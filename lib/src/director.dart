@@ -42,7 +42,10 @@ class Director {
       node.updateMatrix(false);
       if (node is Mesh) {
         if (node.animator != null) node.animator.evaluate(interval);
-        if (node.material != null) graphicsDevice._renderGroup.register(node);
+        if (node.material != null) {
+          graphicsDevice._renderGroup.register(node);
+          graphicsDevice._renderTargets.addAll(node.material._renderTargets);
+        }
         if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
       }
       _prepare(node.children, interval);
@@ -79,6 +82,7 @@ class Director {
       // bounding boxes
       _boundingBoxRenderer.render();
 
+      graphicsDevice.ctx.flush();
       _scene.exitFrame();
       graphicsDevice._renderGroup.clear();
       _boundingBoxRenderer._renderList.clear();

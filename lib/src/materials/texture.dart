@@ -47,6 +47,7 @@ class Texture {
   double vAng = 0.0;
   double wAng = 0.0;
 
+  // TODO needs to reset dirty when other parameters have chagned
   bool _dirty = true;
   Matrix4 _textureMatrix;
   Matrix4 _rowGenerationMatrix;
@@ -156,7 +157,8 @@ class Texture {
         var sampler = texture.sampler;
         texture.width = image.width;
         texture.height = image.height;
-        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
+        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter
+            == gl.LINEAR_MIPMAP_LINEAR));
         if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
           image = _ensureImage(image);
         }
@@ -259,7 +261,8 @@ class TextureManager {
           texture.data = ctx.createTexture();
           texture.width = image.width;
           texture.height = image.height;
-          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
+          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
+              (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
           if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
             image = _ensureImage(image);
           }

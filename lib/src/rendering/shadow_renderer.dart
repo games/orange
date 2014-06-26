@@ -18,7 +18,7 @@ class ShadowRenderer implements Renderer {
   Matrix4 _transformMatrix;
 
   ShadowRenderer(int size, this.light, GraphicsDevice device) {
-    _shadowMap = RenderTargetTexture.create(device, size, size);
+    _shadowMap = new RenderTargetTexture(device, size, size);
     _shadowMap.renderDelegate = this;
     _pass = new Pass();
   }

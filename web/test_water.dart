@@ -10,7 +10,7 @@ class TestWaterScene extends Scene {
 
   @override
   void enter() {
-    camera.setTranslation(-40.0, 40.0, 0.0);
+    camera.setTranslation(-30.0, 10.0, 30.0);
     camera.lookAt(new Vector3.zero());
 
     var skybox = new Cube(width: 1000, height: 1000, depth: 1000);
@@ -26,7 +26,7 @@ class TestWaterScene extends Scene {
     ground.translate(0.0, -10.0);
     ground.material = new StandardMaterial();
     ground.material.diffuseTexture = Texture.load(graphicsDevice.ctx, {
-      "path": "textures/terrain/grasslight-big.jpg",
+      "path": "textures/terrain/backgrounddetailed6.jpg",
       "sampler": new Sampler()
           ..minFilter = gl.NEAREST_MIPMAP_NEAREST
           ..magFilter = gl.NEAREST
@@ -56,13 +56,8 @@ class TestWaterScene extends Scene {
     });
     water.material.bumpTexture.uScale = 2.0;
     water.material.bumpTexture.vScale = 2.0;
-
-    water.material.reflectionTexture = Texture.load(graphicsDevice.ctx, {
-      "path": "textures/reflectiontexture.jpg"
-    });
-    water.material.refractionTexture = RenderTargetTexture.create(graphicsDevice, 512, 512);
-
-    graphicsDevice.renderTargets.add(water.material.refractionTexture);
+    water.material.reflectionTexture = new MirrorTexture(graphicsDevice, 512, 512);
+    water.material.refractionTexture = new RenderTargetTexture(graphicsDevice, 512, 512);
 
     add(water);
 
@@ -203,10 +198,6 @@ void main(void) {
     gl_FragColor = vec4(finalColor, 1.);
 }
 """;
-
-
-
-
 
 
 

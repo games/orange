@@ -1,7 +1,7 @@
 part of orange;
 
 
-abstract class Scene {
+class Scene {
   static int FOGMODE_NONE = 0;
   static int FOGMODE_EXP = 1;
   static int FOGMODE_EXP2 = 2;
@@ -36,6 +36,11 @@ abstract class Scene {
   GraphicsDevice get graphicsDevice => Orange.instance.graphicsDevice;
   Camera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
+  // TODO
+  Color ambientColor = new Color.fromHex(0x0);
+  
+  // physics
+  Vector3 _gravity;
   PhysicsEngine _physicsEngine;
   PhysicsEngine get physicsEngine => _physicsEngine;
   bool get physicsEnabled => _physicsEngine != null;
@@ -49,6 +54,7 @@ abstract class Scene {
       _physicsEngine = null;
       return false;
     }
+    if(gravity == null) gravity = _gravity;
     _physicsEngine._initialize(gravity);
     return true;
   }
@@ -71,8 +77,8 @@ abstract class Scene {
       _lights.add(node);
     }
     nodes.add(node);
-    if (node.name == null) {
-      node.name = "Node${nodes.length}";
+    if (node.id == null) {
+      node.id = "Node${nodes.length}";
     }
   }
 
@@ -94,8 +100,11 @@ abstract class Scene {
     _transparentMeshes.clear();
   }
 
-  void enter();
+  void enter() {
+    
+  }
 
+  // TODO remove parameters
   void enterFrame(num elapsed, num interval) {
 
   }

@@ -117,15 +117,10 @@ class GraphicsDevice {
     if (_renderTargets.length > 0) restoreDefaultFramebuffer();
     clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
 
-    var nonOpaquePasses = {};
-    _renderGroup._meshesPerPass.forEach((Pass pass, List<Mesh> meshes) {
-      if (pass.blending) {
-        nonOpaquePasses[pass] = meshes;
-      } else {
-        _renderMeshes(scene, pass, meshes);
-      }
+    _renderGroup._opaquePasses.forEach((Pass pass, List<Mesh> meshes) {
+      _renderMeshes(scene, pass, meshes);
     });
-    nonOpaquePasses.forEach((Pass pass, List<Mesh> meshes) {
+    _renderGroup._transparentPasses.forEach((Pass pass, List<Mesh> meshes) {
       // TODO sorting
       _renderMeshes(scene, pass, meshes);
     });

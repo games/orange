@@ -44,10 +44,10 @@ class ShadowRenderer implements Renderer {
     return _pass.shader.ready;
   }
 
-  void render(Scene scene, List<Mesh> opaqueMeshes, {List<Mesh> alphaTestMeshes, List<Mesh> transparentMeshes}) {
-    opaqueMeshes.forEach((mesh) => _renderMesh(scene, mesh));
-    if (alphaTestMeshes != null) opaqueMeshes.forEach((mesh) => _renderMesh(scene, mesh));
-    if (transparentMeshes != null) opaqueMeshes.forEach((mesh) => _renderMesh(scene, mesh));
+  void render(Scene scene, Matrix4 viewMatrix, Matrix4 viewProjectionMatrix, Matrix4 projectionMatrix, Vector3 eyePosition) {
+    scene._opaqueMeshes.forEach((mesh) => _renderMesh(scene, mesh));
+    scene._alphaTestMeshes.forEach((mesh) => _renderMesh(scene, mesh));
+    scene._transparentMeshes.forEach((mesh) => _renderMesh(scene, mesh));
   }
 
   void _renderMesh(Scene scene, Mesh mesh) {

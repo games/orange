@@ -12,7 +12,7 @@ class MirrorTexture extends RenderTargetTexture {
   MirrorTexture(GraphicsDevice device, int width, int height) : super(device, width, height);
 
   @override
-  void render(Scene scene, List<Mesh> opaqueMeshes, {List<Mesh> alphaTestMeshes, List<Mesh> transparentMeshes}) {
+  void render(Scene scene, Matrix4 viewMatrix, Matrix4 viewProjectionMatrix, Matrix4 projectionMatrix, Vector3 eyePosition) {
 
     var device = scene.graphicsDevice;
     device.bindFramebuffer(this);
@@ -23,7 +23,7 @@ class MirrorTexture extends RenderTargetTexture {
     _transformMatrix = scene.camera.viewMatrix * _mirrorMatrix;
     scene.clipPlane = mirrorPlane;
     scene.graphicsDevice._cullBackFaces = false;
-    scene.graphicsDevice._renderGroup.render(scene.graphicsDevice, _transformMatrix, scene.camera.projectionMatrix * _transformMatrix, scene.camera.projectionMatrix, scene.camera.position);
+    scene.graphicsDevice._renderGroup.render(scene, _transformMatrix, scene.camera.projectionMatrix * _transformMatrix, scene.camera.projectionMatrix, scene.camera.position);
     scene.graphicsDevice._cullBackFaces = true;
     scene.graphicsDevice._cullingState = null;
     scene.clipPlane = null;

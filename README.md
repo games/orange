@@ -19,6 +19,7 @@ Is a WebGL based 3D engine for my personal experiments.
 - Skybox
 - Reflection texture (Spheric, planar, cubic and projection)
 - Create mesh from height map
+- Water
 
 
 ### TODO ###

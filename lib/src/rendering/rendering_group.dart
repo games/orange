@@ -3,7 +3,7 @@ part of orange;
 
 
 
-class RenderingGroup {
+class RenderingGroup implements Renderer {
   Map<Pass, List<Mesh>> _transparentPasses = {};
   Map<Pass, List<Mesh>> _opaquePasses = {};
 
@@ -34,7 +34,8 @@ class RenderingGroup {
     _opaquePasses.remove(material.technique.pass);
   }
 
-  void render(GraphicsDevice graphics, Matrix4 viewMatrix, Matrix4 viewProjectionMatrix, Matrix4 projectionMatrix, Vector3 eyePosition) {
+  void render(Scene scene, Matrix4 viewMatrix, Matrix4 viewProjectionMatrix, Matrix4 projectionMatrix, Vector3 eyePosition) {
+    var graphics = scene.graphicsDevice;
     _opaquePasses.forEach((Pass pass, List<Mesh> meshes) {
       _renderMeshes(graphics, pass, meshes, viewMatrix, viewProjectionMatrix, projectionMatrix, eyePosition);
     });

@@ -3,7 +3,7 @@ part of orange;
 
 
 abstract class Renderer {
-  void render(Scene scene, List<Mesh> opaqueMeshes, {List<Mesh> alphaTestMeshes, List<Mesh> transparentMeshes});
+  void render(Scene scene, Matrix4 viewMatrix, Matrix4 viewProjectionMatrix, Matrix4 projectionMatrix, Vector3 eyePosition);
 }
 
 class RenderTargetTexture extends Texture implements Renderer {
@@ -52,26 +52,16 @@ class RenderTargetTexture extends Texture implements Renderer {
   }
 
   @override
-  void render(Scene scene, List<Mesh> opaqueMeshes, {List<Mesh> alphaTestMeshes, List<Mesh> transparentMeshes}) {
+  void render(Scene scene, Matrix4 viewMatrix, Matrix4 viewProjectionMatrix, Matrix4 projectionMatrix, Vector3 eyePosition) {
     var device = scene.graphicsDevice;
     device.bindFramebuffer(this);
     device.clear(new Color(0, 0, 0), backBuffer: true, depthStencil: true);
     device.ctx.viewport(0, 0, width, height);
-
-    // TODO fixme
-    if (renderDelegate != null) {
-      renderDelegate.render(scene, opaqueMeshes, alphaTestMeshes: alphaTestMeshes, transparentMeshes: transparentMeshes);
-    } else {
-      var camera = scene.camera;
-      device._renderGroup.render(device, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
-    }
-
-
+    if(renderDelegate == null) renderDelegate = device._renderGroup;
+    renderDelegate.render(scene,  viewMatrix,  viewProjectionMatrix,  projectionMatrix,  eyePosition);
     device.unbindFramebuffer();
   }
 }
-
-
 
 
 

@@ -110,15 +110,17 @@ class GraphicsDevice {
 
   void render(Scene scene) {
 
+    var camera = scene.camera;
+
     _renderTargets.forEach((renderTarget) {
-      renderTarget.render(scene, scene._opaqueMeshes, transparentMeshes: scene._transparentMeshes);
+      renderTarget.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
     });
 
     if (_renderTargets.length > 0) restoreDefaultFramebuffer();
+    
     clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
 
-    var camera = scene.camera;
-    _renderGroup.render(this, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
+    _renderGroup.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
 
     // reset
     // TODO : should dispose the renderTargets ?

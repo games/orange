@@ -31,16 +31,6 @@ class Material {
 
   Texture get reflectionTexture => _reflectionTexture;
 
-  Texture _refractionTexture;
-
-  void set refractionTexture(Texture texture) {
-    if (texture is RenderTargetTexture) _renderTargets.add(texture);
-    if (_renderTargets.contains(_refractionTexture)) _renderTargets.remove(_refractionTexture);
-    _refractionTexture = texture;
-  }
-
-  Texture get refractionTexture => _refractionTexture;
-
   bool wireframe = false;
   bool backFaceCulling = true;
   bool ready([Mesh mesh]) => false;

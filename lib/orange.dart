@@ -77,6 +77,7 @@ part 'src/materials/render_target_texture.dart';
 part 'src/shaders/standard_shader.dart';
 part 'src/shaders/shadowmap_shader.dart';
 part 'src/shaders/color_shader.dart';
+part 'src/shaders/water_shader.dart';
 
 part 'src/lights/light.dart';
 

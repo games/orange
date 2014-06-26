@@ -15,7 +15,6 @@ class Orange {
   num _lastElapsed = 0.0;
   RenderingGroup _renderGroup = new RenderingGroup();
   BoundingBoxRenderer _boundingBoxRenderer;
-  BoundingBoxRenderer get boundingBoxRenderer => _boundingBoxRenderer;
   List<RenderTargetTexture> _renderTargets = [];
   List<Callback> afterRenders = [];
 

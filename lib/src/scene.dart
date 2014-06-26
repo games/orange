@@ -63,8 +63,12 @@ abstract class Scene {
 
   void add(Node node) {
     node.scene = this;
-    if (node is Mesh) {
-      _opaqueMeshes.add(node);
+    if (node is Mesh && node.material != null) {
+      if (node.material.alpha == 1.0 && !node.material.technique.pass.blending) {
+        _opaqueMeshes.add(node);
+      } else {
+        _transparentMeshes.add(node);
+      }
     } else if (node is Light) {
       _lights.add(node);
     }

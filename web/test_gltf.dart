@@ -11,7 +11,8 @@ class TestGLTFScene extends Scene {
   @override
   void enter() {
 
-    var urls = ["../models/duck/duck.json", "../models/SuperMurdoch/SuperMurdoch.json", "../models/rambler/rambler.json", "../models/wine/wine.json", "../models/axe/axe.json"];
+    var urls = ["../models/duck/duck.json", "../models/SuperMurdoch/SuperMurdoch.json", "../models/rambler/rambler.json", 
+                "../models/wine/wine.json", "../models/axe/axe.json", "../models/veneno/veneno.json"];
 
     var selector = new html.SelectElement();
     urls.forEach((u) {
@@ -44,7 +45,7 @@ class TestGLTFScene extends Scene {
     var loader = new GltfLoader2();
     loader.load(graphicsDevice.ctx, url).then((root) {
       _meshes.forEach((m) => remove(m));
-      
+
       add(root);
       root.scale(0.1);
       root.showBoundingBox = true;

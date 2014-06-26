@@ -32,6 +32,11 @@ Is a WebGL based 3D engine for my personal experiments.
 - Lens flares
 - First person camera control
 - Particle System
+- Morph targets
+- LOD system
+
+
+
 
 
 ### About ###

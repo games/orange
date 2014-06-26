@@ -11,6 +11,13 @@ class Color {
     storage[2] = b / 255.0;
     storage[3] = alpha;
   }
+  
+  Color.float(num r, num g, num b, [num alpha = 1.0]) {
+      storage[0] = r.toDouble();
+      storage[1] = g.toDouble();
+      storage[2] = b.toDouble();
+      storage[3] = alpha;
+    }
 
   Color.fromHex(num hexColor) {
     hex = hexColor;
@@ -43,7 +50,6 @@ class Color {
     storage[3] = 1.0;
   }
 
-  Vector3 get rgb => new Vector3.array(storage);
   double get red => storage[0];
   double get green => storage[1];
   double get blue => storage[2];

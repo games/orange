@@ -226,7 +226,10 @@ class GltfLoader2 {
       } else if (specular is List) {
         material.specularColor = new Color.fromList(specular);
       }
-      material.shininess = values["shininess"];
+      var shininess = values["shininess"];
+      if (shininess != null) {
+        material.shininess = shininess.toDouble();
+      }
       _resources[key] = material;
       return material;
     }

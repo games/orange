@@ -24,7 +24,7 @@ class WaterMaterial extends ShaderMaterial {
   }
 
   void _afterBindg(ShaderMaterial material, Mesh mesh, Matrix4 world) {
-    var scene = Director.instance.scene;
+    var scene = Orange.instance.scene;
     var time = scene.elapsed * 0.000001;
     _graphicsDevice.bindColor3("waterColor", waterColor);
     _graphicsDevice.bindFloat4("vLevels", waterColorLevel, fresnelLevel, reflectionLevel, refractionLevel);

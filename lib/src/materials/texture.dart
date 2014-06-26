@@ -122,7 +122,7 @@ class Texture {
       _projectionModeMatrix[13] = 0.5;
       _projectionModeMatrix[14] = 1.0;
       _projectionModeMatrix[15] = 1.0;
-      _textureMatrix = Director.instance.scene.camera.projectionMatrix * _projectionModeMatrix;
+      _textureMatrix = Orange.instance.scene.camera.projectionMatrix * _projectionModeMatrix;
     } else {
       _textureMatrix.setIdentity();
     }

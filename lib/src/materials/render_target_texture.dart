@@ -57,7 +57,7 @@ class RenderTargetTexture extends Texture implements Renderer {
     device.bindFramebuffer(this);
     device.clear(new Color(0, 0, 0), backBuffer: true, depthStencil: true);
     device.ctx.viewport(0, 0, width, height);
-    if(renderDelegate == null) renderDelegate = device._renderGroup;
+    if(renderDelegate == null) renderDelegate = Orange.instance._renderGroup;
     renderDelegate.render(scene,  viewMatrix,  viewProjectionMatrix,  projectionMatrix,  eyePosition);
     device.unbindFramebuffer();
   }

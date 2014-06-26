@@ -21,7 +21,7 @@ part 'test_water.dart';
 
 void main() {
   var canvas = html.querySelector("#container");
-  var renderer = new GraphicsDevice(canvas);
+  var graphics = new GraphicsDevice(canvas);
   var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 2000.0);
   camera.translate(0.0, 0.0, 4.0);
   var controls = new OrbitControls();
@@ -30,7 +30,7 @@ void main() {
   var stats = new Stats();
   html.document.body.children.add(stats.container);
 
-  var director = new Director(renderer);
+  var orange = new Orange(graphics);
   
   var scenes = [new TestAnimationScene(camera), 
                 new TestBoundingBoxScene(camera), 
@@ -41,9 +41,9 @@ void main() {
                 new TestWaterScene(camera)];
   var i = 6;
   
-  director.replace(scenes[i]);
-  director.run();
-  director.afterRenders.add(() {
+  orange.enter(scenes[i]);
+  orange.run();
+  orange.afterRenders.add(() {
     stats.end();
     stats.begin();
   });
@@ -53,7 +53,7 @@ void main() {
   selector.selectedIndex = i;
   selector.onChange.listen((e) {
     controllers.children.clear();
-    director.replace(scenes[int.parse(selector.value)]);
+    orange.enter(scenes[int.parse(selector.value)]);
   });
 
 }

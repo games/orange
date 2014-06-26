@@ -23,7 +23,7 @@ class CubeTexture extends Texture {
     extensions.forEach((String ext) => futures.add(_loadImage(root + ext)));
     Future.wait(futures).then((List<html.ImageElement> images) {
       //TODO check max cubemap size
-      var ctx = Director.instance.graphicsDevice.ctx;
+      var ctx = Orange.instance.graphicsDevice.ctx;
       var texture = ctx.createTexture();
       ctx.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
       ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);

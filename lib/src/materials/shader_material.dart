@@ -26,8 +26,8 @@ class ShaderMaterial extends Material {
 
   @override
   void bind({Mesh mesh, Matrix4 worldMatrix}) {
-    var scene = Director.instance.scene;
-    var device = Director.instance.graphicsDevice;
+    var scene = Orange.instance.scene;
+    var device = Orange.instance.graphicsDevice;
     var shader = technique.pass.shader;
     var camera = scene.camera;
     if (mesh != null) worldMatrix = mesh.worldMatrix;

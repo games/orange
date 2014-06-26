@@ -23,7 +23,7 @@ class MirrorTexture extends RenderTargetTexture {
     _transformMatrix = scene.camera.viewMatrix * _mirrorMatrix;
     scene.clipPlane = mirrorPlane;
     scene.graphicsDevice._cullBackFaces = false;
-    scene.graphicsDevice._renderGroup.render(scene, _transformMatrix, scene.camera.projectionMatrix * _transformMatrix, scene.camera.projectionMatrix, scene.camera.position);
+    Orange.instance._renderGroup.render(scene, _transformMatrix, scene.camera.projectionMatrix * _transformMatrix, scene.camera.projectionMatrix, scene.camera.position);
     scene.graphicsDevice._cullBackFaces = true;
     scene.graphicsDevice._cullingState = null;
     scene.clipPlane = null;

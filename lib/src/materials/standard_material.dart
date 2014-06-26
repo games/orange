@@ -218,7 +218,7 @@ class StandardMaterial extends Material {
   @override
   void unbind() {
     if (reflectionTexture != null && reflectionTexture is RenderTargetTexture) {
-      Director.instance.graphicsDevice.unbindTexture("reflection2DSampler", reflectionTexture);
+      Orange.instance.graphicsDevice.unbindTexture("reflection2DSampler", reflectionTexture);
     }
   }
 

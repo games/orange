@@ -3,35 +3,37 @@ part of orange;
 
 
 
-class Director {
+class Orange {
 
   static const double Epsilon = 0.001;
   static const double CollisionsEpsilon = 0.001;
-  static Director _instance;
-  static Director get instance => _instance;
+  static Orange _instance;
+  static Orange get instance => _instance;
 
   GraphicsDevice graphicsDevice;
   Scene _scene;
   num _lastElapsed = 0.0;
+  RenderingGroup _renderGroup = new RenderingGroup();
   BoundingBoxRenderer _boundingBoxRenderer;
   BoundingBoxRenderer get boundingBoxRenderer => _boundingBoxRenderer;
+  List<RenderTargetTexture> _renderTargets = [];
   List<Callback> afterRenders = [];
 
-  factory Director(GraphicsDevice graphicsDevice) {
-    if (_instance == null) _instance = new Director._(graphicsDevice);
+  factory Orange(GraphicsDevice graphicsDevice) {
+    if (_instance == null) _instance = new Orange._(graphicsDevice);
     return _instance;
   }
 
-  Director._(this.graphicsDevice) {
+  Orange._(this.graphicsDevice) {
     _boundingBoxRenderer = new BoundingBoxRenderer(graphicsDevice);
   }
 
-  replace(Scene scene) {
+  enter(Scene scene) {
     if (_scene != null) {
       _scene.exit();
     }
     _scene = scene;
-    _scene.director = this;
+    _scene.engine = this;
     _scene.enter();
   }
 
@@ -43,8 +45,8 @@ class Director {
       if (node is Mesh) {
         if (node.animator != null) node.animator.evaluate(interval);
         if (node.material != null) {
-          graphicsDevice._renderGroup.register(node);
-          graphicsDevice._renderTargets.addAll(node.material._renderTargets);
+          _renderGroup.register(node);
+          _renderTargets.addAll(node.material._renderTargets);
         }
         if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
       }
@@ -56,12 +58,13 @@ class Director {
     run();
     final interval = elapsed - _lastElapsed;
     _lastElapsed = elapsed;
-    if (_scene != null) {
+    if (_scene != null && _scene.camera != null) {
+      var camera = _scene.camera;
       _scene._elapsed = elapsed;
       _scene._interval = interval;
       _scene.enterFrame(elapsed, interval);
-      _scene.camera.update();
-      //      _scene.camera.updateMatrix();
+      camera.update();
+      // .camera.updateMatrix();
 
       //physics
       if (_scene._physicsEngine != null) {
@@ -72,22 +75,34 @@ class Director {
       scene._lights.forEach((light) {
         if (light is DirectionalLight && light.enabled) {
           if (light.shadowRenderer == null) light.shadowRenderer = new ShadowRenderer(512, light, graphicsDevice);
-          graphicsDevice._renderTargets.add(light.shadowRenderer.shadowMap);
+          _renderTargets.add(light.shadowRenderer.shadowMap);
         }
       });
 
       _prepare(_scene.nodes, interval);
 
-      graphicsDevice.render(_scene);
+      _renderTargets.forEach((renderTarget) {
+        renderTarget.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
+      });
+
+      if (_renderTargets.length > 0) graphicsDevice.restoreDefaultFramebuffer();
+
+      graphicsDevice.clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
+      _renderGroup.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
+
       // bounding boxes
       _boundingBoxRenderer.render();
 
       graphicsDevice.ctx.flush();
+      
       _scene.exitFrame();
-      graphicsDevice._renderGroup.clear();
-      _boundingBoxRenderer._renderList.clear();
+      
       //after render callbacks
       afterRenders.forEach((c) => c());
+
+      _renderGroup.clear();
+      _boundingBoxRenderer._renderList.clear();
+      _renderTargets.clear();
     }
   }
 

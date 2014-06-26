@@ -32,19 +32,15 @@ abstract class Scene {
   double get elapsed => _elapsed;
   double get interval => _interval;
 
-  @deprecated
-  Director director;
-  GraphicsDevice get graphicsDevice => Director.instance.graphicsDevice;
-  @deprecated
+  Orange engine;
+  GraphicsDevice get graphicsDevice => Orange.instance.graphicsDevice;
   Camera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   PhysicsEngine _physicsEngine;
   PhysicsEngine get physicsEngine => _physicsEngine;
   bool get physicsEnabled => _physicsEngine != null;
 
-  Scene(this.camera) {
-
-  }
+  Scene([this.camera]);
 
   bool enablePhysics({Vector3 gravity, PhysicsEnginePlugin plugin}) {
     if (_physicsEngine != null) return true;

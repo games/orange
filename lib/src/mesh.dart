@@ -44,7 +44,7 @@ class Mesh extends Node {
   }
 
   void setPhysicsState(int impostor, [PhysicsBodyCreationOptions options]) {
-    var scene = Director.instance.scene;
+    var scene = Orange.instance.scene;
     if (!scene.physicsEnabled) return;
     var physics = scene.physicsEngine;
     _physicImpostor = impostor;
@@ -57,12 +57,12 @@ class Mesh extends Node {
 
   void setPhysicsLinkWith(Mesh other, Vector3 pivot1, Vector3 pivot2) {
     if (_physicImpostor == PhysicsEngine.NoImpostor) return;
-    Director.instance.scene.physicsEngine._createLink(this, other, pivot1, pivot2);
+    Orange.instance.scene.physicsEngine._createLink(this, other, pivot1, pivot2);
   }
 
   void applyImpulse(Vector3 force, Vector3 contactPoint) {
     if (_physicImpostor == PhysicsEngine.NoImpostor) return;
-    Director.instance.scene.physicsEngine._applyImpulse(this, force, contactPoint);
+    Orange.instance.scene.physicsEngine._applyImpulse(this, force, contactPoint);
   }
 
   Geometry get geometry {

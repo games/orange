@@ -40,7 +40,7 @@ class BoundingSphere {
     var y = centerWorld.y - point.y;
     var z = centerWorld.z - point.z;
     var distance = math.sqrt((x * x) + (y * y) + (z * z));
-    if ((radiusWorld - distance).abs() < Director.Epsilon) return false;
+    if ((radiusWorld - distance).abs() < Orange.Epsilon) return false;
     return true;
   }
 

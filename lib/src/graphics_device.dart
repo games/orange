@@ -11,13 +11,9 @@ class GraphicsDevice {
   bool _cullingState;
   bool _cullBackFaces = true;
   Pass _currentPass;
+  RenderTargetTexture _currentRenderTarget;
 
   html.Rectangle<int> _cachedViewport;
-  RenderTargetTexture _currentRenderTarget;
-  List<RenderTargetTexture> _renderTargets = [];
-  // TODO
-  List<RenderTargetTexture> get renderTargets => _renderTargets;
-  RenderingGroup _renderGroup = new RenderingGroup();
 
   GraphicsDevice(this._renderingCanvas) {
     ctx = _renderingCanvas.getContext3d(preserveDrawingBuffer: true);
@@ -79,7 +75,6 @@ class GraphicsDevice {
     _currentRenderTarget = texture;
     ctx.bindFramebuffer(gl.FRAMEBUFFER, texture.framebuffer);
     ctx.viewport(0, 0, texture.width, texture.height);
-    wipeCaches();
   }
 
   void unbindFramebuffer() {
@@ -90,11 +85,6 @@ class GraphicsDevice {
   void restoreDefaultFramebuffer() {
     ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
     viewport(_cachedViewport.left, _cachedViewport.top, _cachedViewport.width, _cachedViewport.height);
-    wipeCaches();
-  }
-
-  void wipeCaches() {
-    // TODO
   }
 
   use(Pass pass) {
@@ -106,25 +96,6 @@ class GraphicsDevice {
         ctx.uniform1i(uniform.location, i);
       }
     }
-  }
-
-  void render(Scene scene) {
-
-    var camera = scene.camera;
-
-    _renderTargets.forEach((renderTarget) {
-      renderTarget.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
-    });
-
-    if (_renderTargets.length > 0) restoreDefaultFramebuffer();
-    
-    clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
-
-    _renderGroup.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
-
-    // reset
-    // TODO : should dispose the renderTargets ?
-    _renderTargets.clear();
   }
 
   ShaderProperty uniform(String symbol) => _currentPass.shader.uniforms[symbol];

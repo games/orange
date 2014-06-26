@@ -16,7 +16,7 @@ import 'dart:mirrors';
 import 'dart:js' as JS;
 
 
-part 'src/director.dart';
+part 'src/orange.dart';
 part 'src/once.dart';
 part 'src/color.dart';
 part 'src/scene.dart';

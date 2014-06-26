@@ -93,7 +93,7 @@ class BoundingBox {
   }
 
   bool intersectsPoint(Vector3 point) {
-    var delta = Director.Epsilon;
+    var delta = Orange.Epsilon;
     if (maximumWorld.x - point.x < delta || delta > point.x - minimumWorld.x) return false;
     if (maximumWorld.y - point.y < delta || delta > point.y - minimumWorld.y) return false;
     if (maximumWorld.z - point.z < delta || delta > point.z - minimumWorld.z) return false;

@@ -149,6 +149,9 @@ class GraphicsDevice {
     if (textureChannel < 0) return;
     ctx.activeTexture(gl.TEXTURE0 + textureChannel);
     ctx.bindTexture(texture.target, texture.data);
+    // TODO just is a temp solution
+    if (texture.flip) ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    else ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
   }
 
   unbindTexture(String sampler, Texture texture) {

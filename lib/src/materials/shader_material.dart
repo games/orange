@@ -6,14 +6,20 @@ part of orange;
 class ShaderMaterial extends Material {
   GraphicsDevice _graphicsDevice;
 
-  ShaderMaterial(this._graphicsDevice) {
+  ShaderMaterial(this._graphicsDevice, String vertexSource, String fragmentSource) {
     technique = new Technique();
     technique.pass = new Pass();
+    technique.pass.shader = new Shader(_graphicsDevice.ctx, vertexSource, fragmentSource);
+  }
+
+  ShaderMaterial.load(this._graphicsDevice, String url) {
+    technique = new Technique();
+    technique.pass = new Pass();
+    technique.pass.shader = new Shader.load(url);
   }
 
   @override
   bool ready([Mesh mesh]) {
-    if (technique.pass.shader == null) technique.pass.shader = new Shader(_graphicsDevice.ctx, SHADER_COLOR_VS, SHADER_COLOR_FS);
     return technique.pass.shader.ready;
   }
 

@@ -119,7 +119,6 @@ class StandardMaterial extends Material {
 
     //textures
     // TODO ambient, opacity, reflection, emissive, specular, bump
-    var textureMatrix = new Matrix4.identity();
     if (diffuseTexture != null && diffuseTexture.ready) {
       device.bindTexture(Semantics.texture, diffuseTexture);
       // TODO x: uv or uv2; y: alpha of texture

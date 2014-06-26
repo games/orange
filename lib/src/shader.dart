@@ -16,8 +16,12 @@ class Shader {
     _initialize(vertSrc, fragSrc, common: common);
   }
 
-  Shader.load(String vertUrl, String fragUrl) {
-    Future.wait([html.HttpRequest.getString(vertUrl), html.HttpRequest.getString(fragUrl)]).then((r) => _initialize(r[0], r[1]));
+  /**
+   * vertex source file:   ${url}VS.glsl
+   * fragment source file: ${url}FS.glsl
+   **/
+  Shader.load(String url) {
+    Future.wait([html.HttpRequest.getString("${url}VS.glsl"), html.HttpRequest.getString("${url}FS.glsl")]).then((r) => _initialize(r[0], r[1]));
   }
 
   _initialize(String vertSrc, String fragSrc, {String common: ""}) {

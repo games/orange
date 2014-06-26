@@ -17,7 +17,7 @@ class BoundingBoxRenderer {
   VertexBuffer _indices;
   
   BoundingBoxRenderer(this._graphicsDevice) {
-    _material = new ShaderMaterial(_graphicsDevice);
+    _material = new ShaderMaterial(_graphicsDevice, SHADER_COLOR_VS, SHADER_COLOR_FS);
     _material.technique.pass.depthMask = false;
     _renderList = [];
     _vertices = new Cube().geometry.buffers[Semantics.position];

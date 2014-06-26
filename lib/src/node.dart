@@ -5,7 +5,7 @@ part of orange;
 
 
 class Node {
-  String name;
+  String id;
   Scene _scene;
   Vector3 _position;
   Vector3 _scaling;
@@ -16,7 +16,7 @@ class Node {
   List<Node> children;
   bool _needsUpdateLocalMatrix;
 
-  Node({this.name}) {
+  Node({this.id}) {
     _position = new Vector3.zero();
     _scaling = new Vector3.all(1.0);
     _rotation = new Quaternion.identity();
@@ -29,6 +29,16 @@ class Node {
   Vector3 get position => _position;
   Vector3 get scaling => _scaling;
   Quaternion get rotation => _rotation;
+
+  void set scaling(Vector3 val) {
+    val.copyInto(_scaling);
+    _needsUpdateLocalMatrix = true;
+  }
+
+  void set rotation(Quaternion val) {
+    val.copyTo(_rotation);
+    _needsUpdateLocalMatrix = true;
+  }
 
   void set position(Vector3 val) {
     val.copyInto(_position);
@@ -133,7 +143,7 @@ class Node {
 
   Node clone() {
     var result = new Node();
-    result.name = name;
+    result.id = id;
     result.applyMatrix(_localMatrix);
     result._scaling = _scaling.clone();
     children.forEach((c) => result.add(c.clone()));
@@ -143,8 +153,6 @@ class Node {
   void dispose() {
   }
 }
-
-
 
 
 

@@ -14,6 +14,7 @@ Is a WebGL based 3D engine for my personal experiments.
  - Ogre loader ([Script](https://github.com/games/OgreToJson))
  - GLTF(Only Meshes+Textures) 
  - Obj Loader(Basic)
+ - [BabylonJS](https://github.com/BabylonJS/) loader (Basic)
 - Physics engine (Use [Cannon.js](https://github.com/schteppe/cannon.js))
 - Fog
 - Skybox
@@ -34,6 +35,7 @@ Is a WebGL based 3D engine for my personal experiments.
 - Particle System
 - Morph targets
 - LOD system
+- Sub Mesh
 
 
 

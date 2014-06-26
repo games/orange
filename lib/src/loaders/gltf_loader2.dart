@@ -53,7 +53,7 @@ class GltfLoader2 {
   }
 
   void _buildNodeHierarchy(Node node) {
-    _childrenOfNode[node.name].forEach((id) {
+    _childrenOfNode[node.id].forEach((id) {
       var child = _resources["Node_${id}"];
       if (child.parent != null) {
         node.add(child.clone());
@@ -91,9 +91,9 @@ class GltfLoader2 {
         node.applyMatrix(_newMatrix4FromSQT(v["scale"], v["rotation"], v["translation"]));
       }
       if (v.containsKey("children")) {
-        _childrenOfNode[node.name] = v["children"];
+        _childrenOfNode[node.id] = v["children"];
       }
-      _resources["Node_${node.name}"] = node;
+      _resources["Node_${node.id}"] = node;
     });
   }
 
@@ -103,7 +103,7 @@ class GltfLoader2 {
       return _resources[key].clone();
     } else {
       var m = doc["meshes"][id];
-      var node = new Node(name: id);
+      var node = new Node(id: id);
       m["primitives"].forEach((p) {
         var child = new Mesh();
         child._geometry = new Geometry();
@@ -304,22 +304,4 @@ class GltfLoader2 {
     return completer.future;
   }
 
-  Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
-    var m = new Matrix4.zero();
-    m.setFromTranslationRotation(new Vector3.fromFloat32List(new Float32List.fromList(t)), new Quaternion.fromFloat32List(new Float32List.fromList(r)));
-    m.scale(s[0].toDouble(), s[1].toDouble(), s[2].toDouble());
-    return m;
-  }
-
-  Matrix4 _newMatrix4FromList(List l) {
-    var tl = new Float32List(l.length);
-    for (var i = 0; i < l.length; i++) {
-      tl[i] = l[i].toDouble();
-    }
-    return new Matrix4.fromFloat32List(tl);
-  }
-
-  _newVec3FromList(List l) {
-    return new Vector3(l[0].toDouble(), l[1].toDouble(), l[2].toDouble());
-  }
 }

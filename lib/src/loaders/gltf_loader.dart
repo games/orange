@@ -134,7 +134,7 @@ class GltfLoader {
     description.forEach((k, v) {
       var textureManager = new TextureManager();
       var mesh = new Mesh();
-      mesh.name = v["name"];
+      mesh.id = v["name"];
       var primitives = v["primitives"];
       mesh.children = new List.generate(primitives.length, (i) {
         var p = primitives[i];
@@ -195,22 +195,22 @@ class GltfLoader {
     description.forEach((String k, Map v) {
       var matrix;
       if (v.containsKey("matrix")) {
-        matrix = _mat4FromList(v["matrix"]);
+        matrix = _newMatrix4FromList(v["matrix"]);
       } else {
         matrix = _newMatrix4FromSQT(v["scale"], v["rotation"], v["translation"]);
       }
       var node, mesh;
       if (v.containsKey("jointId")) {
         node = new Joint();
-        node.name = v["jointId"];
-        _joints[node.name] = node;
+        node.id = v["jointId"];
+        _joints[node.id] = node;
       } else if (v.containsKey("light")) {
         return;
       } else if (v.containsKey("camera")) {
         return;
       } else {
         node = new Mesh();
-        node.name = v["name"];
+        node.id = v["name"];
         if (v.containsKey("meshes")) {
           var meshes = v["meshes"];
           mesh = new Mesh();
@@ -238,7 +238,7 @@ class GltfLoader {
         node = mesh;
       }
       node.applyMatrix(matrix);
-      _childrenOfNode[node.name] = v["children"];
+      _childrenOfNode[node.id] = v["children"];
       _resources[k] = node;
     });
   }
@@ -268,7 +268,7 @@ class GltfLoader {
 
   _buildNodeHierarchy(Node node) {
     if (node.children == null) node.children = new List();
-    var childNames = _childrenOfNode[node.name];
+    var childNames = _childrenOfNode[node.id];
     childNames.forEach((name) {
       var child = _resources[name];
       node.add(child);
@@ -316,22 +316,6 @@ class GltfLoader {
 
 
 
-Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
-  var m = new Matrix4.zero();
-  m.setFromTranslationRotation(new Vector3.fromFloat32List(new Float32List.fromList(t)), new Quaternion.fromFloat32List(new Float32List.fromList(r)));
-  m.scale(s[0].toDouble(), s[1].toDouble(), s[2].toDouble());
-  return m;
-}
-
-
-
-Matrix4 _mat4FromList(List l) {
-  var tl = new Float32List(l.length);
-  for (var i = 0; i < l.length; i++) {
-    tl[i] = l[i].toDouble();
-  }
-  return new Matrix4.fromFloat32List(tl);
-}
 
 String _convertSemantics(String name) {
   return {

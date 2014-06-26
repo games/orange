@@ -3,7 +3,7 @@ part of orange;
 
 
 class Joint extends Node {
-  int id;
+  int jointId;
   int parentId;
   Matrix4 _bindPoseMatrix;
   Matrix4 _inverseBindMatrix;

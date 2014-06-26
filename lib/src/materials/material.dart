@@ -3,11 +3,13 @@ part of orange;
 
 
 class Material {
+  String id;
   String name;
   Technique technique;
 
   double shininess;
   double alpha = 1.0;
+  double specularPower = 1.0;
   Color diffuseColor = new Color.fromHex(0xFFFFFF);
   Color specularColor;
   Color ambientColor;

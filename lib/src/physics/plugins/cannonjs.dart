@@ -97,7 +97,7 @@ class CannonJSPlugin implements PhysicsEnginePlugin {
         return _createPlane(mesh, options);
       case PhysicsEngine.MeshImpostor:
         var rawVerts = mesh.geometry.buffers[Semantics.position];
-        var rawFaces = mesh.faces;
+        var rawFaces = mesh.indices;
         return _createConvexPolyhedron(rawVerts, rawFaces, mesh, options);
     }
     return null;

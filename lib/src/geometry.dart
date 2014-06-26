@@ -3,6 +3,8 @@ part of orange;
 
 
 class Geometry {
+  String id;
+
   @deprecated
   int vertexCount;
 
@@ -41,6 +43,26 @@ class Geometry {
     if (!(data is Float32List)) data = new Float32List.fromList(data);
     buffers[Semantics.texcoords] = new VertexBuffer(2, gl.FLOAT, 0, 0, count: data.length ~/ 2, data: data);
   }
+
+  void set texCoords2(data) {
+    if (data is VertexBuffer) {
+      buffers[Semantics.texcoords2] = data;
+      return;
+    }
+    if (!(data is Float32List)) data = new Float32List.fromList(data);
+    buffers[Semantics.texcoords2] = new VertexBuffer(2, gl.FLOAT, 0, 0, count: data.length ~/ 2, data: data);
+  }
+
+  void set indices(data) {
+    if (data is VertexBuffer) {
+      buffers[Semantics.indices] = data;
+      return;
+    }
+    if (!(data is Uint16List)) data = new Uint16List.fromList(data);
+    buffers[Semantics.indices] = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
+  }
+
+  VertexBuffer get indices => buffers[Semantics.indices];
 
   BoundingInfo _boundingInfo;
 

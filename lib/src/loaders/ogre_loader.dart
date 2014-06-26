@@ -69,7 +69,7 @@ class OgreLoader {
     }
     if(doc.containsKey("faces")) {
       var data = new Uint16List.fromList(doc["faces"]);
-      mesh.faces = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
+      mesh.indices = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
     }
     if(doc.containsKey("skeleton")) {
       mesh.skeleton = _parseSkeleton(doc["skeleton"]);
@@ -85,13 +85,13 @@ class OgreLoader {
     skeleton.joints = [];
     doc["joints"].forEach((j) {
       var joint = new Joint();
-      joint.id = j["id"];
+      joint.jointId = j["id"];
       if(j.containsKey("parent")) {
         joint.parentId = j["parent"];
       } else {
         joint.parentId = -1;
       }
-      joint.name = j["name"];
+      joint.id = j["name"];
       joint.position = new Vector3.array(j["position"]);
       joint._rotation = _parseRotation(j["rotation"]);
       skeleton.joints.add(joint);

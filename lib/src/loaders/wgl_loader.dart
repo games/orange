@@ -109,7 +109,7 @@ class WglLoader {
       var jointsDesc = or(description["bones"], []);
       jointsDesc.forEach((jointDesc) {
         var joint = new Joint();
-        joint.name = jointDesc["name"];
+        joint.id = jointDesc["name"];
         joint.parentId = jointDesc["parent"];
         joint.skinned = jointDesc["skinned"];
         joint.position = new Vector3.fromList(jointDesc["pos"]);

@@ -55,7 +55,7 @@ class RenderingGroup implements Renderer {
     graphics.bindMatrix4(Semantics.projectionMat, projectionMatrix);
     graphics.bindVector3(Semantics.cameraPosition, eyePosition);
     meshes.forEach((Mesh mesh) {
-      if (mesh.faces != null) {
+      if (mesh.indices != null) {
         var material = mesh.material;
         var globalIntensity = 1.0;
         globalIntensity *= material.alpha;
@@ -93,11 +93,11 @@ class RenderingGroup implements Renderer {
     for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
       ctx.disableVertexAttribArray(i);
     }
-    mesh.faces.bind(ctx);
+    mesh.indices.bind(ctx);
     if (material.wireframe) {
       ctx.drawArrays(gl.LINE_STRIP, 0, mesh.geometry.buffers[Semantics.position].count);
     } else {
-      ctx.drawElements(mesh.primitive, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+      ctx.drawElements(mesh.primitive, mesh.indices.count, mesh.indices.type, mesh.indices.offset);
     }
     _lastMaxEnabledArray = _newMaxEnabledArray;
     material.unbind();

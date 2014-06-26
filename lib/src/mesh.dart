@@ -4,8 +4,8 @@ part of orange;
 
 class Mesh extends Node {
 
+  VertexBuffer _faces;
   Geometry _geometry;
-  VertexBuffer faces;
   Material material;
   Skeleton _skeleton;
   AnimationController animator;
@@ -15,9 +15,14 @@ class Mesh extends Node {
   bool _receiveShadows = false;
   bool showBoundingBox = false;
   BoundingInfo _boundingInfo;
-  int _physicImpostor = PhysicsEngine.NoImpostor;
 
-  Mesh({String name}) : super(name: name);
+  int _physicImpostor = PhysicsEngine.NoImpostor;
+  double physicsMass = 0.0;
+  double physicsFriction = 0.0;
+  double physicsRestitution = 0.0;
+
+
+  Mesh({String name}) : super(id: name);
 
   @override
   updateMatrix([bool updateChildren = true]) {
@@ -77,14 +82,17 @@ class Mesh extends Node {
 
   void set indices(data) {
     if (data is VertexBuffer) {
-      faces = data;
+      _faces = data;
       return;
     }
     if (!(data is Uint16List)) data = new Uint16List.fromList(data);
-    faces = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
+    _faces = new VertexBuffer(0, gl.UNSIGNED_SHORT, 0, 0, count: data.length, data: data, target: gl.ELEMENT_ARRAY_BUFFER);
   }
 
-  VertexBuffer get indices => faces;
+  VertexBuffer get indices {
+    if (_faces == null && _geometry != null) return _geometry.indices;
+    return _faces;
+  }
 
   Skeleton get skeleton {
     if (_skeleton == null && parent != null && parent is Mesh) return (parent as Mesh)._skeleton;
@@ -115,11 +123,11 @@ class Mesh extends Node {
 
   Node clone() {
     var result = new Mesh();
-    result.name = name;
+    result.id = id;
     result.applyMatrix(_localMatrix);
     result._scaling = _scaling.clone();
     if (_geometry != null) result._geometry = _geometry.clone();
-    result.faces = faces;
+    result._faces = _faces;
     result.material = material;
     result._skeleton = _skeleton;
     if (animator != null) result.animator = animator.clone(result);
@@ -136,9 +144,6 @@ class Mesh extends Node {
     //TODO dispose resources
   }
 }
-
-
-
 
 
 

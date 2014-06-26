@@ -21,7 +21,7 @@ class TestTexturesScene extends Scene {
     skybox.material.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     skybox.material.diffuseColor = new Color.fromList([0.0, 0.0, 0.0]);
     skybox.material.specularColor = new Color.fromList([0.0, 0.0, 0.0]);
-    //    add(skybox);
+    add(skybox);
 
     var sphere = new SphereMesh();
     sphere.rotateY(PI/5);

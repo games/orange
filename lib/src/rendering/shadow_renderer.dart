@@ -52,7 +52,7 @@ class ShadowRenderer implements Renderer {
 
   void _renderMesh(Scene scene, Mesh mesh) {
     if (!mesh.castShadows) return;
-    if (mesh.faces != null) {
+    if (mesh.indices != null) {
       var device = scene.graphicsDevice;
       var ctx = device.ctx;
       if (ready(mesh, device)) {
@@ -74,8 +74,8 @@ class ShadowRenderer implements Renderer {
             }
           });
         }
-        mesh.faces.bind(ctx);
-        ctx.drawElements(gl.TRIANGLES, mesh.faces.count, mesh.faces.type, mesh.faces.offset);
+        mesh.indices.bind(ctx);
+        ctx.drawElements(gl.TRIANGLES, mesh.indices.count, mesh.indices.type, mesh.indices.offset);
       }
     }
     mesh.children.forEach((m) => _renderMesh(scene, m));

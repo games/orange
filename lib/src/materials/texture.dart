@@ -33,9 +33,11 @@ class Texture {
   Sampler sampler;
   bool ready = false;
 
+  bool hasAlpha = false;
   bool getAlphaFromRGB = false;
   bool _isCube = false;
   bool mipmap = true;
+  bool flip = false;
   double coordinatesIndex = 0.0;
   int coordinatesMode = SPHERICAL_MODE;
   double level = 1.0;
@@ -46,6 +48,8 @@ class Texture {
   double uAng = 0.0;
   double vAng = 0.0;
   double wAng = 0.0;
+  bool wrapU = false;
+  bool wrapV = false;
 
   // TODO needs to reset dirty when other parameters have chagned
   bool _dirty = true;
@@ -150,7 +154,7 @@ class Texture {
       texture.internalFormat = or(descripton["internalFormat"], gl.RGBA);
       texture.format = or(descripton["format"], gl.RGBA);
       texture.sampler = or(descripton["sampler"], defaultSampler);
-      var flip = or(descripton["FLIP"], false);
+      texture.flip = or(descripton["flip"], false);
       var image = new html.ImageElement(src: url);
       image.onLoad.listen((_) {
         texture.data = ctx.createTexture();
@@ -163,7 +167,7 @@ class Texture {
           image = _ensureImage(image);
         }
         ctx.bindTexture(texture.target, texture.data);
-        if (flip) ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        if (texture.flip) ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_S, sampler.wrapS);
         ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, sampler.wrapT);
         ctx.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);

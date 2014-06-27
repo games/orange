@@ -38,7 +38,7 @@ class Texture {
   bool _isCube = false;
   bool mipmap = true;
   bool flip = false;
-  double coordinatesIndex = 0.0;
+  int coordinatesIndex = 0;
   int coordinatesMode = SPHERICAL_MODE;
   double level = 1.0;
   double uScale = 1.0;
@@ -48,8 +48,8 @@ class Texture {
   double uAng = 0.0;
   double vAng = 0.0;
   double wAng = 0.0;
-  bool wrapU = false;
-  bool wrapV = false;
+  double wrapU = 0.0;
+  double wrapV = 0.0;
 
   // TODO needs to reset dirty when other parameters have chagned
   bool _dirty = true;

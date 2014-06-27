@@ -105,13 +105,13 @@ class BabylonLoader {
 
   Geometry _parseGeometry(Map desc) {
     var geometry = new Geometry();
-    if (desc.containsKey("id")) geometry.id = desc["id"];
-    if (desc.containsKey("positions")) geometry.positions = _toFloat32List(desc["positions"]);
-    if (desc.containsKey("normals")) geometry.normals = _toFloat32List(desc["normals"]);
-    if (desc.containsKey("uvs")) geometry.texCoords = _toFloat32List(desc["uvs"]);
-    if (desc.containsKey("uv2s")) geometry.texCoords2 = _toFloat32List(desc["uv2s"]);
+    if (desc["id"] != null) geometry.id = desc["id"];
+    if (desc["positions"] != null) geometry.positions = _toFloat32List(desc["positions"]);
+    if (desc["normals"] != null) geometry.normals = _toFloat32List(desc["normals"]);
+    if (desc["uvs"] != null) geometry.texCoords = _toFloat32List(desc["uvs"]);
+    if (desc["uv2s"] != null) geometry.texCoords2 = _toFloat32List(desc["uv2s"]);
     // TODO colors, matricesIndices, matricesWeights
-    if (desc.containsKey("indices")) geometry.indices = new Uint16List.fromList(desc["indices"]);
+    if (desc["indices"] != null) geometry.indices = new Uint16List.fromList(desc["indices"]);
     return geometry;
   }
 
@@ -122,29 +122,29 @@ class BabylonLoader {
       material.ambientColor = new Color.fromList(m["ambient"]);
       material.diffuseColor = new Color.fromList(m["diffuse"]);
       material.specularColor = new Color.fromList(m["specular"]);
-      material.specularPower = m["specularPower"];
+      material.specularPower = m["specularPower"].toDouble();
       material.emissiveColor = new Color.fromList(m["emissive"]);
       material.backFaceCulling = or(m["backFaceCulling"], true);
       material.wireframe = or(m["wireframe"], false);
-      if (m.containsKey("diffuseTexture")) {
+      if (m["diffuseTexture"] != null) {
         material.diffuseTexture = _parseTexture(m["diffuseTexture"]);
       }
-      if (m.containsKey("ambientTexture")) {
+      if (m["ambientTexture"] != null) {
         material.ambientTexture = _parseTexture(m["ambientTexture"]);
       }
-      if (m.containsKey("opacityTexture")) {
+      if (m["opacityTexture"] != null) {
         material.opacityTexture = _parseTexture(m["opacityTexture"]);
       }
-      if (m.containsKey("reflectionTexture")) {
+      if (m["reflectionTexture"] != null) {
         material.reflectionTexture = _parseTexture(m["reflectionTexture"]);
       }
-      if (m.containsKey("emissiveTexture")) {
+      if (m["emissiveTexture"] != null) {
         material.emissiveTexture = _parseTexture(m["emissiveTexture"]);
       }
-      if (m.containsKey("specularTexture")) {
+      if (m["specularTexture"] != null) {
         material.specularTexture = _parseTexture(m["specularTexture"]);
       }
-      if (m.containsKey("bumpTexture")) {
+      if (m["bumpTexture"] != null) {
         material.bumpTexture = _parseTexture(m["bumpTexture"]);
       }
       _resources["Material_" + material.id] = material;
@@ -155,7 +155,8 @@ class BabylonLoader {
     var url = _uri.resolve(desc["name"]).toString();
     if (Texture._texturesCache.containsKey(url)) return Texture._texturesCache[url];
     var texture = Texture.load(_ctx, {
-      "path": url
+      "path": url,
+      "flip": true
     });
     texture.level = desc["level"].toDouble();
     texture.hasAlpha = desc["hasAlpha"] == 1;
@@ -167,8 +168,8 @@ class BabylonLoader {
     texture.vScale = desc["vScale"].toDouble();
     texture.uAng = desc["uAng"].toDouble();
     texture.vAng = desc["vAng"].toDouble();
-    texture.wrapU = desc["wrapU"];
-    texture.wrapV = desc["wrapV"];
+    texture.wrapU = desc["wrapU"].toDouble();
+    texture.wrapV = desc["wrapV"].toDouble();
     texture.coordinatesIndex = desc["coordinatesIndex"];
     return texture;
   }
@@ -206,7 +207,9 @@ class BabylonLoader {
     json["cameras"].forEach((c) {
       var camera = new PerspectiveCamera(aspect, near: c["minZ"].toDouble(), far: c["maxZ"].toDouble(), fov: c["fov"].toDouble());
       camera.position = _newVec3FromList(c["position"]);
-      camera.lookAt(_newVec3FromList(c["target"]));
+      if (c["target"] != null) {
+        camera.lookAt(_newVec3FromList(c["target"]));
+      }
       // TODO speed, inertia, checkCollisions, applyGravity, ellipsoid
       cameras[c["name"]] = camera;
     });
@@ -215,6 +218,4 @@ class BabylonLoader {
 
 
 }
-
-
 

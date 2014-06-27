@@ -43,7 +43,6 @@ class BabylonScene extends Scene {
     var combina;
     combina = (child) {
       if (child is Mesh) {
-
         if (child.material != null) {
           child.material.diffuseTexture = diffuseTexture;
           child.material.backFaceCulling = false;

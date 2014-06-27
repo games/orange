@@ -23,7 +23,7 @@ _newVec3FromList(List l) {
 
 Float32List _toFloat32List(List l) {
   var result = new Float32List(l.length);
-  for (var i = 0; i < l.length; i++) result[i] = l[i];
+  for (var i = 0; i < l.length; i++) result[i] = l[i].toDouble();
   return result;
 }
 

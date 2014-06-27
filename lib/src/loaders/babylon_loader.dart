@@ -177,7 +177,8 @@ class BabylonLoader {
         light.direction = _newVec3FromList(l["direction"]);
       } else if (type == 2) {
         light = new SpotLight(0x0);
-        // TODO
+        light.angle = l["angle"].toDouble();
+        light.exponent = l["exponent"].toDouble();
       } else if (type == 3) {
         return;
       }

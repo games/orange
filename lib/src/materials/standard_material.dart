@@ -169,8 +169,7 @@ class StandardMaterial extends Material {
       device.bindFloat4(Semantics.specularColor, specularColor.red, specularColor.green, specularColor.blue, specularPower);
     }
     if (ambientColor != null) {
-      // TODO should multipy to global ambient color
-      device.bindColor3(Semantics.ambientColor, ambientColor);
+      device.bindColor3(Semantics.ambientColor, scene.ambientColor * ambientColor);
     }
     if (diffuseColor != null) {
       device.bindFloat4(Semantics.diffuseColor, diffuseColor.red, diffuseColor.green, diffuseColor.blue, alpha * mesh.visibility);

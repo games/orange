@@ -7,12 +7,14 @@ part of orange;
 // http://www.babylonjs.com/cyos/acpr/#M1XTA
 class BabylonLoader {
 
+  GraphicsDevice _device;
   gl.RenderingContext _ctx;
   Uri _uri;
   Map<String, dynamic> _resources;
 
-  Future<Scene> load(gl.RenderingContext ctx, String url, [Scene scene]) {
-    _ctx = ctx;
+  Future<Scene> load(GraphicsDevice device, String url, [Scene scene]) {
+    _device = device;
+    _ctx = _device.ctx;
     _uri = Uri.parse(url);
     _resources = {};
     if (scene == null) scene = new Scene();
@@ -37,12 +39,15 @@ class BabylonLoader {
     lights.forEach(scene.add);
 
     _parseMaterials(json);
-    _parseGeometries(json);
-    var meshes = _parseMeshes(json);
-    // TODO shadows
 
+    _parseGeometries(json);
+
+    var meshes = _parseMeshes(json, scene);
     _buildHierarchy(meshes);
     meshes.forEach(scene.add);
+
+    _parseShadowMaps(json);
+
 
     return scene;
   }
@@ -58,7 +63,7 @@ class BabylonLoader {
     });
   }
 
-  List<Mesh> _parseMeshes(Map json) {
+  List<Mesh> _parseMeshes(Map json, Scene scene) {
     var meshes = [];
     json["meshes"].forEach((Map m) {
       var mesh = new Mesh();
@@ -70,12 +75,20 @@ class BabylonLoader {
         mesh.rotation = _newQuatFromList(m["rotationQuaternion"]);
       }
       mesh.scaling = _newVec3FromList(m["scaling"]);
-      // TODO pivotMatrix, infiniteDistance, showSubMeshesBoundingBox, isVisible, pickable
+      // TODO localMatrix, pivotMatrix, infiniteDistance, showSubMeshesBoundingBox, isVisible, pickable
       mesh.showBoundingBox = or(m["showBoundingBox"], false);
       mesh.receiveShadows = or(m["receiveShadows"], false);
-      mesh._physicImpostor = or(m["physicsImpostor"], 0);
-      mesh.physicsMass = or(m["physicsMass"], 0.0).toDouble();
-      mesh.physicsFriction = or(m["physicsFriction"], 0.0);
+      if (m.containsKey("physicsImpostor")) {
+        if (!scene.physicsEnabled) scene.enablePhysics();
+        mesh.physicsMass = or(m["physicsMass"], 0.0).toDouble();
+        mesh.physicsFriction = or(m["physicsFriction"], 0.0);
+        mesh._physicImpostor = or(m["physicsImpostor"], 0);
+        if (mesh._physicImpostor != PhysicsEngine.NoImpostor) {
+          var options = new PhysicsBodyCreationOptions(restitution: mesh.physicsRestitution, friction: mesh.physicsFriction, mass: mesh.physicsMass);
+          mesh.setPhysicsState(mesh._physicImpostor, options);
+        }
+      }
+
       mesh.visibility = or(m["visibility"], 1.0).toDouble();
       if (m.containsKey("geometryId")) {
         mesh.geometry = _resources["Geometry_${m["geometryId"]}"];
@@ -144,14 +157,28 @@ class BabylonLoader {
     if (desc == null) return null;
     var url = _uri.resolve(desc["name"]).toString();
     if (Texture._texturesCache.containsKey(url)) return Texture._texturesCache[url];
-    var texture = Texture.load(_ctx, {
-      "path": url,
-      "flip": true
-    });
+
+    var texture;
+    if (desc["isCube"] == true) {
+      texture = new CubeTexture(url);
+    } else if (desc["isRenderTarget"] == true) {
+      var size = desc["renderTargetSize"].toDouble();
+      texture = new RenderTargetTexture(_device, size, size);
+    } else if (desc["mirrorPlane"] != null) {
+      var size = desc["renderTargetSize"].toDouble();
+      texture = new MirrorTexture(_device, size, size);
+    } else {
+      texture = Texture.load(_ctx, {
+        "path": url,
+        "flip": true
+      });
+    }
     texture.level = desc["level"].toDouble();
     texture.hasAlpha = or(desc["hasAlpha"], false);
-    texture.getAlphaFromRGB = or(desc["getAlphaFromRGB"], false);
     texture.coordinatesMode = desc["coordinatesMode"];
+    if (texture is CubeTexture) return texture;
+
+    texture.getAlphaFromRGB = or(desc["getAlphaFromRGB"], false);
     texture.uOffset = desc["uOffset"].toDouble();
     texture.vOffset = desc["vOffset"].toDouble();
     texture.uScale = desc["uScale"].toDouble();
@@ -162,6 +189,25 @@ class BabylonLoader {
     texture.wrapV = desc["wrapV"].toDouble();
     texture.coordinatesIndex = desc["coordinatesIndex"];
     return texture;
+  }
+
+  void _parseShadowMaps(Map json) {
+    if (json["shadowGenerators"] != null) {
+      json["shadowGenerators"].forEach((s) {
+        var light = _resources["Light_${s["lightId"]}"] as Light;
+        if (light != null && light is DirectionalLight) {
+          light.shadowRenderer = new ShadowRenderer(s["mapSize"], light, _device);
+          light.shadowRenderer.useVarianceShadowMap = s["useVarianceShadowMap"];
+          // TODO fixme
+          //          s["renderList"].forEach((mid) {
+          //            var m = _resources["Mesh_${mid}"];
+          //            if (m != null) {
+          //              (m["mesh"] as Mesh).receiveShadows = true;
+          //            }
+          //          });
+        }
+      });
+    }
   }
 
   //int (0 for point light, 1 for directional, 2 for spot and 3 for hemispheric),
@@ -188,6 +234,7 @@ class BabylonLoader {
       light.diffuse = new Color.fromList(l["diffuse"]);
       light.specular = new Color.fromList(l["specular"]);
       lights.add(light);
+      _resources["Light_${light.id}"] = light;
     });
     return lights;
   }

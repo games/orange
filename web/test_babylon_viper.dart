@@ -10,7 +10,7 @@ class TestBabylonViperScene extends Scene {
   void enter() {
 
     var loader = new BabylonLoader();
-    loader.load(graphicsDevice.ctx, "/orange/models/babylon/Viper/Viper.babylon", new BabylonViperScene()).then((s) {
+    loader.load(graphicsDevice, "/orange/models/babylon/Viper/Viper.babylon", new BabylonViperScene()).then((s) {
       if (s.camera == null) {
         s.camera = camera;
       }
@@ -29,10 +29,12 @@ class BabylonViperScene extends Scene {
     var radius = boundingInfo.boundingSphere.radius;
     camera.position = box.center + new Vector3(-radius, radius, radius);
     camera.lookAt(box.center);
+  }
 
-//    nodes.forEach((n) {
-//      if (n is Mesh && n.material != null) n.material.wireframe = true;
-//    });
+  @override
+  exit() {
+    super.exit();
+    removeChildren();
   }
 
 }

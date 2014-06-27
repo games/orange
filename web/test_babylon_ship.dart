@@ -11,7 +11,7 @@ class TestBabylonShipScene extends Scene {
   void enter() {
 
     var loader = new BabylonLoader();
-    loader.load(graphicsDevice.ctx, "/orange/models/babylon/schooner.babylon", new BabylonShipScene()).then((s) {
+    loader.load(graphicsDevice, "/orange/models/babylon/schooner.babylon", new BabylonShipScene()).then((s) {
       if (s.camera == null) {
         s.camera = camera;
       }

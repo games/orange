@@ -11,13 +11,13 @@ class Color {
     storage[2] = b / 255.0;
     storage[3] = alpha;
   }
-  
+
   Color.float(num r, num g, num b, [num alpha = 1.0]) {
-      storage[0] = r.toDouble();
-      storage[1] = g.toDouble();
-      storage[2] = b.toDouble();
-      storage[3] = alpha;
-    }
+    storage[0] = r.toDouble();
+    storage[1] = g.toDouble();
+    storage[2] = b.toDouble();
+    storage[3] = alpha;
+  }
 
   Color.fromHex(num hexColor) {
     hex = hexColor;
@@ -57,4 +57,10 @@ class Color {
   void set alpha(double val) {
     storage[3] = val;
   }
+
+  Color operator *(Color other) {
+    return new Color.float(storage[0] * other.red, storage[1] * other.green, storage[2] * other.blue, storage[3] * other.alpha);
+  }
+
+  String toString() => "R:${red}, G:${green}, B:${blue}, A:${alpha}";
 }

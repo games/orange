@@ -166,14 +166,14 @@ class StandardMaterial extends Material {
       device.bindFloat(Semantics.shininess, shininess);
     }
     if (specularColor != null) {
-      device.bindColor4(Semantics.specularColor, specularColor);
+      device.bindFloat4(Semantics.specularColor, specularColor.red, specularColor.green, specularColor.blue, specularPower);
     }
     if (ambientColor != null) {
       // TODO should multipy to global ambient color
       device.bindColor3(Semantics.ambientColor, ambientColor);
     }
     if (diffuseColor != null) {
-      device.bindColor4(Semantics.diffuseColor, diffuseColor);
+      device.bindFloat4(Semantics.diffuseColor, diffuseColor.red, diffuseColor.green, diffuseColor.blue, alpha * mesh.visibility);
     }
     if (emissiveColor != null) {
       device.bindColor3(Semantics.emissiveColor, emissiveColor);

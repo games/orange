@@ -15,7 +15,8 @@ part 'test_lighting.dart';
 part 'test_gltf.dart';
 part 'test_textures.dart';
 part 'test_water.dart';
-part 'test_babylon.dart';
+part 'test_babylon_ship.dart';
+part 'test_babylon_viper.dart';
 
 
 
@@ -40,8 +41,9 @@ void main() {
                 new TestGLTFScene(camera),
                 new TestTexturesScene(camera),
                 new TestWaterScene(camera),
-                new TestBabylonScene(camera)];
-  var i = 7;
+                new TestBabylonShipScene(camera),
+                new TestBabylonViperScene(camera)];
+  var i = 8;
   
   orange.enter(scenes[i]);
   orange.run();

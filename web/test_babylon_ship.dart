@@ -4,14 +4,14 @@ part of orange_examples;
 
 
 
-class TestBabylonScene extends Scene {
-  TestBabylonScene(Camera camera) : super(camera);
+class TestBabylonShipScene extends Scene {
+  TestBabylonShipScene(Camera camera) : super(camera);
 
   @override
   void enter() {
 
     var loader = new BabylonLoader();
-    loader.load(graphicsDevice.ctx, "/orange/models/babylon/schooner.babylon", new BabylonScene()).then((s) {
+    loader.load(graphicsDevice.ctx, "/orange/models/babylon/schooner.babylon", new BabylonShipScene()).then((s) {
       if (s.camera == null) {
         s.camera = camera;
       }
@@ -21,7 +21,7 @@ class TestBabylonScene extends Scene {
 
 }
 
-class BabylonScene extends Scene {
+class BabylonShipScene extends Scene {
 
   Mesh ship;
   
@@ -38,18 +38,18 @@ class BabylonScene extends Scene {
 
     ship = new Mesh();
     var boundingInfo = BoundingInfo.compute(nodes);
-    var combina;
-    combina = (child) {
+    var prepare;
+    prepare = (child) {
       if (child is Mesh) {
         if (child.material != null) {
           child.material.diffuseTexture = diffuseTexture;
           child.material.backFaceCulling = false;
         }
       }
-      child.children.forEach(combina);
+      child.children.forEach(prepare);
       ship.add(child);
     };
-    nodes.forEach(combina);
+    nodes.forEach(prepare);
     nodes.clear();
     add(ship);
     

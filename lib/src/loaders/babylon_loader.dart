@@ -11,10 +11,11 @@ class BabylonLoader {
   Uri _uri;
   Map<String, dynamic> _resources;
 
-  Future<Scene> load(gl.RenderingContext ctx, String url, Scene scene) {
+  Future<Scene> load(gl.RenderingContext ctx, String url, [Scene scene]) {
     _ctx = ctx;
     _uri = Uri.parse(url);
     _resources = {};
+    if (scene == null) scene = new Scene();
     var completer = new Completer<Scene>();
     html.HttpRequest.getString(url).then((rsp) {
       var json = JSON.decode(rsp);
@@ -73,8 +74,9 @@ class BabylonLoader {
       mesh.showBoundingBox = or(m["showBoundingBox"], false);
       mesh.receiveShadows = or(m["receiveShadows"], false);
       mesh._physicImpostor = or(m["physicsImpostor"], 0);
-      mesh.physicsMass = or(m["physicsMass"], 0.0);
+      mesh.physicsMass = or(m["physicsMass"], 0.0).toDouble();
       mesh.physicsFriction = or(m["physicsFriction"], 0.0);
+      mesh.visibility = or(m["visibility"], 1.0).toDouble();
       if (m.containsKey("geometryId")) {
         mesh.geometry = _resources["Geometry_${m["geometryId"]}"];
       } else {
@@ -126,32 +128,20 @@ class BabylonLoader {
       material.emissiveColor = new Color.fromList(m["emissive"]);
       material.backFaceCulling = or(m["backFaceCulling"], true);
       material.wireframe = or(m["wireframe"], false);
-      if (m["diffuseTexture"] != null) {
-        material.diffuseTexture = _parseTexture(m["diffuseTexture"]);
-      }
-      if (m["ambientTexture"] != null) {
-        material.ambientTexture = _parseTexture(m["ambientTexture"]);
-      }
-      if (m["opacityTexture"] != null) {
-        material.opacityTexture = _parseTexture(m["opacityTexture"]);
-      }
-      if (m["reflectionTexture"] != null) {
-        material.reflectionTexture = _parseTexture(m["reflectionTexture"]);
-      }
-      if (m["emissiveTexture"] != null) {
-        material.emissiveTexture = _parseTexture(m["emissiveTexture"]);
-      }
-      if (m["specularTexture"] != null) {
-        material.specularTexture = _parseTexture(m["specularTexture"]);
-      }
-      if (m["bumpTexture"] != null) {
-        material.bumpTexture = _parseTexture(m["bumpTexture"]);
-      }
+      material.alpha = m["alpha"].toDouble();
+      material.diffuseTexture = _parseTexture(m["diffuseTexture"]);
+      material.ambientTexture = _parseTexture(m["ambientTexture"]);
+      material.opacityTexture = _parseTexture(m["opacityTexture"]);
+      material.reflectionTexture = _parseTexture(m["reflectionTexture"]);
+      material.emissiveTexture = _parseTexture(m["emissiveTexture"]);
+      material.specularTexture = _parseTexture(m["specularTexture"]);
+      material.bumpTexture = _parseTexture(m["bumpTexture"]);
       _resources["Material_" + material.id] = material;
     });
   }
 
   Texture _parseTexture(Map desc) {
+    if (desc == null) return null;
     var url = _uri.resolve(desc["name"]).toString();
     if (Texture._texturesCache.containsKey(url)) return Texture._texturesCache[url];
     var texture = Texture.load(_ctx, {
@@ -159,8 +149,8 @@ class BabylonLoader {
       "flip": true
     });
     texture.level = desc["level"].toDouble();
-    texture.hasAlpha = desc["hasAlpha"] == 1;
-    texture.getAlphaFromRGB = desc["getAlphaFromRGB"] == 1;
+    texture.hasAlpha = or(desc["hasAlpha"], false);
+    texture.getAlphaFromRGB = or(desc["getAlphaFromRGB"], false);
     texture.coordinatesMode = desc["coordinatesMode"];
     texture.uOffset = desc["uOffset"].toDouble();
     texture.vOffset = desc["vOffset"].toDouble();
@@ -218,4 +208,3 @@ class BabylonLoader {
 
 
 }
-

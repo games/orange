@@ -20,7 +20,8 @@ class Mesh extends Node {
   double physicsMass = 0.0;
   double physicsFriction = 0.0;
   double physicsRestitution = 0.0;
-
+  
+  double visibility = 1.0;
 
   Mesh({String name}) : super(id: name);
 

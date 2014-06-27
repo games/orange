@@ -45,31 +45,11 @@ class TestGLTFScene extends Scene {
     var loader = new GltfLoader2();
     loader.load(graphicsDevice.ctx, url).then((root) {
       _meshes.forEach((m) => remove(m));
-
       add(root);
       root.scale(0.1);
       root.showBoundingBox = true;
       root.updateMatrix();
-      var min = new Vector3.all(double.MAX_FINITE);
-      var max = new Vector3.all(-double.MAX_FINITE);
-      var bounding = root.boundingInfo;
-      if (bounding != null) {
-        Vector3.min(min, bounding.boundingBox.minimumWorld, min);
-        Vector3.max(max, bounding.boundingBox.maximumWorld, max);
-      }
-      var combina;
-      combina = (child) {
-        if (child is Mesh) {
-          bounding = child.boundingInfo;
-          if (bounding != null) {
-            Vector3.min(min, bounding.boundingBox.minimumWorld, min);
-            Vector3.max(max, bounding.boundingBox.maximumWorld, max);
-          }
-        }
-        child.children.forEach(combina);
-      };
-      root.children.forEach(combina);
-      root.boundingInfo = new BoundingInfo(min, max);
+      root.boundingInfo = BoundingInfo.compute([root]);
       var box = root.boundingInfo.boundingBox;
       var radius = root.boundingInfo.boundingSphere.radius;
       camera.position = box.center + new Vector3(0.0, radius, radius * 3);

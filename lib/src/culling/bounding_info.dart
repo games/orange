@@ -93,12 +93,30 @@ class BoundingInfo {
   bool extentsOverlap(num min0, num max0, num min1, num max1) {
     return !(min0 > max1 || min1 > max0);
   }
-  
+
   BoundingInfo clone() {
     return new BoundingInfo(minimum.clone(), maximum.clone());
   }
-}
 
+  static BoundingInfo compute(List<Node> nodes) {
+    var min = new Vector3.all(double.MAX_FINITE);
+    var max = new Vector3.all(-double.MAX_FINITE);
+    var bounding;
+    var merge;
+    merge = (child) {
+      if (child is Mesh) {
+        bounding = child.boundingInfo;
+        if (bounding != null) {
+          Vector3.min(min, bounding.boundingBox.minimumWorld, min);
+          Vector3.max(max, bounding.boundingBox.maximumWorld, max);
+        }
+      }
+      child.children.forEach(merge);
+    };
+    nodes.forEach(merge);
+    return new BoundingInfo(min, max);
+  }
+}
 
 
 

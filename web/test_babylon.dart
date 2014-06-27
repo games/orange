@@ -37,9 +37,7 @@ class BabylonScene extends Scene {
     });
 
     ship = new Mesh();
-    var min = new Vector3.all(double.MAX_FINITE);
-    var max = new Vector3.all(-double.MAX_FINITE);
-    var bounding;
+    var boundingInfo = BoundingInfo.compute(nodes);
     var combina;
     combina = (child) {
       if (child is Mesh) {
@@ -47,21 +45,14 @@ class BabylonScene extends Scene {
           child.material.diffuseTexture = diffuseTexture;
           child.material.backFaceCulling = false;
         }
-        bounding = child.boundingInfo;
-        if (bounding != null) {
-          Vector3.min(min, bounding.boundingBox.minimumWorld, min);
-          Vector3.max(max, bounding.boundingBox.maximumWorld, max);
-        }
       }
       child.children.forEach(combina);
       ship.add(child);
     };
     nodes.forEach(combina);
     nodes.clear();
-    
     add(ship);
     
-    var boundingInfo = new BoundingInfo(min, max);
     var box = boundingInfo.boundingBox;
     var radius = boundingInfo.boundingSphere.radius;
     camera.position = box.center + new Vector3(radius / 2, -radius / 4, radius / 2);

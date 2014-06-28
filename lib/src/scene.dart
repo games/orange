@@ -127,7 +127,10 @@ class Scene implements Disposable {
   void dispose() {
     removeChildren();
     disablePhysics();
-    _shouldDisposes.addAll(_particleSystemds);
+    _particleSystemds.forEach((p){
+      p.stop();
+      _shouldDisposes.add(p);
+    });
     _shouldDisposes.forEach((d) => d.dispose());
     _shouldDisposes.clear();
   }

@@ -63,9 +63,9 @@ class StandardMaterial extends Material {
       for (var i = 0; i < scene._lights.length && i < Light.MAX_LIGHTS; i++) {
         defines.add("#define LIGHT$i");
         var light = scene._lights[i];
-        if (light.type == Light.SPOTLIGHT) {
+        if (light is SpotLight) {
           defines.add("#define SPOTLIGHT$i");
-        } else if(light.type == Light.HEMISPHERE) {
+        } else if(light is HemisphericLight) {
           defines.add("#define HEMILIGHT$i");
         } else {
           defines.add("#define POINTDIRLIGHT$i");

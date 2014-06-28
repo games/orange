@@ -21,6 +21,8 @@ class Scene {
   List<Mesh> _alphaTestMeshes = [];
   List<Mesh> _transparentMeshes = [];
   List<Light> _lights = [];
+  // TODO
+  List _toBeDisposed = [];
 
   bool lightsEnabled = true;
   bool texturesEnabled = true;
@@ -29,14 +31,15 @@ class Scene {
 
   double _elapsed = 0.0;
   double _interval = 0.0;
+  double _animationRatio = 0.0;
   double get elapsed => _elapsed;
   double get interval => _interval;
+  double get animationRatio => _animationRatio;
 
   Orange engine;
   GraphicsDevice get graphicsDevice => Orange.instance.graphicsDevice;
   Camera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
-  // TODO
   Color ambientColor = new Color.fromHex(0x0);
   
   // physics
@@ -44,6 +47,9 @@ class Scene {
   PhysicsEngine _physicsEngine;
   PhysicsEngine get physicsEngine => _physicsEngine;
   bool get physicsEnabled => _physicsEngine != null;
+  
+  // particles
+  List<ParticleSystem> _particleSystemds = [];
 
   Scene([this.camera]);
 

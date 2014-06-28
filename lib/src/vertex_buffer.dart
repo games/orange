@@ -11,13 +11,13 @@ class VertexBuffer {
   bool normalized = false;
   int count;
   int target;
+  int usage;
   gl.Buffer buffer;
   TypedData data;
+  
+  int references = 1;
 
-  VertexBuffer(this.size, this.type, this.stride, this.offset, {int count: 0, TypedData data: null, int target: gl.ARRAY_BUFFER}) {
-    this.count = count;
-    this.data = data;
-    this.target = target;
+  VertexBuffer(this.size, this.type, this.stride, this.offset, {this.count: 0, this.data: null, this.target: gl.ARRAY_BUFFER, this.usage: gl.STATIC_DRAW}) {
   }
 
   enable(gl.RenderingContext ctx, ShaderProperty attrib) {
@@ -30,7 +30,7 @@ class VertexBuffer {
     if (buffer == null) {
       buffer = ctx.createBuffer();
       ctx.bindBuffer(target, buffer);
-      ctx.bufferDataTyped(target, data, gl.STATIC_DRAW);
+      ctx.bufferDataTyped(target, data, usage);
     } else {
       ctx.bindBuffer(target, buffer);
     }

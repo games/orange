@@ -42,6 +42,28 @@ class Color {
     return c;
   }
 
+  void scaleTo(double scale, Color ref) {
+    ref.storage[0] = storage[0] * scale;
+    ref.storage[1] = storage[1] * scale;
+    ref.storage[2] = storage[2] * scale;
+    ref.storage[3] = storage[3] * scale;
+  }
+
+  void subtractTo(Color otherColor, Color result) {
+    result.red = red - otherColor.red;
+    result.green = green - otherColor.green;
+    result.blue = blue - otherColor.blue;
+    result.alpha = alpha - otherColor.alpha;
+  }
+
+  Color add(Color arg) {
+    storage[0] = storage[0] + arg.storage[0];
+    storage[1] = storage[1] + arg.storage[1];
+    storage[2] = storage[2] + arg.storage[2];
+    storage[3] = storage[3] + arg.storage[3];
+    return this;
+  }
+
   set hex(num hexColor) {
     var h = hexColor.floor().toInt();
     storage[0] = ((h & 0xFF0000) >> 16) / 255;
@@ -54,6 +76,19 @@ class Color {
   double get green => storage[1];
   double get blue => storage[2];
   double get alpha => storage[3];
+
+  void set red(double val) {
+    storage[0] = val;
+  }
+
+  void set green(double val) {
+    storage[1] = val;
+  }
+
+  void set blue(double val) {
+    storage[2] = val;
+  }
+
   void set alpha(double val) {
     storage[3] = val;
   }
@@ -63,4 +98,12 @@ class Color {
   }
 
   String toString() => "R:${red}, G:${green}, B:${blue}, A:${alpha}";
+
+
+  static void lerpToRef(Color left, Color right, double amount, Color result) {
+    result.red = left.red + (right.red - left.red) * amount;
+    result.green = left.green + (right.green - left.green) * amount;
+    result.blue = left.blue + (right.blue - left.blue) * amount;
+    result.alpha = left.alpha + (right.alpha - left.alpha) * amount;
+  }
 }

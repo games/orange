@@ -7,6 +7,11 @@ class Orange {
 
   static const double Epsilon = 0.001;
   static const double CollisionsEpsilon = 0.001;
+
+  static const int ALPHA_DISABLE = 0;
+  static const int ALPHA_ADD = 1;
+  static const int ALPHA_COMBINE = 2;
+
   static Orange _instance;
   static Orange get instance => _instance;
 
@@ -16,6 +21,7 @@ class Orange {
   RenderingGroup _renderGroup = new RenderingGroup();
   BoundingBoxRenderer _boundingBoxRenderer;
   List<RenderTargetTexture> _renderTargets = [];
+  List<ParticleSystem> _activeParticleSystems = [];
   List<Callback> afterRenders = [];
 
   factory Orange(GraphicsDevice graphicsDevice) {
@@ -61,6 +67,7 @@ class Orange {
       var camera = _scene.camera;
       _scene._elapsed = elapsed;
       _scene._interval = interval;
+      _scene._animationRatio = interval * (60.0 / 1000.0);
       _scene.enterFrame(elapsed, interval);
       camera.update();
       // .camera.updateMatrix();
@@ -80,22 +87,37 @@ class Orange {
 
       _prepare(_scene.nodes, interval);
 
-      _renderTargets.forEach((renderTarget) {
-        renderTarget.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
+      _activeParticleSystems.clear();
+      scene._particleSystemds.forEach((sys) {
+        if (!sys.stared) return;
+        if (sys.emitter == null) return;
+        if (sys.emitter is Node && !sys.emitter.enabled) return;
+        _activeParticleSystems.add(sys);
+        sys.animate();
       });
+
+      var view = camera.viewMatrix;
+      var viewProj = camera.viewProjectionMatrix;
+      var proj = camera.projectionMatrix;
+      var eye = camera.position;
+
+      _renderTargets.forEach((renderTarget) => renderTarget.render(scene, view, viewProj, proj, eye));
 
       if (_renderTargets.length > 0) graphicsDevice.restoreDefaultFramebuffer();
 
       graphicsDevice.clear(scene.backgroundColor, backBuffer: scene.autoClear || scene.forceWireframe, depthStencil: true);
-      _renderGroup.render(scene, camera.viewMatrix, camera.viewProjectionMatrix, camera.projectionMatrix, camera.position);
+      _renderGroup.render(scene, view, viewProj, proj, eye);
 
       // bounding boxes
       _boundingBoxRenderer.render();
 
+      // particles
+      _activeParticleSystems.forEach((sys) => sys.render(scene, view, viewProj, proj, eye));
+
       graphicsDevice.ctx.flush();
-      
+
       _scene.exitFrame();
-      
+
       //after render callbacks
       afterRenders.forEach((c) => c());
 

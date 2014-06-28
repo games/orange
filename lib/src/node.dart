@@ -15,6 +15,8 @@ class Node {
   Node parent;
   List<Node> children;
   bool _needsUpdateLocalMatrix;
+  // TODO
+  bool enabled = true;
 
   Node({this.id}) {
     _position = new Vector3.zero();

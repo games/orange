@@ -87,6 +87,7 @@ class GraphicsDevice {
     viewport(_cachedViewport.left, _cachedViewport.top, _cachedViewport.width, _cachedViewport.height);
   }
 
+  // TODO rename
   use(Pass pass) {
     if (_currentPass == null || _currentPass.shader.program != pass.shader.program) {
       _currentPass = pass;
@@ -150,8 +151,11 @@ class GraphicsDevice {
     ctx.activeTexture(gl.TEXTURE0 + textureChannel);
     ctx.bindTexture(texture.target, texture.data);
     // TODO just is a temp solution
-    if (texture.flip) ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-    else ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+    if (texture.flip) {
+      ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    } else {
+      ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+    }
   }
 
   unbindTexture(String sampler, Texture texture) {
@@ -182,7 +186,48 @@ class GraphicsDevice {
     }
   }
 
+  void set alphaMode(int mode) {
+    switch (mode) {
+      case Orange.ALPHA_DISABLE:
+        depthWrite = true;
+        ctx.disable(gl.BLEND);
+        break;
+      case Orange.ALPHA_COMBINE:
+        depthWrite = false;
+        ctx.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
+        ctx.enable(gl.BLEND);
+        break;
+      case Orange.ALPHA_ADD:
+        depthWrite = true;
+        ctx.blendFuncSeparate(gl.ONE, gl.ONE, gl.ZERO, gl.ONE);
+        ctx.enable(gl.BLEND);
+        break;
+    }
+  }
+
   DeviceCapabilities get caps => _caps;
+
+  gl.Buffer createDynamicVertexBuffer(num capacity) {
+    var buffer = ctx.createBuffer();
+    ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    ctx.bufferData(gl.ARRAY_BUFFER, capacity, gl.DYNAMIC_DRAW);
+    ctx.bindBuffer(gl.ARRAY_BUFFER, null);
+    return buffer;
+  }
+
+  gl.Buffer createIndexBuffer(List indices) {
+    var buffer = ctx.createBuffer();
+    ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+    ctx.bufferDataTyped(gl.ELEMENT_ARRAY_BUFFER, new Float32List.fromList(indices), gl.STATIC_DRAW);
+    ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+    return buffer;
+  }
+
+  void updateDynamicVertexBuffer(gl.Buffer buffer, Float32List vertices) {
+    ctx.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    ctx.bufferSubDataTyped(gl.ARRAY_BUFFER, 0, vertices);
+    ctx.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
 }
 
 

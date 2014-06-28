@@ -80,6 +80,7 @@ part 'src/shaders/standard_shader.dart';
 part 'src/shaders/shadowmap_shader.dart';
 part 'src/shaders/color_shader.dart';
 part 'src/shaders/water_shader.dart';
+part 'src/shaders/particles_shader.dart';
 
 part 'src/lights/light.dart';
 
@@ -94,6 +95,9 @@ part 'src/rendering/shadow_renderer.dart';
 part 'src/rendering/bounding_box_renderer.dart';
 part 'src/rendering/rendering_group.dart';
 
+part 'src/particles/particle.dart';
+part 'src/particles/particle_system.dart';
+
 
 
 or(expectValue, defaultValue) {
@@ -103,6 +107,11 @@ or(expectValue, defaultValue) {
 
 capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
+double randomFloat(num min, num max) {
+  if (min == max) return min.toDouble();
+  var rnd = new math.Random();
+  return rnd.nextDouble() * (max - min) + min;
+}
 
 abstract class Axis {
   static final Vector3 LEFT = new Vector3(1.0, 0.0, 0.0);
@@ -117,8 +126,6 @@ abstract class Axis {
 typedef void Callback();
 typedef void Callback1<T>();
 typedef void Callback2<T1, T2>();
-
-
 
 
 

@@ -2,7 +2,7 @@ part of orange;
 
 
 
-class Shader {
+class Shader implements Disposable {
   bool ready = false;
 
   gl.RenderingContext _ctx;
@@ -73,6 +73,7 @@ class Shader {
     return shader;
   }
 
+  @override
   void dispose() {
     if (program != null) {
       _ctx.deleteProgram(program);

@@ -4,7 +4,7 @@ part of orange;
 
 
 
-class ParticleSystem implements Renderer {
+class ParticleSystem implements Renderer, Disposable {
 
   static const BLENDMODE_ONEONE = 0;
   static const BLENDMODE_STANDARD = 1;
@@ -41,7 +41,7 @@ class ParticleSystem implements Renderer {
   Color colorDead = new Color(0, 0, 0, 1.0);
   Color textureMask = new Color.float(1.0, 1.0, 1.0, 1.0);
 
-  // TODO
+  // TODO typedef
   dynamic startDirectionFunction;
   dynamic startPositionFunction;
 
@@ -102,7 +102,6 @@ class ParticleSystem implements Renderer {
     };
 
 
-    // TODO fixme, refer : babylonJS TransformCoordinatesFromFloatsToRef
     startPositionFunction = (Matrix4 worldMatrix, Vector3 positionToUpdate) {
       _tmp.x = randomFloat(minEmitBox.x, maxEmitBox.x);
       _tmp.y = randomFloat(minEmitBox.y, maxEmitBox.y);
@@ -260,7 +259,7 @@ class ParticleSystem implements Renderer {
       if (!_alive) {
         _started = false;
         if (disposeOnStop) {
-          _scene._toBeDisposed.add(this);
+          _scene._shouldDisposes.add(this);
         }
       }
     }
@@ -284,16 +283,16 @@ class ParticleSystem implements Renderer {
     var device = _scene.graphicsDevice;
 
     device.use(pass);
-    
-    if(blendMod == BLENDMODE_ONEONE) {
+
+    if (blendMod == BLENDMODE_ONEONE) {
       device.alphaMode = Orange.ALPHA_ADD;
     } else {
       device.alphaMode = Orange.ALPHA_COMBINE;
     }
-    if(forceDepthWrite) {
+    if (forceDepthWrite) {
       device.depthWrite = true;
     }
-    
+
     device.bindTexture("diffuseSampler", particleTexture);
     device.bindMatrix4("view", viewMatrix);
     device.bindMatrix4("projection", projectionMatrix);
@@ -322,24 +321,28 @@ class ParticleSystem implements Renderer {
         offset += 4 * 4;
       }
     });
-    
+
     _indexBuffer.bind(device.ctx);
     device.ctx.drawElements(gl.TRIANGLES, _indexBuffer.count, _indexBuffer.type, _indexBuffer.offset);
     device.alphaMode = Orange.ALPHA_DISABLE;
-    
-    
-    
-  }
-  
-  void dispose() {
-//    if(_vertexBuffer != null) {
-//      _scene.graphicsDevice.__releaseBuffer(_vertexBuffer);
-//    }
-    // TODO
-  }
-  
-}
 
+
+
+  }
+
+  void dispose() {
+    _scene.graphicsDevice.ctx.deleteBuffer(_vertexBuffer);
+    _vertexBuffer = null;
+    _indexBuffer.dispose();
+    _indexBuffer = null;
+    if (particleTexture != null) {
+      particleTexture.dispose();
+      particleTexture = null;
+    }
+    _scene._particleSystemds.remove(this);
+  }
+
+}
 
 
 

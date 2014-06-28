@@ -121,6 +121,8 @@ class Orange {
       //after render callbacks
       afterRenders.forEach((c) => c());
 
+      _scene._shouldDisposes.forEach((d) => d.dispose());
+      _scene._shouldDisposes.clear();
       _renderGroup.clear();
       _boundingBoxRenderer._renderList.clear();
       _renderTargets.clear();

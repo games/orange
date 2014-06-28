@@ -5,7 +5,7 @@ part of orange;
 class Geometry {
   String id;
 
-  @deprecated
+  // TODO
   int vertexCount;
 
   Map<String, VertexBuffer> buffers = {};

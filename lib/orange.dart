@@ -29,6 +29,7 @@ part 'src/vertex_buffer.dart';
 part 'src/semantics.dart';
 part 'src/sampler.dart';
 part 'src/geometry.dart';
+part 'src/disposable.dart';
 
 part 'src/cameras/camera.dart';
 part 'src/cameras/orbit_controls.dart';

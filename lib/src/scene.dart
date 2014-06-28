@@ -1,7 +1,7 @@
 part of orange;
 
 
-class Scene {
+class Scene implements Disposable {
   static int FOGMODE_NONE = 0;
   static int FOGMODE_EXP = 1;
   static int FOGMODE_EXP2 = 2;
@@ -22,7 +22,7 @@ class Scene {
   List<Mesh> _transparentMeshes = [];
   List<Light> _lights = [];
   // TODO
-  List _toBeDisposed = [];
+  List<Disposable> _shouldDisposes = [];
 
   bool lightsEnabled = true;
   bool texturesEnabled = true;
@@ -121,5 +121,10 @@ class Scene {
 
   void exit() {
     // TODO release all resources
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
   }
 }

@@ -4,7 +4,7 @@ part of orange;
 var defaultSampler = new Sampler();
 
 
-class Texture {
+class Texture implements Disposable {
   static int NEAREST_SAMPLINGMODE = 1;
   static int BILINEAR_SAMPLINGMODE = 2;
   static int TRILINEAR_SAMPLINGMODE = 3;
@@ -134,9 +134,12 @@ class Texture {
 
   }
 
-  // TODO
   void dispose() {
-    unload(source);
+    references--;
+    if (references <= 0) {
+      _texturesCache.remove(source);
+      Orange.instance.graphicsDevice.ctx.deleteTexture(data);
+    }
   }
 
   static Map<String, Texture> _texturesCache = {};
@@ -161,8 +164,7 @@ class Texture {
         var sampler = texture.sampler;
         texture.width = image.width;
         texture.height = image.height;
-        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter
-            == gl.LINEAR_MIPMAP_LINEAR));
+        var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
         if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
           image = _ensureImage(image);
         }
@@ -181,13 +183,6 @@ class Texture {
         _texturesCache[url] = texture;
       });
       return texture;
-    }
-  }
-
-  // TODO not implement yet
-  static void unload(String url) {
-    if (_texturesCache.containsKey(url)) {
-
     }
   }
 
@@ -265,8 +260,7 @@ class TextureManager {
           texture.data = ctx.createTexture();
           texture.width = image.width;
           texture.height = image.height;
-          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) ||
-              (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
+          var usesMipMaps = ((sampler.minFilter == gl.NEAREST_MIPMAP_NEAREST) || (sampler.minFilter == gl.LINEAR_MIPMAP_NEAREST) || (sampler.minFilter == gl.NEAREST_MIPMAP_LINEAR) || (sampler.minFilter == gl.LINEAR_MIPMAP_LINEAR));
           if (usesMipMaps || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
             image = _ensureImage(image);
           }

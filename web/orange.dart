@@ -45,7 +45,7 @@ void main() {
                 new TestBabylonShipScene(camera),
                 new TestBabylonViperScene(camera),
                 new TestParticles(camera)];
-  var i = 9;
+  var i = 0;
   
   orange.enter(scenes[i]);
   orange.run();

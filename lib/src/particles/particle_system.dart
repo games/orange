@@ -54,7 +54,7 @@ class ParticleSystem implements Renderer {
   List<Particle> _stockParticles = [];
   num _newPartsExcess = 0;
   gl.Buffer _vertexBuffer;
-  gl.Buffer _indexBuffer;
+  VertexBuffer _indexBuffer;
   Float32List _vertices;
   Pass _pass;
   String _cachedDefines;
@@ -78,7 +78,7 @@ class ParticleSystem implements Renderer {
     _vertexBuffer = device.createDynamicVertexBuffer(_capacity * _vertexStrideSize * 4);
 
     var indices = [];
-    var index = 0.0;
+    var index = 0;
     for (var count = 0; count < _capacity; count++) {
       indices.add(index);
       indices.add(index + 1);
@@ -86,10 +86,9 @@ class ParticleSystem implements Renderer {
       indices.add(index);
       indices.add(index + 2);
       indices.add(index + 3);
-      index += 4.0;
+      index += 4;
     }
-
-    _indexBuffer = device.createIndexBuffer(indices);
+    _indexBuffer = new VertexBuffer.indices(indices);
 
     _vertices = new Float32List(_capacity * _vertexStrideSize);
 
@@ -156,7 +155,7 @@ class ParticleSystem implements Renderer {
         particle.colorStep.scaleTo(_scaledUpdateSpeed, _scaledColorStep);
         particle.color.add(_scaledColorStep);
 
-        if (particle.color.alpha < 0) particle.color.alpha = 0;
+        if (particle.color.alpha < 0) particle.color.alpha = 0.0;
         particle.angle += particle.angularSpeed * _scaledUpdateSpeed;
         particle.direction.copyInto(_scaledDirection).scale(_scaledUpdateSpeed);
         particle.position.add(_scaledDirection);
@@ -324,11 +323,8 @@ class ParticleSystem implements Renderer {
       }
     });
     
-    device.ctx.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _indexBuffer);
-    device.ctx.drawElements(gl.TRIANGLES, particles.length * 6, gl.UNSIGNED_SHORT, 0);
-    
-//    device.ctx.drawArrays(gl.LINE_STRIP, 0, 4);
-    
+    _indexBuffer.bind(device.ctx);
+    device.ctx.drawElements(gl.TRIANGLES, _indexBuffer.count, _indexBuffer.type, _indexBuffer.offset);
     device.alphaMode = Orange.ALPHA_DISABLE;
   }
   

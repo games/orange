@@ -14,11 +14,10 @@ class VertexBuffer {
   int usage;
   gl.Buffer buffer;
   TypedData data;
-  
+
   int references = 1;
 
-  VertexBuffer(this.size, this.type, this.stride, this.offset, {this.count: 0, this.data: null, this.target: gl.ARRAY_BUFFER, this.usage: gl.STATIC_DRAW}) {
-  }
+  VertexBuffer(this.size, this.type, this.stride, this.offset, {this.count: 0, this.data: null, this.target: gl.ARRAY_BUFFER, this.usage: gl.STATIC_DRAW});
 
   enable(gl.RenderingContext ctx, ShaderProperty attrib) {
     bind(ctx);
@@ -34,5 +33,17 @@ class VertexBuffer {
     } else {
       ctx.bindBuffer(target, buffer);
     }
+  }
+
+  VertexBuffer.indices(data)
+      : size = 0,
+        stride = 0,
+        offset = 0,
+        type = gl.UNSIGNED_SHORT,
+        usage = gl.STATIC_DRAW,
+        target = gl.ELEMENT_ARRAY_BUFFER {
+    if (!(data is Uint16List)) data = new Uint16List.fromList(data);
+    count = data.length;
+    this.data = data;
   }
 }

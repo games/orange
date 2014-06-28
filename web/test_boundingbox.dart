@@ -5,12 +5,14 @@ part of orange_examples;
 
 class TestBoundingBoxScene extends Scene {
 
-  TestBoundingBoxScene(Camera camera): super(camera);
+  TestBoundingBoxScene(Camera camera) : super(camera);
 
   Mesh box;
 
   @override
   void enter() {
+
+    ambientColor = new Color.fromHex(0xffffff);
 
     camera.setTranslation(0.0, 2.0, 4.0);
     camera.lookAt(new Vector3.zero());
@@ -45,7 +47,7 @@ class TestBoundingBoxScene extends Scene {
     var light0 = new PointLight(0xffffff);
     light0.position = new Vector3(-5.0, 3.0, 0.0);
     add(light0);
-    
+
     var duplicateBox = new html.ButtonElement();
     duplicateBox.onClick.listen((e) {
       var rnd = new Random();
@@ -68,7 +70,7 @@ class TestBoundingBoxScene extends Scene {
 
     box.position = new Vector3(0.0, 0.0, sin(elapsed / 1000) * 2.0);
   }
-  
+
   @override
   void exit() {
     super.exit();

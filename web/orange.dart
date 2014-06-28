@@ -12,6 +12,7 @@ part 'test_boundingbox.dart';
 part 'test_physics.dart';
 part 'test_animation.dart';
 part 'test_lighting.dart';
+part 'test_lighting2.dart';
 part 'test_gltf.dart';
 part 'test_textures.dart';
 part 'test_water.dart';
@@ -31,13 +32,14 @@ void main() {
   controls.attach(camera, canvas);
 
   var stats = new Stats();
-  html.document.body.children.add(stats.container);
+  html.querySelector("#stat").children.add(stats.container);
 
   var orange = new Orange(graphics);
   
   var scenes = [new TestAnimationScene(camera), 
                 new TestBoundingBoxScene(camera), 
-                new TestLightingScene(camera), 
+                new TestLightingScene(camera),
+                new TestLightingScene2(camera),
                 new PhysicsScene(camera),
                 new TestGLTFScene(camera),
                 new TestTexturesScene(camera),
@@ -45,7 +47,7 @@ void main() {
                 new TestBabylonShipScene(camera),
                 new TestBabylonViperScene(camera),
                 new TestParticles(camera)];
-  var i = 0;
+  var i = 3;
   
   orange.enter(scenes[i]);
   orange.run();

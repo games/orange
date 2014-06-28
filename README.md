@@ -21,6 +21,7 @@ Is a WebGL based 3D engine for my personal experiments.
 - Reflection texture (Spheric, planar, cubic and projection)
 - Create mesh from height map
 - Water
+- Particle System
 
 
 ### TODO ###
@@ -32,7 +33,6 @@ Is a WebGL based 3D engine for my personal experiments.
 - Post-processes
 - Lens flares
 - First person camera control
-- Particle System
 - Morph targets
 - LOD system
 - Sub Mesh

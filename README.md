@@ -2,9 +2,10 @@
 
 Is a WebGL based 3D engine for my personal experiments.
 
+
 ### Features ###
 - Skinning Animation
-- Lighting (AMBIENT, DIRECT, POINT, SPOTLIGHT)
+- Lighting (Direct, Point, Spotlight, Hemispherics)
 - Shadow mapping (VSM)
 - Bump mapping
 - Basic primitives (Cube, Cylinder, Plane, Sphere, Coordinate)
@@ -28,7 +29,6 @@ Is a WebGL based 3D engine for my personal experiments.
 - Code refactoring
 - Scene graph
 - Picking
-- Hemispherics lighting
 - Billboarding
 - Post-processes
 - Lens flares

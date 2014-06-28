@@ -77,3 +77,19 @@ class SpotLight extends DirectionalLight {
   }
 }
 
+class HemisphericLight extends Light {
+  Color groundColor = new Color.fromHex(0x0);
+  Vector3 direction;
+
+  HemisphericLight(num hexColor, {this.direction, double intensity: 1.0}) : super(hexColor, intensity, Light.HEMISPHERE);
+
+  @override
+  void bind(gl.RenderingContext ctx, Shader shader, int i) {
+    super.bind(ctx, shader, i);
+    direction.normalize();
+    ctx.uniform4f(shader.uniforms["vLightData$i"].location, direction.x, direction.y, direction.z, 0.0);
+    var color = groundColor.scaled(intensity);
+    ctx.uniform3f(shader.uniforms["vLightGround$i"].location, color.red, color.green, color.blue);
+  }
+
+}

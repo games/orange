@@ -65,6 +65,8 @@ class StandardMaterial extends Material {
         var light = scene._lights[i];
         if (light.type == Light.SPOTLIGHT) {
           defines.add("#define SPOTLIGHT$i");
+        } else if(light.type == Light.HEMISPHERE) {
+          defines.add("#define HEMILIGHT$i");
         } else {
           defines.add("#define POINTDIRLIGHT$i");
         }

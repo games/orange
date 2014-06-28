@@ -198,7 +198,7 @@ class GraphicsDevice {
         ctx.enable(gl.BLEND);
         break;
       case Orange.ALPHA_ADD:
-        depthWrite = true;
+        depthWrite = false;
         ctx.blendFuncSeparate(gl.ONE, gl.ONE, gl.ZERO, gl.ONE);
         ctx.enable(gl.BLEND);
         break;

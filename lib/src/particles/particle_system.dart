@@ -312,13 +312,13 @@ class ParticleSystem implements Renderer {
     pass.shader.attributes.forEach((String name, ShaderProperty attri) {
       device.ctx.enableVertexAttribArray(attri.location);
       if (name == Semantics.position) {
-        device.ctx.vertexAttribPointer(attri.location, 3, gl.FLOAT, false, _vertexStrideSize, 0);
+        device.ctx.vertexAttribPointer(attri.location, 3, gl.FLOAT, false, _vertexStrideSize, offset);
         offset += 3 * 4;
       } else if (name == Semantics.color) {
-        device.ctx.vertexAttribPointer(attri.location, 4, gl.FLOAT, false, _vertexStrideSize, 12);
+        device.ctx.vertexAttribPointer(attri.location, 4, gl.FLOAT, false, _vertexStrideSize, offset);
         offset += 4 * 4;
       } else if (name == "options") {
-        device.ctx.vertexAttribPointer(attri.location, 4, gl.FLOAT, false, _vertexStrideSize, 16);
+        device.ctx.vertexAttribPointer(attri.location, 4, gl.FLOAT, false, _vertexStrideSize, offset);
         offset += 4 * 4;
       }
     });
@@ -326,6 +326,9 @@ class ParticleSystem implements Renderer {
     _indexBuffer.bind(device.ctx);
     device.ctx.drawElements(gl.TRIANGLES, _indexBuffer.count, _indexBuffer.type, _indexBuffer.offset);
     device.alphaMode = Orange.ALPHA_DISABLE;
+    
+    
+    
   }
   
   void dispose() {

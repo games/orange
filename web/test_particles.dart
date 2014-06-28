@@ -64,6 +64,11 @@ class TestParticles extends Scene {
   void enterFrame(num elapsed, num interval) {
     fountain.rotateX(radians(interval / 100.0)); 
   }
+  
+  @override
+  void exit() {
+    dispose();
+  }
 }
 
 

@@ -13,7 +13,7 @@ class Scene implements Disposable {
   num fogDensity = 0.1;
   num fogStart = 0.0;
   num fogEnd = 1000.0;
-  
+
   Plane clipPlane;
 
   List<Node> nodes = [];
@@ -41,13 +41,13 @@ class Scene implements Disposable {
   Camera camera;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   Color ambientColor = new Color.fromHex(0x0);
-  
+
   // physics
   Vector3 _gravity;
   PhysicsEngine _physicsEngine;
   PhysicsEngine get physicsEngine => _physicsEngine;
   bool get physicsEnabled => _physicsEngine != null;
-  
+
   // particles
   List<ParticleSystem> _particleSystemds = [];
 
@@ -60,7 +60,7 @@ class Scene implements Disposable {
       _physicsEngine = null;
       return false;
     }
-    if(gravity == null) gravity = _gravity;
+    if (gravity == null) gravity = _gravity;
     _physicsEngine._initialize(gravity);
     return true;
   }
@@ -107,7 +107,7 @@ class Scene implements Disposable {
   }
 
   void enter() {
-    
+
   }
 
   // TODO remove parameters
@@ -125,6 +125,10 @@ class Scene implements Disposable {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    removeChildren();
+    disablePhysics();
+    _shouldDisposes.addAll(_particleSystemds);
+    _shouldDisposes.forEach((d) => d.dispose());
+    _shouldDisposes.clear();
   }
 }

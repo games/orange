@@ -36,6 +36,7 @@ Is a WebGL based 3D engine for my personal experiments.
 - Morph targets
 - LOD system
 - Sub Mesh
+- New physics plugin [ammo.js](https://github.com/kripken/ammo.js)
 
 
 

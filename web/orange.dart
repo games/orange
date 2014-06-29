@@ -19,6 +19,7 @@ part 'test_water.dart';
 part 'test_babylon_ship.dart';
 part 'test_babylon_viper.dart';
 part 'test_particles.dart';
+part 'test_obj_loader.dart';
 
 
 
@@ -46,8 +47,10 @@ void main() {
                 new TestWaterScene(camera),
                 new TestBabylonShipScene(camera),
                 new TestBabylonViperScene(camera),
-                new TestParticles(camera)];
-  var i = 3;
+                new TestParticles(camera),
+                new TestObjLoader(camera)];
+  
+  var i = scenes.length - 1;
   
   orange.enter(scenes[i]);
   orange.run();

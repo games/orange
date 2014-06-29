@@ -20,6 +20,7 @@ part 'test_babylon_ship.dart';
 part 'test_babylon_viper.dart';
 part 'test_particles.dart';
 part 'test_obj_loader.dart';
+part 'test_physically_based_lighting.dart';
 
 
 
@@ -48,7 +49,8 @@ void main() {
                 new TestBabylonShipScene(camera),
                 new TestBabylonViperScene(camera),
                 new TestParticles(camera),
-                new TestObjLoader(camera)];
+                new TestObjLoader(camera),
+                new TestPhysicallyBasedLighting(camera)];
   
   var i = scenes.length - 1;
   

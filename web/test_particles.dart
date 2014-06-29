@@ -35,7 +35,7 @@ class TestParticles extends Scene {
 
     var particles = new ParticleSystem("particles", 2000, this);
     particles.particleTexture = Texture.load(graphicsDevice.ctx, {
-      "path": "/orange/models/texture/flare.png"
+      "path": "textures/flare.png"
     });
     particles.emitter = fountain;
     particles.minEmitBox = new Vector3(-0.5, 0.0, 0.0);

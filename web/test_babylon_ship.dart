@@ -11,7 +11,7 @@ class TestBabylonShipScene extends Scene {
   void enter() {
 
     var loader = new BabylonLoader();
-    loader.load(graphicsDevice, "/orange/models/babylon/schooner.babylon", new BabylonShipScene()).then((s) {
+    loader.load(graphicsDevice, "models/babylon/schooner.babylon", new BabylonShipScene()).then((s) {
       if (s.camera == null) {
         s.camera = camera;
       }
@@ -29,7 +29,7 @@ class BabylonShipScene extends Scene {
   void enter() {
 
     var diffuseTexture = Texture.load(graphicsDevice.ctx, {
-      "path": "/orange/models/babylon/PLAYER_SHIP_SCHOONER_ID1.jpg",
+      "path": "models/babylon/PLAYER_SHIP_SCHOONER_ID1.jpg",
       "sampler": new Sampler()
                 ..minFilter = gl.NEAREST_MIPMAP_NEAREST
                 ..magFilter = gl.NEAREST,

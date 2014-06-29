@@ -10,7 +10,7 @@ class TestBabylonViperScene extends Scene {
   void enter() {
 
     var loader = new BabylonLoader();
-    loader.load(graphicsDevice, "/orange/models/babylon/Viper/Viper.babylon", new BabylonViperScene()).then((s) {
+    loader.load(graphicsDevice, "models/babylon/Viper/Viper.babylon", new BabylonViperScene()).then((s) {
       if (s.camera == null) {
         s.camera = camera;
       }

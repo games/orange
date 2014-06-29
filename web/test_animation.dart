@@ -15,7 +15,7 @@ class TestAnimationScene extends Scene {
     camera.setTranslation(0.0, 1.0, 2.5);
     camera.lookAt(new Vector3(0.0, 0.4, 0.0));
 
-    var url = "http://127.0.0.1:3030/orange/models/ogre/alric.orange";
+    var url = "models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(graphicsDevice.ctx, url).then((m) {
       m.setTranslation(0.0, -1.0, -1.0);

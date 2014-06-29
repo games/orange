@@ -11,8 +11,8 @@ class TestGLTFScene extends Scene {
   @override
   void enter() {
 
-    var urls = ["../models/duck/duck.json", "../models/SuperMurdoch/SuperMurdoch.json", "../models/rambler/rambler.json", 
-                "../models/wine/wine.json", "../models/axe/axe.json", "../models/veneno/veneno.json"];
+    var urls = ["models/duck/duck.json", "models/SuperMurdoch/SuperMurdoch.json", "models/rambler/rambler.json", 
+                "models/wine/wine.json", "models/axe/axe.json", "models/veneno/veneno.json"];
 
     var selector = new html.SelectElement();
     urls.forEach((u) {

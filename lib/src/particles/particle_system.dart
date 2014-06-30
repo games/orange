@@ -327,7 +327,6 @@ class ParticleSystem implements Renderer, Disposable {
     device.alphaMode = Orange.ALPHA_DISABLE;
 
 
-
   }
 
   void dispose() {

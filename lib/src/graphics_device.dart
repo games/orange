@@ -90,6 +90,11 @@ class GraphicsDevice {
   // TODO rename
   use(Pass pass) {
     if (_currentPass == null || _currentPass.shader.program != pass.shader.program) {
+      if(_currentPass != null) {
+        _currentPass.shader.attributes.forEach((n, a){
+          ctx.disableVertexAttribArray(a.location);
+        });
+      }
       _currentPass = pass;
       pass.bind(this);
       for (var i = 0; i < pass.shader.sampers.length; i++) {

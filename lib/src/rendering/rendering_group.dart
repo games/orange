@@ -7,9 +7,6 @@ class RenderingGroup implements Renderer {
   Map<Pass, List<Mesh>> _transparentPasses = {};
   Map<Pass, List<Mesh>> _opaquePasses = {};
 
-  int _lastMaxEnabledArray = -1;
-  int _newMaxEnabledArray = -1;
-
   void register(Mesh mesh) {
     var material = mesh.material;
     if (material == null) return;
@@ -46,7 +43,6 @@ class RenderingGroup implements Renderer {
   }
 
   _renderMeshes(GraphicsDevice graphics, Pass pass, List<Mesh> meshes, Matrix4 viewMatrix, Matrix4 viewProjectionMatrix, Matrix4 projectionMatrix, Vector3 eyePosition) {
-    _lastMaxEnabledArray = -1;
     var shader = pass.shader;
     var ctx = graphics.ctx;
     graphics.use(pass);
@@ -74,7 +70,6 @@ class RenderingGroup implements Renderer {
   }
 
   _renderMesh(GraphicsDevice graphics, Mesh mesh, Shader shader) {
-    _newMaxEnabledArray = -1;
     var ctx = graphics.ctx;
     var material = mesh.material;
     graphics.cullingState = material.backFaceCulling;
@@ -84,14 +79,8 @@ class RenderingGroup implements Renderer {
       shader.attributes.forEach((semantic, attrib) {
         if (geometry.buffers.containsKey(semantic)) {
           geometry.buffers[semantic].enable(ctx, attrib);
-          if (attrib.location > _newMaxEnabledArray) {
-            _newMaxEnabledArray = attrib.location;
-          }
         }
       });
-    }
-    for (var i = (_newMaxEnabledArray + 1); i < _lastMaxEnabledArray; i++) {
-      ctx.disableVertexAttribArray(i);
     }
     mesh.indices.bind(ctx);
     if (material.wireframe) {
@@ -99,7 +88,6 @@ class RenderingGroup implements Renderer {
     } else {
       ctx.drawElements(mesh.primitive, mesh.indices.count, mesh.indices.type, mesh.indices.offset);
     }
-    _lastMaxEnabledArray = _newMaxEnabledArray;
     material.unbind();
   }
 

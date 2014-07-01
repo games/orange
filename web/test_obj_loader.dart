@@ -10,6 +10,7 @@ class TestObjLoader extends Scene {
   void enter() {
 
     var urls = [
+                "models/obj/Head_max_obj/Infinite-Level_02.obj",
                 "models/obj/head.obj", 
                 "models/obj/train.obj", 
                 "models/obj/female02/female02.obj", 

@@ -16,6 +16,7 @@ class ObjLoader {
       var vertices = [],
           indices = [],
           uvs = [],
+          finalUvs = [],
           normals = [];
       lines.forEach((line) {
         line = line.trim();
@@ -24,25 +25,35 @@ class ObjLoader {
           vertices.addAll(line.replaceFirst("v", "").trim().split(" ").map((e) => double.parse(e)));
         } else if (line.startsWith("f ")) {
           indices.addAll(line.replaceFirst("f", "").trim().split(" ").map((e){
-            var f;
+            int f;
             if(e.contains("/")) {
-              f = e.split("/").first;
+              var fs = e.split("/");
+              f = int.parse(fs.first) - 1;
+              var vt = (int.parse(fs[1]) - 1) * 2;
+              var vn = fs.length == 3 ? int.parse(fs[2]) : null;
+              var vi = f * 2;
+              finalUvs[vi] = uvs[vt];
+              finalUvs[vi + 1] = uvs[vt + 1];
             } else {
-              f = e;
+              f = int.parse(e) - 1;
             }
-            return int.parse(f) - 1;
+            return f;
           }));
         } else if (line.startsWith("vt ")) {
           var iter = line.replaceFirst("vt", "").trim().split(" ").map((e) => double.parse(e));
-          uvs.add(iter.first);
-          uvs.add(iter.elementAt(1));
+          var u = iter.first;
+          var v = iter.elementAt(1);
+          uvs.add(u);
+          uvs.add(v);
+          finalUvs.add(u);
+          finalUvs.add(v);
         } else if (line.startsWith("vn ")) {
-//          normals.addAll(line.replaceFirst("vn", "").trim().split(" ").map((e) => double.parse(e)));
+          normals.addAll(line.replaceFirst("vn", "").trim().split(" ").map((e) => double.parse(e)));
         }
       });
       _mesh.setPositions(vertices);
       _mesh.setIndices(indices);
-      _mesh.setTexCoords(uvs);
+      _mesh.setTexCoords(finalUvs);
       
       if(normals.length > 0) {
         _mesh.setNormals(normals);

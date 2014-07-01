@@ -28,7 +28,7 @@ part 'test_physically_based_lighting.dart';
 void main() {
   var canvas = html.querySelector("#container");
   var graphics = new GraphicsDevice(canvas);
-  var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 2000.0);
+  var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 10000.0);
   camera.translate(0.0, 0.0, 4.0);
   var controls = new OrbitControls();
   controls.attach(camera, canvas);

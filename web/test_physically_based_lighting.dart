@@ -9,38 +9,45 @@ part of orange_examples;
 
 class TestPhysicallyBasedLighting extends Scene {
   TestPhysicallyBasedLighting(Camera camera) : super(camera);
-  
+
   int type = 0;
-  double roughness = 0.5;
-  double specualerColor = 0.5;
+  double roughness = 0.3;
+  double specualerColor = 0.2;
 
   @override
   void enter() {
-    var urls = [
-                    "models/obj/head.obj", 
-                    "models/obj/train.obj", 
-                    "models/obj/female02/female02.obj", 
-                    "models/obj/tree.obj"];
-    
+    var urls = [{
+        "path": "models/obj/Head_max_obj/Infinite-Level_02.obj",
+        "diffuse": "models/obj/Head_max_obj/Images/Map-COL.jpg",
+        "bump": "models/obj/Head_max_obj/Images/Infinite-Level_02_Tangent_SmoothUV.jpg",
+        "flip": true
+      }, {
+        "path": "models/obj/head.obj",
+        "diffuse": "models/obj/skin1.jpg",
+        "flip": true
+      }];
+
     var selector = new html.SelectElement();
-    urls.forEach((u) {
-      var option = new html.OptionElement(data: u.split("/").last, value: u);
+    for (var i = 0; i < urls.length; i++) {
+      var u = urls[i];
+      var option = new html.OptionElement(data: u["path"].split("/").last, value: i.toString());
       selector.children.add(option);
-    });
+    }
+
     selector.onChange.listen((e) {
       var opt = selector.options[selector.selectedIndex];
-      _loadModel(opt.value);
+      _loadModel(urls[int.parse(opt.value)]);
     });
     var controllers = html.querySelector("#controllers");
     controllers.children.add(selector);
     controllers.children.add(new html.BRElement());
-    
-    
+
+
     var types = new html.SelectElement();
-    for(var i = 0; i < 7; i++) {
+    for (var i = 0; i < 7; i++) {
       var option = new html.OptionElement(data: i.toString(), value: i.toString());
       types.children.add(option);
-     }
+    }
     types.onChange.listen((e) {
       var opt = types.options[types.selectedIndex];
       type = int.parse(opt.value);
@@ -49,7 +56,7 @@ class TestPhysicallyBasedLighting extends Scene {
     controllers.children.add(new html.BRElement());
     controllers.children.add(types);
     controllers.children.add(new html.BRElement());
-    
+
     var roughnessSlider = new html.RangeInputElement();
     roughnessSlider.id = "roughness";
     roughnessSlider.min = "0";
@@ -63,7 +70,7 @@ class TestPhysicallyBasedLighting extends Scene {
     controllers.children.add(new html.BRElement());
     controllers.children.add(roughnessSlider);
     controllers.children.add(new html.BRElement());
-    
+
     var specualrSlider = new html.RangeInputElement();
     specualrSlider.id = "roughness";
     specualrSlider.min = "0";
@@ -77,10 +84,10 @@ class TestPhysicallyBasedLighting extends Scene {
     controllers.children.add(new html.BRElement());
     controllers.children.add(specualrSlider);
     controllers.children.add(new html.BRElement());
-    
+
     _loadModel(urls.first);
   }
-  
+
   html.LabelElement _labelFor(html.Element element, String title) {
     var label = new html.LabelElement();
     label.htmlFor = element.id;
@@ -88,25 +95,40 @@ class TestPhysicallyBasedLighting extends Scene {
     return label;
   }
 
-  void _loadModel(String url) {
+  void _loadModel(Map desc) {
+    var url = desc["path"];
+    var diffuse = desc["diffuse"];
+    var bump = desc["bump"];
+    var flip = desc["flip"];
     var loader = new ObjLoader();
     loader.load(url).then((m) {
       removeChildren();
       add(m);
-      
+
       var envTexture = new CubeTexture("textures/cube/Bridge2/bridge");
-      var texture = Texture.load(graphicsDevice.ctx, {
-        "path": "models/obj/skin1.jpg"
+      var diffuseTexture = Texture.load(graphicsDevice.ctx, {
+        "path": diffuse,
+        "flip": flip
       });
+      var bumpTexture;
+      if (bump != null) {
+        bumpTexture = Texture.load(graphicsDevice.ctx, {
+          "path": bump,
+          "flip": flip
+        });
+      }
       var ggx = Texture.load(graphicsDevice.ctx, {
         "path": "textures/ggx-helper-dfv.png"
       });
 
       m.material = new ShaderMaterial(graphicsDevice, PhysicallyVS, PhysicallyFS);
-      m.material.backFaceCulling = false;
+      m.material.backFaceCulling = true;
       (m.material as ShaderMaterial).afterBinding = (ShaderMaterial material, Mesh mesh, Matrix4 worldMatrix) {
         graphicsDevice.bindTexture("GgxDFV", ggx);
-        graphicsDevice.bindTexture("diffuseSampler", texture);
+        graphicsDevice.bindTexture("diffuseSampler", diffuseTexture);
+        if(bumpTexture != null) {
+          graphicsDevice.bindTexture("bumpSampler", bumpTexture);
+        }
         graphicsDevice.bindInt("type", type);
         graphicsDevice.bindFloat("uRoughess", roughness);
         graphicsDevice.bindFloat("uSpecularColour", specualerColor);
@@ -128,7 +150,8 @@ class TestPhysicallyBasedLighting extends Scene {
 
 
 
-const PhysicallyVS = """
+const PhysicallyVS =
+    """
 precision mediump float;
 
 attribute vec3 position;
@@ -155,17 +178,20 @@ void main(void) {
 """;
 
 // http://www.altdev.co/2011/08/23/shader-code-for-physically-based-lighting/
-const PhysicallyFS = """
+const PhysicallyFS =
+    """
 precision mediump float;
 precision mediump int;
 
 #define PI 3.1415926535897932384626433832795
 #define PI_OVER_TWO 1.5707963267948966
 #define PI_OVER_FOUR 0.7853981633974483
+#extension GL_OES_standard_derivatives : enable
 
 uniform vec3 vEyePosition;
 uniform sampler2D GgxDFV;
 uniform sampler2D diffuseSampler;
+uniform sampler2D bumpSampler;
 uniform int type;
 uniform float uRoughess;
 uniform float uSpecularColour;
@@ -355,33 +381,58 @@ float LightingFuncGGX_OPT5(vec3 N, vec3 V, vec3 L, float roughness, float F0) {
   return specular;
 }
 
+mat3 cotangent_frame(vec3 normal, vec3 p, vec2 uv) {
+  // get edge vectors of the pixel triangle
+  vec3 dp1 = dFdx(p);
+  vec3 dp2 = dFdy(p);
+  vec2 duv1 = dFdx(uv);
+  vec2 duv2 = dFdy(uv);
+
+  // solve the linear system
+  vec3 dp2perp = cross(dp2, normal);
+  vec3 dp1perp = cross(normal, dp1);
+  vec3 tangent = dp2perp * duv1.x + dp1perp * duv2.x;
+  vec3 binormal = dp2perp * duv1.y + dp1perp * duv2.y;
+
+  // construct a scale-invariant frame 
+  float invmax = inversesqrt(max(dot(tangent, tangent), dot(binormal, binormal)));
+  return mat3(tangent * invmax, binormal * invmax, normal);
+}
+
+vec3 perturbNormal(vec3 viewDir) {
+  vec3 map = texture2D(bumpSampler, vUV).xyz;
+  map = map * 255. / 127. - 128. / 127.;
+  mat3 TBN = cotangent_frame(vNormal, -viewDir, vUV);
+  return normalize(TBN * map);
+}
 
 void main(void) {
-  vec3 color = vec3(78.0 / 255.0, 58.0 / 255.0, 49.0 / 255.0);
+  vec3 color = vec3(0.8, 0.9, 0.8);
   color = texture2D(diffuseSampler, vUV).xyz;
   vec3 light_colour = vec3(1.0, 1.0, 1.0);
   vec3 light_direction = normalize(vec3(1.0, 1.0, 1.0));
-  
-
-  vec3 diffuse = clamp(dot(vNormal, light_direction), 0.0, 1.0) * light_colour;
 
   float specular_power = uRoughess;
   float specular_colour = uSpecularColour;
   vec3 specular = vec3(0.0, 0.0, 0.0);
   float specular_term = 0.0;
   vec3 viewDirection = normalize(vEyePosition - vWorldPosition);
+  
+  vec3 normal = perturbNormal(viewDirection);
+
+  vec3 diffuse = clamp(dot(normal, light_direction), 0.0, 1.0) * light_colour;
 
   if(type == 0){
-    specular_power = 32.0;
-    specular_colour = 0.03;
+    specular_power = 10.0;
+    specular_colour = 0.01;
 
     float normalisation_term = (specular_power + 2.0) / 2.0 * PI;
     vec3 halfVector = normalize(viewDirection + light_direction);
-    float n_dot_h = clamp(dot(vNormal, halfVector), 0.0, 1.0);
+    float n_dot_h = clamp(dot(normal, halfVector), 0.0, 1.0);
     float blinn_phong = pow(n_dot_h, specular_power);    // n_dot_h is the saturated dot product of the normal and half vectors 
     specular_term = normalisation_term * blinn_phong;
   
-    float n_dot_l = clamp(dot(vNormal, light_direction), 0.0, 1.0);
+    float n_dot_l = clamp(dot(normal, light_direction), 0.0, 1.0);
     float cosine_term = n_dot_l;
   
     // Dot product of half vector and light vector. No need to saturate as it can't go above 90 degrees
@@ -391,28 +442,28 @@ void main(void) {
     float fresnel_term = specular_colour + (1.0 - specular_colour) * exponential;
   
     float alpha = 1.0 / (sqrt(PI_OVER_FOUR * specular_power + PI_OVER_TWO));
-    float n_dot_v = clamp(dot(vNormal, vWorldPosition), 0.0, 1.0);
+    float n_dot_v = clamp(dot(normal, vWorldPosition), 0.0, 1.0);
     float visibility_term = (n_dot_l * (1.0 - alpha) + alpha) * (n_dot_v * (1.0 - alpha) + alpha);
     visibility_term = 1.0 / visibility_term;
   
     specular = (PI / 4.0) * specular_term * cosine_term * fresnel_term * visibility_term * light_colour;
   } else if(type == 1) {
-    specular_term = LightingFuncGGX_REF(vNormal, viewDirection, light_direction, uRoughess, uSpecularColour);
+    specular_term = LightingFuncGGX_REF(normal, viewDirection, light_direction, uRoughess, uSpecularColour);
     specular = specular_term * light_colour;
   } else if(type == 2) {
-    specular_term = LightingFuncGGX_OPT1(vNormal, viewDirection, light_direction, uRoughess, uSpecularColour);
+    specular_term = LightingFuncGGX_OPT1(normal, viewDirection, light_direction, uRoughess, uSpecularColour);
     specular = specular_term * light_colour;
   } else if(type == 3) {
-    specular_term = LightingFuncGGX_OPT2(vNormal, viewDirection, light_direction, uRoughess, uSpecularColour);
+    specular_term = LightingFuncGGX_OPT2(normal, viewDirection, light_direction, uRoughess, uSpecularColour);
     specular = specular_term * light_colour;
   } else if(type == 4) {
-    specular_term = LightingFuncGGX_OPT3(vNormal, viewDirection, light_direction, uRoughess, uSpecularColour);
+    specular_term = LightingFuncGGX_OPT3(normal, viewDirection, light_direction, uRoughess, uSpecularColour);
     specular = specular_term * light_colour;
   } else if(type == 5) {
-    specular_term = LightingFuncGGX_OPT4(vNormal, viewDirection, light_direction, uRoughess, uSpecularColour);
+    specular_term = LightingFuncGGX_OPT4(normal, viewDirection, light_direction, uRoughess, uSpecularColour);
     specular = specular_term * light_colour;
   } else if(type == 6) {
-    specular_term = LightingFuncGGX_OPT5(vNormal, viewDirection, light_direction, uRoughess, uSpecularColour);
+    specular_term = LightingFuncGGX_OPT5(normal, viewDirection, light_direction, uRoughess, uSpecularColour);
     specular = specular_term * light_colour;
   }
 
@@ -428,7 +479,8 @@ void main(void) {
 
 
 //https://github.com/skurmedel/webglmat/blob/master/src/shaders/metal_fs.glsl
-const FS2 = """
+const FS2 =
+    """
 
 precision mediump float;
 
@@ -587,4 +639,3 @@ void main(void) {
 }
 
 """;
-

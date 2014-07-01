@@ -4,8 +4,9 @@ part of orange_examples;
 
 
 // TODO :
-//  http://d.hatena.ne.jp/hanecci/20140423/p1
+//  http://www.filmicworlds.com/2014/04/21/optimizing-ggx-shaders-with-dotlh/
 //  http://www.filmicworlds.com/images/ggx-opt/optimized-ggx.hlsl
+//  http://seblagarde.wordpress.com/2011/08/17/hello-world/
 
 class TestPhysicallyBasedLighting extends Scene {
   TestPhysicallyBasedLighting(Camera camera) : super(camera);
@@ -71,18 +72,64 @@ class TestPhysicallyBasedLighting extends Scene {
     controllers.children.add(roughnessSlider);
     controllers.children.add(new html.BRElement());
 
-    var specualrSlider = new html.RangeInputElement();
-    specualrSlider.id = "roughness";
-    specualrSlider.min = "0";
-    specualrSlider.max = "3";
-    specualrSlider.step = "0.01";
-    specualrSlider.value = specualerColor.toString();
-    specualrSlider.onChange.listen((e) {
-      specualerColor = double.parse(specualrSlider.value);
+    var refractionSlider = new html.RangeInputElement();
+    refractionSlider.id = "refractionSlider";
+    refractionSlider.min = "0";
+    refractionSlider.max = "3";
+    refractionSlider.step = "0.01";
+    refractionSlider.value = specualerColor.toString();
+    refractionSlider.onChange.listen((e) {
+      specualerColor = double.parse(refractionSlider.value);
     });
-    controllers.children.add(_labelFor(specualrSlider, "Specualer(0~3)"));
+    controllers.children.add(_labelFor(refractionSlider, "Refraction(0~3)"));
     controllers.children.add(new html.BRElement());
-    controllers.children.add(specualrSlider);
+    controllers.children.add(refractionSlider);
+    controllers.children.add(new html.BRElement());
+
+    var refractionList = new html.SelectElement();
+    refractionList.id = "refractionList";
+    refractionList.value = specualerColor.toString();
+    refractionList.onChange.listen((e) {
+      var opt = refractionList.options[refractionList.selectedIndex];
+      specualerColor = double.parse(opt.value);
+      refractionSlider.value = specualerColor.toString();
+    });
+
+    [{
+        "name": "Quartz",
+        "value": 0.045593921
+      }, {
+        "name": "ice",
+        "value": 0.017908907
+      }, {
+        "name": "Water",
+        "value": 0.020373188
+      }, {
+        "name": "Alcohol",
+        "value": 0.01995505
+      }, {
+        "name": "Glass",
+        "value": 0.04
+      }, {
+        "name": "Milk",
+        "value": 0.022181983
+      }, {
+        "name": "Ruby",
+        "value": 0.077271957
+      }, {
+        "name": "Crystal",
+        "value": 0.111111111
+      }, {
+        "name": "Diamond",
+        "value": 0.171968833
+      }, {
+        "name": "Skin",
+        "value": 0.028
+      },].forEach((r) {
+      var option = new html.OptionElement(data: r["name"], value: r["value"].toString());
+      refractionList.children.add(option);
+    });
+    controllers.children.add(refractionList);
     controllers.children.add(new html.BRElement());
 
     _loadModel(urls.first);
@@ -126,7 +173,7 @@ class TestPhysicallyBasedLighting extends Scene {
       (m.material as ShaderMaterial).afterBinding = (ShaderMaterial material, Mesh mesh, Matrix4 worldMatrix) {
         graphicsDevice.bindTexture("GgxDFV", ggx);
         graphicsDevice.bindTexture("diffuseSampler", diffuseTexture);
-        if(bumpTexture != null) {
+        if (bumpTexture != null) {
           graphicsDevice.bindTexture("bumpSampler", bumpTexture);
         }
         graphicsDevice.bindInt("type", type);
@@ -476,6 +523,25 @@ void main(void) {
   gl_FragColor = vec4(color * diffuse + specular, 1.);
 }
 """;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //https://github.com/skurmedel/webglmat/blob/master/src/shaders/metal_fs.glsl

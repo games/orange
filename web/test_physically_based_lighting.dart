@@ -7,6 +7,7 @@ part of orange_examples;
 //  http://www.filmicworlds.com/2014/04/21/optimizing-ggx-shaders-with-dotlh/
 //  http://www.filmicworlds.com/images/ggx-opt/optimized-ggx.hlsl
 //  http://seblagarde.wordpress.com/2011/08/17/hello-world/
+//  http://alteredqualia.com/xg/examples/deferred_skin.html
 
 class TestPhysicallyBasedLighting extends Scene {
   TestPhysicallyBasedLighting(Camera camera) : super(camera);

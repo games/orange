@@ -7,6 +7,7 @@ class PolygonMesh extends Mesh {
   Float32List _positions;
   Float32List _normals;
   Float32List _texCoords;
+  Float32List _tangents;
   Uint16List _indices;
 
   PolygonMesh({String name}) : super(name: name) {
@@ -58,11 +59,77 @@ class PolygonMesh extends Mesh {
     }
   }
 
+  // http://www.terathon.com/code/tangent.html
+  calculateTangents() {
+    _tangents = new Float32List(_positions.length);
+    geometry.buffers[Semantics.tangent] = new VertexBuffer(3, gl.FLOAT, 0, 0, count: _positions.length ~/ 3, data: _tangents);
+    
+    
+    var count = _indices.length;
+    var tan1 = new List<Vector3>.generate(_positions.length, (i) => new Vector3.zero());
+    var tan2 = new List<Vector3>.generate(_positions.length, (i) => new Vector3.zero());
+    
+    for (var f = 0; f < count; f += 3) {
+      var i1 = _indices[f];
+      var i2 = _indices[f + 1];
+      var i3 = _indices[f + 2];
+
+      var p1 = getVertex(i1);
+      var p2 = getVertex(i2);
+      var p3 = getVertex(i3);
+      
+      var w1 = getTexCoord(i1);
+      var w2 = getTexCoord(i1);
+      var w3 = getTexCoord(i1);
+
+      var v1 = p2 - p1;
+      var v2 = p3 - p1;
+      
+      var s1 = w2 - w1;
+      var s2 = w3 - w1;
+      
+      var r = 1.0 / (s1.x * s2.y - s2.x * s1.y);
+      var sdir = new Vector3((s2.y * v1.x - s1.y * v2.x) * r,
+                             (s2.y * v1.y - s1.y * v2.y) * r,
+                             (s2.y * v1.z - s1.y * v2.z) * r);
+      var tdir = new Vector3((s1.x * v2.x - s2.x * v1.x) * r,
+                             (s1.x * v2.y - s2.x * v1.y) * r,
+                             (s1.x * v2.z - s2.x * v1.z) * r);
+      
+      tan1[i1] += sdir;
+      tan1[i2] += sdir;
+      tan1[i3] += sdir;
+      
+      tan2[i1] += tdir;
+      tan2[i2] += tdir;
+      tan2[i3] += tdir;
+    }
+    
+    for (var i = 0; i < count; i++) {
+      var vi = _indices[i];
+      var n = getNormal(vi);
+      var t = tan1[vi];
+      var tan = (t - n * n.dot(t)).normalized();
+      setTangents(vi, tan);
+      // TODO Calculate handedness
+      //   -> tan.w = (Dot(Cross(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
+    }
+  }
+  
+  Vector3 getTangents(int index) {
+    index *= 3;
+    return new Vector3(_tangents[index], _tangents[index + 1], _tangents[index + 2]);
+  }
+  
+  void setTangents(int index, data) {
+    index *= 3;
+    _tangents[index] = data[0];
+    _tangents[index + 1] = data[1];
+    _tangents[index + 2] = data[2];
+  }
+
   Vector3 getVertex(int index) {
     index *= 3;
-    if (index + 2 >= _positions.length) {
-      print(index);
-    }
     return new Vector3(_positions[index], _positions[index + 1], _positions[index + 2]);
   }
 
@@ -120,7 +187,6 @@ class PolygonMesh extends Mesh {
     _indices.add(face[2]);
   }
 }
-
 
 
 

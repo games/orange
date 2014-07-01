@@ -17,7 +17,8 @@ class ObjLoader {
           indices = [],
           uvs = [],
           finalUvs = [],
-          normals = [];
+          normals = [], 
+          finalNormals = [];
       lines.forEach((line) {
         line = line.trim();
         if (line.length == 0) return;
@@ -29,11 +30,20 @@ class ObjLoader {
             if(e.contains("/")) {
               var fs = e.split("/");
               f = int.parse(fs.first) - 1;
+              
               var vt = (int.parse(fs[1]) - 1) * 2;
-              var vn = fs.length == 3 ? int.parse(fs[2]) : null;
               var vi = f * 2;
               finalUvs[vi] = uvs[vt];
               finalUvs[vi + 1] = uvs[vt + 1];
+              
+              var vn = fs.length == 3 ? int.parse(fs[2]) : null;
+              if(vn != null) {
+                var nv = (vn - 1) * 3;
+                var ni = f * 3;
+                finalNormals[ni] = normals[nv];
+                finalNormals[ni + 1] = normals[nv + 1];
+                finalNormals[ni + 2] = normals[nv + 2];
+              }
             } else {
               f = int.parse(e) - 1;
             }
@@ -48,15 +58,17 @@ class ObjLoader {
           finalUvs.add(u);
           finalUvs.add(v);
         } else if (line.startsWith("vn ")) {
-          normals.addAll(line.replaceFirst("vn", "").trim().split(" ").map((e) => double.parse(e)));
+          var vn = line.replaceFirst("vn ", "").trim().split(" ").map((e) => double.parse(e));
+          normals.addAll(vn);
+          finalNormals.addAll(vn);
         }
       });
       _mesh.setPositions(vertices);
       _mesh.setIndices(indices);
       _mesh.setTexCoords(finalUvs);
       
-      if(normals.length > 0) {
-        _mesh.setNormals(normals);
+      if(finalNormals.length > 0) {
+        _mesh.setNormals(finalNormals);
       } else {
         _mesh.calculateSurfaceNormals();
       }

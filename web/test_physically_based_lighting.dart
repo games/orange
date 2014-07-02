@@ -453,18 +453,18 @@ mat3 cotangent_frame(vec3 normal, vec3 p, vec2 uv) {
 }
 
 vec3 perturbNormal(vec3 viewDir) {
-//  vec3 map = texture2D(bumpSampler, vUV).xyz;
-//  map = map * 255. / 127. - 128. / 127.;
-//  mat3 TBN = cotangent_frame(vNormal, -viewDir, vUV);
-//  return normalize(TBN * map);
-
-  vec3 N = vNormal;
-  vec3 T = vTangent;
-  vec3 B = cross(N, T);
-  mat3 TBN = mat3(T, B, N);
   vec3 map = texture2D(bumpSampler, vUV).xyz;
-  map = map * 255. / 127. - 128. / 127.; 
-  return normalize(TBN * map); 
+  map = map * 255. / 127. - 128. / 127.;
+  mat3 TBN = cotangent_frame(vNormal, -viewDir, vUV);
+  return normalize(TBN * map);
+
+//  vec3 N = vNormal;
+//  vec3 T = vTangent;
+//  vec3 B = cross(N, T);
+//  mat3 TBN = mat3(T, B, N);
+//  vec3 map = texture2D(bumpSampler, vUV).xyz;
+//  map = map * 255. / 127. - 128. / 127.; 
+//  return normalize(TBN * map); 
 }
 
 void main(void) {
@@ -479,7 +479,7 @@ void main(void) {
   float specular_term = 0.0;
   vec3 viewDirection = normalize(vEyePosition - vWorldPosition);
   
-  vec3 normal = vNormal;// perturbNormal(viewDirection);
+  vec3 normal = perturbNormal(viewDirection);
 
   vec3 diffuse = clamp(dot(normal, light_direction), 0.0, 1.0) * light_colour;
 

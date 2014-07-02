@@ -179,7 +179,11 @@ class Texture implements Disposable {
         ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, sampler.wrapT);
         ctx.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
         ctx.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, sampler.magFilter);
-        ctx.texImage2D(texture.target, 0, texture.internalFormat, texture.format, texture.type, image);
+        if (image is html.CanvasElement) {
+          ctx.texImage2DCanvas(texture.target, 0, texture.internalFormat, texture.format, texture.type, image);
+        } else {
+          ctx.texImage2DImage(texture.target, 0, texture.internalFormat, texture.format, texture.type, image);
+        }
         if (usesMipMaps) {
           ctx.generateMipmap(texture.target);
         }
@@ -227,4 +231,3 @@ class Texture implements Disposable {
     return x + 1;
   }
 }
-

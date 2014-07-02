@@ -51,13 +51,11 @@ class TestLightingScene extends Scene {
     plane.material.diffuseColor = new Color.fromList([0.3, 0.3, 0.3]);
     add(plane);
 
-    var textureManager = new TextureManager();
-    textureManager.load(graphicsDevice.ctx, {
+    var firefox = Texture.load(graphicsDevice.ctx, {
       "path": "textures/firefox.png"
-    }).then((t) {
-      box.material.diffuseTexture = t;
-      sphere.material.diffuseTexture = t;
     });
+    box.material.diffuseTexture = firefox;
+    sphere.material.diffuseTexture = firefox;
 
     pointLight0 = new PointLight(0xffffff);
     pointLight0.translate(new Vector3(-5.0, 3.0, 0.0));

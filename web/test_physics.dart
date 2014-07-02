@@ -131,23 +131,15 @@ class PhysicsScene extends Scene {
     border3.setPhysicsState(PhysicsEngine.PlaneImpostor, new PhysicsBodyCreationOptions(friction: 0.5, restitution: 0.7));
     add(border3);
 
-
-    var textureManager = new TextureManager();
-    textureManager.load(graphicsDevice.ctx, {
+    var mosaic = Texture.load(graphicsDevice.ctx, {
       "path": "textures/mosaic.jpg"
-    }).then((t) {
-      sphereMaterial.diffuseTexture = t;
     });
-    textureManager.load(graphicsDevice.ctx, {
+    sphereMaterial.diffuseTexture = mosaic;
+
+    var wood = Texture.load(graphicsDevice.ctx, {
       "path": "textures/wood.jpg"
-    }).then((t) {
-      cube.material.diffuseTexture = t;
     });
-    //    textureManager.load(graphicsDevice.ctx, {
-    //      "path": "bump.png"
-    //    }).then((t) {
-    //      //      plane.material.bumpTexture = t;
-    //    });
+    cube.material.diffuseTexture = wood;
 
     var light0 = new PointLight(0xffffff);
     light0.intensity = 0.9;

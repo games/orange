@@ -132,7 +132,6 @@ class GltfLoader {
     var arr = [];
 
     description.forEach((k, v) {
-      var textureManager = new TextureManager();
       var mesh = new Mesh();
       mesh.id = v["name"];
       var primitives = v["primitives"];
@@ -149,9 +148,12 @@ class GltfLoader {
         submesh.material = new StandardMaterial();
 
         var material = _resources[p["material"]];
-        textureManager.load(_ctx, material["diffuse"]).then((t) => submesh.material.diffuseTexture = t);
+        
+        submesh.material.diffuseTexture = Texture.load(_ctx, material["diffuse"]);
+        
+//        textureManager.load(_ctx, material["diffuse"]).then((t) => submesh.material.diffuseTexture = t);
         //        submesh.indicesAttrib = new BufferView(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], indicesAttrib["count"]);
-        submesh.faces = new VertexBuffer(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], count: indicesAttrib["count"], target: gl.ELEMENT_ARRAY_BUFFER);
+        submesh.indices = new VertexBuffer(2, gl.UNSIGNED_SHORT, 0, indicesAttrib["byteOffset"], count: indicesAttrib["count"], target: gl.ELEMENT_ARRAY_BUFFER);
         //        submesh.attributes = {};
 
         attributes.forEach((ak, av) {

@@ -29,9 +29,9 @@ class RenderTargetTexture extends Texture implements Renderer {
     ctx.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     ctx.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     if (device.caps.textureFloat) {
-      ctx.texImage2D(target, 0, internalFormat, width, height, 0, format, gl.FLOAT, null);
+      ctx.texImage2DTyped(target, 0, internalFormat, width, height, 0, format, gl.FLOAT, null);
     } else {
-      ctx.texImage2D(target, 0, internalFormat, width, height, 0, format, gl.UNSIGNED_BYTE, null);
+      ctx.texImage2DTyped(target, 0, internalFormat, width, height, 0, format, gl.UNSIGNED_BYTE, null);
     }
 
     // renderbuffer

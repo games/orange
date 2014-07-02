@@ -31,7 +31,6 @@ class OgreLoader {
   }
   
   _parseMaterials(Map doc) {
-    var textureManager = new TextureManager();
     _materials = {};
     doc.forEach((String n, Map m) {
       var material = new StandardMaterial();
@@ -42,7 +41,7 @@ class OgreLoader {
       material.emissiveColor = new Color.fromList(m["emissive"]);
       material.ambientColor = new Color.fromList(m["ambient"]);
       material.diffuseColor = new Color.fromList(m["diffuse"]);
-      textureManager.load(_ctx,  {"path": _uri.resolve(m["texture"]).toString()}).then((t) => material.diffuseTexture = t);
+      material.diffuseTexture = Texture.load(_ctx, {"path": _uri.resolve(m["texture"]).toString()});
       _materials[material.name] = material;
     });
   }

@@ -124,6 +124,21 @@ class ParticleSystem implements Renderer, Disposable {
     _stopped = true;
   }
 
+  Pass get pass {
+    var define = [];
+    if (_scene.clipPlane != null) {
+      define.add("#define CLIPPLANE");
+    }
+    var join = define.join("\n");
+    if (_cachedDefines != join) {
+      _cachedDefines = join;
+      if (_pass != null) _pass.dispose();
+      _pass = new Pass();
+      _pass.shader = new Shader(_scene.graphicsDevice.ctx, PARTICLES_VS, PARTICLES_FS, common: join);
+    }
+    return _pass;
+  }
+
   void _appendParticleVertex(int index, Particle particle, double offsetX, double offsetY) {
     var offset = index * 11;
     _vertices[offset] = particle.position.x;
@@ -203,20 +218,6 @@ class ParticleSystem implements Renderer, Disposable {
       colorDead.subtractTo(particle.color, _colorDiff);
       _colorDiff.scaleTo(1.0 / particle.lifeTime, particle.colorStep);
     }
-  }
-
-  Pass get pass {
-    var define = [];
-    if (_scene.clipPlane != null) {
-      define.add("#define CLIPPLANE");
-    }
-    var join = define.join("\n");
-    if (_cachedDefines != join) {
-      _cachedDefines = join;
-      _pass = new Pass();
-      _pass.shader = new Shader(_scene.graphicsDevice.ctx, PARTICLES_VS, PARTICLES_FS, common: join);
-    }
-    return _pass;
   }
 
   void animate() {
@@ -342,7 +343,6 @@ class ParticleSystem implements Renderer, Disposable {
   }
 
 }
-
 
 
 

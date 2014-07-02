@@ -8,6 +8,7 @@ part of orange_examples;
 //  http://www.filmicworlds.com/images/ggx-opt/optimized-ggx.hlsl
 //  http://seblagarde.wordpress.com/2011/08/17/hello-world/
 //  http://alteredqualia.com/xg/examples/deferred_skin.html
+//  https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/PhysicallyBased/index.html
 
 class TestPhysicallyBasedLighting extends Scene {
   TestPhysicallyBasedLighting(Camera camera) : super(camera);
@@ -76,13 +77,13 @@ class TestPhysicallyBasedLighting extends Scene {
     var refractionSlider = new html.RangeInputElement();
     refractionSlider.id = "refractionSlider";
     refractionSlider.min = "0";
-    refractionSlider.max = "3";
+    refractionSlider.max = "1";
     refractionSlider.step = "0.01";
     refractionSlider.value = specualerColor.toString();
     refractionSlider.onChange.listen((e) {
       specualerColor = double.parse(refractionSlider.value);
     });
-    controllers.children.add(_labelFor(refractionSlider, "Refraction(0~3)"));
+    controllers.children.add(_labelFor(refractionSlider, "Refraction(0~1)"));
     controllers.children.add(new html.BRElement());
     controllers.children.add(refractionSlider);
     controllers.children.add(new html.BRElement());
@@ -98,34 +99,25 @@ class TestPhysicallyBasedLighting extends Scene {
 
     [{
         "name": "Quartz",
-        "value": 0.045593921
+        "value": 0.570
       }, {
         "name": "ice",
-        "value": 0.017908907
+        "value": 0.224
       }, {
         "name": "Water",
-        "value": 0.020373188
-      }, {
-        "name": "Alcohol",
-        "value": 0.01995505
+        "value": 0.255
       }, {
         "name": "Glass",
-        "value": 0.04
+        "value": 0.5
       }, {
         "name": "Milk",
-        "value": 0.022181983
+        "value": 0.277
       }, {
-        "name": "Ruby",
-        "value": 0.077271957
-      }, {
-        "name": "Crystal",
-        "value": 0.111111111
-      }, {
-        "name": "Diamond",
-        "value": 0.171968833
+        "name": "Plastic",
+        "value": 0.5
       }, {
         "name": "Skin",
-        "value": 0.028
+        "value": 0.35
       },].forEach((r) {
       var option = new html.OptionElement(data: r["name"], value: r["value"].toString());
       refractionList.children.add(option);
@@ -469,7 +461,7 @@ vec3 perturbNormal(vec3 viewDir) {
 
 void main(void) {
   vec3 color = vec3(0.8, 0.9, 0.8);
-  color = texture2D(diffuseSampler, vUV).xyz;
+  color = color * texture2D(diffuseSampler, vUV).xyz;
   vec3 light_colour = vec3(1.0, 1.0, 1.0);
   vec3 light_direction = normalize(vec3(1.0, 1.0, 1.0));
 

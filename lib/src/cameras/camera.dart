@@ -39,7 +39,7 @@ class PerspectiveCamera extends Camera {
   double fov;
   double aspect;
 
-  PerspectiveCamera(this.aspect, {this.near: 1.0, this.far: 2000.0, this.fov: 50.0}) {
+  PerspectiveCamera(this.aspect, {this.near: 0.1, this.far: 1000.0, this.fov: 50.0}) {
     _viewMatrix = new Matrix4.identity();
     updateProjection();
   }

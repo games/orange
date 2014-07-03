@@ -3,7 +3,7 @@ part of orange;
 
 
 
-class OrbitControls2 implements CameraController {
+class ArcRotateController implements CameraController {
 
   Camera camera;
   html.Element element;
@@ -11,17 +11,17 @@ class OrbitControls2 implements CameraController {
   double _alpha = 0.0;
   double _beta = 0.0;
   double _radius = 0.0;
-  double _inertia = 0.0;
 
   double _inertialAlphaOffset = 0.0;
   double _inertialBetaOffset = 0.0;
   double _inertialRadiusOffset = 0.0;
 
+  double inertia = 0.9;
   double lowerAlphaLimit;
   double upperAlphaLimit;
-  double lowerBetaLimit;
-  double upperBetaLimit;
-  double lowerRadiusLimit;
+  double lowerBetaLimit = Orange.Epsilon;
+  double upperBetaLimit = math.PI - Orange.Epsilon;
+  double lowerRadiusLimit = Orange.Epsilon;
   double upperRadiusLimit;
   double angularSensibility = 1000.0;
 
@@ -30,8 +30,8 @@ class OrbitControls2 implements CameraController {
   StreamSubscription _mouseMoveSubscription;
   StreamSubscription _mouseUpSubscription;
   StreamSubscription _mouseWheelSubscription;
-
-  Vector2 _previousPosition;
+  
+  bool _mouseDown = false;
 
   @override
   void attach(Camera camera, html.Element element) {
@@ -40,9 +40,19 @@ class OrbitControls2 implements CameraController {
     _contextMenuSubscription = element.onContextMenu.listen((e) => e.preventDefault());
     _mouseDownSubscription = element.onMouseDown.listen(_onMouseDown);
     _mouseWheelSubscription = element.onMouseWheel.listen(_onMouseWheel);
-
     this.camera = camera;
     this.element = element;
+    _init();
+  }
+
+  _init() {
+    var radiusv3 = camera.position - camera.target;
+    _radius = radiusv3.length;
+    _alpha = math.acos(radiusv3.x / math.sqrt(math.pow(radiusv3.x, 2) + math.pow(radiusv3.z, 2)));
+    if (radiusv3.z < 0) {
+      _alpha = 2 * math.PI - _alpha;
+    }
+    _beta = math.acos(radiusv3.y / _radius);
   }
 
   @override
@@ -57,15 +67,16 @@ class OrbitControls2 implements CameraController {
 
   @override
   void update() {
+    _init();
+    
     if (_inertialAlphaOffset != 0 || _inertialBetaOffset != 0 || _inertialRadiusOffset != 0) {
-
       _alpha += _inertialAlphaOffset;
       _beta += _inertialBetaOffset;
       _radius -= _inertialRadiusOffset;
 
-      _inertialAlphaOffset *= _inertia;
-      _inertialBetaOffset *= _inertia;
-      _inertialRadiusOffset *= _inertia;
+      _inertialAlphaOffset *= inertia;
+      _inertialBetaOffset *= inertia;
+      _inertialRadiusOffset *= inertia;
 
       if (_inertialAlphaOffset.abs() < Orange.Epsilon) _inertialAlphaOffset = 0.0;
       if (_inertialBetaOffset.abs() < Orange.Epsilon) _inertialBetaOffset = 0.0;
@@ -83,57 +94,42 @@ class OrbitControls2 implements CameraController {
     var sina = math.sin(_alpha);
     var cosb = math.cos(_beta);
     var sinb = math.sin(_beta);
-    
-    var radiusv3 = camera.position - camera.target;
-    var radius = radiusv3.length;
-    var alpha = math.acos(radiusv3.x / math.sqrt(math.pow(radiusv3.x, 2) + math.pow(radiusv3.z, 2)));
-    var beta = math.acos(radiusv3.y / radius);
-    
-    _radius += radius;
-    _alpha += alpha;
-    _beta += beta;
-    
-//    camera.position.add(new Vector3(_radius * cosa * sinb, _radius * cosb, _radius * sina * sinb));
     var offset = new Vector3(_radius * cosa * sinb, _radius * cosb, _radius * sina * sinb);
-    print([_alpha, _beta, _radius]);
-    camera.translate(offset);
+    camera.position = camera.target + offset;
     camera.lookAt(camera.target);
   }
 
   void _onMouseDown(html.MouseEvent event) {
-    _previousPosition = new Vector2(event.client.x.toDouble(), event.client.y.toDouble());
     if (_mouseMoveSubscription != null) _mouseMoveSubscription.cancel();
     if (_mouseUpSubscription != null) _mouseUpSubscription.cancel();
     _mouseMoveSubscription = html.document.onMouseMove.listen(_onMouseMove);
     _mouseUpSubscription = html.document.onMouseUp.listen(_onMouseUp);
-
+    _mouseDown = true;
     event.preventDefault();
   }
 
   void _onMouseWheel(html.WheelEvent event) {
-    var delta = 0.0;
-
+    var delta = event.deltaY / 200.0;
+    _inertialRadiusOffset += delta;
+    event.preventDefault();
   }
 
   void _onMouseMove(html.MouseEvent event) {
-    if (_previousPosition == null) return;
-    var offsetX = event.client.x - _previousPosition.x;
-    var offsetY = event.client.y - _previousPosition.y;
-    _inertialAlphaOffset -= offsetX / angularSensibility;
+    if(!_mouseDown) return;
+    var offsetX = event.movement.x;
+    var offsetY = event.movement.y;
+    _inertialAlphaOffset += offsetX / angularSensibility;
     _inertialBetaOffset -= offsetY / angularSensibility;
-    _previousPosition.setValues(event.client.x.toDouble(), event.client.y.toDouble());
     event.preventDefault();
   }
 
   void _onMouseUp(html.MouseEvent event) {
+    _mouseDown = false;
     if (_mouseMoveSubscription != null) _mouseMoveSubscription.cancel();
     if (_mouseUpSubscription != null) _mouseUpSubscription.cancel();
-    _previousPosition = null;
     event.preventDefault();
   }
 }
-
-
 
 
 

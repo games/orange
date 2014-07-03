@@ -30,8 +30,8 @@ void main() {
   var graphics = new GraphicsDevice(canvas);
   var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 10000.0);
   camera.translate(0.0, 0.0, 4.0);
-  var controls = new OrbitControls2();
-  controls.attach(camera, canvas);
+  var controller = new ArcRotateController();
+  controller.attach(camera, canvas);
 
   var stats = new Stats();
   html.querySelector("#stat").children.add(stats.container);

@@ -33,7 +33,7 @@ part 'src/disposable.dart';
 
 part 'src/cameras/camera.dart';
 part 'src/cameras/orbit_controls.dart';
-part 'src/cameras/orbit_controls2.dart';
+part 'src/cameras/arc_rotate_controller.dart';
 
 part 'src/primitives/polygon_mesh.dart';
 part 'src/primitives/cube.dart';

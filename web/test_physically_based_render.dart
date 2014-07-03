@@ -10,8 +10,8 @@ part of orange_examples;
 //  http://alteredqualia.com/xg/examples/deferred_skin.html
 //  https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/PhysicallyBased/index.html
 
-class TestPhysicallyBasedLighting extends Scene {
-  TestPhysicallyBasedLighting(Camera camera) : super(camera);
+class TestPhysicallyBasedRender extends Scene {
+  TestPhysicallyBasedRender(Camera camera) : super(camera);
 
   int type = 0;
   double roughness = 0.3;

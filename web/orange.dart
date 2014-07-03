@@ -20,7 +20,7 @@ part 'test_babylon_ship.dart';
 part 'test_babylon_viper.dart';
 part 'test_particles.dart';
 part 'test_obj_loader.dart';
-part 'test_physically_based_lighting.dart';
+part 'test_physically_based_render.dart';
 
 
 
@@ -50,9 +50,9 @@ void main() {
                 new TestBabylonViperScene(camera),
                 new TestParticles(camera),
                 new TestObjLoader(camera),
-                new TestPhysicallyBasedLighting(camera)];
+                new TestPhysicallyBasedRender(camera)];
   
-  var i = 0;
+  var i = scenes.length - 1;
   
   orange.enter(scenes[i]);
   orange.run();

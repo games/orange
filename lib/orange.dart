@@ -70,6 +70,7 @@ part 'src/math/matrix.dart';
 part 'src/materials/material.dart';
 part 'src/materials/shader_material.dart';
 part 'src/materials/standard_material.dart';
+part 'src/materials/physically_based_material.dart';
 part 'src/materials/water_material.dart';
 part 'src/materials/technique.dart';
 part 'src/materials/pass.dart';
@@ -83,6 +84,7 @@ part 'src/shaders/shadowmap_shader.dart';
 part 'src/shaders/color_shader.dart';
 part 'src/shaders/water_shader.dart';
 part 'src/shaders/particles_shader.dart';
+part 'src/shaders/physically_based_shader.dart';
 
 part 'src/lights/light.dart';
 

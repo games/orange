@@ -8,6 +8,23 @@ class OrbitControls2 implements CameraController {
   Camera camera;
   html.Element element;
 
+  double _alpha = 0.0;
+  double _beta = 0.0;
+  double _radius = 0.0;
+  double _inertia = 0.0;
+
+  double _inertialAlphaOffset = 0.0;
+  double _inertialBetaOffset = 0.0;
+  double _inertialRadiusOffset = 0.0;
+
+  double lowerAlphaLimit;
+  double upperAlphaLimit;
+  double lowerBetaLimit;
+  double upperBetaLimit;
+  double lowerRadiusLimit;
+  double upperRadiusLimit;
+  double angularSensibility = 1000.0;
+
   StreamSubscription _contextMenuSubscription;
   StreamSubscription _mouseDownSubscription;
   StreamSubscription _mouseMoveSubscription;
@@ -40,41 +57,51 @@ class OrbitControls2 implements CameraController {
 
   @override
   void update() {
-    if(_inertialAlphaOffset != 0 || _inertialBetaOffset != 0 || _inertialRadiusOffset != 0) {
+    if (_inertialAlphaOffset != 0 || _inertialBetaOffset != 0 || _inertialRadiusOffset != 0) {
+
       _alpha += _inertialAlphaOffset;
       _beta += _inertialBetaOffset;
       _radius -= _inertialRadiusOffset;
-      
+
       _inertialAlphaOffset *= _inertia;
       _inertialBetaOffset *= _inertia;
       _inertialRadiusOffset *= _inertia;
-      
-      if(_inertialAlphaOffset.abs() < Orange.Epsilon) 
-        _inertialAlphaOffset = 0.0;
-      if(_inertialBetaOffset.abs() < Orange.Epsilon)
-        _inertialBetaOffset = 0.0;
-      if(_inertialRadiusOffset.abs() < Orange.Epsilon)
-        _inertialRadiusOffset = 0.0;
+
+      if (_inertialAlphaOffset.abs() < Orange.Epsilon) _inertialAlphaOffset = 0.0;
+      if (_inertialBetaOffset.abs() < Orange.Epsilon) _inertialBetaOffset = 0.0;
+      if (_inertialRadiusOffset.abs() < Orange.Epsilon) _inertialRadiusOffset = 0.0;
     }
+
+    if (lowerAlphaLimit != null && _alpha < lowerAlphaLimit) _alpha = lowerAlphaLimit;
+    if (upperAlphaLimit != null && _alpha > upperAlphaLimit) _alpha = upperAlphaLimit;
+    if (lowerBetaLimit != null && _beta < lowerBetaLimit) _beta = lowerBetaLimit;
+    if (upperBetaLimit != null && _beta > upperBetaLimit) _beta = upperBetaLimit;
+    if (lowerRadiusLimit != null && _radius < lowerRadiusLimit) _radius = lowerRadiusLimit;
+    if (upperRadiusLimit != null && _radius > upperRadiusLimit) _radius = upperRadiusLimit;
+
+    var cosa = math.cos(_alpha);
+    var sina = math.sin(_alpha);
+    var cosb = math.cos(_beta);
+    var sinb = math.sin(_beta);
     
-    if(_lowerAlphaLimit != 0 && _alpha < _lowerAlphaLimit) 
-      _alpha = _lowerAlphaLimit;
-    if(_upperAlphaLimit != 0 && _alpha > _upperAlphaLimit)
-      _alpha = _upperAlphaLimit;
-    if(_lowerBetaLimit != 0 && _beta < _lowerBetaLimit)
-      _beta = _lowerBetaLimit;
-    if(_upperBetaLimit != 0 && _beta > _upperBetaLimit)
-      _beta = _upperBetaLimit;
-    if(_lowerRadiusLimit != 0 && _radius < _lowerRadiusLimit)
-      _radius = _lowerRadiusLimit;
-    if(_upperRadiusLimit != 0 && _radius > _upperRadiusLimit)
-      _radius = _upperRadiusLimit;
+    var radiusv3 = camera.position - camera.target;
+    var radius = radiusv3.length;
+    var alpha = math.acos(radiusv3.x / math.sqrt(math.pow(radiusv3.x, 2) + math.pow(radiusv3.z, 2)));
+    var beta = math.acos(radiusv3.y / radius);
     
+    _radius += radius;
+    _alpha += alpha;
+    _beta += beta;
     
+//    camera.position.add(new Vector3(_radius * cosa * sinb, _radius * cosb, _radius * sina * sinb));
+    var offset = new Vector3(_radius * cosa * sinb, _radius * cosb, _radius * sina * sinb);
+    print([_alpha, _beta, _radius]);
+    camera.translate(offset);
+    camera.lookAt(camera.target);
   }
 
   void _onMouseDown(html.MouseEvent event) {
-    _previousPosition = new Vector2(event.client.x, event.client.y);
+    _previousPosition = new Vector2(event.client.x.toDouble(), event.client.y.toDouble());
     if (_mouseMoveSubscription != null) _mouseMoveSubscription.cancel();
     if (_mouseUpSubscription != null) _mouseUpSubscription.cancel();
     _mouseMoveSubscription = html.document.onMouseMove.listen(_onMouseMove);
@@ -85,28 +112,26 @@ class OrbitControls2 implements CameraController {
 
   void _onMouseWheel(html.WheelEvent event) {
     var delta = 0.0;
-    
+
   }
-  
-  num _inertialAlphaOffset, _inertialBetaOffset, _inertialRadiusOffset;
-  
+
   void _onMouseMove(html.MouseEvent event) {
-    if(_previousPosition == null) return;
+    if (_previousPosition == null) return;
     var offsetX = event.client.x - _previousPosition.x;
     var offsetY = event.client.y - _previousPosition.y;
     _inertialAlphaOffset -= offsetX / angularSensibility;
     _inertialBetaOffset -= offsetY / angularSensibility;
-    _previousPosition.setValues(event.client.x, event.client.y);
+    _previousPosition.setValues(event.client.x.toDouble(), event.client.y.toDouble());
     event.preventDefault();
   }
-  
+
   void _onMouseUp(html.MouseEvent event) {
+    if (_mouseMoveSubscription != null) _mouseMoveSubscription.cancel();
+    if (_mouseUpSubscription != null) _mouseUpSubscription.cancel();
     _previousPosition = null;
     event.preventDefault();
   }
 }
-
-
 
 
 

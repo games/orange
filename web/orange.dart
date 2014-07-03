@@ -30,7 +30,7 @@ void main() {
   var graphics = new GraphicsDevice(canvas);
   var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 10000.0);
   camera.translate(0.0, 0.0, 4.0);
-  var controls = new OrbitControls();
+  var controls = new OrbitControls2();
   controls.attach(camera, canvas);
 
   var stats = new Stats();
@@ -52,7 +52,7 @@ void main() {
                 new TestObjLoader(camera),
                 new TestPhysicallyBasedLighting(camera)];
   
-  var i = scenes.length - 1;
+  var i = scenes.length - 2;
   
   orange.enter(scenes[i]);
   orange.run();

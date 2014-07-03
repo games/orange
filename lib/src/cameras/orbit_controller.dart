@@ -2,11 +2,8 @@ part of orange;
 
 
 
-//
-// from : http://tileableart.com/code/natureof/js/three/js/controls/OrbitControls.js
-// TODO : update from https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js
-//
-class OrbitControls implements CameraController {
+
+class OrbitController implements CameraController {
 
   static const STATE_NONE = -1;
   static const STATE_ROTATE = 0;

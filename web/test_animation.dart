@@ -12,13 +12,13 @@ class TestAnimationScene extends Scene {
   enter() {
 
     var controllers = html.querySelector("#controllers");
-    camera.setTranslation(0.0, 1.0, 2.5);
-    camera.lookAt(new Vector3(0.0, 0.4, 0.0));
+    camera.setTranslation(0.0, 1.0, 3.0);
+    camera.lookAt(new Vector3(0.0, 1.0, 0.0));
 
     var url = "models/ogre/alric.orange";
     var loader = new OgreLoader();
     loader.load(graphicsDevice.ctx, url).then((m) {
-      m.setTranslation(0.0, -1.0, -1.0);
+      m.setTranslation(0.0, 0.0, 0.0);
       m.animator.switchAnimation("Idle");
       m.animator.animations.forEach((n, a) {
         var row = new html.DivElement();
@@ -38,6 +38,15 @@ class TestAnimationScene extends Scene {
       mesh = m;
     });
 
+    var ground = new PlaneMesh(width: 50, height: 50, ground: true);
+    ground.setTranslation(0.0, -1.0, 0.0);
+    ground.rotateY(PI / 2);
+    ground.material = new StandardMaterial();
+    ground.material.backFaceCulling = false;
+    ground.material.diffuseColor = new Color.float(0.3, 0.3, 1.0);
+    ground.receiveShadows = true;
+    add(ground);
+
     var row = new html.DivElement();
     row.className = "row";
     var radio = new html.CheckboxInputElement();
@@ -54,8 +63,9 @@ class TestAnimationScene extends Scene {
     row.children.add(label);
     controllers.children.add(row);
 
-    var light0 = new PointLight(0xffffff);
+    var light0 = new DirectionalLight(0xffffff);
     light0.setTranslation(0.0, 1.0, 0.0);
+    light0.direction.setValues(1.0, -1.0, 0.0);
     add(light0);
 
     var light2 = new HemisphericLight(0xffffff);
@@ -92,4 +102,3 @@ class TestAnimationScene extends Scene {
     }
   }
 }
-

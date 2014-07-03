@@ -73,8 +73,8 @@ class Scene implements Disposable {
 
   void add(Node node) {
     node.scene = this;
-    if (node is Mesh && node.material != null) {
-      if (node.material.alpha == 1.0 && !node.material.technique.pass.blending) {
+    if (node is Mesh) {
+      if(node.material == null || (node.material.alpha == 1.0 && !node.material.technique.pass.blending)) {
         _opaqueMeshes.add(node);
       } else {
         _transparentMeshes.add(node);

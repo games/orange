@@ -52,7 +52,7 @@ void main() {
                 new TestObjLoader(camera),
                 new TestPhysicallyBasedLighting(camera)];
   
-  var i = scenes.length - 2;
+  var i = scenes.length - 1;
   
   orange.enter(scenes[i]);
   orange.run();

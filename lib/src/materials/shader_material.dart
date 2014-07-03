@@ -5,6 +5,7 @@ part of orange;
 
 class ShaderMaterial extends Material {
   GraphicsDevice _graphicsDevice;
+  dynamic beforReady;
   dynamic afterBinding;
 
   ShaderMaterial(this._graphicsDevice, String vertexSource, String fragmentSource, {this.afterBinding}) {
@@ -21,6 +22,9 @@ class ShaderMaterial extends Material {
 
   @override
   bool ready([Mesh mesh]) {
+    var isReady = true;
+    if(beforReady != null) isReady = beforReady(this);
+    if(!isReady) return false;
     return technique.pass.shader.ready;
   }
 

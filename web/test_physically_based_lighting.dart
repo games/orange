@@ -22,7 +22,7 @@ class TestPhysicallyBasedLighting extends Scene {
     var urls = [{
         "path": "models/obj/Head_max_obj/Infinite-Level_02.obj",
         "diffuse": "models/obj/Head_max_obj/Images/Map-COL.jpg",
-        "bump": "models/obj/Head_max_obj/Images/Infinite-Level_02_Tangent_SmoothUV.jpg",
+        "bump": "models/obj/Head_max_obj/Images/Infinite-Level_02_Tangent_SmoothUV2.jpg",
         "flip": true
       }, {
         "path": "models/obj/head.obj",
@@ -152,7 +152,7 @@ class TestPhysicallyBasedLighting extends Scene {
         "path": diffuse,
         "flip": flip
       });
-      var bumpTexture;
+      Texture bumpTexture;
       if (bump != null) {
         bumpTexture = Texture.load(graphicsDevice.ctx, {
           "path": bump,
@@ -165,10 +165,14 @@ class TestPhysicallyBasedLighting extends Scene {
 
       m.material = new ShaderMaterial(graphicsDevice, PhysicallyVS, PhysicallyFS);
       m.material.backFaceCulling = true;
+      (m.material as ShaderMaterial).beforReady = (m) {
+        if(bumpTexture == null) return true;
+        return bumpTexture.ready;
+      };
       (m.material as ShaderMaterial).afterBinding = (ShaderMaterial material, Mesh mesh, Matrix4 worldMatrix) {
         graphicsDevice.bindTexture("GgxDFV", ggx);
         graphicsDevice.bindTexture("diffuseSampler", diffuseTexture);
-        if (bumpTexture != null) {
+        if (bumpTexture != null && bumpTexture.ready) {
           graphicsDevice.bindTexture("bumpSampler", bumpTexture);
         }
         graphicsDevice.bindInt("type", type);
@@ -460,7 +464,7 @@ vec3 perturbNormal(vec3 viewDir) {
 }
 
 void main(void) {
-  vec3 color = vec3(0.8, 0.9, 0.8);
+  vec3 color = vec3(0.9, 0.9, 0.9);
   color = color * texture2D(diffuseSampler, vUV).xyz;
   vec3 light_colour = vec3(1.0, 1.0, 1.0);
   vec3 light_direction = normalize(vec3(1.0, 1.0, 1.0));

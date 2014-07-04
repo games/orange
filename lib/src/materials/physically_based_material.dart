@@ -15,6 +15,8 @@ class PhysicallyBasedMaterial extends Material {
   // F0
   double reflectivity = 0.3;
 
+  String _cachedDefines;
+
   PhysicallyBasedMaterial() {
     technique = new Technique();
     technique.pass = new Pass();
@@ -24,12 +26,54 @@ class PhysicallyBasedMaterial extends Material {
   bool ready([Mesh mesh]) {
     if (mesh == null) return false;
 
-    if (diffuseTexture != null && !diffuseTexture.ready) return false;
+    var defines = [];
+    var scene = mesh.scene;
+    var device = scene.graphicsDevice;
 
-    if (bumpTexture != null && !bumpTexture.ready) return false;
+    if (diffuseTexture != null) {
+      if (!diffuseTexture.ready) return false;
+      defines.add("#define DIFFUSE");
+    }
 
-    if (technique.pass.shader == null) {
-      technique.pass.shader = new Shader(Orange.instance.graphicsDevice.ctx, SHADER_PHYSICALLY_BASED_VS, SHADER_PHYSICALLY_BASED_FS, common: "");
+    if (device.caps.standardDerivatives && bumpTexture != null) {
+      if (!bumpTexture.ready) return false;
+      defines.add("#define BUMP");
+    }
+
+    if (scene.lightsEnabled) {
+      for (var i = 0; i < scene._lights.length && i < Light.MAX_LIGHTS; i++) {
+        defines.add("#define LIGHT$i");
+        var light = scene._lights[i];
+        if (light is SpotLight) {
+          defines.add("#define SPOTLIGHT$i");
+        } else if (light is HemisphericLight) {
+          defines.add("#define HEMILIGHT$i");
+        } else {
+          defines.add("#define POINTDIRLIGHT$i");
+        }
+      }
+    }
+
+    if (mesh.geometry != null) {
+      var geometry = mesh.geometry;
+      if (geometry.buffers.containsKey(Semantics.texcoords)) {
+        defines.add("#define UV1");
+      }
+      if (geometry.buffers.containsKey(Semantics.texcoords2)) {
+        defines.add("#define UV2");
+      }
+      if (mesh.skeleton != null) {
+        defines.add("#define BONES");
+        defines.add("#define BonesPerMesh ${mesh.skeleton.joints.length}");
+        defines.add("#define BONES4");
+      }
+    }
+
+    var finalDefines = defines.join("\n");
+    if (_cachedDefines != finalDefines) {
+      _cachedDefines = finalDefines;
+      if (technique.pass.shader != null) technique.pass.shader.dispose();
+      technique.pass.shader = new Shader(device.ctx, SHADER_PHYSICALLY_BASED_VS, SHADER_PHYSICALLY_BASED_FS, common: finalDefines);
     }
     return technique.pass.shader.ready;
   }
@@ -38,13 +82,14 @@ class PhysicallyBasedMaterial extends Material {
   void bind({Mesh mesh, Matrix4 worldMatrix}) {
     var device = Orange.instance.graphicsDevice;
     var scene = mesh.scene;
-    
+    var shader = technique.pass.shader;
+
     device.bindMatrix4(Semantics.modelMat, mesh.worldMatrix);
 
     if (diffuseTexture != null) {
       device.bindTexture(Semantics.texture, diffuseTexture);
-//      device.bindFloat2("vDiffuseInfos", diffuseTexture.coordinatesIndex, diffuseTexture.level);
-//      device.bindMatrix4("diffuseMatrix", diffuseTexture.textureMatrix);
+      //      device.bindFloat2("vDiffuseInfos", diffuseTexture.coordinatesIndex, diffuseTexture.level);
+      //      device.bindMatrix4("diffuseMatrix", diffuseTexture.textureMatrix);
     }
     if (bumpTexture != null) {
       device.bindTexture("bumpSampler", bumpTexture);
@@ -66,6 +111,24 @@ class PhysicallyBasedMaterial extends Material {
       device.bindColor3(Semantics.emissiveColor, emissiveColor);
     }
 
+    if (scene.lightsEnabled) {
+      var lights = scene._lights;
+      for (var i = 0; i < lights.length && i < Light.MAX_LIGHTS; i++) {
+        var light = lights[i];
+        light.bind(device.ctx, shader, i);
+        var diffuse = light.diffuse.scaled(light.intensity);
+        // [color + range]
+        device.bindFloat4("vLightDiffuse${i}", diffuse.red, diffuse.green, diffuse.blue, light.range);
+        device.bindColor3("vLightSpecular${i}", light.specular.scaled(light.intensity));
+      }
+    }
+
+    var skeleton = mesh.skeleton;
+    if (skeleton != null) {
+      skeleton.updateMatrix();
+      device.bindMatrix4List(Semantics.jointMat, skeleton.jointMatrices);
+    }
+
     device.bindFloat("uAlbedo", albedo);
     device.bindFloat("uRoughess", roughness);
     device.bindFloat("uReflectivity", reflectivity);
@@ -78,11 +141,6 @@ class PhysicallyBasedMaterial extends Material {
   }
 
 }
-
-
-
-
-
 
 
 

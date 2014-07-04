@@ -39,10 +39,11 @@ precision mediump int;
 #define PI_OVER_FOUR 0.7853981633974483
 #extension GL_OES_standard_derivatives : enable
 
+uniform vec4 vDiffuseColor;
 uniform vec3 vEyePosition;
-uniform sampler2D GgxDFV;
 uniform sampler2D diffuseSampler;
 uniform sampler2D bumpSampler;
+uniform float uAlbedo;
 uniform float uRoughess;
 uniform float uReflectivity;
 
@@ -80,9 +81,8 @@ vec2 LightingFuncGGX_FV(float dotLH, float roughness) {
 float LightingFuncGGX_D(float dotNH, float roughness) {
   float alpha = roughness*roughness;
   float alphaSqr = alpha*alpha;
-  float pi = 3.14159;
   float denom = dotNH * dotNH *(alphaSqr-1.0) + 1.0;
-  float D = alphaSqr/(pi * denom * denom);
+  float D = alphaSqr/(PI * denom * denom);
   return D;
 }
 
@@ -126,8 +126,11 @@ vec3 perturbNormal(vec3 viewDir) {
 }
 
 void main(void) {
-  vec3 color = vec3(0.9, 0.9, 0.9);
-  color = color * texture2D(diffuseSampler, vUV).xyz;
+  vec3 diffuseColor = vDiffuseColor.rgb;
+  vec4 baseColor = texture2D(diffuseSampler, vUV);
+  float alpha = vDiffuseColor.a * baseColor.a;
+  vec3 color = uAlbedo * vDiffuseColor.rgb * baseColor.xyz;
+
   vec3 light_colour = vec3(1.0, 1.0, 1.0);
   vec3 light_direction = normalize(vec3(1.0, 1.0, 1.0));
 
@@ -144,6 +147,6 @@ void main(void) {
   specular_term = LightingFuncGGX(normal, viewDirection, light_direction, uRoughess, uReflectivity);
   specular = specular_term * light_colour;
 
-  gl_FragColor = vec4(color * diffuse + specular, 1.);
+  gl_FragColor = vec4(color * diffuse + specular, alpha);
 }
 """;

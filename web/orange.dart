@@ -21,6 +21,7 @@ part 'test_babylon_viper.dart';
 part 'test_particles.dart';
 part 'test_obj_loader.dart';
 part 'test_physically_based_render.dart';
+part 'test_physically_based_render2.dart';
 
 
 
@@ -50,7 +51,8 @@ void main() {
                 new TestBabylonViperScene(camera),
                 new TestParticles(camera),
                 new TestObjLoader(camera),
-                new TestPhysicallyBasedRender(camera)];
+                new TestPhysicallyBasedRender(camera),
+                new TestPhysicallyBasedRender2(camera)];
   
   var i = scenes.length - 1;
   

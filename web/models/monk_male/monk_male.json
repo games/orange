@@ -1,0 +1,2454 @@
+{
+    "accessors": {
+        "accessor_159": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 98346,
+            "byteStride": 0,
+            "count": 660,
+            "type": 5123
+        },
+        "accessor_162": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 99666,
+            "byteStride": 0,
+            "count": 1560,
+            "type": 5123
+        },
+        "accessor_165": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 102786,
+            "byteStride": 0,
+            "count": 972,
+            "type": 5123
+        },
+        "accessor_168": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 104730,
+            "byteStride": 0,
+            "count": 2757,
+            "type": 5123
+        },
+        "accessor_170": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1573536,
+            "byteStride": 12,
+            "count": 5949,
+            "max": [
+                0.738716,
+                3.22153,
+                6.19007
+            ],
+            "min": [
+                -0.340784,
+                -3.22153,
+                -2.03887e-006
+            ],
+            "type": 35665
+        },
+        "accessor_172": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1644924,
+            "byteStride": 12,
+            "count": 5949,
+            "max": [
+                0.999471,
+                0.999745,
+                0.997081
+            ],
+            "min": [
+                -0.999015,
+                -0.999745,
+                -1
+            ],
+            "type": 35665
+        },
+        "accessor_174": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1716312,
+            "byteStride": 8,
+            "count": 5949,
+            "max": [
+                0.994141,
+                0.980469
+            ],
+            "min": [
+                0.0234375,
+                0.00195307
+            ],
+            "type": 35664
+        },
+        "accessor_280": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 62430,
+            "byteStride": 0,
+            "count": 2472,
+            "type": 5123
+        },
+        "accessor_283": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 67374,
+            "byteStride": 0,
+            "count": 876,
+            "type": 5123
+        },
+        "accessor_286": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 69126,
+            "byteStride": 0,
+            "count": 3639,
+            "type": 5123
+        },
+        "accessor_289": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 76404,
+            "byteStride": 0,
+            "count": 3420,
+            "type": 5123
+        },
+        "accessor_292": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 83244,
+            "byteStride": 0,
+            "count": 1554,
+            "type": 5123
+        },
+        "accessor_295": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 86352,
+            "byteStride": 0,
+            "count": 5997,
+            "type": 5123
+        },
+        "accessor_297": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 998880,
+            "byteStride": 12,
+            "count": 17958,
+            "max": [
+                0.825902,
+                3.22153,
+                6.19007
+            ],
+            "min": [
+                -0.487406,
+                -3.22153,
+                -0.001127
+            ],
+            "type": 35665
+        },
+        "accessor_299": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1214376,
+            "byteStride": 12,
+            "count": 17958,
+            "max": [
+                0.999456,
+                0.999386,
+                0.999999
+            ],
+            "min": [
+                -0.999373,
+                -0.999386,
+                -1
+            ],
+            "type": 35665
+        },
+        "accessor_301": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1429872,
+            "byteStride": 8,
+            "count": 17958,
+            "max": [
+                1,
+                1
+            ],
+            "min": [
+                0.00390625,
+                0.00390619
+            ],
+            "type": 35664
+        },
+        "accessor_356": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 39738,
+            "byteStride": 0,
+            "count": 816,
+            "type": 5123
+        },
+        "accessor_359": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 41370,
+            "byteStride": 0,
+            "count": 816,
+            "type": 5123
+        },
+        "accessor_362": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 43002,
+            "byteStride": 0,
+            "count": 816,
+            "type": 5123
+        },
+        "accessor_364": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 635808,
+            "byteStride": 12,
+            "count": 2448,
+            "max": [
+                0.729338,
+                0.831773,
+                3.2253
+            ],
+            "min": [
+                -0.522452,
+                -0.831773,
+                0.770066
+            ],
+            "type": 35665
+        },
+        "accessor_366": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 665184,
+            "byteStride": 12,
+            "count": 2448,
+            "max": [
+                0.993068,
+                0.998711,
+                0.178894
+            ],
+            "min": [
+                -0.993784,
+                -0.998711,
+                -0.0694304
+            ],
+            "type": 35665
+        },
+        "accessor_368": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 694560,
+            "byteStride": 8,
+            "count": 2448,
+            "max": [
+                0.716797,
+                0.966797
+            ],
+            "min": [
+                0.0546875,
+                0.486328
+            ],
+            "type": 35664
+        },
+        "accessor_389": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 110244,
+            "byteStride": 0,
+            "count": 759,
+            "type": 5123
+        },
+        "accessor_391": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1763904,
+            "byteStride": 12,
+            "count": 759,
+            "max": [
+                0.805779,
+                0.934058,
+                3.68746
+            ],
+            "min": [
+                -0.678388,
+                -0.934058,
+                1.14431
+            ],
+            "type": 35665
+        },
+        "accessor_393": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1773012,
+            "byteStride": 12,
+            "count": 759,
+            "max": [
+                0.987365,
+                0.992564,
+                0.409301
+            ],
+            "min": [
+                -0.993899,
+                -0.992119,
+                -0.153739
+            ],
+            "type": 35665
+        },
+        "accessor_395": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1782120,
+            "byteStride": 8,
+            "count": 759,
+            "max": [
+                0.496094,
+                0.990234
+            ],
+            "min": [
+                0.0234375,
+                0.509766
+            ],
+            "type": 35664
+        },
+        "accessor_450": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 59730,
+            "byteStride": 0,
+            "count": 450,
+            "type": 5123
+        },
+        "accessor_453": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 60630,
+            "byteStride": 0,
+            "count": 450,
+            "type": 5123
+        },
+        "accessor_456": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 61530,
+            "byteStride": 0,
+            "count": 450,
+            "type": 5123
+        },
+        "accessor_458": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 955680,
+            "byteStride": 12,
+            "count": 1350,
+            "max": [
+                0.721963,
+                0.934057,
+                3.26761
+            ],
+            "min": [
+                -0.678388,
+                -0.934057,
+                1.54042
+            ],
+            "type": 35665
+        },
+        "accessor_460": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 971880,
+            "byteStride": 12,
+            "count": 1350,
+            "max": [
+                0.99923,
+                0.987683,
+                0.46742
+            ],
+            "min": [
+                -0.987638,
+                -0.981989,
+                -0.0991093
+            ],
+            "type": 35665
+        },
+        "accessor_462": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 988080,
+            "byteStride": 8,
+            "count": 1350,
+            "max": [
+                0.714844,
+                0.994141
+            ],
+            "min": [
+                0.394531,
+                0.597656
+            ],
+            "type": 35664
+        },
+        "accessor_483": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "count": 450,
+            "type": 5123
+        },
+        "accessor_485": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 0,
+            "byteStride": 12,
+            "count": 450,
+            "max": [
+                0.637296,
+                0.366565,
+                5.90911
+            ],
+            "min": [
+                0.160465,
+                -0.366565,
+                4.98329
+            ],
+            "type": 35665
+        },
+        "accessor_487": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 5400,
+            "byteStride": 12,
+            "count": 450,
+            "max": [
+                0.95916,
+                0.968233,
+                0.657089
+            ],
+            "min": [
+                -0.950412,
+                -0.968233,
+                -0.513712
+            ],
+            "type": 35665
+        },
+        "accessor_489": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 10800,
+            "byteStride": 8,
+            "count": 450,
+            "max": [
+                0.716797,
+                0.720703
+            ],
+            "min": [
+                0.148438,
+                0.0175781
+            ],
+            "type": 35664
+        },
+        "accessor_510": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 111762,
+            "byteStride": 0,
+            "count": 6861,
+            "type": 5123
+        },
+        "accessor_512": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1788192,
+            "byteStride": 12,
+            "count": 6861,
+            "max": [
+                0.738716,
+                3.22153,
+                6.19007
+            ],
+            "min": [
+                -0.678387,
+                -3.22153,
+                -2.03899e-006
+            ],
+            "type": 35665
+        },
+        "accessor_514": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1870524,
+            "byteStride": 12,
+            "count": 6861,
+            "max": [
+                0.999471,
+                0.999745,
+                0.997081
+            ],
+            "min": [
+                -0.999015,
+                -0.999745,
+                -1
+            ],
+            "type": 35665
+        },
+        "accessor_516": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 1952856,
+            "byteStride": 8,
+            "count": 6861,
+            "max": [
+                0.994141,
+                0.990234
+            ],
+            "min": [
+                0.0234375,
+                0.00195307
+            ],
+            "type": 35664
+        },
+        "accessor_537": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 58818,
+            "byteStride": 0,
+            "count": 456,
+            "type": 5123
+        },
+        "accessor_539": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 941088,
+            "byteStride": 12,
+            "count": 456,
+            "max": [
+                0.721963,
+                0.934057,
+                3.26764
+            ],
+            "min": [
+                -0.678388,
+                -0.934057,
+                1.47295
+            ],
+            "type": 35665
+        },
+        "accessor_541": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 946560,
+            "byteStride": 12,
+            "count": 456,
+            "max": [
+                0.998985,
+                0.987469,
+                0.46742
+            ],
+            "min": [
+                -0.987638,
+                -0.981157,
+                -0.107117
+            ],
+            "type": 35665
+        },
+        "accessor_543": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 952032,
+            "byteStride": 8,
+            "count": 456,
+            "max": [
+                0.71875,
+                1
+            ],
+            "min": [
+                0.0507813,
+                0.597656
+            ],
+            "type": 35664
+        },
+        "accessor_649": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 900,
+            "byteStride": 0,
+            "count": 3837,
+            "type": 5123
+        },
+        "accessor_652": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 8574,
+            "byteStride": 0,
+            "count": 912,
+            "type": 5123
+        },
+        "accessor_655": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 10398,
+            "byteStride": 0,
+            "count": 1464,
+            "type": 5123
+        },
+        "accessor_658": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 13326,
+            "byteStride": 0,
+            "count": 2736,
+            "type": 5123
+        },
+        "accessor_661": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 18798,
+            "byteStride": 0,
+            "count": 6414,
+            "type": 5123
+        },
+        "accessor_664": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 31626,
+            "byteStride": 0,
+            "count": 4056,
+            "type": 5123
+        },
+        "accessor_666": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 14400,
+            "byteStride": 12,
+            "count": 19419,
+            "max": [
+                0.869339,
+                3.22077,
+                6.19007
+            ],
+            "min": [
+                -0.559545,
+                -3.22077,
+                -0.0542785
+            ],
+            "type": 35665
+        },
+        "accessor_668": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 247428,
+            "byteStride": 12,
+            "count": 19419,
+            "max": [
+                0.999878,
+                0.999316,
+                0.999999
+            ],
+            "min": [
+                -0.999229,
+                -0.999316,
+                -1
+            ],
+            "type": 35665
+        },
+        "accessor_670": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 480456,
+            "byteStride": 8,
+            "count": 19419,
+            "max": [
+                1,
+                0.998047
+            ],
+            "min": [
+                0.00390625,
+                0.00585938
+            ],
+            "type": 35664
+        },
+        "accessor_72": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 44634,
+            "byteStride": 0,
+            "count": 936,
+            "type": 5123
+        },
+        "accessor_75": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 46506,
+            "byteStride": 0,
+            "count": 972,
+            "type": 5123
+        },
+        "accessor_78": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 48450,
+            "byteStride": 0,
+            "count": 2172,
+            "type": 5123
+        },
+        "accessor_81": {
+            "bufferView": "bufferView_672",
+            "byteOffset": 52794,
+            "byteStride": 0,
+            "count": 3012,
+            "type": 5123
+        },
+        "accessor_83": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 714144,
+            "byteStride": 12,
+            "count": 7092,
+            "max": [
+                0.713746,
+                3.22153,
+                6.19007
+            ],
+            "min": [
+                -0.373785,
+                -3.22153,
+                -2.03899e-006
+            ],
+            "type": 35665
+        },
+        "accessor_85": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 799248,
+            "byteStride": 12,
+            "count": 7092,
+            "max": [
+                0.999895,
+                0.999745,
+                0.99925
+            ],
+            "min": [
+                -0.999797,
+                -0.999745,
+                -1
+            ],
+            "type": 35665
+        },
+        "accessor_87": {
+            "bufferView": "bufferView_673",
+            "byteOffset": 884352,
+            "byteStride": 8,
+            "count": 7092,
+            "max": [
+                0.998047,
+                0.984375
+            ],
+            "min": [
+                0.00390625,
+                0.00195307
+            ],
+            "type": 35664
+        }
+    },
+    "animations": {},
+    "asset": {
+        "generator": "collada2gltf@63e932907e3f0c834c8668d04f03ddb6eabf78d1",
+        "premultipliedAlpha": true,
+        "profile": "WebGL 1.0.2",
+        "version": 0.6
+    },
+    "bufferViews": {
+        "bufferView_672": {
+            "buffer": "monk_male",
+            "byteLength": 125484,
+            "byteOffset": 0,
+            "target": 34963
+        },
+        "bufferView_673": {
+            "buffer": "monk_male",
+            "byteLength": 2007744,
+            "byteOffset": 125484,
+            "target": 34962
+        }
+    },
+    "buffers": {
+        "monk_male": {
+            "byteLength": 2133228,
+            "path": "monk_male.bin",
+            "type": "arraybuffer"
+        }
+    },
+    "materials": {
+        "Hair_NKDShape_MonkM_Beard_normal_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "Hair_NKDShape_MonkM_Beard_normal_mat_001"
+        },
+        "Monk_Male_oneBatchShape_oneBatch_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "Monk_Male_oneBatchShape_oneBatch_mat_001"
+        },
+        "N_BTS_HVY_AShape_MonkM_HVY_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_BTS_HVY_AShape_MonkM_HVY_A_Mat_001"
+        },
+        "N_BTS_LIT_AShape_MonkM_LIT_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_BTS_LIT_AShape_MonkM_LIT_A_Mat_001"
+        },
+        "N_BTS_MED_AShape_MonkM_MED_A_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_BTS_MED_AShape_MonkM_MED_A_mat_001"
+        },
+        "N_BTS_NKDShape_MonkM_NKD_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_BTS_NKDShape_MonkM_NKD_A_Mat_001"
+        },
+        "N_GLV_HVY_AShape_MonkM_HVY_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_GLV_HVY_AShape_MonkM_HVY_A_Mat_001"
+        },
+        "N_GLV_LIT_AShape_MonkM_LIT_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_GLV_LIT_AShape_MonkM_LIT_A_Mat_001"
+        },
+        "N_GLV_MED_AShape_MonkM_MED_A_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_GLV_MED_AShape_MonkM_MED_A_mat_001"
+        },
+        "N_GLV_NKDShape_MonkM_NKD_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_GLV_NKDShape_MonkM_NKD_A_Mat_001"
+        },
+        "N_LEG_HVY_AShape_MonkM_HVY_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_LEG_HVY_AShape_MonkM_HVY_A_Mat_001"
+        },
+        "N_LEG_LIT_AShape_MonkM_LIT_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_LEG_LIT_AShape_MonkM_LIT_A_Mat_001"
+        },
+        "N_LEG_MED_AShape_MonkM_MED_A_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_LEG_MED_AShape_MonkM_MED_A_mat_001"
+        },
+        "N_LEG_NKDShape_MonkM_NKD_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_LEG_NKDShape_MonkM_NKD_A_Mat_001"
+        },
+        "N_TRS_HVY_AShape_MonkM_HVY_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_HVY_AShape_MonkM_HVY_A_Mat_001"
+        },
+        "N_TRS_HVY_A_ClothShape_MonkM_HVY_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_HVY_A_ClothShape_MonkM_HVY_A_cloth_001"
+        },
+        "N_TRS_HVY_BShape_MonkM_HVY_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_HVY_BShape_MonkM_HVY_A_Mat_001"
+        },
+        "N_TRS_HVY_B_ClothShape_MonkM_HVY_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_HVY_B_ClothShape_MonkM_HVY_A_cloth_001"
+        },
+        "N_TRS_HVY_CShape_MonkM_HVY_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_HVY_CShape_MonkM_HVY_A_Mat_001"
+        },
+        "N_TRS_HVY_C_ClothShape_MonkM_HVY_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_HVY_C_ClothShape_MonkM_HVY_A_cloth_001"
+        },
+        "N_TRS_LIT_AShape_MonkM_LIT_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_LIT_AShape_MonkM_LIT_A_Mat_001"
+        },
+        "N_TRS_LIT_A_ClothShape_MonkM_LIT_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_LIT_A_ClothShape_MonkM_LIT_A_cloth_001"
+        },
+        "N_TRS_MED_AShape_MonkM_MED_A_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_MED_AShape_MonkM_MED_A_mat_001"
+        },
+        "N_TRS_MED_A_ClothShape_MonkM_MED_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_MED_A_ClothShape_MonkM_MED_A_cloth_001"
+        },
+        "N_TRS_MED_BShape_MonkM_MED_A_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_MED_BShape_MonkM_MED_A_mat_001"
+        },
+        "N_TRS_MED_B_ClothShape_MonkM_MED_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_MED_B_ClothShape_MonkM_MED_A_cloth_001"
+        },
+        "N_TRS_MED_CShape_MonkM_MED_A_mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_MED_CShape_MonkM_MED_A_mat_001"
+        },
+        "N_TRS_MED_C_ClothShape_MonkM_MED_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_MED_C_ClothShape_MonkM_MED_A_cloth_001"
+        },
+        "N_TRS_NKDShape_MonkM_NKD_A_Mat_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_NKDShape_MonkM_NKD_A_Mat_001"
+        },
+        "N_TRS_NKD_ClothShape_MonkM_NKD_A_cloth_001-effect": {
+            "instanceTechnique": {
+                "technique": "technique0",
+                "values": {
+                    "ambient": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "diffuse": [
+                        0.64,
+                        0.64,
+                        0.64,
+                        1
+                    ],
+                    "emission": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "shininess": 50,
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1
+                    ]
+                }
+            },
+            "name": "N_TRS_NKD_ClothShape_MonkM_NKD_A_cloth_001"
+        }
+    },
+    "meshes": {
+        "MonkM_Beard_normal_mat-mesh": {
+            "name": "MonkM_Beard_normal_mat",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_487",
+                        "POSITION": "accessor_485",
+                        "TEXCOORD_0": "accessor_489"
+                    },
+                    "indices": "accessor_483",
+                    "material": "Hair_NKDShape_MonkM_Beard_normal_mat_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_HVY_A_Mat-mesh": {
+            "name": "MonkM_HVY_A_Mat",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_668",
+                        "POSITION": "accessor_666",
+                        "TEXCOORD_0": "accessor_670"
+                    },
+                    "indices": "accessor_649",
+                    "material": "N_TRS_HVY_CShape_MonkM_HVY_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_668",
+                        "POSITION": "accessor_666",
+                        "TEXCOORD_0": "accessor_670"
+                    },
+                    "indices": "accessor_652",
+                    "material": "N_LEG_HVY_AShape_MonkM_HVY_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_668",
+                        "POSITION": "accessor_666",
+                        "TEXCOORD_0": "accessor_670"
+                    },
+                    "indices": "accessor_655",
+                    "material": "N_BTS_HVY_AShape_MonkM_HVY_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_668",
+                        "POSITION": "accessor_666",
+                        "TEXCOORD_0": "accessor_670"
+                    },
+                    "indices": "accessor_658",
+                    "material": "N_GLV_HVY_AShape_MonkM_HVY_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_668",
+                        "POSITION": "accessor_666",
+                        "TEXCOORD_0": "accessor_670"
+                    },
+                    "indices": "accessor_661",
+                    "material": "N_TRS_HVY_AShape_MonkM_HVY_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_668",
+                        "POSITION": "accessor_666",
+                        "TEXCOORD_0": "accessor_670"
+                    },
+                    "indices": "accessor_664",
+                    "material": "N_TRS_HVY_BShape_MonkM_HVY_A_Mat_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_HVY_A_cloth-mesh": {
+            "name": "MonkM_HVY_A_cloth",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_366",
+                        "POSITION": "accessor_364",
+                        "TEXCOORD_0": "accessor_368"
+                    },
+                    "indices": "accessor_356",
+                    "material": "N_TRS_HVY_C_ClothShape_MonkM_HVY_A_cloth_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_366",
+                        "POSITION": "accessor_364",
+                        "TEXCOORD_0": "accessor_368"
+                    },
+                    "indices": "accessor_359",
+                    "material": "N_TRS_HVY_A_ClothShape_MonkM_HVY_A_cloth_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_366",
+                        "POSITION": "accessor_364",
+                        "TEXCOORD_0": "accessor_368"
+                    },
+                    "indices": "accessor_362",
+                    "material": "N_TRS_HVY_B_ClothShape_MonkM_HVY_A_cloth_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_LIT_A_Mat-mesh": {
+            "name": "MonkM_LIT_A_Mat",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_85",
+                        "POSITION": "accessor_83",
+                        "TEXCOORD_0": "accessor_87"
+                    },
+                    "indices": "accessor_72",
+                    "material": "N_LEG_LIT_AShape_MonkM_LIT_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_85",
+                        "POSITION": "accessor_83",
+                        "TEXCOORD_0": "accessor_87"
+                    },
+                    "indices": "accessor_75",
+                    "material": "N_BTS_LIT_AShape_MonkM_LIT_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_85",
+                        "POSITION": "accessor_83",
+                        "TEXCOORD_0": "accessor_87"
+                    },
+                    "indices": "accessor_78",
+                    "material": "N_GLV_LIT_AShape_MonkM_LIT_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_85",
+                        "POSITION": "accessor_83",
+                        "TEXCOORD_0": "accessor_87"
+                    },
+                    "indices": "accessor_81",
+                    "material": "N_TRS_LIT_AShape_MonkM_LIT_A_Mat_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_LIT_A_cloth-mesh": {
+            "name": "MonkM_LIT_A_cloth",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_541",
+                        "POSITION": "accessor_539",
+                        "TEXCOORD_0": "accessor_543"
+                    },
+                    "indices": "accessor_537",
+                    "material": "N_TRS_LIT_A_ClothShape_MonkM_LIT_A_cloth_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_MED_A_cloth-mesh": {
+            "name": "MonkM_MED_A_cloth",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_460",
+                        "POSITION": "accessor_458",
+                        "TEXCOORD_0": "accessor_462"
+                    },
+                    "indices": "accessor_450",
+                    "material": "N_TRS_MED_B_ClothShape_MonkM_MED_A_cloth_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_460",
+                        "POSITION": "accessor_458",
+                        "TEXCOORD_0": "accessor_462"
+                    },
+                    "indices": "accessor_453",
+                    "material": "N_TRS_MED_A_ClothShape_MonkM_MED_A_cloth_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_460",
+                        "POSITION": "accessor_458",
+                        "TEXCOORD_0": "accessor_462"
+                    },
+                    "indices": "accessor_456",
+                    "material": "N_TRS_MED_C_ClothShape_MonkM_MED_A_cloth_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_MED_A_mat-mesh": {
+            "name": "MonkM_MED_A_mat",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_299",
+                        "POSITION": "accessor_297",
+                        "TEXCOORD_0": "accessor_301"
+                    },
+                    "indices": "accessor_280",
+                    "material": "N_GLV_MED_AShape_MonkM_MED_A_mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_299",
+                        "POSITION": "accessor_297",
+                        "TEXCOORD_0": "accessor_301"
+                    },
+                    "indices": "accessor_283",
+                    "material": "N_LEG_MED_AShape_MonkM_MED_A_mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_299",
+                        "POSITION": "accessor_297",
+                        "TEXCOORD_0": "accessor_301"
+                    },
+                    "indices": "accessor_286",
+                    "material": "N_TRS_MED_BShape_MonkM_MED_A_mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_299",
+                        "POSITION": "accessor_297",
+                        "TEXCOORD_0": "accessor_301"
+                    },
+                    "indices": "accessor_289",
+                    "material": "N_TRS_MED_CShape_MonkM_MED_A_mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_299",
+                        "POSITION": "accessor_297",
+                        "TEXCOORD_0": "accessor_301"
+                    },
+                    "indices": "accessor_292",
+                    "material": "N_BTS_MED_AShape_MonkM_MED_A_mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_299",
+                        "POSITION": "accessor_297",
+                        "TEXCOORD_0": "accessor_301"
+                    },
+                    "indices": "accessor_295",
+                    "material": "N_TRS_MED_AShape_MonkM_MED_A_mat_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_NKD_A_Mat-mesh": {
+            "name": "MonkM_NKD_A_Mat",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_172",
+                        "POSITION": "accessor_170",
+                        "TEXCOORD_0": "accessor_174"
+                    },
+                    "indices": "accessor_159",
+                    "material": "N_BTS_NKDShape_MonkM_NKD_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_172",
+                        "POSITION": "accessor_170",
+                        "TEXCOORD_0": "accessor_174"
+                    },
+                    "indices": "accessor_162",
+                    "material": "N_GLV_NKDShape_MonkM_NKD_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_172",
+                        "POSITION": "accessor_170",
+                        "TEXCOORD_0": "accessor_174"
+                    },
+                    "indices": "accessor_165",
+                    "material": "N_LEG_NKDShape_MonkM_NKD_A_Mat_001-effect",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_172",
+                        "POSITION": "accessor_170",
+                        "TEXCOORD_0": "accessor_174"
+                    },
+                    "indices": "accessor_168",
+                    "material": "N_TRS_NKDShape_MonkM_NKD_A_Mat_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "MonkM_NKD_A_cloth-mesh": {
+            "name": "MonkM_NKD_A_cloth",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_393",
+                        "POSITION": "accessor_391",
+                        "TEXCOORD_0": "accessor_395"
+                    },
+                    "indices": "accessor_389",
+                    "material": "N_TRS_NKD_ClothShape_MonkM_NKD_A_cloth_001-effect",
+                    "primitive": 4
+                }
+            ]
+        },
+        "oneBatch_mat-mesh": {
+            "name": "oneBatch_mat",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "accessor_514",
+                        "POSITION": "accessor_512",
+                        "TEXCOORD_0": "accessor_516"
+                    },
+                    "indices": "accessor_510",
+                    "material": "Monk_Male_oneBatchShape_oneBatch_mat_001-effect",
+                    "primitive": 4
+                }
+            ]
+        }
+    },
+    "nodes": {
+        "MonkM_Beard_normal_mat": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_Beard_normal_mat-mesh"
+            ],
+            "name": "MonkM_Beard_normal_mat"
+        },
+        "MonkM_HVY_A_Mat": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_HVY_A_Mat-mesh"
+            ],
+            "name": "MonkM_HVY_A_Mat"
+        },
+        "MonkM_HVY_A_cloth": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_HVY_A_cloth-mesh"
+            ],
+            "name": "MonkM_HVY_A_cloth"
+        },
+        "MonkM_LIT_A_Mat": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_LIT_A_Mat-mesh"
+            ],
+            "name": "MonkM_LIT_A_Mat"
+        },
+        "MonkM_LIT_A_cloth": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_LIT_A_cloth-mesh"
+            ],
+            "name": "MonkM_LIT_A_cloth"
+        },
+        "MonkM_MED_A_cloth": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_MED_A_cloth-mesh"
+            ],
+            "name": "MonkM_MED_A_cloth"
+        },
+        "MonkM_MED_A_mat": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_MED_A_mat-mesh"
+            ],
+            "name": "MonkM_MED_A_mat"
+        },
+        "MonkM_NKD_A_Mat": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_NKD_A_Mat-mesh"
+            ],
+            "name": "MonkM_NKD_A_Mat"
+        },
+        "MonkM_NKD_A_cloth": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "MonkM_NKD_A_cloth-mesh"
+            ],
+            "name": "MonkM_NKD_A_cloth"
+        },
+        "oneBatch_mat": {
+            "children": [],
+            "matrix": [
+                0.0559172,
+                0.0776379,
+                6.92545,
+                0,
+                6.92589,
+                2.46103e-006,
+                -0.0559207,
+                0,
+                -0.000629301,
+                6.92567,
+                -0.0776353,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "oneBatch_mat-mesh"
+            ],
+            "name": "oneBatch_mat"
+        }
+    },
+    "programs": {
+        "program_0": {
+            "attributes": [
+                "a_normal",
+                "a_position"
+            ],
+            "fragmentShader": "monk_male0FS",
+            "vertexShader": "monk_male0VS"
+        }
+    },
+    "scene": "defaultScene",
+    "scenes": {
+        "defaultScene": {
+            "nodes": [
+                "MonkM_LIT_A_Mat",
+                "MonkM_NKD_A_Mat",
+                "MonkM_MED_A_mat",
+                "MonkM_HVY_A_cloth",
+                "MonkM_NKD_A_cloth",
+                "MonkM_MED_A_cloth",
+                "MonkM_Beard_normal_mat",
+                "oneBatch_mat",
+                "MonkM_LIT_A_cloth",
+                "MonkM_HVY_A_Mat"
+            ]
+        }
+    },
+    "shaders": {
+        "monk_male0FS": {
+            "path": "monk_male0FS.glsl",
+            "type": 35632
+        },
+        "monk_male0VS": {
+            "path": "monk_male0VS.glsl",
+            "type": 35633
+        }
+    },
+    "skins": {},
+    "techniques": {
+        "technique0": {
+            "parameters": {
+                "ambient": {
+                    "type": 35666
+                },
+                "diffuse": {
+                    "type": 35666
+                },
+                "emission": {
+                    "type": 35666
+                },
+                "modelViewMatrix": {
+                    "semantic": "MODELVIEW",
+                    "type": 35676
+                },
+                "normal": {
+                    "semantic": "NORMAL",
+                    "type": 35665
+                },
+                "normalMatrix": {
+                    "semantic": "MODELVIEWINVERSETRANSPOSE",
+                    "type": 35675
+                },
+                "position": {
+                    "semantic": "POSITION",
+                    "type": 35665
+                },
+                "projectionMatrix": {
+                    "semantic": "PROJECTION",
+                    "type": 35676
+                },
+                "shininess": {
+                    "type": 5126
+                },
+                "specular": {
+                    "type": 35666
+                }
+            },
+            "pass": "defaultPass",
+            "passes": {
+                "defaultPass": {
+                    "details": {
+                        "commonProfile": {
+                            "extras": {
+                                "doubleSided": true
+                            },
+                            "lightingModel": "Phong",
+                            "parameters": [
+                                "ambient",
+                                "diffuse",
+                                "emission",
+                                "modelViewMatrix",
+                                "normalMatrix",
+                                "projectionMatrix",
+                                "shininess",
+                                "specular"
+                            ]
+                        },
+                        "type": "COLLADA-1.4.1/commonProfile"
+                    },
+                    "instanceProgram": {
+                        "attributes": {
+                            "a_normal": "normal",
+                            "a_position": "position"
+                        },
+                        "program": "program_0",
+                        "uniforms": {
+                            "u_ambient": "ambient",
+                            "u_diffuse": "diffuse",
+                            "u_emission": "emission",
+                            "u_modelViewMatrix": "modelViewMatrix",
+                            "u_normalMatrix": "normalMatrix",
+                            "u_projectionMatrix": "projectionMatrix",
+                            "u_shininess": "shininess",
+                            "u_specular": "specular"
+                        }
+                    },
+                    "states": {
+                        "blendEnable": 0,
+                        "cullFaceEnable": 0,
+                        "depthMask": 1,
+                        "depthTestEnable": 1
+                    }
+                }
+            }
+        }
+    }
+}

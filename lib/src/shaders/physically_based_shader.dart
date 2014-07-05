@@ -8,7 +8,37 @@ precision mediump float;
 attribute vec3 position;
 attribute vec3 normal;
 attribute vec3 tangent;
+
+#ifdef UV1
 attribute vec2 uv;
+#endif
+#ifdef UV2
+attribute vec2 uv2;
+#endif
+
+#ifdef BONES
+attribute vec4 matricesIndices;
+attribute vec4 matricesWeights;
+#endif
+
+#ifdef DIFFUSE
+varying vec2 vDiffuseUV;
+uniform mat4 diffuseMatrix;
+uniform vec2 vDiffuseInfos;
+#endif
+
+#ifdef BUMP
+varying vec2 vBumpUV;
+uniform vec2 vBumpInfos;
+uniform mat4 bumpMatrix;
+#endif
+
+#ifdef BONES
+uniform mat4 mBones[BonesPerMesh];
+#endif
+
+
+
 uniform mat4 world;
 uniform mat4 view;
 uniform mat4 viewProjection;
@@ -18,17 +48,26 @@ uniform vec3 vEyePosition;
 varying vec3 vWorldPosition;
 varying vec3 vNormal;
 varying vec3 vTangent;
-varying vec2 vUV;
 
 void main(void) {
   vec4 wp = world * vec4(position, 1.0);
   vWorldPosition = wp.xyz; 
   vNormal = normalize(vec3(world * vec4(normal, 0.0)));
-  vUV = uv;
+
+  #ifdef DIFFUSE
+  #ifdef UV1
+  vDiffuseUV = vec2(diffuseMatrix * vec4(uv, 1.0, 0.0));
+  #endif
+  #ifdef UV2
+  vDiffuseUV = vec2(diffuseMatrix * vec4(uv2, 1.0, 0.0));
+  #endif
+  #endif
  
   gl_Position = viewProjection * wp;
 }
 """;
+
+
 
 const String SHADER_PHYSICALLY_BASED_FS = """
 precision mediump float;
@@ -41,6 +80,7 @@ precision mediump int;
 
 uniform vec4 vDiffuseColor;
 uniform vec3 vEyePosition;
+
 uniform sampler2D diffuseSampler;
 uniform sampler2D bumpSampler;
 uniform float uAlbedo;
@@ -50,7 +90,11 @@ uniform float uReflectivity;
 varying vec3 vWorldPosition;
 varying vec3 vNormal;
 varying vec3 vTangent;
-varying vec2 vUV;
+
+#ifdef DIFFUSE
+varying vec2 vDiffuseUV;
+uniform vec2 vDiffuseInfos;
+#endif
 
 float saturate(float d) {
   return clamp(d, 0.0, 1.0);
@@ -119,17 +163,21 @@ mat3 cotangent_frame(vec3 normal, vec3 p, vec2 uv) {
 }
 
 vec3 perturbNormal(vec3 viewDir) {
-  vec3 map = texture2D(bumpSampler, vUV).xyz;
+  vec3 map = texture2D(bumpSampler, vDiffuseUV).xyz;
   map = map * 255. / 127. - 128. / 127.;
-  mat3 TBN = cotangent_frame(vNormal, -viewDir, vUV);
+  mat3 TBN = cotangent_frame(vNormal, -viewDir, vDiffuseUV);
   return normalize(TBN * map);
 }
 
 void main(void) {
   vec3 diffuseColor = vDiffuseColor.rgb;
-  vec4 baseColor = texture2D(diffuseSampler, vUV);
+  vec4 baseColor = vec4(1.0, 1.0, 1.0, 1.0);
+  #ifdef DIFFUSE
+  baseColor = texture2D(diffuseSampler, vDiffuseUV);
+  baseColor.rgb *= vDiffuseInfos.y;
+  #endif
   float alpha = vDiffuseColor.a * baseColor.a;
-  vec3 color = uAlbedo * vDiffuseColor.rgb * baseColor.xyz;
+  vec3 color = uAlbedo * diffuseColor * baseColor.xyz;
 
   vec3 light_colour = vec3(1.0, 1.0, 1.0);
   vec3 light_direction = normalize(vec3(1.0, 1.0, 1.0));

@@ -44,6 +44,14 @@ class TestPhysicallyBasedRender2 extends Scene {
       material.bumpTexture = bumpTexture;
       m.material = material;
       
+      var light = new PointLight(0xffffff);
+      light.setTranslation(10.0, 10.0, 10.0);
+      add(light);
+      
+      var light2 = new PointLight(0xffffff);
+      light2.setTranslation(-10.0, 10.0, 10.0);
+      add(light2);
+      
       _forceOn(m);
     });
   }

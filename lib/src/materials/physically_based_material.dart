@@ -88,11 +88,13 @@ class PhysicallyBasedMaterial extends Material {
 
     if (diffuseTexture != null) {
       device.bindTexture(Semantics.texture, diffuseTexture);
-      //      device.bindFloat2("vDiffuseInfos", diffuseTexture.coordinatesIndex, diffuseTexture.level);
-      //      device.bindMatrix4("diffuseMatrix", diffuseTexture.textureMatrix);
+      device.bindFloat2("vDiffuseInfos", diffuseTexture.coordinatesIndex, diffuseTexture.level);
+      device.bindMatrix4("diffuseMatrix", diffuseTexture.textureMatrix);
     }
     if (bumpTexture != null) {
       device.bindTexture("bumpSampler", bumpTexture);
+      device.bindFloat2("vBumpInfos", bumpTexture.coordinatesIndex, bumpTexture.level);
+      device.bindMatrix4("bumpMatrix", bumpTexture.textureMatrix);
     }
 
     if (shininess != null) {

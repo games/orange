@@ -96,6 +96,19 @@ varying vec2 vDiffuseUV;
 uniform vec2 vDiffuseInfos;
 #endif
 
+// Lights
+#ifdef LIGHT0
+uniform vec4 vLightData0;
+uniform vec4 vLightDiffuse0;
+uniform vec3 vLightSpecular0;
+#ifdef SPOTLIGHT0
+uniform vec4 vLightDirection0;
+#endif
+#ifdef HEMILIGHT0
+uniform vec3 vLightGround0;
+#endif
+#endif
+
 float saturate(float d) {
   return clamp(d, 0.0, 1.0);
 }
@@ -179,21 +192,27 @@ void main(void) {
   float alpha = vDiffuseColor.a * baseColor.a;
   vec3 color = uAlbedo * diffuseColor * baseColor.xyz;
 
-  vec3 light_colour = vec3(1.0, 1.0, 1.0);
-  vec3 light_direction = normalize(vec3(1.0, 1.0, 1.0));
-
-  float specular_power = uRoughess;
-  float specular_colour = uReflectivity;
+  vec3 diffuse = vec3(1.0, 1.0, 1.0);
   vec3 specular = vec3(0.0, 0.0, 0.0);
-  float specular_term = 0.0;
   vec3 viewDirection = normalize(vEyePosition - vWorldPosition);
-  
-  vec3 normal = perturbNormal(viewDirection);
 
-  vec3 diffuse = clamp(dot(normal, light_direction), 0.0, 1.0) * light_colour;
-  
-  specular_term = LightingFuncGGX(normal, viewDirection, light_direction, uRoughess, uReflectivity);
-  specular = specular_term * light_colour;
+  vec3 normal = vNormal;
+  #ifdef BUMP
+  normal = perturbNormal(viewDirection);
+  #endif
+
+  #ifdef LIGHT0
+  vec3 lightColor0 = vLightDiffuse0.xyz;
+  vec3 lightVectorW0;
+  if (vLightData0.w == 0.0) {
+    lightVectorW0 = normalize(vLightData0.xyz - vWorldPosition);
+  } else {
+    lightVectorW0 = normalize(-vLightData0.xyz);
+  }
+  diffuse = clamp(dot(normal, lightVectorW0), 0.0, 1.0) * lightColor0;
+  float specularTerm = LightingFuncGGX(normal, viewDirection, lightVectorW0, uRoughess, uReflectivity);
+  specular = specularTerm * lightColor0;
+  #endif
 
   gl_FragColor = vec4(color * diffuse + specular, alpha);
 }

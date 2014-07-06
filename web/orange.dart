@@ -54,7 +54,7 @@ void main() {
                 new TestPhysicallyBasedRender(camera),
                 new TestPhysicallyBasedRender2(camera)];
   
-  var i = scenes.length - 1;
+  var i = 5;//scenes.length - 1;
   
   orange.enter(scenes[i]);
   orange.run();

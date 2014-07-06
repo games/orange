@@ -4,7 +4,7 @@ part of orange;
 
 Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
   var m = new Matrix4.zero();
-  m.setFromTranslationRotation(new Vector3.fromFloat32List(new Float32List.fromList(t)), new Quaternion.fromFloat32List(new Float32List.fromList(r)));
+  m.setFromTranslationRotation(new Vector3.fromFloat32List(_toFloat32List(t)), new Quaternion.fromFloat32List(_toFloat32List(r)));
   m.scale(s[0].toDouble(), s[1].toDouble(), s[2].toDouble());
   return m;
 }

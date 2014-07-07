@@ -5,7 +5,10 @@ part of orange;
 
 
 class Node {
+  // unique id in scene tree.
   String id;
+  String name;
+  
   Scene _scene;
   Vector3 _position;
   Vector3 _scaling;

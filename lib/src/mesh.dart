@@ -20,7 +20,7 @@ class Mesh extends Node {
   double physicsMass = 0.0;
   double physicsFriction = 0.0;
   double physicsRestitution = 0.0;
-  
+
   double visibility = 1.0;
 
   Mesh({String name}) : super(id: name);
@@ -96,12 +96,14 @@ class Mesh extends Node {
   }
 
   Skeleton get skeleton {
-    if (_skeleton == null && parent != null && parent is Mesh) return (parent as Mesh)._skeleton;
     return _skeleton;
   }
 
   void set skeleton(Skeleton val) {
     _skeleton = val;
+    children.forEach((c) {
+      if (c is Mesh) c.skeleton = val;
+    });
   }
 
   bool get castShadows => _castShadows;
@@ -109,7 +111,7 @@ class Mesh extends Node {
   void set castShadows(bool val) {
     _castShadows = val;
     children.forEach((c) {
-      if (c is Mesh) c._castShadows = val;
+      if (c is Mesh) c.castShadows = val;
     });
   }
 
@@ -145,7 +147,5 @@ class Mesh extends Node {
     //TODO dispose resources
   }
 }
-
-
 
 

@@ -9,18 +9,23 @@ class GltfLoader2 {
   Mesh _root;
   Uri _uri;
   Map<String, dynamic> _resources;
+  Map<String, Skeleton> _skeletons;
   Map<String, Joint> _joints;
   Map<String, List<String>> _childrenOfNode;
   Map<String, List<String>> _jointsOfSkeleton;
+  Map<String, Map> _skinOfNode;
+  Animation _animation;
 
   Future<Mesh> load(gl.RenderingContext ctx, String url) {
     _ctx = ctx;
     _uri = Uri.parse(url);
     _root = new Mesh();
     _resources = {};
+    _skeletons = {};
     _joints = {};
     _childrenOfNode = {};
     _jointsOfSkeleton = {};
+    _skinOfNode = {};
     var completer = new Completer<Mesh>();
     html.HttpRequest.getString(url).then((rsp) {
       var json = JSON.decode(rsp);
@@ -28,6 +33,7 @@ class GltfLoader2 {
       json["buffers"].forEach((k, v) => loadBufferFutures.add(_loadBuffer(k, v)));
       Future.wait(loadBufferFutures).then((List buffers) {
         _parseNodes(json);
+        _parseSkins(json);
         _parseAnimations(json);
         _parseScene(json);
         completer.complete(_root);
@@ -39,12 +45,17 @@ class GltfLoader2 {
   void _parseAnimations(Map doc) {
     if (doc.containsKey("animations")) {
       var animation = new Animation();
+      animation.name = "default";
       animation.tracks = [];
+      animation.length = 0.0;
       doc["animations"].forEach((String k, Map ani) {
         var track = new Track();
         var channels = ani["channels"] as List;
         track.jointName = channels.first["target"]["id"];
+        var joint = _resources["Node_${track.jointName}"] as Joint;
+        track.jointId = joint.jointId;
         track.keyframes = [];
+
         var parameters = {};
         ani["parameters"].forEach((k, p) => parameters[k] = _getAttribute(doc, p, k));
         var count = ani["count"];
@@ -54,12 +65,9 @@ class GltfLoader2 {
             var sampler = ch["sampler"];
             var target = ch["target"];
             var path = target["path"];
-            var vertexBuffer = parameters[path] as VertexBuffer;
-            // TODO always FLOAT ?
-            var list = vertexBuffer.data as Float32List;
-            if (path == "TIME") {
-              keyframe.time = list[i];
-            } else if (path == "rotation") {
+            var buffer = parameters[path] as VertexBuffer;
+            var list = buffer.data as Float32List;
+            if (path == "rotation") {
               keyframe.rotate = new Quaternion.axisAngle(new Vector3(list[i], list[i + 1], list[i + 2]), list[i + 3]);
             } else if (path == "scale") {
               keyframe.scaling = new Vector3(list[i], list[i + 1], list[i + 2]);
@@ -67,24 +75,51 @@ class GltfLoader2 {
               keyframe.translate = new Vector3(list[i], list[i + 1], list[i + 2]);
             }
           });
+          // time
+          var buffer = parameters["TIME"] as VertexBuffer;
+          var list = buffer.data as Float32List;
+          keyframe.time = list[i];
+
           track.keyframes.add(keyframe);
         }
         animation.tracks.add(track);
       });
+      if (animation.tracks.length > 0) {
+        animation.length = animation.tracks.first.keyframes.last.time;
+        _animation = animation;
+      }
     }
   }
 
   void _parseSkins(Map doc) {
     if (doc.containsKey("skins")) {
+      _skeletons = {};
       doc["skins"].forEach((String k, Map v) {
         var skeleton = new Skeleton();
+        skeleton.name = k;
         skeleton.joints = [];
-        v["joints"].forEach((jn) => skeleton.joints.add(_resources["Node_${jn}"]));
-        var buffer = _getBufferData(doc, v["inverseBindMatrices"]);
+        for (var i = 0; i < v["joints"].length; i++) {
+          var joint = _joints[v["joints"][i]];
+          joint.jointId = i;
+          skeleton.joints.add(joint);
+        }
+        skeleton.joints.forEach((joint) {
+          if (joint.parent == null) joint.parentId = -1; else if (joint.parent is Joint) joint.parentId = joint.parent.jointId;
+        });
+        var buffer = _getBufferData(doc, v["inverseBindMatrices"]) as Float32List;
         for (var i = 0; i < skeleton.joints.length; i++) {
-          skeleton.joints[i]._inverseBindMatrix = new Matrix4.fromBuffer(buffer.buffer, i * 4 * 16);
+          // TODO ???????
+//          skeleton.joints[i]._bindPoseMatrix = new Matrix4.fromBuffer(buffer.buffer, i * 4 * 16);
+          var inverseBindMatrix = new Matrix4.identity();
+          for (var j = 0; j < 16; j++) {
+            inverseBindMatrix[j] = buffer[(i * 16) + j];
+          }
+//          skeleton.joints[i]._inverseBindMatrix = inverseBindMatrix;
         }
         // TODO bindShapeMatrix
+        // ...
+        skeleton.buildHierarchy();
+        _skeletons[k] = skeleton;
       });
     }
   }
@@ -95,36 +130,52 @@ class GltfLoader2 {
     scene["nodes"].forEach((String id) {
       var key = "Node_${id}";
       if (_resources.containsKey(key)) {
-        nodes.add(_resources[key]);
+        var node = _resources[key] as Node;
+        // TODO fixme
+        if (!(node is Joint)) nodes.add(node);
       }
     });
-    nodes.forEach((node) => _buildNodeHierarchy(node));
     if (nodes.length == 1) {
       _root = nodes.first;
     } else {
       nodes.forEach((node) => _root.add(node));
     }
+    nodes.forEach((n) => _setupSkeleton(n));
   }
 
-  void _buildNodeHierarchy(Node node) {
-    _childrenOfNode[node.id].forEach((id) {
-      var child = _resources["Node_${id}"];
-      if (child.parent != null) {
-        node.add(child.clone());
-      } else {
-        node.add(child);
-      }
-      _buildNodeHierarchy(child);
-    });
+  // TODO fixme
+  void _setupSkeleton(Node node) {
+    if (!(node is Mesh)) return;
+    var mesh = node as Mesh;
+    var skin = _skinOfNode[node.id];
+    if (skin != null) {
+      var skeleton = _skeletons[skin["skin"]];
+        
+//            skeleton._roots = [];
+//            skin["skeletons"].forEach((jointName){
+//              skeleton._roots.add(_resources["Node_${jointName}"]);
+//            });
+//            skeleton._roots.forEach((joint) => joint.updateMatrix());
+//            skeleton.jointMatrices = new Float32List(skeleton.joints.length * 16);
+            
+      mesh.skeleton = skeleton;
+      mesh.animator = new AnimationController(node);
+      mesh.animator.animations = {};
+      mesh.animator.animations["default"] = _animation;
+//      mesh.animator.switchAnimation("default");
+      _animation.skeleton = skeleton;
+      mesh.children.forEach((c) => _setupSkeleton(c));
+    }
   }
 
   void _parseNodes(Map doc) {
-    var nodes = doc["nodes"];
-    nodes.forEach((String id, Map v) {
+    var nodes = [];
+    doc["nodes"].forEach((String id, Map v) {
       var node;
       if (v.containsKey("jointId")) {
         node = new Joint();
-        node.id = v["jointId"];
+        node.id = id;
+        _joints[v["jointId"]] = node;
       } else if (v.containsKey("light")) {
         return;
       } else if (v.containsKey("camera")) {
@@ -136,7 +187,10 @@ class GltfLoader2 {
         });
       } else if (v.containsKey("instanceSkin")) {
         node = new Mesh(name: id);
-        // TODO
+        v["instanceSkin"]["sources"].forEach((src) {
+          node.add(_getMesh(doc, src));
+        });
+        _skinOfNode[node.id] = v["instanceSkin"];
       } else {
         node = new Mesh(name: id);
       }
@@ -149,6 +203,18 @@ class GltfLoader2 {
         _childrenOfNode[node.id] = v["children"];
       }
       _resources["Node_${node.id}"] = node;
+      nodes.add(node);
+    });
+    // build node hierarchy
+    nodes.forEach((Node node) {
+      _childrenOfNode[node.id].forEach((id) {
+        var child = _resources["Node_${id}"];
+        if (child.parent != null) {
+          node.add(child.clone());
+        } else {
+          node.add(child);
+        }
+      });
     });
   }
 
@@ -158,7 +224,7 @@ class GltfLoader2 {
       return _resources[key].clone();
     } else {
       var m = doc["meshes"][id];
-      var node = new Node(id: id);
+      var node = new Mesh(name: id);
       m["primitives"].forEach((p) {
         var child = new Mesh();
         child._geometry = new Geometry();
@@ -170,6 +236,10 @@ class GltfLoader2 {
             child._geometry.positions = _getAttribute(doc, ar, Semantics.position);
           } else if (at == "TEXCOORD_0") {
             child._geometry.texCoords = _getAttribute(doc, ar, Semantics.texcoords);
+          } else if (at == "JOINT") {
+            child._geometry.buffers[Semantics.joints] = _getAttribute(doc, ar, Semantics.joints);
+          } else if (at == "WEIGHT") {
+            child._geometry.buffers[Semantics.weights] = _getAttribute(doc, ar, Semantics.weights);
           }
         });
         child.material = _getMaterial(doc, p["material"]);

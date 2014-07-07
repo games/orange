@@ -4,27 +4,27 @@ part of orange;
 
 class Skeleton {
   String name;
-  List<Joint> roots;
+  List<Joint> _roots;
   List<Joint> joints;
   Float32List jointMatrices;
   bool _dirtyJoints = true;
   
   buildHierarchy() {
     jointMatrices = new Float32List(joints.length * 16);
-    roots = [];
+    _roots = [];
     joints.forEach((joint) {
       if(joint.parentId == -1) {
-        roots.add(joint);
+        _roots.add(joint);
       } else {
         joints[joint.parentId].add(joint);
       }
     });
-    roots.forEach((joint) => joint.updateMatrix());
+    _roots.forEach((joint) => joint.updateMatrix());
   }
   
   updateMatrix() {
     if(_dirtyJoints) {
-      roots.forEach((joint) => joint.updateMatrix());
+      _roots.forEach((joint) => joint.updateMatrix());
       for(var i = 0; i < joints.length; i++) {
         var joint = joints[i];
         var mat = joint.worldMatrix * joint._inverseBindMatrix;

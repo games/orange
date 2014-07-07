@@ -3936,7 +3936,7 @@
     },
     "images": {
         "marauder_diffuse_dds": {
-            "path": "marauder_diffuse.dds"
+            "path": "marauder_diffuse.png"
         }
     },
     "lights": {

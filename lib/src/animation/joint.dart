@@ -19,4 +19,9 @@ class Joint extends Node {
       _inverseBindMatrix.invert();
     }
   }
+  
+  @override
+  String toString() {
+    return "Joint:$id, $jointId";
+  }
 }

@@ -24,7 +24,7 @@ Is a WebGL based 3D engine for my personal experiments.
 - Create mesh from height map
 - Water
 - Particle System
-- Physically based lighting (not finish yet)
+- Physically based render (not finish yet)
 
 
 ### TODO ###

@@ -28,11 +28,65 @@ class GltfLoader2 {
       json["buffers"].forEach((k, v) => loadBufferFutures.add(_loadBuffer(k, v)));
       Future.wait(loadBufferFutures).then((List buffers) {
         _parseNodes(json);
+        _parseAnimations(json);
         _parseScene(json);
         completer.complete(_root);
       });
     }).catchError((Error e) => print([e, e.stackTrace]));
     return completer.future;
+  }
+
+  void _parseAnimations(Map doc) {
+    if (doc.containsKey("animations")) {
+      var animation = new Animation();
+      animation.tracks = [];
+      doc["animations"].forEach((String k, Map ani) {
+        var track = new Track();
+        var channels = ani["channels"] as List;
+        track.jointName = channels.first["target"]["id"];
+        track.keyframes = [];
+        var parameters = {};
+        ani["parameters"].forEach((k, p) => parameters[k] = _getAttribute(doc, p, k));
+        var count = ani["count"];
+        for (var i = 0; i < count; i++) {
+          var keyframe = new Keyframe();
+          channels.forEach((Map ch) {
+            var sampler = ch["sampler"];
+            var target = ch["target"];
+            var path = target["path"];
+            var vertexBuffer = parameters[path] as VertexBuffer;
+            // TODO always FLOAT ?
+            var list = vertexBuffer.data as Float32List;
+            if (path == "TIME") {
+              keyframe.time = list[i];
+            } else if (path == "rotation") {
+              keyframe.rotate = new Quaternion.axisAngle(new Vector3(list[i], list[i + 1], list[i + 2]), list[i + 3]);
+            } else if (path == "scale") {
+              keyframe.scaling = new Vector3(list[i], list[i + 1], list[i + 2]);
+            } else if (path == "translation") {
+              keyframe.translate = new Vector3(list[i], list[i + 1], list[i + 2]);
+            }
+          });
+          track.keyframes.add(keyframe);
+        }
+        animation.tracks.add(track);
+      });
+    }
+  }
+
+  void _parseSkins(Map doc) {
+    if (doc.containsKey("skins")) {
+      doc["skins"].forEach((String k, Map v) {
+        var skeleton = new Skeleton();
+        skeleton.joints = [];
+        v["joints"].forEach((jn) => skeleton.joints.add(_resources["Node_${jn}"]));
+        var buffer = _getBufferData(doc, v["inverseBindMatrices"]);
+        for (var i = 0; i < skeleton.joints.length; i++) {
+          skeleton.joints[i]._inverseBindMatrix = new Matrix4.fromBuffer(buffer.buffer, i * 4 * 16);
+        }
+        // TODO bindShapeMatrix
+      });
+    }
   }
 
   void _parseScene(Map doc) {
@@ -68,8 +122,9 @@ class GltfLoader2 {
     var nodes = doc["nodes"];
     nodes.forEach((String id, Map v) {
       var node;
-      if (v.containsKey("joint")) {
-        return;
+      if (v.containsKey("jointId")) {
+        node = new Joint();
+        node.id = v["jointId"];
       } else if (v.containsKey("light")) {
         return;
       } else if (v.containsKey("camera")) {
@@ -191,6 +246,46 @@ class GltfLoader2 {
       bv["data"] = bf["data"];
       _resources[key] = bv;
       return bv;
+    }
+  }
+
+  TypedData _getBufferData(Map root, Map desc) {
+    var view = _getBufferView(root, desc["bufferView"]);
+    var size = 3,
+        type = gl.FLOAT,
+        offset = desc["byteOffset"],
+        count = desc["count"];
+    switch (desc["type"]) {
+      case gl.FLOAT:
+        size = 1;
+        break;
+      case gl.FLOAT_VEC2:
+        size = 2;
+        break;
+      case gl.FLOAT_VEC3:
+        size = 3;
+        break;
+      case gl.FLOAT_VEC4:
+        size = 4;
+        break;
+      case gl.FLOAT_MAT2:
+        size = 4;
+        break;
+      case gl.FLOAT_MAT3:
+        size = 9;
+        break;
+      case gl.FLOAT_MAT4:
+        size = 16;
+        break;
+      case gl.UNSIGNED_SHORT:
+        size = 1;
+        type = gl.UNSIGNED_SHORT;
+        break;
+    }
+    if (type == gl.FLOAT) {
+      return new Float32List.view(view["data"], view["byteOffset"] + offset, count * size);
+    } else {
+      return new Uint16List.view(view["data"], view["byteOffset"] + offset, count);
     }
   }
 

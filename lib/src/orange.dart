@@ -53,7 +53,7 @@ class Orange {
           _renderGroup.register(node);
           _renderTargets.addAll(node.material._renderTargets);
         }
-        if (node.showBoundingBox) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
+        if (node.showBoundingBox && node.boundingInfo != null) _boundingBoxRenderer._renderList.add(node.boundingInfo.boundingBox);
       }
       _prepare(node.children, interval);
     });

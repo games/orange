@@ -49,6 +49,7 @@ class TestGLTFScene extends Scene {
       add(root);
       root.scale(0.1);
       root.showBoundingBox = true;
+      root.showSubBoundingBox = true;
       root.updateMatrix();
       root.boundingInfo = BoundingInfo.compute([root]);
       var box = root.boundingInfo.boundingBox;

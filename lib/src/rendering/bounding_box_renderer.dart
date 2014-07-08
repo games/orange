@@ -7,7 +7,7 @@ part of orange;
 class BoundingBoxRenderer {
   static final indices = new Uint16List.fromList([0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 7, 1, 6, 2, 5, 3, 4]);
   
-  bool showBackLines = true;
+  bool showBackLines = false;
   Color backColor = new Color(100, 100, 100);
   Color frontColor = new Color(255, 255, 255);
   GraphicsDevice _graphicsDevice;

@@ -14,6 +14,7 @@ class Mesh extends Node {
   bool _castShadows = false;
   bool _receiveShadows = false;
   bool showBoundingBox = false;
+  bool _showSubBoundingBox = false;
   BoundingInfo _boundingInfo;
 
   int _physicImpostor = PhysicsEngine.NoImpostor;
@@ -124,6 +125,18 @@ class Mesh extends Node {
     });
   }
 
+  bool get showSubBoundingBox => _showSubBoundingBox;
+
+  void set showSubBoundingBox(bool val) {
+    _showSubBoundingBox = val;
+    children.forEach((c) {
+      if (c is Mesh) {
+        c.showBoundingBox = val;
+        c.showSubBoundingBox = val;
+      }
+    });
+  }
+
   Node clone() {
     var result = new Mesh();
     result.id = id;
@@ -147,5 +160,3 @@ class Mesh extends Node {
     //TODO dispose resources
   }
 }
-
-

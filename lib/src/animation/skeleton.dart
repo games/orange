@@ -9,6 +9,8 @@ class Skeleton {
   Float32List jointMatrices;
   bool _dirtyJoints = true;
   
+  Matrix4 _bindShapeMatrix;
+  
   buildHierarchy() {
     jointMatrices = new Float32List(joints.length * 16);
     _roots = [];
@@ -20,6 +22,7 @@ class Skeleton {
       }
     });
     _roots.forEach((joint) => joint.updateMatrix());
+    if(_bindShapeMatrix == null) _bindShapeMatrix = new Matrix4.identity();
   }
   
   updateMatrix() {
@@ -27,7 +30,7 @@ class Skeleton {
       _roots.forEach((joint) => joint.updateMatrix());
       for(var i = 0; i < joints.length; i++) {
         var joint = joints[i];
-        var mat = joint.worldMatrix * joint._inverseBindMatrix;
+        var mat = joint.worldMatrix * joint._inverseBindMatrix * _bindShapeMatrix;
         for(var j = 0; j < 16; j++) {
           jointMatrices[i * 16 + j] = mat[j];
         }

@@ -56,21 +56,8 @@ class GltfLoader2 {
         track.jointId = joint.jointId;
         track.keyframes = [];
 
-        Float32List rotation;
-        Float32List scale;
-        Float32List translation;
-        Float32List time;
-        ani["parameters"].forEach((k, p) {
-          if (k == "rotation") {
-            rotation = _getAttribute(doc, p, k).data as Float32List;
-          } else if (k == "scale") {
-            scale = _getAttribute(doc, p, k).data as Float32List;
-          } else if (k == "translation") {
-            translation = _getAttribute(doc, p, k).data as Float32List;
-          } else if (k == "TIME") {
-            time = _getAttribute(doc, p, k).data as Float32List;
-          }
-        });
+        var parameters = {};
+        ani["parameters"].forEach((k, p) => parameters[k] = _getAttribute(doc, p, k).data as Float32List);
         // track
         var count = ani["count"];
         for (var i = 0; i < count; i++) {
@@ -78,18 +65,19 @@ class GltfLoader2 {
           channels.forEach((Map ch) {
             var target = ch["target"];
             var path = target["path"];
+            var list = parameters[path];
             if (path == "rotation") {
               var idx = i * 4;
-              keyframe.rotate = new Quaternion.axisAngle(new Vector3(rotation[idx], rotation[idx + 1], rotation[idx + 2]), rotation[idx + 3]);
+              keyframe.rotate = new Quaternion.axisAngle(new Vector3(list[idx], list[idx + 1], list[idx + 2]), list[idx + 3]);
             } else if (path == "scale") {
               var idx = i * 3;
-              keyframe.scaling = new Vector3(scale[idx], scale[idx + 1], scale[idx + 2]);
+              keyframe.scaling = new Vector3(list[idx], list[idx + 1], list[idx + 2]);
             } else if (path == "translation") {
               var idx = i * 3;
-              keyframe.translate = new Vector3(translation[idx], translation[idx + 1], translation[idx + 2]);
+              keyframe.translate = new Vector3(list[idx], list[idx + 1], list[idx + 2]);
             }
           });
-          keyframe.time = time[i];
+          keyframe.time = parameters["TIME"][i];
           track.keyframes.add(keyframe);
         }
 
@@ -119,18 +107,9 @@ class GltfLoader2 {
         });
         var buffer = _getBufferData(doc, v["inverseBindMatrices"]) as Float32List;
         for (var i = 0; i < skeleton.joints.length; i++) {
-          // TODO ???????
-//        skeleton.joints[i]._bindPoseMatrix = new Matrix4.fromBuffer(buffer.buffer, i * 3 * 16);
-          
-          var inverseBindMatrix = new Matrix4.identity();
-          for (var j = 0; j < 16; j++) {
-            inverseBindMatrix[j] = buffer[(i * 16) + j];
-          }
-//          skeleton.joints[i]._inverseBindMatrix = inverseBindMatrix;
-          
+          skeleton.joints[i]._inverseBindMatrix = new Matrix4.fromBuffer(buffer.buffer, buffer.offsetInBytes + i * 4 * 16);
         }
-        // TODO bindShapeMatrix
-        // ...
+        skeleton._bindShapeMatrix = _newMatrix4FromList(v["bindShapeMatrix"]);
         skeleton.buildHierarchy();
         _skeletons[k] = skeleton;
       });
@@ -163,19 +142,12 @@ class GltfLoader2 {
     var skin = _skinOfNode[node.id];
     if (skin != null) {
       var skeleton = _skeletons[skin["skin"]];
-
-      //            skeleton._roots = [];
-      //            skin["skeletons"].forEach((jointName){
-      //              skeleton._roots.add(_resources["Node_${jointName}"]);
-      //            });
-      //            skeleton._roots.forEach((joint) => joint.updateMatrix());
-      //            skeleton.jointMatrices = new Float32List(skeleton.joints.length * 16);
-
       mesh.skeleton = skeleton;
       mesh.animator = new AnimationController(node);
+      mesh.animator.bindPose = false;
       mesh.animator.animations = {};
       mesh.animator.animations["default"] = _animation;
-//      mesh.animator.switchAnimation("default");
+      mesh.animator.switchAnimation("default");
       _animation.skeleton = skeleton;
       mesh.children.forEach((c) => _setupSkeleton(c));
     }
@@ -277,7 +249,7 @@ class GltfLoader2 {
       if (semantics == Semantics.position) {
         // TODO bounding box ?
       }
-      if(type != gl.UNSIGNED_SHORT) type = gl.FLOAT;
+      if (type != gl.UNSIGNED_SHORT) type = gl.FLOAT;
       var vertexBuffer = new VertexBuffer(size, type, 0, 0, count: count, data: _getBufferData(doc, attr), target: view["target"]);
       _resources[key] = vertexBuffer;
       return vertexBuffer;

@@ -2,10 +2,10 @@ part of orange;
 
 
 
-Matrix4 _newMatrix4FromSQT(List s, List r, List t) {
+Matrix4 _newMatrix4FromSQT(List scale, List quaternion, List translation) {
   var m = new Matrix4.zero();
-  m.setFromTranslationRotation(new Vector3.fromFloat32List(_toFloat32List(t)), new Quaternion.fromFloat32List(_toFloat32List(r)));
-  m.scale(s[0].toDouble(), s[1].toDouble(), s[2].toDouble());
+  m.setFromTranslationRotation(_newVec3FromList(translation), _newQuatFromAxisAngle(quaternion));
+  m.scale(scale[0].toDouble(), scale[1].toDouble(), scale[2].toDouble());
   return m;
 }
 
@@ -25,6 +25,10 @@ Float32List _toFloat32List(List l) {
   var result = new Float32List(l.length);
   for (var i = 0; i < l.length; i++) result[i] = l[i].toDouble();
   return result;
+}
+
+Quaternion _newQuatFromAxisAngle(List l) {
+  return new Quaternion.axisAngle(_newVec3FromList(l), l[3].toDouble());
 }
 
 Quaternion _newQuatFromEuler(List l) {

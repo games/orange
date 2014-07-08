@@ -8,7 +8,8 @@ class AnimationController {
   Map<String, Animation> animations;
   Mesh _mesh;
   double _duration = 0.0;
-  Matrix4 _emptyMatrix = new Matrix4.zero();
+  Matrix4 _tempMatrix = new Matrix4.zero();
+  bool bindPose = true;
 
   AnimationController(this._mesh) {
     _mesh.animator = this;
@@ -37,8 +38,12 @@ class AnimationController {
       var pos = lerp(startframe.translate, endframe.translate, percent);
       var rot = slerp(startframe.rotate, endframe.rotate, percent);
       joint._needsUpdateLocalMatrix = false;
-      joint._localMatrix = joint._bindPoseMatrix * _emptyMatrix.setFromTranslationRotation(pos, rot);
-      if(startframe.scaling != null && endframe.scaling != null) {
+      if (bindPose) {
+        joint._localMatrix = joint._bindPoseMatrix * _tempMatrix.setFromTranslationRotation(pos, rot);
+      } else {
+        joint._localMatrix.setFromTranslationRotation(pos, rot);
+      }
+      if (startframe.scaling != null && endframe.scaling != null) {
         var scaling = lerp(startframe.scaling, endframe.scaling, percent);
         joint._localMatrix.scale(scaling);
       }
@@ -53,7 +58,6 @@ class AnimationController {
     return result;
   }
 }
-
 
 
 

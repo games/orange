@@ -140,12 +140,14 @@ class GltfLoader2 {
     if (skin != null) {
       var skeleton = _skeletons[skin["skin"]];
       mesh.skeleton = skeleton;
-      mesh.animator = new AnimationController(node);
-      mesh.animator.bindPose = false;
-      mesh.animator.animations = {};
-      mesh.animator.animations["default"] = _animation;
-      mesh.animator.switchAnimation("default");
-      _animation.skeleton = skeleton;
+      if (_animation != null) {
+        mesh.animator = new AnimationController(node);
+        mesh.animator.bindPose = false;
+        mesh.animator.animations = {};
+        mesh.animator.animations["default"] = _animation;
+        mesh.animator.switchAnimation("default");
+        _animation.skeleton = skeleton;
+      }
       mesh.children.forEach((c) => _setupSkeleton(c));
     }
   }
@@ -225,7 +227,7 @@ class GltfLoader2 {
           }
         });
         child.material = _getMaterial(doc, p["material"]);
-        child.primitive = p["primitive"];
+        child.primitive = p.containsKey("primitive") ? p["primitive"] : gl.TRIANGLES;
         node.add(child);
       });
       _resources[key] = node;
@@ -289,7 +291,7 @@ class GltfLoader2 {
       var values = technique["values"];
       var transparency = values["transparency"];
       if (transparency is num) {
-        material.alpha = transparency;
+        material.alpha = transparency.toDouble();
       }
       var diffuse = values["diffuse"];
       if (diffuse is String) {
@@ -379,7 +381,9 @@ class GltfLoader2 {
 
   _loadBuffer(String name, Map doc) {
     var completer = new Completer();
-    html.HttpRequest.request(_uri.resolve(doc["path"]).toString(), responseType: doc["type"]).then((response) {
+    var type = "arraybuffer";
+    if (doc.containsKey("type")) type = doc["type"];
+    html.HttpRequest.request(_uri.resolve(doc["path"]).toString(), responseType: type).then((response) {
       doc["name"] = name;
       doc["data"] = response.response;
       _resources["Buffer_${name}"] = doc;

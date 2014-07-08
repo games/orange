@@ -7,11 +7,13 @@ class TestGLTFScene extends Scene {
   TestGLTFScene(Camera camera) : super(camera);
 
   List _meshes = [];
+  bool _showBBox = false;
 
   @override
   void enter() {
 
-    var urls = ["models/gltf/monster/monster.json", "models/gltf/duck/duck.json", "models/gltf/SuperMurdoch/SuperMurdoch.json", 
+    var urls = ["models/gltf/monster/monster.json", "models/gltf/keeper_of_the_light/keeper_of_the_light.json", 
+                "models/gltf/duck/duck.json", "models/gltf/SuperMurdoch/SuperMurdoch.json", 
                 "models/gltf/rambler/rambler.json", "models/gltf/wine/wine.json", "models/gltf/marauder/marauder.json", 
                 "models/gltf/monk_male/monk_male.json"];
 
@@ -25,7 +27,19 @@ class TestGLTFScene extends Scene {
       var opt = selector.options[selector.selectedIndex];
       _loadModel(opt.value);
     });
+    
     html.querySelector("#controllers").children.add(selector);
+    
+    var toggleBoundingBox = new html.ButtonElement();
+    toggleBoundingBox.onClick.listen((e) {
+      _meshes.forEach((m) {
+        _showBBox = !_showBBox;
+        m.showBoundingBox = _showBBox;
+        m.showSubBoundingBox = _showBBox;
+      });
+    });
+    toggleBoundingBox.text = "Bounding Box";
+    html.querySelector("#controllers").children.add(toggleBoundingBox);
 
     _loadModel(urls.first);
 
@@ -46,10 +60,12 @@ class TestGLTFScene extends Scene {
     var loader = new GltfLoader2();
     loader.load(graphicsDevice.ctx, url).then((root) {
       _meshes.forEach((m) => remove(m));
+      _meshes.clear();
+      
       add(root);
+      root.showBoundingBox = _showBBox;
+      root.showSubBoundingBox = _showBBox;
       root.scale(0.1);
-      root.showBoundingBox = true;
-      root.showSubBoundingBox = true;
       root.updateMatrix();
       root.boundingInfo = BoundingInfo.compute([root]);
       var box = root.boundingInfo.boundingBox;

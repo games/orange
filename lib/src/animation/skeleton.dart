@@ -15,6 +15,7 @@ class Skeleton {
     jointMatrices = new Float32List(joints.length * 16);
     _roots = [];
     joints.forEach((joint) {
+      if(joint.parent != null) return;
       if(joint.parentId == -1) {
         _roots.add(joint);
       } else {

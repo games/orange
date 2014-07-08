@@ -57,30 +57,27 @@ class GltfLoader2 {
         track.keyframes = [];
 
         var parameters = {};
-        ani["parameters"].forEach((k, p) => parameters[k] = _getAttribute(doc, p, k).data as Float32List);
+        ani["parameters"].forEach((k, p) => parameters[k] = _getAttribute(doc, p, k));
         // track
         var count = ani["count"];
         for (var i = 0; i < count; i++) {
           var keyframe = new Keyframe();
           channels.forEach((Map ch) {
-            var target = ch["target"];
-            var path = target["path"];
-            var list = parameters[path];
+            var path = ch["target"]["path"];
+            var buffer = parameters[path] as VertexBuffer;
+            var list = buffer.data as Float32List;
+            var idx = i * buffer.size;
             if (path == "rotation") {
-              var idx = i * 4;
               keyframe.rotate = new Quaternion.axisAngle(new Vector3(list[idx], list[idx + 1], list[idx + 2]), list[idx + 3]);
             } else if (path == "scale") {
-              var idx = i * 3;
               keyframe.scaling = new Vector3(list[idx], list[idx + 1], list[idx + 2]);
             } else if (path == "translation") {
-              var idx = i * 3;
               keyframe.translate = new Vector3(list[idx], list[idx + 1], list[idx + 2]);
             }
           });
-          keyframe.time = parameters["TIME"][i];
+          keyframe.time = parameters["TIME"].data[i];
           track.keyframes.add(keyframe);
         }
-
         animation.tracks.add(track);
       });
       if (animation.tracks.length > 0) {

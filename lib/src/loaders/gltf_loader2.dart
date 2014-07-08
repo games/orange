@@ -56,32 +56,43 @@ class GltfLoader2 {
         track.jointId = joint.jointId;
         track.keyframes = [];
 
-        var parameters = {};
-        ani["parameters"].forEach((k, p) => parameters[k] = _getAttribute(doc, p, k));
+        Float32List rotation;
+        Float32List scale;
+        Float32List translation;
+        Float32List time;
+        ani["parameters"].forEach((k, p) {
+          if (k == "rotation") {
+            rotation = _getAttribute(doc, p, k).data as Float32List;
+          } else if (k == "scale") {
+            scale = _getAttribute(doc, p, k).data as Float32List;
+          } else if (k == "translation") {
+            translation = _getAttribute(doc, p, k).data as Float32List;
+          } else if (k == "TIME") {
+            time = _getAttribute(doc, p, k).data as Float32List;
+          }
+        });
+        // track
         var count = ani["count"];
         for (var i = 0; i < count; i++) {
           var keyframe = new Keyframe();
           channels.forEach((Map ch) {
-            var sampler = ch["sampler"];
             var target = ch["target"];
             var path = target["path"];
-            var buffer = parameters[path] as VertexBuffer;
-            var list = buffer.data as Float32List;
             if (path == "rotation") {
-              keyframe.rotate = new Quaternion.axisAngle(new Vector3(list[i], list[i + 1], list[i + 2]), list[i + 3]);
+              var idx = i * 4;
+              keyframe.rotate = new Quaternion.axisAngle(new Vector3(rotation[idx], rotation[idx + 1], rotation[idx + 2]), rotation[idx + 3]);
             } else if (path == "scale") {
-              keyframe.scaling = new Vector3(list[i], list[i + 1], list[i + 2]);
+              var idx = i * 3;
+              keyframe.scaling = new Vector3(scale[idx], scale[idx + 1], scale[idx + 2]);
             } else if (path == "translation") {
-              keyframe.translate = new Vector3(list[i], list[i + 1], list[i + 2]);
+              var idx = i * 3;
+              keyframe.translate = new Vector3(translation[idx], translation[idx + 1], translation[idx + 2]);
             }
           });
-          // time
-          var buffer = parameters["TIME"] as VertexBuffer;
-          var list = buffer.data as Float32List;
-          keyframe.time = list[i];
-
+          keyframe.time = time[i];
           track.keyframes.add(keyframe);
         }
+
         animation.tracks.add(track);
       });
       if (animation.tracks.length > 0) {
@@ -109,12 +120,14 @@ class GltfLoader2 {
         var buffer = _getBufferData(doc, v["inverseBindMatrices"]) as Float32List;
         for (var i = 0; i < skeleton.joints.length; i++) {
           // TODO ???????
-//          skeleton.joints[i]._bindPoseMatrix = new Matrix4.fromBuffer(buffer.buffer, i * 4 * 16);
+//        skeleton.joints[i]._bindPoseMatrix = new Matrix4.fromBuffer(buffer.buffer, i * 3 * 16);
+          
           var inverseBindMatrix = new Matrix4.identity();
           for (var j = 0; j < 16; j++) {
             inverseBindMatrix[j] = buffer[(i * 16) + j];
           }
 //          skeleton.joints[i]._inverseBindMatrix = inverseBindMatrix;
+          
         }
         // TODO bindShapeMatrix
         // ...
@@ -150,14 +163,14 @@ class GltfLoader2 {
     var skin = _skinOfNode[node.id];
     if (skin != null) {
       var skeleton = _skeletons[skin["skin"]];
-        
-//            skeleton._roots = [];
-//            skin["skeletons"].forEach((jointName){
-//              skeleton._roots.add(_resources["Node_${jointName}"]);
-//            });
-//            skeleton._roots.forEach((joint) => joint.updateMatrix());
-//            skeleton.jointMatrices = new Float32List(skeleton.joints.length * 16);
-            
+
+      //            skeleton._roots = [];
+      //            skin["skeletons"].forEach((jointName){
+      //              skeleton._roots.add(_resources["Node_${jointName}"]);
+      //            });
+      //            skeleton._roots.forEach((joint) => joint.updateMatrix());
+      //            skeleton.jointMatrices = new Float32List(skeleton.joints.length * 16);
+
       mesh.skeleton = skeleton;
       mesh.animator = new AnimationController(node);
       mesh.animator.animations = {};
@@ -258,50 +271,27 @@ class GltfLoader2 {
     } else {
       var attr = doc["accessors"][name];
       var view = _getBufferView(doc, attr["bufferView"]);
-      var size = 3,
-          type = gl.FLOAT,
-          stride = attr["byteStride"],
-          offset = attr["byteOffset"],
+      var type = attr["type"],
+          size = _sizeOfType(type),
           count = attr["count"];
-      switch (attr["type"]) {
-        case gl.FLOAT:
-          size = 1;
-          break;
-        case gl.FLOAT_VEC2:
-          size = 2;
-          break;
-        case gl.FLOAT_VEC3:
-          size = 3;
-          break;
-        case gl.FLOAT_VEC4:
-          size = 4;
-          break;
-        case gl.FLOAT_MAT2:
-          size = 4;
-          break;
-        case gl.FLOAT_MAT3:
-          size = 9;
-          break;
-        case gl.FLOAT_MAT4:
-          size = 16;
-          break;
-        case gl.UNSIGNED_SHORT:
-          size = 1;
-          type = gl.UNSIGNED_SHORT;
-          break;
-      }
       if (semantics == Semantics.position) {
         // TODO bounding box ?
       }
-      var data;
-      if (type == gl.FLOAT) {
-        data = new Float32List.view(view["data"], view["byteOffset"] + offset, count * size);
-      } else {
-        data = new Uint16List.view(view["data"], view["byteOffset"] + offset, count);
-      }
-      var vertexBuffer = new VertexBuffer(size, type, 0, 0, count: count, data: data, target: view["target"]);
+      if(type != gl.UNSIGNED_SHORT) type = gl.FLOAT;
+      var vertexBuffer = new VertexBuffer(size, type, 0, 0, count: count, data: _getBufferData(doc, attr), target: view["target"]);
       _resources[key] = vertexBuffer;
       return vertexBuffer;
+    }
+  }
+
+  TypedData _getBufferData(Map root, Map desc) {
+    var view = _getBufferView(root, desc["bufferView"]);
+    var offset = desc["byteOffset"],
+        count = desc["count"];
+    if (desc["type"] == gl.UNSIGNED_SHORT) {
+      return new Uint16List.view(view["data"], view["byteOffset"] + offset, count);
+    } else {
+      return new Float32List.view(view["data"], view["byteOffset"] + offset, count * _sizeOfType(desc["type"]));
     }
   }
 
@@ -316,46 +306,6 @@ class GltfLoader2 {
       bv["data"] = bf["data"];
       _resources[key] = bv;
       return bv;
-    }
-  }
-
-  TypedData _getBufferData(Map root, Map desc) {
-    var view = _getBufferView(root, desc["bufferView"]);
-    var size = 3,
-        type = gl.FLOAT,
-        offset = desc["byteOffset"],
-        count = desc["count"];
-    switch (desc["type"]) {
-      case gl.FLOAT:
-        size = 1;
-        break;
-      case gl.FLOAT_VEC2:
-        size = 2;
-        break;
-      case gl.FLOAT_VEC3:
-        size = 3;
-        break;
-      case gl.FLOAT_VEC4:
-        size = 4;
-        break;
-      case gl.FLOAT_MAT2:
-        size = 4;
-        break;
-      case gl.FLOAT_MAT3:
-        size = 9;
-        break;
-      case gl.FLOAT_MAT4:
-        size = 16;
-        break;
-      case gl.UNSIGNED_SHORT:
-        size = 1;
-        type = gl.UNSIGNED_SHORT;
-        break;
-    }
-    if (type == gl.FLOAT) {
-      return new Float32List.view(view["data"], view["byteOffset"] + offset, count * size);
-    } else {
-      return new Uint16List.view(view["data"], view["byteOffset"] + offset, count);
     }
   }
 
@@ -467,6 +417,39 @@ class GltfLoader2 {
       completer.complete(doc);
     });
     return completer.future;
+  }
+
+  int _sizeOfType(int type) {
+    var size = 0;
+    switch (type) {
+      case gl.FLOAT:
+        size = 1;
+        break;
+      case gl.FLOAT_VEC2:
+        size = 2;
+        break;
+      case gl.FLOAT_VEC3:
+        size = 3;
+        break;
+      case gl.FLOAT_VEC4:
+        size = 4;
+        break;
+      case gl.FLOAT_MAT2:
+        size = 8;
+        break;
+      case gl.FLOAT_MAT3:
+        size = 12;
+        break;
+      case gl.FLOAT_MAT4:
+        size = 16;
+        break;
+      case gl.UNSIGNED_SHORT:
+        size = 1;
+        break;
+      default:
+        throw new ArgumentError("Not support type '${type}'");
+    }
+    return size;
   }
 
 }

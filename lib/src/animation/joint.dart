@@ -22,6 +22,6 @@ class Joint extends Node {
   
   @override
   String toString() {
-    return "Joint:$id, $jointId";
+    return "Joint:'$id', ID:'$jointId', Parent:'$parentId'";
   }
 }

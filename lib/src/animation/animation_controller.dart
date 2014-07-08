@@ -38,6 +38,10 @@ class AnimationController {
       var rot = slerp(startframe.rotate, endframe.rotate, percent);
       joint._needsUpdateLocalMatrix = false;
       joint._localMatrix = joint._bindPoseMatrix * _emptyMatrix.setFromTranslationRotation(pos, rot);
+      if(startframe.scaling != null && endframe.scaling != null) {
+        var scaling = lerp(startframe.scaling, endframe.scaling, percent);
+        joint._localMatrix.scale(scaling);
+      }
     });
     skeleton._dirtyJoints = true;
     _mesh.skeleton = skeleton;

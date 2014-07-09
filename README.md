@@ -2,8 +2,6 @@
 
 Is a WebGL based 3D engine for my personal experiments.
 
-Thanks [BabylonJS](https://github.com/BabylonJS/)
-
 ### Features ###
 - Skinning Animation
 - Lighting (Direct, Point, Spotlight, Hemispherics)
@@ -25,6 +23,7 @@ Thanks [BabylonJS](https://github.com/BabylonJS/)
 - Water
 - Particle System
 - Physically based render (not finish yet)
+- Selection octrees
 
 
 ### TODO ###
@@ -41,6 +40,11 @@ Thanks [BabylonJS](https://github.com/BabylonJS/)
 - New physics plugin [ammo.js](https://github.com/kripken/ammo.js)
 
 
+### Thanks ###
+- [BabylonJS](https://github.com/BabylonJS/)
+- [Cannon.js](https://github.com/schteppe/cannon.js)
+- [vector_math](http://pub.dartlang.org/packages/vector_math)
+- [GLTF](https://github.com/KhronosGroup/glTF)
 
 
 

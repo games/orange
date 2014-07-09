@@ -49,9 +49,7 @@ part 'src/animation/skeleton.dart';
 part 'src/animation/animation.dart';
 part 'src/animation/track.dart';
 
-part 'src/loaders/wgl_loader.dart';
 part 'src/loaders/gltf_loader.dart';
-part 'src/loaders/gltf_loader2.dart';
 part 'src/loaders/ogre_loader.dart';
 part 'src/loaders/obj_loader.dart';
 part 'src/loaders/babylon_loader.dart';

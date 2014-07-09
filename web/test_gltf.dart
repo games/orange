@@ -12,8 +12,10 @@ class TestGLTFScene extends Scene {
   @override
   void enter() {
 
-    var urls = ["models/gltf/monster/monster.json", "models/gltf/keeper_of_the_light/keeper_of_the_light.json", "models/gltf/duck/duck.json", "models/gltf/SuperMurdoch/SuperMurdoch.json",
-        "models/gltf/rambler/rambler.json", "models/gltf/wine/wine.json", "models/gltf/marauder/marauder.json", "models/gltf/monk_male/monk_male.json"];
+    var urls = ["models/gltf/monster/monster.json", "models/gltf/keeper_of_the_light/keeper_of_the_light.json", 
+                "models/gltf/duck/duck.json", "models/gltf/SuperMurdoch/SuperMurdoch.json",
+                "models/gltf/rambler/rambler.json", "models/gltf/wine/wine.json", "models/gltf/marauder/marauder.json", 
+                "models/gltf/monk_male/monk_male.json"];
 
     var selector = new html.SelectElement();
     urls.forEach((u) {
@@ -55,7 +57,7 @@ class TestGLTFScene extends Scene {
   }
 
   void _loadModel(String url) {
-    var loader = new GltfLoader2();
+    var loader = new GltfLoader();
     loader.load(graphicsDevice.ctx, url).then((root) {
       _meshes.forEach((m) => remove(m));
       _meshes.clear();

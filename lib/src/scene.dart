@@ -75,13 +75,13 @@ class Scene implements Disposable {
     _physicsEngine = null;
   }
   
-  Octree<Mesh> updateSelectionOctree({int maxCapacity: 64, int maxDepth: 2}) {
+  Octree<Mesh> updateSelectionOctree({int maxBlockCapacity: 64, int maxDepth: 2}) {
     if(_selectionOctree == null) {
-      _selectionOctree = new Octree(Octree.MeshesBlockCreation, maxBlockCapacity: maxCapacity, maxDepth: maxDepth);
+      _selectionOctree = new Octree(Octree.MeshesBlockCreation, maxBlockCapacity: maxBlockCapacity, maxDepth: maxDepth);
     }
     _meshes.forEach((m) => m.updateMatrix());
-    var bi = BoundingInfo.compute(_meshes);
-    _selectionOctree.update(bi.minimum, bi.maximum, _meshes);
+    var bounding = BoundingInfo.compute(_meshes);
+    _selectionOctree.update(bounding.minimum, bounding.maximum, _meshes);
     return _selectionOctree;
   }
 

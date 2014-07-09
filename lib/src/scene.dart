@@ -15,8 +15,12 @@ class Scene implements Disposable {
   num fogEnd = 1000.0;
 
   Plane clipPlane;
+  Frustum frustum;
+  Octree<Mesh> _selectionOctree;
+  Octree<Mesh> get selectionOctree => _selectionOctree;
 
   List<Node> nodes = [];
+  List<Mesh> _meshes = [];
   List<Mesh> _opaqueMeshes = [];
   List<Mesh> _alphaTestMeshes = [];
   List<Mesh> _transparentMeshes = [];
@@ -70,6 +74,16 @@ class Scene implements Disposable {
     _physicsEngine.dispose();
     _physicsEngine = null;
   }
+  
+  Octree<Mesh> updateSelectionOctree({int maxCapacity: 64, int maxDepth: 2}) {
+    if(_selectionOctree == null) {
+      _selectionOctree = new Octree(Octree.MeshesBlockCreation, maxBlockCapacity: maxCapacity, maxDepth: maxDepth);
+    }
+    _meshes.forEach((m) => m.updateMatrix());
+    var bi = BoundingInfo.compute(_meshes);
+    _selectionOctree.update(bi.minimum, bi.maximum, _meshes);
+    return _selectionOctree;
+  }
 
   void add(Node node) {
     node.scene = this;
@@ -79,6 +93,7 @@ class Scene implements Disposable {
       } else {
         _transparentMeshes.add(node);
       }
+      _meshes.add(node);
     } else if (node is Light) {
       _lights.add(node);
     }
@@ -91,6 +106,8 @@ class Scene implements Disposable {
   void remove(Node node) {
     if (node is Mesh) {
       _opaqueMeshes.remove(node);
+      _transparentMeshes.remove(node);
+      _meshes.remove(node);
       if (_physicsEngine != null && node._physicImpostor != PhysicsEngine.NoImpostor) _physicsEngine._unregisterMesh(node);
     } else if (node is Light) {
       _lights.remove(node);

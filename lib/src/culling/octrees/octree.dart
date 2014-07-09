@@ -9,15 +9,17 @@ abstract class OctreeContainer<T> {
 class Octree<T> implements OctreeContainer {
 
   List<OctreeBlock<T>> blocks;
-  List<T> dynamicContent;
+  List<T> dynamicContent = [];
 
   int maxBlockCapacity;
   int maxDepth;
   List<T> _selectionContent;
   OctreeBlockCreation<T> _blockCreation;
+  
+  List<T> get selectionContent => _selectionContent;
 
   Octree(this._blockCreation, {this.maxBlockCapacity: 64, this.maxDepth: 2}) {
-    _selectionContent = new List(1024);
+    _selectionContent = new List();
   }
 
   void update(Vector3 worldMin, Vector3 worldMax, List<T> entries) {
@@ -68,8 +70,8 @@ class Octree<T> implements OctreeContainer {
     for (var x = 0; x < 2; x++) {
       for (var y = 0; y < 2; y++) {
         for (var z = 0; z < 2; z++) {
-          var localMin = worldMin + blockSize * new Vector3(x.toDouble(), y.toDouble(), z.toDouble());
-          var localMax = worldMin + blockSize * new Vector3(x + 1.0, y + 1.0, z + 1.0);
+          var localMin = worldMin + new Vector3(blockSize.x * x, blockSize.y * y, blockSize.z * z);
+          var localMax = worldMin + new Vector3(blockSize.x * (x + 1.0), blockSize.y * (y + 1.0), blockSize.z * (z + 1.0));
           var block = new OctreeBlock(localMin, localMax, maxBlockCapacity, currentDepth + 1, maxDepth, creation);
           block.addEntries(entries);
           target.blocks.add(block);

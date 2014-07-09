@@ -22,6 +22,7 @@ part 'test_particles.dart';
 part 'test_obj_loader.dart';
 part 'test_physically_based_render.dart';
 part 'test_physically_based_render2.dart';
+part 'test_octree.dart';
 
 
 
@@ -52,9 +53,10 @@ void main() {
                 new TestParticles(camera),
                 new TestObjLoader(camera),
                 new TestPhysicallyBasedRender(camera),
-                new TestPhysicallyBasedRender2(camera)];
+                new TestPhysicallyBasedRender2(camera),
+                new TestOctree(camera)];
   
-  var i = 5;//scenes.length - 1;
+  var i = scenes.length - 1;
   
   orange.enter(scenes[i]);
   orange.run();

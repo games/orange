@@ -70,7 +70,8 @@ class Orange {
       _scene._animationRatio = interval * (60.0 / 1000.0);
       _scene.enterFrame(elapsed, interval);
       camera.update();
-      // .camera.updateMatrix();
+      if(_scene.frustum == null) _scene.frustum = new Frustum();
+      _scene.frustum.setFromMatrix(camera.viewProjectionMatrix);
 
       //physics
       if (_scene._physicsEngine != null) {
@@ -84,8 +85,14 @@ class Orange {
           _renderTargets.add(light.shadowRenderer.shadowMap);
         }
       });
-
-      _prepare(_scene.nodes, interval);
+      
+      //octree
+      var nodes = _scene.nodes;
+      if(_scene._selectionOctree != null) {
+        nodes = _scene._selectionOctree.select(_scene.frustum.planes);
+      }
+      
+      _prepare(nodes, interval);
 
       _activeParticleSystems.clear();
       scene._particleSystemds.forEach((sys) {

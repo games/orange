@@ -92,6 +92,8 @@ part 'src/physics/plugins/cannonjs.dart';
 part 'src/culling/bounding_info.dart';
 part 'src/culling/bounding_box.dart';
 part 'src/culling/bounding_sphere.dart';
+part 'src/culling/octrees/octree.dart';
+part 'src/culling/octrees/octree_block.dart';
 
 part 'src/rendering/shadow_renderer.dart';
 part 'src/rendering/bounding_box_renderer.dart';

@@ -2,7 +2,7 @@
 
 Is a WebGL based 3D engine for my personal experiments.
 
-
+Thanks [BabylonJS](https://github.com/BabylonJS/)
 
 ### Features ###
 - Skinning Animation

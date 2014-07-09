@@ -104,7 +104,8 @@ class StandardMaterial extends Material {
       // TODO cache ??
       if (technique.pass.shader != null) technique.pass.shader.dispose();
       technique.pass.shader = new Shader(renderer.ctx, SHADER_STANDARD_VS, SHADER_STANDARD_FS, common: finalDefines);
-      return technique.pass.shader.ready;
+      // every time we create a new Shader, should use it in next frame.
+      return false;
     }
     return true;
   }

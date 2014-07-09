@@ -9,7 +9,7 @@ class AnimationController {
   Mesh _mesh;
   double _duration = 0.0;
   Matrix4 _tempMatrix = new Matrix4.zero();
-  bool bindPose = true;
+  bool useBindPose = true;
 
   AnimationController(this._mesh) {
     _mesh.animator = this;
@@ -26,7 +26,9 @@ class AnimationController {
     _duration = _duration % _animation.length;
     Keyframe startframe, endframe;
     _animation.tracks.forEach((track) {
-      var joint = skeleton.joints[track.jointId];
+      var joint = skeleton.find(track);
+      if (joint == null) return;
+
       for (var i = 0; i < track.keyframes.length - 1; i++) {
         startframe = track.keyframes[i];
         endframe = track.keyframes[i + 1];
@@ -38,7 +40,7 @@ class AnimationController {
       var pos = lerp(startframe.translate, endframe.translate, percent);
       var rot = slerp(startframe.rotate, endframe.rotate, percent);
       joint._needsUpdateLocalMatrix = false;
-      if (bindPose) {
+      if (useBindPose) {
         joint._localMatrix = joint._bindPoseMatrix * _tempMatrix.setFromTranslationRotation(pos, rot);
       } else {
         joint._localMatrix.setFromTranslationRotation(pos, rot);
@@ -58,9 +60,6 @@ class AnimationController {
     return result;
   }
 }
-
-
-
 
 
 

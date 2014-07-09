@@ -142,7 +142,7 @@ class GltfLoader2 {
       mesh.skeleton = skeleton;
       if (_animation != null) {
         mesh.animator = new AnimationController(node);
-        mesh.animator.bindPose = false;
+        mesh.animator.useBindPose = false;
         mesh.animator.animations = {};
         mesh.animator.animations["default"] = _animation;
         mesh.animator.switchAnimation("default");

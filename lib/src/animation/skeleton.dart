@@ -8,31 +8,46 @@ class Skeleton {
   List<Joint> joints;
   Float32List jointMatrices;
   bool _dirtyJoints = true;
-  
+
   Matrix4 _bindShapeMatrix;
-  
+
+  Joint find(Track track) {
+    if (track.jointId != null) {
+      return joints[track.jointId];
+    } else if (track.jointName != null) {
+      for (var i = 0; i < joints.length; i++) {
+        var joint = joints[i];
+        if (joint.name == track.jointName) {
+          track.jointId = i;
+          return joint;
+        }
+      }
+    }
+    return null;
+  }
+
   buildHierarchy() {
     jointMatrices = new Float32List(joints.length * 16);
     _roots = [];
     joints.forEach((joint) {
-      if(joint.parent != null) return;
-      if(joint.parentId == -1) {
+      if (joint.parent != null) return;
+      if (joint.parentId == -1) {
         _roots.add(joint);
       } else {
         joints[joint.parentId].add(joint);
       }
     });
     _roots.forEach((joint) => joint.updateMatrix());
-    if(_bindShapeMatrix == null) _bindShapeMatrix = new Matrix4.identity();
+    if (_bindShapeMatrix == null) _bindShapeMatrix = new Matrix4.identity();
   }
-  
+
   updateMatrix() {
-    if(_dirtyJoints) {
+    if (_dirtyJoints) {
       _roots.forEach((joint) => joint.updateMatrix());
-      for(var i = 0; i < joints.length; i++) {
+      for (var i = 0; i < joints.length; i++) {
         var joint = joints[i];
         var mat = joint.worldMatrix * joint._inverseBindMatrix * _bindShapeMatrix;
-        for(var j = 0; j < 16; j++) {
+        for (var j = 0; j < 16; j++) {
           jointMatrices[i * 16 + j] = mat[j];
         }
       }

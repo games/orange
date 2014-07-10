@@ -23,6 +23,7 @@ part 'test_obj_loader.dart';
 part 'test_physically_based_render.dart';
 part 'test_physically_based_render2.dart';
 part 'test_octree.dart';
+part 'test_babylon_wcafe.dart';
 
 
 
@@ -54,7 +55,8 @@ void main() {
                 new TestObjLoader(camera),
                 new TestPhysicallyBasedRender(camera),
                 new TestPhysicallyBasedRender2(camera),
-                new TestOctree(camera)];
+                new TestOctree(camera),
+                new TestBabylonWCafeScene(camera)];
   
   var i = scenes.length - 1;
   

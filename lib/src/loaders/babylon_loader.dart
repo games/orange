@@ -34,6 +34,7 @@ class BabylonLoader {
 
     var cameras = _parseCamera(json);
     scene.camera = cameras[json["activeCamera"]];
+    scene.cameras = cameras;
 
     var lights = _parseLights(json);
     lights.forEach(scene.add);
@@ -48,6 +49,11 @@ class BabylonLoader {
 
     _parseShadowMaps(json);
 
+    // skeletons
+    // particleSystems
+    scene._particleSystemds = _parseParticleSystems(json, scene);
+
+    // lensFlareSystems
 
     return scene;
   }
@@ -75,8 +81,10 @@ class BabylonLoader {
         mesh.rotation = _newQuatFromList(m["rotationQuaternion"]);
       }
       mesh.scaling = _newVec3FromList(m["scaling"]);
-      // TODO localMatrix, pivotMatrix, infiniteDistance, showSubMeshesBoundingBox, isVisible, pickable
+      // TODO localMatrix, pivotMatrix, infiniteDistance, pickable
+      mesh.visible = m["isVisible"];
       mesh.showBoundingBox = or(m["showBoundingBox"], false);
+      mesh.showSubBoundingBox = or(m["showSubMeshesBoundingBox"], false);
       mesh.receiveShadows = or(m["receiveShadows"], false);
       if (m.containsKey("physicsImpostor")) {
         if (!scene.physicsEnabled) scene.enablePhysics();
@@ -173,6 +181,7 @@ class BabylonLoader {
         "flip": true
       });
     }
+    texture.name = desc["name"];
     texture.level = desc["level"].toDouble();
     texture.hasAlpha = or(desc["hasAlpha"], false);
     texture.coordinatesMode = desc["coordinatesMode"];
@@ -188,6 +197,7 @@ class BabylonLoader {
     texture.wrapU = desc["wrapU"].toDouble();
     texture.wrapV = desc["wrapV"].toDouble();
     texture.coordinatesIndex = desc["coordinatesIndex"];
+    // TODO animations of texture
     return texture;
   }
 
@@ -226,7 +236,8 @@ class BabylonLoader {
         light.angle = l["angle"].toDouble();
         light.exponent = l["exponent"].toDouble();
       } else if (type == 3) {
-        return;
+        light = new HemisphericLight(0x0);
+        light.groundColor = new Color.fromList(l["groundColor"]);
       }
       light.id = l["id"];
       light.position = _newVec3FromList(l["position"]);
@@ -244,6 +255,7 @@ class BabylonLoader {
     var aspect = _ctx.canvas.width / _ctx.canvas.height;
     json["cameras"].forEach((c) {
       var camera = new PerspectiveCamera(aspect, near: c["minZ"].toDouble(), far: c["maxZ"].toDouble(), fov: c["fov"].toDouble());
+      camera.name = c["name"];
       camera.position = _newVec3FromList(c["position"]);
       if (c["target"] != null) {
         camera.lookAt(_newVec3FromList(c["target"]));
@@ -252,6 +264,45 @@ class BabylonLoader {
       cameras[c["name"]] = camera;
     });
     return cameras;
+  }
+
+  List<ParticleSystem> _parseParticleSystems(Map json, Scene scene) {
+    var list = json["particleSystems"];
+    if(list == null) return [];
+    
+    var result = [];
+    list.forEach((Map sys) {
+      var emitter = _resources["Mesh_${sys["emitterId"]}"]["mesh"];
+      var particleSystem = new ParticleSystem("particle#${sys["emitterId"]}", sys["capacity"], scene);
+      if (sys["textureName"] != null) {
+        particleSystem.particleTexture = Texture.load(_ctx, {
+          "path": _uri.resolve(sys["textureName"]).toString(),
+          "flip": true
+        });
+      }
+      particleSystem.minAngularSpeed = sys["minAngularSpeed"].toDouble();
+      particleSystem.maxAngularSpeed = sys["maxAngularSpeed"].toDouble();
+      particleSystem.minSize = sys["minSize"].toDouble();
+      particleSystem.maxSize = sys["maxSize"].toDouble();
+      particleSystem.minLifeTime = sys["minLifeTime"].toDouble();
+      particleSystem.maxLifeTime = sys["maxLifeTime"].toDouble();
+      particleSystem.emitter = emitter;
+      particleSystem.emitRate = sys["emitRate"].toDouble();
+      particleSystem.minEmitBox = _newVec3FromList(sys["minEmitBox"]);
+      particleSystem.maxEmitBox = _newVec3FromList(sys["maxEmitBox"]);
+      particleSystem.gravity = _newVec3FromList(sys["gravity"]);
+      particleSystem.direction1 = _newVec3FromList(sys["direction1"]);
+      particleSystem.direction1 = _newVec3FromList(sys["direction1"]);
+      particleSystem.color1 = new Color.fromList(sys["color1"]);
+      particleSystem.color2 = new Color.fromList(sys["color2"]);
+      particleSystem.colorDead = new Color.fromList(sys["colorDead"]);
+      particleSystem.updateSpeed = sys["updateSpeed"].toDouble();
+      particleSystem.targetStopDuration = sys["targetStopFrame"].toDouble();
+      particleSystem.textureMask = new Color.fromList(sys["textureMask"]);
+      particleSystem.blendMod = sys["blendMode"];
+      result.add(particleSystem);
+    });
+    return result;
   }
 
 

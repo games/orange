@@ -43,6 +43,8 @@ class Scene implements Disposable {
   Orange engine;
   GraphicsDevice get graphicsDevice => Orange.instance.graphicsDevice;
   Camera camera;
+  // TODO
+  Map<String, Camera> cameras;
   Color backgroundColor = new Color.fromHex(0x84A6EE);
   Color ambientColor = new Color.fromHex(0x0);
 

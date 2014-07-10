@@ -47,7 +47,7 @@ class Orange {
   _prepare(List<Node> nodes, num interval) {
     nodes.forEach((node) {
       node.updateMatrix(false);
-      if (node is Mesh) {
+      if (node is Mesh && node.enabled && node.visible && node.visibility > 0) {
         if (node.animator != null) node.animator.evaluate(interval);
         if (node.material != null) {
           _renderGroup.register(node);

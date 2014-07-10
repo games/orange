@@ -20,7 +20,7 @@ class Texture implements Disposable {
   static int WRAP_ADDRESSMODE = 1;
   static int MIRROR_ADDRESSMODE = 2;
 
-
+  String name;
   String source;
   gl.Texture data;
   int format;

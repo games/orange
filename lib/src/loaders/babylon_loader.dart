@@ -240,7 +240,7 @@ class BabylonLoader {
         light.groundColor = new Color.fromList(l["groundColor"]);
       }
       light.id = l["id"];
-      light.position = _newVec3FromList(l["position"]);
+      if(l["position"] != null) light.position = _newVec3FromList(l["position"]);
       light.intensity = l["intensity"].toDouble();
       light.diffuse = new Color.fromList(l["diffuse"]);
       light.specular = new Color.fromList(l["specular"]);

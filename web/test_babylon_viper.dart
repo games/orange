@@ -11,9 +11,14 @@ class TestBabylonViperScene extends Scene {
 
     var loader = new BabylonLoader();
     loader.load(graphicsDevice, "models/babylon/Viper/Viper.babylon", new BabylonViperScene()).then((s) {
-      if (s.camera == null) {
-        s.camera = camera;
-      }
+//      if (s.camera == null) {
+//        s.camera = camera;
+//      } else {
+//        var controller = camera.controller;
+//        camera.controller.detach();
+//        controller.attach(s.camera, controller.element);
+//      }
+      s.camera = camera;
       engine.enter(s);
     });
   }

@@ -91,6 +91,11 @@ class BabylonLoader {
       }
       mesh.scaling = _newVec3FromList(m["scaling"]);
       // TODO localMatrix, pivotMatrix, infiniteDistance, pickable
+      if(m["localMatrix"] != null) {
+        mesh._pivotMatrix = _newMatrix4FromList(m["localMatrix"]);
+      } else if(m["pivotMatrix"] != null) {
+        mesh._pivotMatrix = _newMatrix4FromList(m["pivotMatrix"]);
+      }
       mesh.enabled = or(m["isEnabled"], true);
       mesh.visible = m["isVisible"];
       mesh.showBoundingBox = or(m["showBoundingBox"], false);

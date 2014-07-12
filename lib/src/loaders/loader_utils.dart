@@ -40,3 +40,20 @@ Quaternion _newQuatFromEuler(List l) {
 Quaternion _newQuatFromList(List l) {
   return new Quaternion(l[0].toDouble(), l[1].toDouble(), l[2].toDouble(), l[3].toDouble());
 }
+
+Plane _newPlaneFromList(List l) {
+  return new Plane.components(l[0].toDouble(), l[1].toDouble(), l[2].toDouble(), l[3].toDouble());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

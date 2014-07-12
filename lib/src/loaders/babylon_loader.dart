@@ -31,22 +31,27 @@ class BabylonLoader {
     scene.backgroundColor = new Color.fromList(json["clearColor"]);
     scene.ambientColor = new Color.fromList(json["ambientColor"]);
     scene._gravity = _newVec3FromList(json["gravity"]);
+    // fog
+    if(json["fogMode"] != null && json["fogMode"] != 0) {
+      scene.fogMode = json["fogMode"];
+      scene.fogColor = new Color.fromList(json["fogColor"]);
+      scene.fogStart = json["fogStart"];
+      scene.fogEnd = json["fogEnd"];
+      scene.fogDensity = json["fogDensity"];
+    }
 
-    var cameras = _parseCamera(json);
-    scene.camera = cameras[json["activeCameraID"]];
-    scene.cameras = cameras;
-
-    var lights = _parseLights(json);
-    lights.forEach(scene.add);
+    _parseLights(json).forEach(scene.add);
 
     _parseMaterials(json);
 
     _parseGeometries(json);
 
-    var meshes = _parseMeshes(json, scene);
-    _buildHierarchy(meshes);
-    meshes.forEach(scene.add);
+    _buildHierarchy(_parseMeshes(json, scene)).forEach(scene.add);
 
+    var cameras = _parseCamera(json);
+    scene.camera = cameras[json["activeCameraID"]];
+    scene.cameras = cameras;
+    
     _parseShadowMaps(json);
 
     // skeletons
@@ -58,15 +63,19 @@ class BabylonLoader {
     return scene;
   }
 
-  void _buildHierarchy(List<Mesh> meshes) {
+  List<Mesh> _buildHierarchy(List<Mesh> meshes) {
+    var roots = [];
     meshes.forEach((mesh) {
       var data = _resources["Mesh_${mesh.id}"];
       var parentId = data["parentId"];
       if (parentId != null) {
         var parent = _resources["Mesh_${parentId}"]["mesh"] as Mesh;
         parent.add(mesh);
+      } else {
+        roots.add(mesh);
       }
     });
+    return roots;
   }
 
   List<Mesh> _parseMeshes(Map json, Scene scene) {
@@ -82,11 +91,13 @@ class BabylonLoader {
       }
       mesh.scaling = _newVec3FromList(m["scaling"]);
       // TODO localMatrix, pivotMatrix, infiniteDistance, pickable
+      mesh.enabled = or(m["isEnabled"], true);
       mesh.visible = m["isVisible"];
       mesh.showBoundingBox = or(m["showBoundingBox"], false);
       mesh.showSubBoundingBox = or(m["showSubMeshesBoundingBox"], false);
       mesh.receiveShadows = or(m["receiveShadows"], false);
-      if (m.containsKey("physicsImpostor")) {
+      mesh.billboardMode = m["billboardMode"];
+      if (m["physicsImpostor"] != null) {
         if (!scene.physicsEnabled) scene.enablePhysics();
         mesh.physicsMass = or(m["physicsMass"], 0.0).toDouble();
         mesh.physicsFriction = or(m["physicsFriction"], 0.0);
@@ -147,7 +158,7 @@ class BabylonLoader {
       material.specularColor = new Color.fromList(m["specular"]);
       material.specularPower = m["specularPower"].toDouble();
       material.emissiveColor = new Color.fromList(m["emissive"]);
-      material.backFaceCulling = or(m["backFaceCulling"], true);
+      material.backFaceCulling = or(m["backFaceCulling"], false);
       material.wireframe = or(m["wireframe"], false);
       material.alpha = m["alpha"].toDouble();
       material.diffuseTexture = _parseTexture(m["diffuseTexture"]);
@@ -170,11 +181,12 @@ class BabylonLoader {
     if (desc["isCube"] == true) {
       texture = new CubeTexture(url);
     } else if (desc["isRenderTarget"] == true) {
-      var size = desc["renderTargetSize"].toDouble();
+      var size = desc["renderTargetSize"].toInt();
       texture = new RenderTargetTexture(_device, size, size);
     } else if (desc["mirrorPlane"] != null) {
       var size = desc["renderTargetSize"].toDouble();
       texture = new MirrorTexture(_device, size, size);
+      texture.mirrorPlane = _newPlaneFromList(desc["mirrorPlane"]);
     } else {
       texture = Texture.load(_ctx, {
         "path": url,
@@ -187,6 +199,7 @@ class BabylonLoader {
     texture.coordinatesMode = desc["coordinatesMode"];
     if (texture is CubeTexture) return texture;
 
+    texture.coordinatesIndex = desc["coordinatesIndex"];
     texture.getAlphaFromRGB = or(desc["getAlphaFromRGB"], false);
     texture.uOffset = desc["uOffset"].toDouble();
     texture.vOffset = desc["vOffset"].toDouble();
@@ -196,7 +209,6 @@ class BabylonLoader {
     texture.vAng = desc["vAng"].toDouble();
     texture.wrapU = desc["wrapU"].toDouble();
     texture.wrapV = desc["wrapV"].toDouble();
-    texture.coordinatesIndex = desc["coordinatesIndex"];
     // TODO animations of texture
     return texture;
   }
@@ -220,7 +232,6 @@ class BabylonLoader {
     }
   }
 
-  //int (0 for point light, 1 for directional, 2 for spot and 3 for hemispheric),
   List<Light> _parseLights(Map json) {
     var lights = [];
     json["lights"].forEach((l) {
@@ -233,17 +244,21 @@ class BabylonLoader {
         light.direction = _newVec3FromList(l["direction"]);
       } else if (type == 2) {
         light = new SpotLight(0x0);
+        light.direction = _newVec3FromList(l["direction"]);
         light.angle = l["angle"].toDouble();
         light.exponent = l["exponent"].toDouble();
       } else if (type == 3) {
         light = new HemisphericLight(0x0);
+        light.direction = _newVec3FromList(l["direction"]);
         light.groundColor = new Color.fromList(l["groundColor"]);
       }
       light.id = l["id"];
       if(l["position"] != null) light.position = _newVec3FromList(l["position"]);
-      light.intensity = l["intensity"].toDouble();
+      if(l["intensity"] != null) light.intensity = l["intensity"].toDouble();
+      if(l["range"] != null) light.range = l["range"].toDouble();
       light.diffuse = new Color.fromList(l["diffuse"]);
       light.specular = new Color.fromList(l["specular"]);
+      // TODO animation of light
       lights.add(light);
       _resources["Light_${light.id}"] = light;
     });
@@ -266,6 +281,10 @@ class BabylonLoader {
         quat.setEuler(c["rotation"][1].toDouble(), c["rotation"][0].toDouble(), c["rotation"][2].toDouble());
         camera.rotation = quat;
         camera.lookAtFromRotation();
+      }
+      if(c["parentId"] != null) {
+         var parent = _resources["Mesh_${c["parentId"]}"] as Node;
+         parent.add(camera);
       }
       // TODO speed, inertia, checkCollisions, applyGravity, ellipsoid
       cameras[c["id"]] = camera;

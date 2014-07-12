@@ -4,12 +4,19 @@ part of orange;
 
 class Mesh extends Node {
 
+  static int BILLBOARDMODE_NONE = 0;
+  static int BILLBOARDMODE_X = 1;
+  static int BILLBOARDMODE_Y = 2;
+  static int BILLBOARDMODE_Z = 4;
+  static int BILLBOARDMODE_ALL = 7;
+
   VertexBuffer _faces;
   Geometry _geometry;
   Material material;
   Skeleton _skeleton;
   AnimationController animator;
   int primitive = gl.TRIANGLES;
+  int billboardMode = BILLBOARDMODE_NONE;
 
   bool _castShadows = false;
   bool _receiveShadows = false;

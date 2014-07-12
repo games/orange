@@ -70,6 +70,7 @@ class Orange {
       _scene._animationRatio = interval * (60.0 / 1000.0);
       _scene.enterFrame(elapsed, interval);
       camera.update();
+      camera.updateMatrix();
       if(_scene.frustum == null) _scene.frustum = new Frustum();
       _scene.frustum.setFromMatrix(camera.viewProjectionMatrix);
 

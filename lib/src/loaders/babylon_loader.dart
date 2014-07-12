@@ -33,7 +33,7 @@ class BabylonLoader {
     scene._gravity = _newVec3FromList(json["gravity"]);
 
     var cameras = _parseCamera(json);
-    scene.camera = cameras[json["activeCamera"]];
+    scene.camera = cameras[json["activeCameraID"]];
     scene.cameras = cameras;
 
     var lights = _parseLights(json);
@@ -255,13 +255,20 @@ class BabylonLoader {
     var aspect = _ctx.canvas.width / _ctx.canvas.height;
     json["cameras"].forEach((c) {
       var camera = new PerspectiveCamera(aspect, near: c["minZ"].toDouble(), far: c["maxZ"].toDouble(), fov: c["fov"].toDouble());
+      camera.id = c["id"];
       camera.name = c["name"];
       camera.position = _newVec3FromList(c["position"]);
       if (c["target"] != null) {
         camera.lookAt(_newVec3FromList(c["target"]));
+      } else {
+        // TODO fixme
+        var quat = new Quaternion.identity();
+        quat.setEuler(c["rotation"][1].toDouble(), c["rotation"][0].toDouble(), c["rotation"][2].toDouble());
+        camera.rotation = quat;
+        camera.lookAtFromRotation();
       }
       // TODO speed, inertia, checkCollisions, applyGravity, ellipsoid
-      cameras[c["name"]] = camera;
+      cameras[c["id"]] = camera;
     });
     return cameras;
   }

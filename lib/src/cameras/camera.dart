@@ -12,16 +12,25 @@ abstract class CameraController {
 
 class Camera extends Node {
   CameraController controller;
+  Vector3 _upVector = Axis.UP;
   Matrix4 _projectionMatrix;
   Matrix4 _viewMatrix;
   Vector3 _target = new Vector3.zero();
 
   void lookAt(Vector3 target) {
     _target = target;
-    _viewMatrix = makeViewMatrix(_position, target, Axis.UP);
+    _viewMatrix = makeViewMatrix(_position, target, _upVector);
     _rotation = new Quaternion.fromRotation(_viewMatrix.getRotation());
   }
-
+  
+  void lookAtFromRotation() {
+    var reference = new Vector3(0.0, 0.0, 1.0);
+    var matrix = _rotation.asRotationMatrix();
+    var transformed = matrix * reference;
+    _target = transformed + _position;
+    _viewMatrix = makeViewMatrix(_position, _target, _upVector);
+  }
+  
   void update() {
     if (controller != null) controller.update();
   }

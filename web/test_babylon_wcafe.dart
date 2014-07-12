@@ -14,6 +14,7 @@ class TestBabylonWCafeScene extends Scene {
       if (s.camera == null) {
         s.camera = camera;
       }
+      s.camera = camera;
       engine.enter(s);
     });
   }

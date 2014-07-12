@@ -24,6 +24,7 @@ part 'test_physically_based_render.dart';
 part 'test_physically_based_render2.dart';
 part 'test_octree.dart';
 part 'test_babylon_wcafe.dart';
+part 'test_billboard.dart';
 
 
 
@@ -40,26 +41,27 @@ void main() {
   html.querySelector("#stat").children.add(stats.container);
 
   var orange = new Orange(graphics);
-  
+
   var scenes = [new TestAnimationScene(camera), 
                 new TestBoundingBoxScene(camera), 
-                new TestLightingScene(camera),
-                new TestLightingScene2(camera),
-                new PhysicsScene(camera),
-                new TestGLTFScene(camera),
-                new TestTexturesScene(camera),
-                new TestWaterScene(camera),
-                new TestBabylonShipScene(camera),
-                new TestBabylonViperScene(camera),
-                new TestParticles(camera),
-                new TestObjLoader(camera),
-                new TestPhysicallyBasedRender(camera),
-                new TestPhysicallyBasedRender2(camera),
-                new TestOctree(camera),
-                new TestBabylonWCafeScene(camera)];
-  
+                new TestLightingScene(camera), 
+                new TestLightingScene2(camera), 
+                new PhysicsScene(camera), 
+                new TestGLTFScene(camera), 
+                new TestTexturesScene(camera), 
+                new TestWaterScene(camera), 
+                new TestBabylonShipScene(camera), 
+                new TestBabylonViperScene(camera), 
+                new TestParticles(camera), 
+                new TestObjLoader(camera), 
+                new TestPhysicallyBasedRender(camera), 
+                new TestPhysicallyBasedRender2(camera), 
+                new TestOctree(camera), 
+                new TestBabylonWCafeScene(camera), 
+                new TestBillboardScene(camera)];
+
   var i = scenes.length - 1;
-  
+
   orange.enter(scenes[i]);
   orange.run();
   orange.afterRenders.add(() {
@@ -72,11 +74,38 @@ void main() {
   selector.selectedIndex = i;
   selector.onChange.listen((e) {
     controllers.children.clear();
+
+    controller.attach(camera, canvas);
     orange.enter(scenes[int.parse(selector.value)]);
   });
 
 }
 
+void addControls(html.Element control) {
+  html.querySelector("#controllers").children.add(control);
+}
+
+html.Element createRadio(String id, String group, String desc, handler, [bool selected = false]) {
+  var row = createRow();
+  var radio = new html.RadioButtonInputElement();
+  radio.id = id;
+  radio.name = group;
+  radio.value = group;
+  radio.checked = selected;
+  radio.onClick.listen(handler);
+  var label = new html.LabelElement();
+  label.htmlFor = radio.id;
+  label.text = desc;
+  row.children.add(radio);
+  row.children.add(label);
+  return row;
+}
+
+html.DivElement createRow() {
+  var row = new html.DivElement();
+  row.className = "row";
+  return row;
+}
 
 
 

@@ -16,7 +16,16 @@ class Mesh extends Node {
   Skeleton _skeleton;
   AnimationController animator;
   int primitive = gl.TRIANGLES;
-  int billboardMode = BILLBOARDMODE_NONE;
+
+  int _billboardMode = BILLBOARDMODE_NONE;
+  Matrix4 _rotateYByPI = new Matrix4.rotationY(math.PI);
+  Matrix4 _localBillboard = new Matrix4.zero();
+  Matrix4 _pivotMatrix = new Matrix4.identity();
+  Matrix4 _localScaling = new Matrix4.identity();
+  Matrix4 _localRotation = new Matrix4.identity();
+  Matrix4 _localTranslation = new Matrix4.identity();
+  Matrix4 _localPivotScaling;
+  Matrix4 _localPivotScalingRotation;
 
   bool _castShadows = false;
   bool _receiveShadows = false;
@@ -35,8 +44,57 @@ class Mesh extends Node {
 
   @override
   updateMatrix([bool updateChildren = true]) {
-    super.updateMatrix(updateChildren);
+
+    if (_needsUpdateLocalMatrix || _billboardMode != BILLBOARDMODE_NONE) {
+      _localScaling.setIdentity();
+      _localScaling[0] = _scaling.x;
+      _localScaling[5] = _scaling.y;
+      _localScaling[10] = _scaling.z;
+      _localScaling[15] = 1.0;
+
+      _localRotation.setIdentity().setRotation(_rotation.asRotationMatrix());
+
+      _localTranslation.setIdentity().setTranslation(_position);
+
+      _localPivotScaling = _localScaling * _pivotMatrix;
+      _localPivotScalingRotation = _localRotation * _localPivotScaling;
+
+      if (_billboardMode != BILLBOARDMODE_NONE) {
+        var localPosition = _position.clone();
+        var zero = scene.camera.position.clone();
+        if (parent != null && parent.position != null) {
+          localPosition.add(parent.position);
+          _localTranslation.setTranslation(localPosition);
+        }
+        if (_billboardMode & BILLBOARDMODE_ALL == BILLBOARDMODE_ALL) {
+          zero = scene.camera.position;
+        } else {
+          if (_billboardMode & BILLBOARDMODE_X == BILLBOARDMODE_X) zero.x = localPosition.x + 0.001;//Orange.Epsilon;
+          if (_billboardMode & BILLBOARDMODE_Y == BILLBOARDMODE_Y) zero.y = localPosition.y + 0.001;
+          if (_billboardMode & BILLBOARDMODE_Z == BILLBOARDMODE_Z) zero.z = localPosition.z + 0.001;
+        }
+        setViewMatrix(_localBillboard, localPosition, zero, Axis.UP);
+        _localBillboard[12] = _localBillboard[13] = _localBillboard[14] = 0.0;
+        _localBillboard.invert();
+        _localMatrix = _localBillboard * _localPivotScalingRotation;
+        _localPivotScalingRotation = _localMatrix * _rotateYByPI;
+      }
+
+      _localMatrix = _localTranslation * _localPivotScalingRotation;
+      _needsUpdateLocalMatrix = false;
+    }
+
+    if (parent != null && _billboardMode == BILLBOARDMODE_NONE) {
+      worldMatrix = parent.worldMatrix * _localMatrix;
+    } else {
+      worldMatrix = _localMatrix.clone();
+    }
     _updateBoundingInfo();
+
+    if (updateChildren) children.forEach((c) => c.updateMatrix(updateChildren));
+
+    // super.updateMatrix(updateChildren);
+    // _updateBoundingInfo();
   }
 
   void _updateBoundingInfo() {
@@ -144,11 +202,22 @@ class Mesh extends Node {
     });
   }
 
+  int get billboardMode => _billboardMode;
+
+  void set billboardMode(int val) {
+    _billboardMode = val;
+    _needsUpdateLocalMatrix = true;
+  }
+
   Node clone() {
     var result = new Mesh();
     result.id = id;
     result.applyMatrix(_localMatrix);
     result._scaling = _scaling.clone();
+    result._position = _position.clone();
+    result._rotation = _rotation.clone();
+    result._billboardMode = _billboardMode;
+    result._pivotMatrix = _pivotMatrix.clone();
     if (_geometry != null) result._geometry = _geometry.clone();
     result._faces = _faces;
     result.material = material;

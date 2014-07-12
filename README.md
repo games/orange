@@ -24,13 +24,13 @@ Is a WebGL based 3D engine for my personal experiments.
 - Particle System
 - Physically based render (not finish yet)
 - Selection octrees
+- Billboarding
 
 
 ### TODO ###
 - Code refactoring
 - Scene graph
 - Picking
-- Billboarding
 - Post-processes
 - Lens flares
 - First person camera control

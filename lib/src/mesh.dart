@@ -69,9 +69,9 @@ class Mesh extends Node {
         if (_billboardMode & BILLBOARDMODE_ALL == BILLBOARDMODE_ALL) {
           zero = scene.camera.position;
         } else {
-          if (_billboardMode & BILLBOARDMODE_X == BILLBOARDMODE_X) zero.x = localPosition.x + 0.001;//Orange.Epsilon;
-          if (_billboardMode & BILLBOARDMODE_Y == BILLBOARDMODE_Y) zero.y = localPosition.y + 0.001;
-          if (_billboardMode & BILLBOARDMODE_Z == BILLBOARDMODE_Z) zero.z = localPosition.z + 0.001;
+          if (_billboardMode & BILLBOARDMODE_X == BILLBOARDMODE_X) zero.x = localPosition.x + Orange.Epsilon;
+          if (_billboardMode & BILLBOARDMODE_Y == BILLBOARDMODE_Y) zero.y = localPosition.y + Orange.Epsilon;
+          if (_billboardMode & BILLBOARDMODE_Z == BILLBOARDMODE_Z) zero.z = localPosition.z + Orange.Epsilon;
         }
         setViewMatrix(_localBillboard, localPosition, zero, Axis.UP);
         _localBillboard[12] = _localBillboard[13] = _localBillboard[14] = 0.0;

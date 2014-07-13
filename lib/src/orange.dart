@@ -17,7 +17,9 @@ class Orange {
 
   GraphicsDevice graphicsDevice;
   Scene _scene;
-  num _lastElapsed = 0.0;
+  num _elapsedTime = 0.0;
+  num _deltaTime = 0.0;
+  num _fps = 60;
   RenderingGroup _renderGroup = new RenderingGroup();
   BoundingBoxRenderer _boundingBoxRenderer;
   List<RenderTargetTexture> _renderTargets = [];
@@ -61,8 +63,9 @@ class Orange {
 
   _animate(num elapsed) {
     run();
-    final interval = elapsed - _lastElapsed;
-    _lastElapsed = elapsed;
+    final interval = elapsed - _elapsedTime;
+    _elapsedTime = elapsed;
+    _deltaTime = interval;
     if (_scene != null && _scene.camera != null) {
       var camera = _scene.camera;
       _scene._elapsed = elapsed;
@@ -138,4 +141,7 @@ class Orange {
   }
 
   Scene get scene => _scene;
+  num get elapsedTime => _elapsedTime;
+  num get deltaTime => _deltaTime;
+  num get fps => _fps;
 }

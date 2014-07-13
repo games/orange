@@ -34,7 +34,7 @@ void main() {
   var graphics = new GraphicsDevice(canvas);
   var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 10000.0);
   camera.translate(0.0, 0.0, 4.0);
-  var controller = new ArcRotateController();
+  var controller = new FreeCameraController();// new ArcRotateController();
   controller.attach(camera, canvas);
 
   var stats = new Stats();
@@ -60,7 +60,7 @@ void main() {
                 new TestBabylonWCafeScene(camera), 
                 new TestBillboardScene(camera)];
 
-  var i = scenes.length - 1;
+  var i = 8;// scenes.length - 3;
 
   orange.enter(scenes[i]);
   orange.run();
@@ -69,20 +69,38 @@ void main() {
     stats.begin();
   });
 
-  var controllers = html.querySelector("#controllers");
+  var controls = html.querySelector("#controllers");
   var selector = html.querySelector("#scenes") as html.SelectElement;
   selector.selectedIndex = i;
   selector.onChange.listen((e) {
-    controllers.children.clear();
+    controls.children.clear();
 
     controller.attach(camera, canvas);
     orange.enter(scenes[int.parse(selector.value)]);
+
+    addControls(createButton("b1", "full screen", (e) {
+      canvas.requestFullscreen();
+    }));
+
+    addControls(createButton("b2", "pointer lock", (e) {
+      canvas.requestPointerLock();
+    }));
   });
 
 }
 
 void addControls(html.Element control) {
   html.querySelector("#controllers").children.add(control);
+}
+
+html.ButtonElement createButton(String id, String desc, handler) {
+  var row = createRow();
+  var btn = new html.ButtonElement();
+  btn.id = id;
+  btn.text = desc;
+  btn.onClick.listen(handler);
+  row.children.add(btn);
+  return btn;
 }
 
 html.Element createRadio(String id, String group, String desc, handler, [bool selected = false]) {

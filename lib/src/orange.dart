@@ -20,6 +20,8 @@ class Orange {
   num _elapsedTime = 0.0;
   num _deltaTime = 0.0;
   num _fps = 60;
+  bool _isPointerLock = false;
+  
   RenderingGroup _renderGroup = new RenderingGroup();
   BoundingBoxRenderer _boundingBoxRenderer;
   List<RenderTargetTexture> _renderTargets = [];
@@ -33,6 +35,9 @@ class Orange {
 
   Orange._(this.graphicsDevice) {
     _boundingBoxRenderer = new BoundingBoxRenderer(graphicsDevice);
+    html.document.onPointerLockChange.listen((event) {
+      _isPointerLock = html.document.pointerLockElement == graphicsDevice._renderingCanvas;
+    });
   }
 
   enter(Scene scene) {

@@ -204,3 +204,20 @@ class MathUtils {
     storage[3] = aw * bw - az * bz;
   }
 }
+
+
+num clampNumber(num val, num min, num max) {
+  return math.min(math.max(val, min), max);
+}
+
+// Linear mapping from range <a1, a2> to range <b1, b2>
+num mapLinear(x, a1, a2, b1, b2) {
+  return b1 + (x - a1) * (b2 - b1) / (a2 - a1);
+}
+
+
+
+
+
+
+

@@ -28,6 +28,14 @@ class BabylonShipScene extends Scene {
   @override
   void enter() {
 
+    addControls(createButton("b1", "full screen", (e) {
+      graphicsDevice.renderingCanvas.requestFullscreen();
+    }));
+
+    addControls(createButton("b2", "pointer lock", (e) {
+      graphicsDevice.renderingCanvas.requestPointerLock();
+    }));
+    
     var diffuseTexture = Texture.load(graphicsDevice.ctx, {
       "path": "models/babylon/PLAYER_SHIP_SCHOONER_ID1.jpg",
       "sampler": new Sampler()
@@ -95,6 +103,7 @@ class BabylonShipScene extends Scene {
   @override
   exit() {
     removeChildren();
+    html.document.exitPointerLock();
   }
 
 }

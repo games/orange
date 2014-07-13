@@ -8,7 +8,7 @@ class Node {
   // unique id in scene tree.
   String id;
   String name;
-  
+
   Scene _scene;
   Vector3 _position;
   Vector3 _scaling;
@@ -58,6 +58,23 @@ class Node {
       _position.y += y;
       _position.z += z;
     }
+    _needsUpdateLocalMatrix = true;
+  }
+
+  void translateX(double distance) {
+    translateOnAxis(Axis.X, distance);
+  }
+
+  void translateY(double distance) {
+    translateOnAxis(Axis.Y, distance);
+  }
+
+  void translateZ(double distance) {
+    translateOnAxis(Axis.Z, distance);
+  }
+  
+  void translateOnAxis(Vector3 axis, double distance) {
+    _position.add( _rotation.rotated(axis).scale(distance));
     _needsUpdateLocalMatrix = true;
   }
 
@@ -158,7 +175,6 @@ class Node {
   void dispose() {
   }
 }
-
 
 
 

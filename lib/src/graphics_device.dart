@@ -3,6 +3,8 @@ part of orange;
 
 class GraphicsDevice {
   html.CanvasElement _renderingCanvas;
+  html.CanvasElement get renderingCanvas => _renderingCanvas;
+  
   gl.RenderingContext ctx;
   int _lastMaxEnabledArray = -1;
   int _newMaxEnabledArray = -1;

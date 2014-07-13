@@ -34,6 +34,7 @@ part 'src/disposable.dart';
 part 'src/cameras/camera.dart';
 part 'src/cameras/orbit_controller.dart';
 part 'src/cameras/arc_rotate_controller.dart';
+part 'src/cameras/first_person_controller.dart';
 
 part 'src/primitives/polygon_mesh.dart';
 part 'src/primitives/cube.dart';
@@ -102,6 +103,8 @@ part 'src/rendering/rendering_group.dart';
 part 'src/particles/particle.dart';
 part 'src/particles/particle_system.dart';
 
+part 'src/collisions/collider.dart';
+
 
 
 or(expectValue, defaultValue) {
@@ -130,7 +133,6 @@ abstract class Axis {
 typedef void Callback();
 typedef void Callback1<T>();
 typedef void Callback2<T1, T2>();
-
 
 
 

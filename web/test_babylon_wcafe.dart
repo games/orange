@@ -10,7 +10,7 @@ class TestBabylonWCafeScene extends Scene {
   void enter() {
 
     var url = "models/babylon/WCafe/WCafe.babylon";
-//    url = "models/babylon/TheCar/TheCar.incremental.babylon";
+    url = "models/babylon/TheCar/TheCar.incremental.babylon";
 //    url = "models/babylon/Robot/Robot.babylon";
     var loader = new BabylonLoader();
     loader.load(graphicsDevice, url, new BabylonWCafeScene()).then((s) {

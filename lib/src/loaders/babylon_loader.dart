@@ -32,7 +32,7 @@ class BabylonLoader {
     scene.ambientColor = new Color.fromList(json["ambientColor"]);
     scene._gravity = _newVec3FromList(json["gravity"]);
     // fog
-    if(json["fogMode"] != null && json["fogMode"] != 0) {
+    if (json["fogMode"] != null && json["fogMode"] != 0) {
       scene.fogMode = json["fogMode"];
       scene.fogColor = new Color.fromList(json["fogColor"]);
       scene.fogStart = json["fogStart"];
@@ -51,11 +51,12 @@ class BabylonLoader {
     var cameras = _parseCamera(json);
     scene.camera = cameras[json["activeCameraID"]];
     scene.cameras = cameras;
-    
+
     _parseShadowMaps(json);
 
-    // skeletons
-    // particleSystems
+    // TODO skeletons
+    _parseSkeletons(json);
+
     scene._particleSystemds = _parseParticleSystems(json, scene);
 
     // lensFlareSystems
@@ -91,9 +92,9 @@ class BabylonLoader {
       }
       mesh.scaling = _newVec3FromList(m["scaling"]);
       // TODO localMatrix, pivotMatrix, infiniteDistance, pickable
-      if(m["localMatrix"] != null) {
+      if (m["localMatrix"] != null) {
         mesh._pivotMatrix = _newMatrix4FromList(m["localMatrix"]);
-      } else if(m["pivotMatrix"] != null) {
+      } else if (m["pivotMatrix"] != null) {
         mesh._pivotMatrix = _newMatrix4FromList(m["pivotMatrix"]);
       }
       mesh.enabled = or(m["isEnabled"], true);
@@ -116,6 +117,8 @@ class BabylonLoader {
       mesh.visibility = or(m["visibility"], 1.0).toDouble();
       if (m.containsKey("geometryId")) {
         mesh.geometry = _resources["Geometry_${m["geometryId"]}"];
+      } else if (m["delayLoadingFile"] != null) {
+        _delayLoading(mesh, m);
       } else {
         mesh.geometry = _parseGeometry(m);
       }
@@ -130,6 +133,15 @@ class BabylonLoader {
       meshes.add(mesh);
     });
     return meshes;
+  }
+  
+  void _delayLoading(Mesh mesh, Map desc) {
+    var url = _uri.resolve(desc["delayLoadingFile"]).toString();
+    print(url);
+    html.HttpRequest.request(url).then((r) {
+      var json = JSON.decode(r.responseText);
+      mesh.geometry = _parseGeometry(json);
+    });
   }
 
   void _parseGeometries(Map json) {
@@ -258,9 +270,9 @@ class BabylonLoader {
         light.groundColor = new Color.fromList(l["groundColor"]);
       }
       light.id = l["id"];
-      if(l["position"] != null) light.position = _newVec3FromList(l["position"]);
-      if(l["intensity"] != null) light.intensity = l["intensity"].toDouble();
-      if(l["range"] != null) light.range = l["range"].toDouble();
+      if (l["position"] != null) light.position = _newVec3FromList(l["position"]);
+      if (l["intensity"] != null) light.intensity = l["intensity"].toDouble();
+      if (l["range"] != null) light.range = l["range"].toDouble();
       light.diffuse = new Color.fromList(l["diffuse"]);
       light.specular = new Color.fromList(l["specular"]);
       // TODO animation of light
@@ -287,9 +299,9 @@ class BabylonLoader {
         camera.rotation = quat;
         camera.lookAtFromRotation();
       }
-      if(c["parentId"] != null) {
-         var parent = _resources["Mesh_${c["parentId"]}"] as Node;
-         parent.add(camera);
+      if (c["parentId"] != null) {
+        var parent = _resources["Mesh_${c["parentId"]}"] as Node;
+        parent.add(camera);
       }
       // TODO speed, inertia, checkCollisions, applyGravity, ellipsoid
       cameras[c["id"]] = camera;
@@ -297,10 +309,16 @@ class BabylonLoader {
     return cameras;
   }
 
+  _parseSkeletons(Map root) {
+    if (root["skeletons"] != null) {
+
+    }
+  }
+
   List<ParticleSystem> _parseParticleSystems(Map json, Scene scene) {
     var list = json["particleSystems"];
-    if(list == null) return [];
-    
+    if (list == null) return [];
+
     var result = [];
     list.forEach((Map sys) {
       var emitter = _resources["Mesh_${sys["emitterId"]}"]["mesh"];

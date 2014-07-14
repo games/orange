@@ -39,6 +39,8 @@ class Mesh extends Node {
   double physicsRestitution = 0.0;
 
   double visibility = 1.0;
+  
+  double _distanceToCamera = 0.0;
 
   Mesh({String name}) : super(id: name);
 

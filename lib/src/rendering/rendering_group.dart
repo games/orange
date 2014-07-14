@@ -37,8 +37,15 @@ class RenderingGroup implements Renderer {
       _renderMeshes(graphics, pass, meshes, viewMatrix, viewProjectionMatrix, projectionMatrix, eyePosition);
     });
     _transparentPasses.forEach((Pass pass, List<Mesh> meshes) {
-      // TODO sorting
-      _renderMeshes(graphics, pass, meshes, viewMatrix, viewProjectionMatrix, projectionMatrix, eyePosition);
+      var sortedMeshes = [];
+      meshes.forEach((Mesh mesh) {
+        if(mesh.boundingInfo != null) {
+          mesh._distanceToCamera = (mesh.boundingInfo.boundingSphere.centerWorld - scene.camera.position).length2;
+          sortedMeshes.add(mesh);
+        }
+      });
+      sortedMeshes.sort((Mesh a, Mesh b) => -a._distanceToCamera.compareTo(b._distanceToCamera));
+      _renderMeshes(graphics, pass, sortedMeshes, viewMatrix, viewProjectionMatrix, projectionMatrix, eyePosition);
     });
   }
 

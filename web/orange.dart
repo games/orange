@@ -34,7 +34,8 @@ void main() {
   var graphics = new GraphicsDevice(canvas);
   var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 10000.0);
   camera.translate(0.0, 0.0, 4.0);
-  var controller = new FreeCameraController();// new ArcRotateController();
+  var controller = new FreeCameraController();
+//  controller = new ArcRotateController();
   controller.attach(camera, canvas);
 
   var stats = new Stats();
@@ -60,7 +61,7 @@ void main() {
                 new TestBabylonWCafeScene(camera), 
                 new TestBillboardScene(camera)];
 
-  var i = 8;// scenes.length - 3;
+  var i = scenes.length - 2;
 
   orange.enter(scenes[i]);
   orange.run();

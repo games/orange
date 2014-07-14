@@ -10,9 +10,20 @@ class Pass {
   bool depthMask = true;
   bool cullFaceEnable = true;
   bool blending = false;
+
   int blendEquation = gl.FUNC_ADD;
   int sfactor = gl.SRC_ALPHA;
   int dfactor = gl.ONE_MINUS_SRC_ALPHA;
+
+  int alphaMode = 1;
+
+  int modeRGB = gl.FUNC_ADD;
+  int modeAlpha = gl.FUNC_ADD;
+  int srcRGB = gl.SRC_ALPHA;
+  int dstRGB = gl.ONE_MINUS_SRC_ALPHA;
+  int srcAlpha = gl.ONE;
+  int dstAlpha = gl.ONE;
+
   Shader shader;
 
   Pass([this.id]) {
@@ -27,8 +38,13 @@ class Pass {
     device.enableState(gl.SAMPLE_ALPHA_TO_COVERAGE, true);
     device.enableState(gl.BLEND, blending);
     if (blending) {
-      ctx.blendEquation(blendEquation);
-      ctx.blendFunc(sfactor, dfactor);
+      if (alphaMode == 0) {
+        ctx.blendEquation(blendEquation);
+        ctx.blendFunc(sfactor, dfactor);
+      } else {
+        ctx.blendEquationSeparate(modeRGB, modeAlpha);
+        ctx.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+      }
     }
     ctx.depthMask(depthMask);
   }
@@ -37,7 +53,6 @@ class Pass {
     if (shader != null) shader.dispose();
   }
 }
-
 
 
 

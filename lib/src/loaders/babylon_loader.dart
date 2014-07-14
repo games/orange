@@ -137,7 +137,6 @@ class BabylonLoader {
   
   void _delayLoading(Mesh mesh, Map desc) {
     var url = _uri.resolve(desc["delayLoadingFile"]).toString();
-    print(url);
     html.HttpRequest.request(url).then((r) {
       var json = JSON.decode(r.responseText);
       mesh.geometry = _parseGeometry(json);
@@ -177,7 +176,6 @@ class BabylonLoader {
       material.emissiveColor = new Color.fromList(m["emissive"]);
       material.backFaceCulling = or(m["backFaceCulling"], false);
       material.wireframe = or(m["wireframe"], false);
-      material.alpha = m["alpha"].toDouble();
       material.diffuseTexture = _parseTexture(m["diffuseTexture"]);
       material.ambientTexture = _parseTexture(m["ambientTexture"]);
       material.opacityTexture = _parseTexture(m["opacityTexture"]);
@@ -185,6 +183,11 @@ class BabylonLoader {
       material.emissiveTexture = _parseTexture(m["emissiveTexture"]);
       material.specularTexture = _parseTexture(m["specularTexture"]);
       material.bumpTexture = _parseTexture(m["bumpTexture"]);
+      material.alpha = m["alpha"].toDouble();
+      if(material.alpha < 1.0) {
+        material.technique.pass.blending = true;
+        material.technique.pass.alphaMode = 1;
+      }
       _resources["Material_" + material.id] = material;
     });
   }

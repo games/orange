@@ -68,8 +68,8 @@ class BabylonLoader {
     var roots = [];
     meshes.forEach((mesh) {
       var data = _resources["Mesh_${mesh.id}"];
-      var parentId = data["parentId"];
-      if (parentId != null) {
+      var parentId = data["parent"] as String;
+      if (parentId != null && !parentId.isEmpty && _resources.containsKey("Mesh_${parentId}")) {
         var parent = _resources["Mesh_${parentId}"]["mesh"] as Mesh;
         parent.add(mesh);
       } else {

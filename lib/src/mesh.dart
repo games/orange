@@ -41,6 +41,7 @@ class Mesh extends Node {
   double visibility = 1.0;
   
   double _distanceToCamera = 0.0;
+  List _trianglePlanes;
 
   Mesh({String name}) : super(id: name);
 

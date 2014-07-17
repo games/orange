@@ -3,7 +3,7 @@ part of orange;
 
 
 
-class FreeCameraController extends CameraController {
+class FirstPersonController extends CameraController {
 
   Camera camera;
   html.Element element;
@@ -268,206 +268,206 @@ class FreeCameraController extends CameraController {
 
 
 
-class FreeCameraController2 extends CameraController {
-
-  Camera camera;
-  html.Element element;
-
-  Vector3 cameraDirection = new Vector3.zero();
-  Vector2 cameraRotation = new Vector2.zero();
-  Vector3 rotation = new Vector3.zero();
-  Vector3 ellipsoid = new Vector3(0.5, 1.0, 0.5);
-  List<int> keysUp = [html.KeyCode.W, html.KeyCode.UP];
-  List<int> keysDown = [html.KeyCode.S, html.KeyCode.DOWN];
-  List<int> keysLeft = [html.KeyCode.A, html.KeyCode.LEFT];
-  List<int> keysRight = [html.KeyCode.D, html.KeyCode.RIGHT];
-  double speed = 2.0;
-  double inertia = 0.9;
-  bool checkCollisions = false;
-  bool applyGravity = false;
-  bool noRotationConstraint = false;
-  double angularSensibility = 2000.0;
-  // TODO
-  dynamic lockedTarget;
-  dynamic onCollide;
-
-  List<int> _keys = [];
-  Collider _collider = new Collider();
-  bool _needMoveForGravity = true;
-  Vector3 _currentTarget = new Vector3.zero();
-  Vector2 _previousPosition;
-  Vector2 _cameraRotation = new Vector2.zero();
-  Vector3 _position = new Vector3.zero();
-  Vector3 _rotation = new Vector3.zero();
-  Vector3 _localDirection;
-  Vector3 _transformedDirection;
-  Vector3 _referencePoint = new Vector3.zero();
-  Vector3 _transformedReferencePoint = new Vector3.zero();
-  Matrix4 _cameraRotationMatrix = new Matrix4.zero();
-  Matrix4 _cameraTransformMatrix = new Matrix4.zero();
-
-  StreamSubscription _contextMenuSubscription;
-  StreamSubscription _keydownSubscription;
-  StreamSubscription _keyupSubscription;
-  StreamSubscription _mouseDownSubscription;
-  StreamSubscription _mouseMoveSubscription;
-  StreamSubscription _mouseUpSubscription;
-  StreamSubscription _mouseOutSubscription;
-  StreamSubscription _mouseWheelSubscription;
-
-  @override
-  void attach(Camera camera, html.Element element) {
-    detach();
-    camera.controller = this;
-    _contextMenuSubscription = element.onContextMenu.listen((e) => e.preventDefault());
-    _keydownSubscription = element.onKeyDown.listen(_onKeydown);
-    _keyupSubscription = element.onKeyUp.listen(_onKeyup);
-    _mouseDownSubscription = element.onMouseDown.listen(_onMouseDown);
-    _mouseUpSubscription = element.onMouseUp.listen(_onMouseUp);
-    _mouseMoveSubscription = element.onMouseMove.listen(_onMouseMove);
-    _mouseOutSubscription = element.onMouseOut.listen(_onMouseOut);
-    _mouseWheelSubscription = element.onMouseWheel.listen(_onMouseWheel);
-    this.camera = camera;
-    this.element = element;
-  }
-
-  @override
-  void detach() {
-    if (camera != null) camera.controller = null;
-    if (_contextMenuSubscription != null) _contextMenuSubscription.cancel();
-    if (_keydownSubscription != null) _keydownSubscription.cancel();
-    if (_keyupSubscription != null) _keyupSubscription.cancel();
-    if (_mouseDownSubscription != null) _mouseDownSubscription.cancel();
-    if (_mouseMoveSubscription != null) _mouseMoveSubscription.cancel();
-    if (_mouseUpSubscription != null) _mouseUpSubscription.cancel();
-    if (_mouseOutSubscription != null) _mouseOutSubscription.cancel();
-    if (_mouseWheelSubscription != null) _mouseWheelSubscription.cancel();
-  }
-
-  @override
-  void update() {
-    _checkInputs();
-    var needToMove = cameraDirection.x.abs() > 0 || cameraDirection.y.abs() > 0 || cameraDirection.z.abs() > 0;
-    var needToRotate = cameraRotation.x.abs() > 0 || cameraRotation.y.abs() > 0;
-    if (needToMove) {
-      _position.add(cameraDirection);
-    }
-    if (needToRotate) {
-      _rotation.x += cameraRotation.x;
-      _rotation.y += cameraRotation.y;
-      if (!noRotationConstraint) {
-        var limit = (math.PI / 2) * 0.95;
-        if (_rotation.x > limit) _rotation.x = limit;
-        if (_rotation.x < -limit) _rotation.x = -limit;
-      }
-    }
-    // inertia
-    if (needToMove) {
-      if (cameraDirection.x.abs() < Orange.Epsilon) cameraDirection.x = 0.0;
-      if (cameraDirection.y.abs() < Orange.Epsilon) cameraDirection.y = 0.0;
-      if (cameraDirection.z.abs() < Orange.Epsilon) cameraDirection.z = 0.0;
-    }
-    if (needToRotate) {
-      if (cameraRotation.x.abs() < Orange.Epsilon) cameraRotation.x = 0.0;
-      if (cameraRotation.y.abs() < Orange.Epsilon) cameraRotation.y = 0.0;
-      cameraRotation.scale(inertia);
-    }
-  }
-
-  void _checkInputs() {
-    if (_localDirection == null) {
-      _localDirection = new Vector3.zero();
-      _transformedDirection = new Vector3.zero();
-    }
-    _keys.forEach((int keyCode) {
-      var speed = _computeLocalCameraSpeed();
-      if (keysLeft.contains(keyCode)) {
-        _localDirection.setValues(-speed, 0.0, 0.0);
-      } else if (keysUp.contains(keyCode)) {
-        _localDirection.setValues(0.0, 0.0, speed);
-      } else if (keysRight.contains(keyCode)) {
-        _localDirection.setValues(speed, 0.0, 0.0);
-      } else if (keysDown.contains(keyCode)) {
-        _localDirection.setValues(0.0, 0.0, -speed);
-      }
-
-      _cameraTransformMatrix.copyInverse(_getViewMatrix());
-      _transformedDirection = _cameraTransformMatrix * _localDirection;
-      cameraDirection.add(_transformedDirection);
-    });
-  }
-
-  Quaternion _tempRotation = new Quaternion.identity();
-
-  Matrix4 _getViewMatrix() {
-    _referencePoint.setValues(0.0, 0.0, 1.0);
-    _tempRotation.setEuler(rotation.y, rotation.x, rotation.z);
-    _cameraRotationMatrix.setIdentity().setRotation(_tempRotation.asRotationMatrix());
-    _transformedReferencePoint = _cameraRotationMatrix * _referencePoint;
-    _currentTarget = _position + _transformedReferencePoint;
-    camera.position = _position;
-    camera.lookAt(_currentTarget);
-    return camera.viewMatrix;
-  }
-
-  double _computeLocalCameraSpeed() {
-    return speed * (Orange.instance.deltaTime / (Orange.instance.fps * 10.0));
-  }
-
-  void _onKeydown(html.KeyboardEvent event) {
-    if (keysDown.contains(event.keyCode) || keysLeft.contains(event.keyCode) || keysRight.contains(event.keyCode) || keysUp.contains(event.keyCode)) {
-      var index = _keys.indexOf(event.keyCode);
-      if (index == -1) {
-        _keys.add(event.keyCode);
-      }
-      event.preventDefault();
-    }
-  }
-
-  void _onKeyup(html.KeyboardEvent event) {
-    if (keysDown.contains(event.keyCode) || keysLeft.contains(event.keyCode) || keysRight.contains(event.keyCode) || keysUp.contains(event.keyCode)) {
-      var index = _keys.indexOf(event.keyCode);
-      if (index >= 0) {
-        _keys.remove(event.keyCode);
-      }
-      event.preventDefault();
-    }
-  }
-
-  void _onMouseDown(html.MouseEvent event) {
-    _previousPosition = new Vector2(event.client.x.toDouble(), event.client.y.toDouble());
-    event.preventDefault();
-  }
-
-  void _onMouseUp(html.MouseEvent event) {
-    _previousPosition = null;
-  }
-
-  void _onMouseWheel(html.WheelEvent event) {
-  }
-
-  void _onMouseOut(html.MouseEvent event) {
-    _previousPosition = null;
-    _keys = [];
-    event.preventDefault();
-  }
-
-  void _onMouseMove(html.MouseEvent event) {
-    if (_previousPosition == null) return;
-    var offsetX, offsetY;
-    if (!Orange.instance._isPointerLock) {
-      offsetX = event.client.x - _previousPosition.x;
-      offsetY = event.client.y - _previousPosition.y;
-    } else {
-      offsetX = event.movement.x;
-      offsetY = event.movement.y;
-    }
-    _cameraRotation.y += offsetX / angularSensibility;
-    _cameraRotation.x += offsetY / angularSensibility;
-    _previousPosition.setValues(event.client.x.toDouble(), event.client.y.toDouble());
-    event.preventDefault();
-  }
-}
+//class FreeCameraController2 extends CameraController {
+//
+//  Camera camera;
+//  html.Element element;
+//
+//  Vector3 cameraDirection = new Vector3.zero();
+//  Vector2 cameraRotation = new Vector2.zero();
+//  Vector3 rotation = new Vector3.zero();
+//  Vector3 ellipsoid = new Vector3(0.5, 1.0, 0.5);
+//  List<int> keysUp = [html.KeyCode.W, html.KeyCode.UP];
+//  List<int> keysDown = [html.KeyCode.S, html.KeyCode.DOWN];
+//  List<int> keysLeft = [html.KeyCode.A, html.KeyCode.LEFT];
+//  List<int> keysRight = [html.KeyCode.D, html.KeyCode.RIGHT];
+//  double speed = 2.0;
+//  double inertia = 0.9;
+//  bool checkCollisions = false;
+//  bool applyGravity = false;
+//  bool noRotationConstraint = false;
+//  double angularSensibility = 2000.0;
+//  // TODO
+//  dynamic lockedTarget;
+//  dynamic onCollide;
+//
+//  List<int> _keys = [];
+//  Collider _collider = new Collider();
+//  bool _needMoveForGravity = true;
+//  Vector3 _currentTarget = new Vector3.zero();
+//  Vector2 _previousPosition;
+//  Vector2 _cameraRotation = new Vector2.zero();
+//  Vector3 _position = new Vector3.zero();
+//  Vector3 _rotation = new Vector3.zero();
+//  Vector3 _localDirection;
+//  Vector3 _transformedDirection;
+//  Vector3 _referencePoint = new Vector3.zero();
+//  Vector3 _transformedReferencePoint = new Vector3.zero();
+//  Matrix4 _cameraRotationMatrix = new Matrix4.zero();
+//  Matrix4 _cameraTransformMatrix = new Matrix4.zero();
+//
+//  StreamSubscription _contextMenuSubscription;
+//  StreamSubscription _keydownSubscription;
+//  StreamSubscription _keyupSubscription;
+//  StreamSubscription _mouseDownSubscription;
+//  StreamSubscription _mouseMoveSubscription;
+//  StreamSubscription _mouseUpSubscription;
+//  StreamSubscription _mouseOutSubscription;
+//  StreamSubscription _mouseWheelSubscription;
+//
+//  @override
+//  void attach(Camera camera, html.Element element) {
+//    detach();
+//    camera.controller = this;
+//    _contextMenuSubscription = element.onContextMenu.listen((e) => e.preventDefault());
+//    _keydownSubscription = element.onKeyDown.listen(_onKeydown);
+//    _keyupSubscription = element.onKeyUp.listen(_onKeyup);
+//    _mouseDownSubscription = element.onMouseDown.listen(_onMouseDown);
+//    _mouseUpSubscription = element.onMouseUp.listen(_onMouseUp);
+//    _mouseMoveSubscription = element.onMouseMove.listen(_onMouseMove);
+//    _mouseOutSubscription = element.onMouseOut.listen(_onMouseOut);
+//    _mouseWheelSubscription = element.onMouseWheel.listen(_onMouseWheel);
+//    this.camera = camera;
+//    this.element = element;
+//  }
+//
+//  @override
+//  void detach() {
+//    if (camera != null) camera.controller = null;
+//    if (_contextMenuSubscription != null) _contextMenuSubscription.cancel();
+//    if (_keydownSubscription != null) _keydownSubscription.cancel();
+//    if (_keyupSubscription != null) _keyupSubscription.cancel();
+//    if (_mouseDownSubscription != null) _mouseDownSubscription.cancel();
+//    if (_mouseMoveSubscription != null) _mouseMoveSubscription.cancel();
+//    if (_mouseUpSubscription != null) _mouseUpSubscription.cancel();
+//    if (_mouseOutSubscription != null) _mouseOutSubscription.cancel();
+//    if (_mouseWheelSubscription != null) _mouseWheelSubscription.cancel();
+//  }
+//
+//  @override
+//  void update() {
+//    _checkInputs();
+//    var needToMove = cameraDirection.x.abs() > 0 || cameraDirection.y.abs() > 0 || cameraDirection.z.abs() > 0;
+//    var needToRotate = cameraRotation.x.abs() > 0 || cameraRotation.y.abs() > 0;
+//    if (needToMove) {
+//      _position.add(cameraDirection);
+//    }
+//    if (needToRotate) {
+//      _rotation.x += cameraRotation.x;
+//      _rotation.y += cameraRotation.y;
+//      if (!noRotationConstraint) {
+//        var limit = (math.PI / 2) * 0.95;
+//        if (_rotation.x > limit) _rotation.x = limit;
+//        if (_rotation.x < -limit) _rotation.x = -limit;
+//      }
+//    }
+//    // inertia
+//    if (needToMove) {
+//      if (cameraDirection.x.abs() < Orange.Epsilon) cameraDirection.x = 0.0;
+//      if (cameraDirection.y.abs() < Orange.Epsilon) cameraDirection.y = 0.0;
+//      if (cameraDirection.z.abs() < Orange.Epsilon) cameraDirection.z = 0.0;
+//    }
+//    if (needToRotate) {
+//      if (cameraRotation.x.abs() < Orange.Epsilon) cameraRotation.x = 0.0;
+//      if (cameraRotation.y.abs() < Orange.Epsilon) cameraRotation.y = 0.0;
+//      cameraRotation.scale(inertia);
+//    }
+//  }
+//
+//  void _checkInputs() {
+//    if (_localDirection == null) {
+//      _localDirection = new Vector3.zero();
+//      _transformedDirection = new Vector3.zero();
+//    }
+//    _keys.forEach((int keyCode) {
+//      var speed = _computeLocalCameraSpeed();
+//      if (keysLeft.contains(keyCode)) {
+//        _localDirection.setValues(-speed, 0.0, 0.0);
+//      } else if (keysUp.contains(keyCode)) {
+//        _localDirection.setValues(0.0, 0.0, speed);
+//      } else if (keysRight.contains(keyCode)) {
+//        _localDirection.setValues(speed, 0.0, 0.0);
+//      } else if (keysDown.contains(keyCode)) {
+//        _localDirection.setValues(0.0, 0.0, -speed);
+//      }
+//
+//      _cameraTransformMatrix.copyInverse(_getViewMatrix());
+//      _transformedDirection = _cameraTransformMatrix * _localDirection;
+//      cameraDirection.add(_transformedDirection);
+//    });
+//  }
+//
+//  Quaternion _tempRotation = new Quaternion.identity();
+//
+//  Matrix4 _getViewMatrix() {
+//    _referencePoint.setValues(0.0, 0.0, 1.0);
+//    _tempRotation.setEuler(rotation.y, rotation.x, rotation.z);
+//    _cameraRotationMatrix.setIdentity().setRotation(_tempRotation.asRotationMatrix());
+//    _transformedReferencePoint = _cameraRotationMatrix * _referencePoint;
+//    _currentTarget = _position + _transformedReferencePoint;
+//    camera.position = _position;
+//    camera.lookAt(_currentTarget);
+//    return camera.viewMatrix;
+//  }
+//
+//  double _computeLocalCameraSpeed() {
+//    return speed * (Orange.instance.deltaTime / (Orange.instance.fps * 10.0));
+//  }
+//
+//  void _onKeydown(html.KeyboardEvent event) {
+//    if (keysDown.contains(event.keyCode) || keysLeft.contains(event.keyCode) || keysRight.contains(event.keyCode) || keysUp.contains(event.keyCode)) {
+//      var index = _keys.indexOf(event.keyCode);
+//      if (index == -1) {
+//        _keys.add(event.keyCode);
+//      }
+//      event.preventDefault();
+//    }
+//  }
+//
+//  void _onKeyup(html.KeyboardEvent event) {
+//    if (keysDown.contains(event.keyCode) || keysLeft.contains(event.keyCode) || keysRight.contains(event.keyCode) || keysUp.contains(event.keyCode)) {
+//      var index = _keys.indexOf(event.keyCode);
+//      if (index >= 0) {
+//        _keys.remove(event.keyCode);
+//      }
+//      event.preventDefault();
+//    }
+//  }
+//
+//  void _onMouseDown(html.MouseEvent event) {
+//    _previousPosition = new Vector2(event.client.x.toDouble(), event.client.y.toDouble());
+//    event.preventDefault();
+//  }
+//
+//  void _onMouseUp(html.MouseEvent event) {
+//    _previousPosition = null;
+//  }
+//
+//  void _onMouseWheel(html.WheelEvent event) {
+//  }
+//
+//  void _onMouseOut(html.MouseEvent event) {
+//    _previousPosition = null;
+//    _keys = [];
+//    event.preventDefault();
+//  }
+//
+//  void _onMouseMove(html.MouseEvent event) {
+//    if (_previousPosition == null) return;
+//    var offsetX, offsetY;
+//    if (!Orange.instance._isPointerLock) {
+//      offsetX = event.client.x - _previousPosition.x;
+//      offsetY = event.client.y - _previousPosition.y;
+//    } else {
+//      offsetX = event.movement.x;
+//      offsetY = event.movement.y;
+//    }
+//    _cameraRotation.y += offsetX / angularSensibility;
+//    _cameraRotation.x += offsetY / angularSensibility;
+//    _previousPosition.setValues(event.client.x.toDouble(), event.client.y.toDouble());
+//    event.preventDefault();
+//  }
+//}
 
 
 

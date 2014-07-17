@@ -34,7 +34,7 @@ void main() {
   var graphics = new GraphicsDevice(canvas);
   var camera = new PerspectiveCamera(canvas.width / canvas.height, near: 1.0, far: 10000.0);
   camera.translate(0.0, 0.0, 4.0);
-  var controller = new FreeCameraController();
+  var controller = new FirstPersonController();
   controller = new ArcRotateController();
   controller.attach(camera, canvas);
 

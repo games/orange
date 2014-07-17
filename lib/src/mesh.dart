@@ -44,6 +44,8 @@ class Mesh extends Node {
   
   Collider _collider = new Collider();
   List _trianglePlanes;
+  Matrix4 _collisionsScalingMatrix = new Matrix4.zero();
+  Matrix4 _collisionsTransformMatrix;
   Vector3 ellipsoid = new Vector3(0.5, 1.0, 0.5);
   Vector3 ellipsoidOffset = new Vector3.zero();
   bool checkCollisions = false;
@@ -235,7 +237,14 @@ class Mesh extends Node {
   _checkCollision(Collider collider) {
     if(!_boundingInfo._checkCollision(collider)) return;
     
-    // TODO
+    _collisionsScalingMatrix.scale(1.0/ collider.radius.x, 1.0/collider.radius.y, 1.0/collider.radius.z);
+    _collisionsTransformMatrix = _collisionsScalingMatrix * worldMatrix;
+
+    //    children.forEach((child){
+//      if(child is Mesh) {
+//        collider._collide(child, pts, indices, indexStart, indexEnd, decal)
+//      }
+//    });
   }
 
   Node clone() {

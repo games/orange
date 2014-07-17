@@ -116,8 +116,11 @@ class BoundingInfo {
     nodes.forEach(merge);
     return new BoundingInfo(min, max);
   }
-}
 
+  bool _checkCollision(Collider collider) {
+    return collider._canDoCollision(boundingSphere.centerWorld, boundingSphere.radiusWorld, boundingBox.minimumWorld, boundingBox.maximumWorld);
+  }
+}
 
 
 

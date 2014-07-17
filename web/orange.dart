@@ -61,7 +61,7 @@ void main() {
                 new TestBabylonWCafeScene(camera), 
                 new TestBillboardScene(camera)];
 
-  var i = scenes.length - 2;
+  var i = scenes.length - 3;
 
   orange.enter(scenes[i]);
   orange.run();

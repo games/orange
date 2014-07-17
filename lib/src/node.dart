@@ -24,6 +24,7 @@ class Node {
 
   Node({this.id}) {
     _position = new Vector3.zero();
+    _worldPosition = new Vector3.zero();
     _scaling = new Vector3.all(1.0);
     _rotation = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();

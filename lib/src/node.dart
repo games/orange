@@ -11,6 +11,7 @@ class Node {
 
   Scene _scene;
   Vector3 _position;
+  Vector3 _worldPosition;
   Vector3 _scaling;
   Quaternion _rotation;
   Matrix4 _localMatrix;
@@ -153,6 +154,7 @@ class Node {
     } else {
       worldMatrix = _localMatrix.clone();
     }
+    _worldPosition.setValues(worldMatrix[12], worldMatrix[13], worldMatrix[14]);
     if (updateChildren) children.forEach((c) => c.updateMatrix(updateChildren));
   }
 

@@ -41,7 +41,12 @@ class Mesh extends Node {
   double visibility = 1.0;
   
   double _distanceToCamera = 0.0;
+  
+  Collider _collider = new Collider();
   List _trianglePlanes;
+  Vector3 ellipsoid = new Vector3(0.5, 1.0, 0.5);
+  Vector3 ellipsoidOffset = new Vector3.zero();
+  bool checkCollisions = false;
 
   Mesh({String name}) : super(id: name);
 
@@ -92,6 +97,8 @@ class Mesh extends Node {
     } else {
       worldMatrix = _localMatrix.clone();
     }
+    _worldPosition.setValues(worldMatrix[12], worldMatrix[13], worldMatrix[14]);
+    
     _updateBoundingInfo();
 
     if (updateChildren) children.forEach((c) => c.updateMatrix(updateChildren));
@@ -210,6 +217,25 @@ class Mesh extends Node {
   void set billboardMode(int val) {
     _billboardMode = val;
     _needsUpdateLocalMatrix = true;
+  }
+  
+  void moveWithCollisions(Vector3 velocity) {
+    var pos = _worldPosition - new Vector3(0.0, ellipsoid.y, 0.0);
+    pos.add(ellipsoidOffset);
+    _collider.radius = ellipsoid;
+    
+    var newPos = new Vector3.zero();
+    _scene._getNewPosition(pos, velocity, _collider, 3, newPos, this);
+    var pos2 = newPos - pos;
+    if(pos2.length > Orange.CollisionsEpsilon) {
+      _position.add(pos2);
+    }
+  }
+  
+  _checkCollision(Collider collider) {
+    if(!_boundingInfo._checkCollision(collider)) return;
+    
+    // TODO
   }
 
   Node clone() {

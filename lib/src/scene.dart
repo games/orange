@@ -153,4 +153,53 @@ class Scene implements Disposable {
     _shouldDisposes.forEach((d) => d.dispose());
     _shouldDisposes.clear();
   }
+  
+  void _getNewPosition(Vector3 pos, Vector3 velocity, Collider collider, int maximumRetry, Vector3 finalPosition, Mesh mesh) {
+    var scaledPos = pos.clone();
+    scaledPos.divide(collider.radius);
+    
+    var scaledVelocity = velocity.clone();
+    scaledVelocity.divide(collider.radius);
+    
+    collider.retry = 0;
+    collider.initialVelocity = scaledVelocity;
+    collider.initialPosition = scaledPos;
+    _collideWithWorld(scaledPos, scaledVelocity, collider, maximumRetry, finalPosition, mesh);
+    
+    finalPosition.multiply(collider.radius);
+  }
+  
+  void _collideWithWorld(Vector3 position, Vector3 velocity, Collider collider, int maximumRetry, Vector3 finalPosition, Mesh mesh) {
+    var closeDistance = Orange.CollisionsEpsilon * 10.0;
+    if(collider.retry >= maximumRetry) {
+      finalPosition.setFrom(position);
+      return;
+    }
+   collider._initialize(position, velocity, closeDistance);
+   
+   _meshes.forEach((m){
+     if(m.enabled && m.checkCollisions && m != mesh) {
+       m._checkCollision(collider);
+     }
+   });
+   
+   if(!collider.collisionFound) {
+     finalPosition.setFrom(position + velocity);
+     return;
+   }
+   
+   if(velocity.x !=0 || velocity.y != 0 || velocity.z != 0) {
+     collider._getResponse(position, velocity);
+   }
+   
+   if(velocity.length <= closeDistance) {
+     finalPosition.setFrom(position);
+     return;
+   }
+   
+   collider.retry++;
+   
+   _collideWithWorld(position, velocity, collider, maximumRetry, finalPosition, mesh);
+   
+  }
 }

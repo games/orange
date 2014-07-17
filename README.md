@@ -8,7 +8,7 @@ Is a WebGL based 3D engine for my personal experiments.
 - Shadow mapping (VSM)
 - Bump mapping
 - Basic primitives (Cube, Cylinder, Plane, Sphere, Coordinate)
-- Camera (Orbit Control)
+- Camera (Orbit control, First person control)
 - Bounding box
 - Loaders  
  - Ogre loader ([Script](https://github.com/games/OgreToJson))
@@ -33,11 +33,11 @@ Is a WebGL based 3D engine for my personal experiments.
 - Picking
 - Post-processes
 - Lens flares
-- First person camera control
 - Morph targets
 - LOD system
 - Sub Mesh
 - New physics plugin [ammo.js](https://github.com/kripken/ammo.js)
+- Add BabylonJS License
 
 
 ### Thanks ###

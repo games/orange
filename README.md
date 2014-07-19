@@ -25,11 +25,11 @@ Is a WebGL based 3D engine for my personal experiments.
 - Physically based render (not finish yet)
 - Selection octrees
 - Billboarding
+- Scene graph
 
 
 ### TODO ###
 - Code refactoring
-- Scene graph
 - Picking
 - Post-processes
 - Lens flares

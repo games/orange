@@ -1,7 +1,7 @@
 name: orange
 version: 0.0.1
 author: Valor Zhong <valorzhong@gmail.com>
-description: Is a WebGL based 3D engine
+description: Yet another WebGL based 3D render engine
 homepage: https://github.com/games/orange
 documentation: https://github.com/games/orange
 

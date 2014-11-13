@@ -7,6 +7,5 @@ documentation: https://github.com/games/orange
 
 dependencies:
   browser: any
-  vector_math: any
   stats: any
   unittest: any

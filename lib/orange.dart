@@ -33,7 +33,7 @@ part 'src/render/shader.dart';
 part 'src/render/technique.dart';
 part 'src/render/pass.dart';
 part 'src/render/effect.dart';
-part 'src/render/program_inputs.dart';
+part 'src/render/program_input.dart';
 
 
 part 'src/components/transform.dart';

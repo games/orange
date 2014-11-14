@@ -14,7 +14,7 @@ class Mesh {
   VertexBuffer _texCoords2Buffer;
   VertexBuffer _indexBuffer;
   
-  List<Material> materials = [];
+  List<Material> materials;
 
   void computeNormals() {
     // TODO

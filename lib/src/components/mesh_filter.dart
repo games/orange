@@ -7,6 +7,12 @@ part of orange;
 
 class MeshFilter extends Component {
   
+  Mesh _sharedMesh;
+  Mesh get sharedMesh => _sharedMesh; 
+  set sharedMesh(Mesh mesh) {
+    _sharedMesh = mesh;
+  }
+  
   @override
   void start() {
     // TODO: implement start

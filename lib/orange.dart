@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-
 library orange;
 
 
@@ -22,6 +21,9 @@ part 'src/orange.dart';
 part 'src/node.dart';
 part 'src/component.dart';
 part 'src/game_time.dart';
+part 'src/mesh.dart';
+
+part 'src/resources/resource_manager.dart';
 
 part 'src/render/graphics_device.dart';
 part 'src/render/vertex_buffer.dart';

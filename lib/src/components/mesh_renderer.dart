@@ -18,6 +18,11 @@ class MeshRenderer extends Component {
   }
   
   void render() {
+    if(_target.meshFilter == null || _target.meshFilter.sharedMesh == null)
+      return;
+    
+    var mesh = _target.meshFilter.sharedMesh;
+    mesh.materials;
     
   }
 }

@@ -1,6 +1,27 @@
-// Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+  Orange : Simplified BSD License
+
+  Copyright (c) 2014, Valor Zhong
+  All rights reserved.
+  
+  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+  following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+     disclaimer.
+    
+  2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+     following disclaimer in the documentation and/or other materials provided with the distribution.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+ */
 
 
 part of orange;
@@ -16,8 +37,8 @@ class Effect implements Disposable {
   gl.Program program;
   gl.Shader vertexShader;
   gl.Shader fragmentShader;
-  Map<String, ProgramInput> attributes;
-  Map<String, ProgramInput> uniforms;
+  Map<String, EffectParameter> attributes;
+  Map<String, EffectParameter> uniforms;
   List<String> samplers;
   
   bool _ready = false;
@@ -43,24 +64,23 @@ class Effect implements Disposable {
   }
   
   void prepare() {
-    if(_ready) return;
-    _compile(_vertSrc, _fragSrc, common: _commonSrc);
-    // I don't wanna store the source again
+    if(_ready || _vertSrc == null || _fragSrc == null) return;
+    _compile();
+    // TODO: clean
     _vertSrc = null;
     _fragSrc = null;
     _commonSrc = null;
   }
 
-  _compile(String vertSrc, String fragSrc, {String common: ""}) {
-    if(vertSrc == null || fragSrc == null) return;
+  _compile() {
     
     var graphics = Orange.instance.graphicsDevice;
     var ctx = graphics._ctx;
 
-    vertexShader = _compileShader(ctx, "$common\n$vertSrc", gl.VERTEX_SHADER);
+    vertexShader = _compileShader(ctx, "$_commonSrc\n$_vertSrc", gl.VERTEX_SHADER);
     if (vertexShader == null) return;
 
-    fragmentShader = _compileShader(ctx, "$common\n$fragSrc", gl.FRAGMENT_SHADER);
+    fragmentShader = _compileShader(ctx, "$_commonSrc\n$_fragSrc", gl.FRAGMENT_SHADER);
     if (fragmentShader == null) return;
 
     program = ctx.createProgram();
@@ -76,7 +96,7 @@ class Effect implements Disposable {
     var attribCount = ctx.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < attribCount; i++) {
       var info = ctx.getActiveAttrib(program, i);
-      attributes[info.name] = new ProgramInput(info.name, ctx.getAttribLocation(program, info.name), info.type);
+      attributes[info.name] = new EffectParameter(info.name, ctx.getAttribLocation(program, info.name), info.type);
     }
 
     uniforms = {};
@@ -89,7 +109,7 @@ class Effect implements Disposable {
       if (ii != -1) {
         name = name.substring(0, ii);
       }
-      uniforms[name] = new ProgramInput(name, ctx.getUniformLocation(program, name), uniform.type);
+      uniforms[name] = new EffectParameter(name, ctx.getUniformLocation(program, name), uniform.type);
       if (uniform.type == gl.SAMPLER_2D || uniform.type == gl.SAMPLER_CUBE) {
         samplers.add(name);
       }

@@ -23,16 +23,26 @@
   
  */
 
+
 part of orange;
 
 
-
-class ResourceManager extends Disposable {
+class Material {
   
+  String name;
+  Color color;
+  bool wireframe = false;
+  Texture mainTexture;
+  Vector2 mainTextureOffset;
+  Vector2 mainTextureScale;
+  Shader shader;
   
+  Material(this.name);
   
-  @override
-  void dispose() {
-    // TODO: implement dispose
+  static Material defaultMaterial() {
+    var material = new Material("default");
+    material.shader = Shader.defaultShader();
+    return material;
   }
+  
 }

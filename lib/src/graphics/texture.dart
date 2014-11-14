@@ -27,12 +27,6 @@ part of orange;
 
 
 
-class ResourceManager extends Disposable {
+class Texture {
   
-  
-  
-  @override
-  void dispose() {
-    // TODO: implement dispose
-  }
 }

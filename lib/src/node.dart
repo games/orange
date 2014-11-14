@@ -1,6 +1,27 @@
-// Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+  Orange : Simplified BSD License
+
+  Copyright (c) 2014, Valor Zhong
+  All rights reserved.
+  
+  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+  following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+     disclaimer.
+    
+  2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+     following disclaimer in the documentation and/or other materials provided with the distribution.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+ */
 
 part of orange;
 
@@ -14,7 +35,7 @@ class Node {
   bool enabled;
   bool visible;
 
-  List<Component> components;
+  List<Component> components = [];
 
   Transform _transform;
   Transform get transform => _transform;
@@ -34,12 +55,12 @@ class Node {
   Node(this.name, {this.visible: true, this.enabled: true});
 
   initialize() {
-    if (components != null) components.forEach((c) => c.start());
+    components.forEach((c) => c.start());
     if (children != null) children.forEach((c) => c.initialize());
   }
 
   update(GameTime time) {
-    if (components != null) components.forEach((c) => c.update(time));
+    components.forEach((c) => c.update(time));
     if (children != null) children.forEach((c) => c.update(time));
   }
 

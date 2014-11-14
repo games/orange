@@ -25,14 +25,6 @@
 
 part of orange;
 
-
-
-class ResourceManager extends Disposable {
+class ResourceLoader {
   
-  
-  
-  @override
-  void dispose() {
-    // TODO: implement dispose
-  }
 }

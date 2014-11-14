@@ -27,12 +27,14 @@ part of orange;
 
 
 
-class ResourceManager extends Disposable {
-  
-  
-  
+class EffectParameter {
+  String name;
+  dynamic location;
+  int type;
+  VertexFormat semantic;
+
+  EffectParameter(this.name, this.location, this.type);
+
   @override
-  void dispose() {
-    // TODO: implement dispose
-  }
+  String toString() => "[${semantic.name}]${name}: ${location}";
 }

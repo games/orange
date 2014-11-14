@@ -27,12 +27,44 @@ part of orange;
 
 
 
-class ResourceManager extends Disposable {
-  
-  
-  
+class PerspectiveCamera extends Camera {
+  double near;
+  double far;
+  double fov;
+  double aspect;
+
+  PerspectiveCamera(this.aspect, {this.near: 0.1, this.far: 1000.0, this.fov: 50.0}) {
+    updateProjection();
+  }
+
+  void setLens(num focalLen, [num frameHeight = 24]) {
+    fov = 2 * degrees(Math.atan(frameHeight / (focalLen * 2)));
+    updateProjection();
+  }
+
   @override
-  void dispose() {
-    // TODO: implement dispose
+  updateProjection() {
+    _projectionMatrix = new Matrix4.perspective(radians(fov), aspect, near, far);
+  }
+
+  @override
+  void start() {
+    // TODO: implement start
+  }
+
+  @override
+  void update(GameTime time) {
+    // TODO: implement update
+  }
+
+  @override
+  void stageResized() {
+    aspect = Orange.instance.width / Orange.instance.height;
+    updateProjection();
   }
 }
+
+
+
+
+

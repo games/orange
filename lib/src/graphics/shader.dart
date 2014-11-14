@@ -27,12 +27,26 @@ part of orange;
 
 
 
-class ResourceManager extends Disposable {
+class Shader {
   
+  String name;
+  List<Technique> techniques;
+  Technique get technique => techniques.first;
   
+  Shader(this.name): techniques = [];
+
   
-  @override
-  void dispose() {
-    // TODO: implement dispose
+  static Shader defaultShader() {
+    var technique = new Technique("technique");
+    var pass = new Pass();
+    var effect = new Effect.load("packages/orange/src/shaders/default");
+    var attributes = effect.attributes;
+    attributes["a_position"].semantic = VertexFormat.POSITION;
+    var uniforms = effect.uniforms;
+    uniforms["u_worldViewProjectionMatrix"].semantic = VertexFormat.WORLD_VIEW_PROJECTION;
+    technique.passes.add(pass);
+    var shader = new Shader("default");
+    shader.techniques.add(technique);
+    return shader;
   }
 }

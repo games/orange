@@ -12,6 +12,25 @@ import 'package:stats/stats.dart';
 void main() {
   var canvas = Html.querySelector("#container");
   
+  var orange = new Orange(canvas);
+  
+  orange.initialize = () {
+    new OBJLoader().load("models/obj/head.obj").then((mesh) {
+      orange.root.addChild(new Node("head")
+      ..addComponent(new MeshFilter(mesh))
+      ..addComponent(new MeshRenderer()..materials = [Material.defaultMaterial()]));
+    });
+  };
+  
+  orange.enterFrame = (GameTime gameTime) {
+    
+  };
+  
+  orange.exitFrame = () {
+    
+  };
+  
+  orange.run();
   
 }
 

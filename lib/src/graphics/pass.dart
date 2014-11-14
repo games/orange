@@ -27,12 +27,20 @@ part of orange;
 
 
 
-class ResourceManager extends Disposable {
-  
-  
-  
-  @override
-  void dispose() {
-    // TODO: implement dispose
+class Pass {
+  Effect effect;
+  RenderState renderState;
+
+  bool bind(GraphicsDevice graphicsDevice) {
+    effect.prepare();
+    if (!effect.ready) return false;
+    
+    graphicsDevice.useEffect(effect);
+    graphicsDevice.setRenderState(renderState);
+    return true;
+  }
+
+  void unbind() {
+    // TODO
   }
 }

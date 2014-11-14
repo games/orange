@@ -27,12 +27,9 @@ part of orange;
 
 
 
-class ResourceManager extends Disposable {
-  
-  
-  
-  @override
-  void dispose() {
-    // TODO: implement dispose
-  }
+class Technique {
+  String name;
+  List<Pass> passes;
+
+  Technique(this.name) : passes = [];
 }

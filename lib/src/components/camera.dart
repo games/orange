@@ -32,8 +32,9 @@ abstract class Camera extends Component {
 
   Matrix4 _projectionMatrix;
 
-  Matrix4 get projectionMatrix => _projectionMatrix;
-  Matrix4 get viewMatrix => _target.transform.worldMatrix.inverse();
+  Matrix4 get viewProjection => _projectionMatrix * view;
+  Matrix4 get projection => _projectionMatrix;
+  Matrix4 get view => _target.transform.worldMatrix.inverse();
 
   void updateProjection();
   

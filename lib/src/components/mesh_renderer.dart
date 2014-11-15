@@ -29,10 +29,11 @@ part of orange;
 class MeshRenderer extends Component {
   
   List<Material> materials;
+  DataProvider _provider;
 
   @override
   void onStart() {
-    // TODO: implement start
+    _provider = new DataProvider();
   }
 
   @override
@@ -50,35 +51,36 @@ class MeshRenderer extends Component {
   }
 
   void _renderInternal(Mesh mesh, Material material, Pass pass) {
-    var graphicsDevice = Orange.instance.graphicsDevice;
-    var camera = Orange.instance.mainCamera.camera;
+    var orange = Orange.instance;
+    var graphics = orange.graphicsDevice;
+    var camera = orange.mainCamera.camera;
 
-    if (!pass.bind(graphicsDevice)) return;
+    if (!pass.bind(graphics)) return;
+    
+    _provider.camera = camera;
+    _provider.material = material;
+    _provider.mesh = mesh;
+    _provider.pass = pass;
+    _provider.target = _target;
 
     var effect = pass.effect;
     // set uniforms
     effect.uniforms.forEach((String name, EffectParameter parameter) {
-      if (parameter.semantic == VertexFormat.WORLD_VIEW_PROJECTION) {
-        graphicsDevice.setMatrix4(
-            parameter.location,
-            camera.projectionMatrix * camera.viewMatrix * _target.transform.worldMatrix);
-      }
+      parameter.bind(graphics, _provider);
     });
 
     // set attributes
     effect.attributes.forEach((String name, EffectParameter parameter) {
-      var buffer = mesh._buffers[parameter.semantic];
-      buffer.upload(graphicsDevice);
-      buffer.enable(graphicsDevice, parameter);
+      parameter.bind(graphics, _provider);
     });
 
     // bind indices
-    mesh.indexBuffer.upload(graphicsDevice);
+    mesh.indexBuffer.upload(graphics);
 
     if (material.wireframe) {
-      graphicsDevice.drawLines(mesh.vertexBuffer.numVertices);
+      graphics.drawLines(mesh.vertexBuffer.numVertices);
     } else {
-      graphicsDevice.drawTriangles(mesh.indexBuffer);
+      graphics.drawTriangles(mesh.indexBuffer);
     }
 
     pass.unbind();

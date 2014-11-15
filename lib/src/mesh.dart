@@ -29,33 +29,33 @@ part of orange;
 
 class Mesh {
 
-  Map<VertexFormat, VertexBuffer> _buffers;
+  Map<Semantices, VertexBuffer> _buffers;
 
   Mesh() : _buffers = {};
 
-  VertexBuffer get vertexBuffer => _buffers[VertexFormat.POSITION];
+  VertexBuffer get vertexBuffer => _buffers[Semantices.POSITION];
   void set vertexBuffer(VertexBuffer value) {
-    _buffers[VertexFormat.POSITION] = value;
+    _buffers[Semantices.POSITION] = value;
   }
 
-  VertexBuffer get normalBuffer => _buffers[VertexFormat.NORMAL];
+  VertexBuffer get normalBuffer => _buffers[Semantices.NORMAL];
   void set normalBuffer(VertexBuffer value) {
-    _buffers[VertexFormat.NORMAL] = value;
+    _buffers[Semantices.NORMAL] = value;
   }
 
-  VertexBuffer get texCoordsBuffer => _buffers[VertexFormat.TEXCOORD_0];
+  VertexBuffer get texCoordsBuffer => _buffers[Semantices.TEXCOORD_0];
   void set texCoordsBuffer(VertexBuffer value) {
-    _buffers[VertexFormat.TEXCOORD_0] = value;
+    _buffers[Semantices.TEXCOORD_0] = value;
   }
 
-  VertexBuffer get texCoords2Buffer => _buffers[VertexFormat.TEXCOORD_1];
+  VertexBuffer get texCoords2Buffer => _buffers[Semantices.TEXCOORD_1];
   void set texCoords2Buffer(VertexBuffer value) {
-    _buffers[VertexFormat.TEXCOORD_1] = value;
+    _buffers[Semantices.TEXCOORD_1] = value;
   }
 
-  VertexBuffer get indexBuffer => _buffers[VertexFormat.INDEX];
+  VertexBuffer get indexBuffer => _buffers[Semantices.INDEX];
   void set indexBuffer(VertexBuffer value) {
-    _buffers[VertexFormat.INDEX] = value;
+    _buffers[Semantices.INDEX] = value;
   }
   
   void set vertices(List<double> data) {

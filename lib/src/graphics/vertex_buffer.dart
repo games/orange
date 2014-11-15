@@ -27,30 +27,6 @@ part of orange;
 
 
 
-
-class VertexFormat {
-  static const VertexFormat POSITION = const VertexFormat("POSITION");
-  static const VertexFormat TEXCOORD_0 = const VertexFormat("TEXCOORD_0");
-  static const VertexFormat TEXCOORD_1 = const VertexFormat("TEXCOORD_1");
-  static const VertexFormat NORMAL = const VertexFormat("NORMAL");
-  static const VertexFormat INDEX = const VertexFormat("INDEX");
-  static const VertexFormat JOINT_WEIGHTS = const VertexFormat("JOINT_WEIGHTS");
-  static const VertexFormat JOINTS = const VertexFormat("JOINTS");
-  static const VertexFormat JOINT_MATRICES = const VertexFormat("JOINT_MATRICES");
-
-  static const VertexFormat MODEL = const VertexFormat("MODEL");
-  static const VertexFormat VIEW = const VertexFormat("VIEW");
-  static const VertexFormat PROJECTION = const VertexFormat("PROJECTION");
-  static const VertexFormat VIEW_PROJECTION = const VertexFormat("VIEW_PROJECTION");
-  static const VertexFormat WORLD_VIEW_PROJECTION = const VertexFormat("WORLD_VIEW_PROJECTION");
-
-  final String name;
-  const VertexFormat(this.name);
-  
-  @override
-  String toString() => name;
-}
-
 class VertexAttribute {
   /// index of vertex atribute
   int location;

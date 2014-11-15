@@ -47,7 +47,7 @@ class VertexAttribute {
   VertexAttribute(this.size, this.type, this.normalized, this.stride, this.offset);
 }
 
-class VertexBuffer {
+class VertexBuffer extends Disposable {
   gl.Buffer _bufferHandle;
   TypedData _data;
 
@@ -90,6 +90,7 @@ class VertexBuffer {
     graphicsDevice.enableBuffer(parameter.location, this);
   }
 
+  @override
   void dispose() {
     if (_bufferHandle != null) {
       Orange.instance.graphicsDevice.deleteBuffer(this);

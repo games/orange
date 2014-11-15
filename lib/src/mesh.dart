@@ -27,36 +27,13 @@ part of orange;
 
 
 
-class Mesh {
+class Mesh extends Disposable {
 
-  Map<Semantices, VertexBuffer> _buffers;
-
-  Mesh() : _buffers = {};
-
-  VertexBuffer get vertexBuffer => _buffers[Semantices.POSITION];
-  void set vertexBuffer(VertexBuffer value) {
-    _buffers[Semantices.POSITION] = value;
-  }
-
-  VertexBuffer get normalBuffer => _buffers[Semantices.NORMAL];
-  void set normalBuffer(VertexBuffer value) {
-    _buffers[Semantices.NORMAL] = value;
-  }
-
-  VertexBuffer get texCoordsBuffer => _buffers[Semantices.TEXCOORD_0];
-  void set texCoordsBuffer(VertexBuffer value) {
-    _buffers[Semantices.TEXCOORD_0] = value;
-  }
-
-  VertexBuffer get texCoords2Buffer => _buffers[Semantices.TEXCOORD_1];
-  void set texCoords2Buffer(VertexBuffer value) {
-    _buffers[Semantices.TEXCOORD_1] = value;
-  }
-
-  VertexBuffer get indexBuffer => _buffers[Semantices.INDEX];
-  void set indexBuffer(VertexBuffer value) {
-    _buffers[Semantices.INDEX] = value;
-  }
+  VertexBuffer vertexBuffer;
+  VertexBuffer normalBuffer;
+  VertexBuffer texCoordsBuffer;
+  VertexBuffer texCoords2Buffer;
+  VertexBuffer indexBuffer;
   
   void set vertices(List<double> data) {
     vertexBuffer = new VertexBuffer.vertexData(new Float32List.fromList(data), 3);
@@ -90,5 +67,19 @@ class Mesh {
     var mesh = new Mesh();
     // TODO
     return mesh;
+  }
+
+  @override
+  void dispose() {
+    _deleteBuffer(vertexBuffer);
+    _deleteBuffer(indexBuffer);
+    _deleteBuffer(normalBuffer);
+    _deleteBuffer(texCoordsBuffer);
+    _deleteBuffer(texCoords2Buffer);
+  }
+  
+  void _deleteBuffer(VertexBuffer vertexBuffer) {
+    if(vertexBuffer != null) vertexBuffer.dispose();
+    vertexBuffer = null;
   }
 }

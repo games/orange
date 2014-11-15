@@ -45,13 +45,14 @@ part 'src/game_time.dart';
 part 'src/mesh.dart';
 
 part 'src/resources/resource_manager.dart';
-part 'src/resources/resource_loader.dart';
+part 'src/resources/texture_loader.dart';
 part 'src/resources/obj_loader.dart';
 
 part 'src/graphics/graphics_device.dart';
 part 'src/graphics/vertex_buffer.dart';
 part 'src/graphics/material.dart';
 part 'src/graphics/texture.dart';
+part 'src/graphics/sampler.dart';
 part 'src/graphics/shader.dart';
 part 'src/graphics/technique.dart';
 part 'src/graphics/render_state.dart';
@@ -100,11 +101,20 @@ double radians(double degrees) {
   return degrees * degrees2radians;
 }
 
+or(expectValue, defaultValue) {
+  if (expectValue == null) return defaultValue;
+  return expectValue;
+}
 
+bool isPowerOfTwo(int x) => (x & (x - 1)) == 0;
 
-
-
-
+int nextHighestPowerOfTwo(int x) {
+  --x;
+  for (var i = 1; i < 32; i <<= 1) {
+    x = x | x >> i;
+  }
+  return x + 1;
+}
 
 
 

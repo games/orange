@@ -38,6 +38,7 @@ class GraphicsDevice {
   Math.Rectangle _viewport;
   bool _currentDepthMask;
   VertexBuffer _currentIndexBuffer;
+  Effect _currentEffect;
 
   GraphicsDevice(html.CanvasElement canvas) {
     _renderingCanvas = canvas;
@@ -103,6 +104,10 @@ class GraphicsDevice {
         attribute.offset);
   }
 
+  void deleteTexture(gl.Texture texture) {
+    _ctx.deleteTexture(texture);
+  }
+
   void useEffect(Effect effect) {
     _ctx.useProgram(effect.program);
   }
@@ -159,7 +164,7 @@ class GraphicsDevice {
   void _setDepthWrite(bool enabled) {
     _ctx.depthMask(enabled);
   }
-  
+
   void drawLines(int numVertices) {
     _ctx.drawArrays(gl.LINE_STRIP, 0, numVertices);
   }
@@ -172,12 +177,51 @@ class GraphicsDevice {
     if (numTriangles == null) numTriangles = indexBuffer._numVertices;
     _ctx.drawElements(gl.TRIANGLES, numTriangles * 3, gl.UNSIGNED_SHORT, offset);
   }
+
   
   /// ========== set uniforms ===============
   setMatrix4(gl.UniformLocation location, Matrix4 value) {
     _ctx.uniformMatrix4fv(location, false, value._elements);
   }
- 
+  
+
+  /// ========== textures ===============
+  void createTexture(Texture texture, data) {
+    texture._texture = _ctx.createTexture();
+    _ctx.bindTexture(texture.target, texture._texture);
+    if (texture.flip) {
+      _ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    } else {
+      _ctx.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+    }
+    var sampler = texture.sampler;
+    _ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_S, sampler.wrapS);
+    _ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, sampler.wrapT);
+    _ctx.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
+    _ctx.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, sampler.magFilter);
+    _ctx.texImage2D(texture.target, 0, texture.format, texture.format, texture.type, data);
+    if (texture.mipMapping) {
+      _ctx.generateMipmap(texture.target);
+    }
+    _ctx.bindTexture(texture.target, null);
+  }
+
+  bindTexture(Texture texture, int channel) {
+    if (!texture.ready) return;
+    if (channel < 0) return;
+    _ctx.activeTexture(gl.TEXTURE0 + channel);
+    _ctx.bindTexture(texture.target, texture._texture);
+  }
+
+  unbindTexture(Texture texture, int channel) {
+    if (channel < 0) return;
+    _ctx.activeTexture(gl.TEXTURE0 + channel);
+    _ctx.bindTexture(texture.target, null);
+  }
+
+
+
+
 }
 
 

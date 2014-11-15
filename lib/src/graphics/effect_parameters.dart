@@ -36,8 +36,10 @@ class EffectParameters {
 
   set(String name, dynamic location, int type) {
     if (_parameters.containsKey(name)) {
-      _parameters[name].location = location;
-      _parameters[name].type = type;
+      var param = _parameters[name];
+      param.name = name;
+      param.location = location;
+      param.type = type;
     } else {
       add(new EffectParameter(name, location, type));
     }
@@ -89,6 +91,8 @@ class Semantices {
   static const Semantices PROJECTION = const Semantices(_projectionBinding);
   static const Semantices VIEW_PROJECTION = const Semantices(_viewProjectionBinding);
   static const Semantices WORLD_VIEW_PROJECTION = const Semantices(_worldViewProjectionBinding);
+  
+  static const Semantices DIFFUSE_TEXTURE = const Semantices(_diffuseTextureBinding);
 
   final _Binding binding;
   const Semantices(this.binding);
@@ -156,3 +160,8 @@ _viewProjectionBinding(GraphicsDevice graphics, EffectParameter parameter, DataP
 _worldViewProjectionBinding(GraphicsDevice graphics, EffectParameter parameter, DataProvider provider) =>
     graphics.setMatrix4(parameter.location, provider.camera.viewProjection * provider.target.transform.worldMatrix);
 
+_diffuseTextureBinding(GraphicsDevice graphics, EffectParameter parameter, DataProvider provider) {
+    var channel = provider.pass.effect.samplers.indexOf(parameter.name);
+    graphics.bindTexture(provider.material.mainTexture, channel);
+}
+    

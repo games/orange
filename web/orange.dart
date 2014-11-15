@@ -16,9 +16,13 @@ void main() {
   
   orange.initialize = () {
     new OBJLoader().load("models/obj/head.obj").then((mesh) {
+      
+      var material = Material.defaultMaterial();
+      material.mainTexture = orange.resources.loadTexture("textures/firefox.png");
+      
       orange.root.addChild(new Node("head")
       ..addComponent(new MeshFilter(mesh))
-      ..addComponent(new MeshRenderer()..materials = [Material.defaultMaterial()]));
+      ..addComponent(new MeshRenderer()..materials = [material]));
     });
     
     orange.mainCamera.transform.translate(0.0, 1.0, 5.0);

@@ -38,6 +38,9 @@ class Orange {
 
   GraphicsDevice _graphicsDevice;
   GraphicsDevice get graphicsDevice => _graphicsDevice;
+  
+  ResourceManager _resources;
+  ResourceManager get resources => _resources;
 
   GameTime _gameTime;
   GameTime get gameTime => _gameTime;
@@ -59,6 +62,7 @@ class Orange {
 
   Orange._(html.CanvasElement canvas) {
     _graphicsDevice = new GraphicsDevice(canvas);
+    _resources = new ResourceManager();
     _gameTime = new GameTime();
     _root = new Node("Root");
 

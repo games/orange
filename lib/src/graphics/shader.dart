@@ -42,11 +42,13 @@ class Shader {
     var attributes = effect.attributes;
     attributes["aPosition"] = new EffectParameter.semantics(Semantices.POSITION);
     attributes["aNormal"] = new EffectParameter.semantics(Semantices.NORMAL);
+    attributes["aUV"] = new EffectParameter.semantics(Semantices.TEXCOORD_0);
     
     var uniforms = effect.uniforms;
     uniforms["uViewMat"] = new EffectParameter.semantics(Semantices.VIEW);
     uniforms["uModelMat"] = new EffectParameter.semantics(Semantices.MODEL);
     uniforms["uProjectionMat"] = new EffectParameter.semantics(Semantices.PROJECTION);
+    uniforms["uDiffuseTexture"] = new EffectParameter.semantics(Semantices.DIFFUSE_TEXTURE);
     
     var pass = new Pass();
     pass.effect = effect;

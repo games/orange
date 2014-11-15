@@ -1,5 +1,6 @@
 precision highp float;
 attribute vec3 aPosition;
+attribute vec2 aUV;
 attribute vec3 aNormal;
 
 uniform mat4 uViewMat;
@@ -7,6 +8,7 @@ uniform mat4 uModelMat;
 uniform mat4 uProjectionMat;
 
 varying vec4 vPosition;
+varying vec2 vDiffuseUV;
 varying vec3 vLighting;
 
 mat3 getNormalMat(mat4 mat) {
@@ -28,5 +30,6 @@ void main(void) {
   highp float directional = max(dot(normal, directionalVector), 0.0);
   vec3 lighting = ambientLight + (directionalLightColor * directional);
 
+  vDiffuseUV = aUV;
   vLighting = lighting;
 }

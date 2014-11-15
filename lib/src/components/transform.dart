@@ -36,6 +36,14 @@ class Transform extends Component {
   Matrix4 _worldMatrix;
   bool _dirty;
 
+  Transform() {
+    _position = new Vector3.zero();
+    _scale = new Vector3.all(1.0);
+    _rotation = new Quaternion.identity();
+    _localMatrix = new Matrix4.identity();
+    _dirty = true;
+  }
+
   Matrix4 get worldMatrix => _worldMatrix;
 
   Vector3 get scale => _scale;
@@ -92,16 +100,12 @@ class Transform extends Component {
   }
 
   @override
-  void start() {
-    _position = new Vector3.zero();
-    _scale = new Vector3.all(1.0);
-    _rotation = new Quaternion.identity();
-    _localMatrix = new Matrix4.identity();
-    _dirty = true;
+  void onStart() {
+
   }
 
   @override
-  void update(GameTime time) {
+  void onUpdate(GameTime time) {
     if (_dirty) {
       _dirty = false;
       _localMatrix.recompose(_position, _rotation, _scale);
@@ -113,7 +117,6 @@ class Transform extends Component {
     }
   }
 }
-
 
 
 

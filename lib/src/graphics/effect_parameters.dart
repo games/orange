@@ -27,6 +27,34 @@ part of orange;
 
 
 
+class EffectParameters {
+
+  Map<String, EffectParameter> _parameters;
+  EffectParameters() : _parameters = {};
+
+  add(EffectParameter parameter) => _parameters[parameter.name] = parameter;
+
+  set(String name, dynamic location, int type) {
+    if (_parameters.containsKey(name)) {
+      _parameters[name].location = location;
+      _parameters[name].type = type;
+    } else {
+      add(new EffectParameter(name, location, type));
+    }
+  }
+  
+  void forEach(void handler(String name, EffectParameter parameter)) {
+    _parameters.forEach(handler);
+  }
+
+  EffectParameter operator [](String name) => _parameters[name];
+  
+  void operator []=(String name, EffectParameter parameter) {
+    _parameters[name] = parameter;
+  }
+}
+
+
 class EffectParameter {
   String name;
   dynamic location;
@@ -34,6 +62,8 @@ class EffectParameter {
   VertexFormat semantic;
 
   EffectParameter(this.name, this.location, this.type);
+
+  EffectParameter.semantics(this.semantic);
 
   @override
   String toString() => "[${semantic.name}]${name}: ${location}";

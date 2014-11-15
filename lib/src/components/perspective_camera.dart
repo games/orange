@@ -48,12 +48,12 @@ class PerspectiveCamera extends Camera {
   }
 
   @override
-  void start() {
+  void onStart() {
     // TODO: implement start
   }
 
   @override
-  void update(GameTime time) {
+  void onUpdate(GameTime time) {
     // TODO: implement update
   }
 

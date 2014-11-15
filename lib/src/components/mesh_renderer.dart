@@ -31,12 +31,12 @@ class MeshRenderer extends Component {
   List<Material> materials;
 
   @override
-  void start() {
+  void onStart() {
     // TODO: implement start
   }
 
   @override
-  void update(GameTime time) {
+  void onUpdate(GameTime time) {
     // TODO: implement update
   }
 
@@ -51,7 +51,7 @@ class MeshRenderer extends Component {
 
   void _renderInternal(Mesh mesh, Material material, Pass pass) {
     var graphicsDevice = Orange.instance.graphicsDevice;
-    var camera = Orange.instance.mainCamera;
+    var camera = Orange.instance.mainCamera.camera;
 
     if (!pass.bind(graphicsDevice)) return;
 

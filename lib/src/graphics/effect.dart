@@ -37,16 +37,19 @@ class Effect implements Disposable {
   gl.Program program;
   gl.Shader vertexShader;
   gl.Shader fragmentShader;
-  Map<String, EffectParameter> attributes;
-  Map<String, EffectParameter> uniforms;
+  EffectParameters attributes;
+  EffectParameters uniforms;
   List<String> samplers;
-  
+
   bool _ready = false;
   bool get ready => _ready;
-  
+
   String _vertSrc, _fragSrc, _commonSrc;
 
-  Effect(this._vertSrc, this._fragSrc, {String common: ""}) {
+  Effect(this._vertSrc, this._fragSrc, {String common: ""})
+      : attributes = new EffectParameters(),
+        uniforms = new EffectParameters(),
+        samplers = [] {
     _commonSrc = common;
   }
 
@@ -54,17 +57,19 @@ class Effect implements Disposable {
    * vertex source file:   [url].vs.glsl
    * fragment source file: [url].fs.glsl
    **/
-  Effect.load(String url, {String common: ""}) {
-    Future.wait([html.HttpRequest.getString("${url}.vs.glsl"), 
-                 html.HttpRequest.getString("${url}.fs.glsl")]).then((r) {
+  Effect.load(String url, {String common: ""})
+      : attributes = new EffectParameters(),
+        uniforms = new EffectParameters(),
+        samplers = [] {
+    Future.wait([html.HttpRequest.getString("${url}.vs.glsl"), html.HttpRequest.getString("${url}.fs.glsl")]).then((r) {
       _vertSrc = r[0];
       _fragSrc = r[1];
       _commonSrc = common;
     });
   }
-  
+
   void prepare() {
-    if(_ready || _vertSrc == null || _fragSrc == null) return;
+    if (_ready || _vertSrc == null || _fragSrc == null) return;
     _compile();
     // TODO: clean
     _vertSrc = null;
@@ -73,7 +78,7 @@ class Effect implements Disposable {
   }
 
   _compile() {
-    
+
     var graphics = Orange.instance.graphicsDevice;
     var ctx = graphics._ctx;
 
@@ -92,15 +97,12 @@ class Effect implements Disposable {
       return;
     }
 
-    attributes = {};
     var attribCount = ctx.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < attribCount; i++) {
       var info = ctx.getActiveAttrib(program, i);
-      attributes[info.name] = new EffectParameter(info.name, ctx.getAttribLocation(program, info.name), info.type);
+      attributes.set(info.name, ctx.getAttribLocation(program, info.name), info.type);
     }
 
-    uniforms = {};
-    samplers = [];
     var uniformCount = ctx.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
     for (var i = 0; i < uniformCount; i++) {
       var uniform = ctx.getActiveUniform(program, i);
@@ -109,7 +111,7 @@ class Effect implements Disposable {
       if (ii != -1) {
         name = name.substring(0, ii);
       }
-      uniforms[name] = new EffectParameter(name, ctx.getUniformLocation(program, name), uniform.type);
+      uniforms.set(name, ctx.getUniformLocation(program, name), uniform.type);
       if (uniform.type == gl.SAMPLER_2D || uniform.type == gl.SAMPLER_CUBE) {
         samplers.add(name);
       }
@@ -140,4 +142,3 @@ class Effect implements Disposable {
     }
   }
 }
-

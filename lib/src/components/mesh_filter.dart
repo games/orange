@@ -33,12 +33,12 @@ class MeshFilter extends Component {
   MeshFilter(this.sharedMesh);
   
   @override
-  void start() {
+  void onStart() {
     // TODO: implement start
   }
 
   @override
-  void update(GameTime time) {
+  void onUpdate(GameTime time) {
     // TODO: implement update
   }
 }

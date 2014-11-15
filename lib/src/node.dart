@@ -52,12 +52,14 @@ class Node {
   MeshRenderer _renderer;
   MeshRenderer get renderer => _renderer;
 
-  Node(this.name, {this.visible: true, this.enabled: true});
-
-  initialize() {
-    components.forEach((c) => c.start());
-    if (children != null) children.forEach((c) => c.initialize());
+  Node(this.name, {this.visible: true, this.enabled: true}) {
+    addComponent(new Transform());
   }
+
+//  initialize() {
+//    components.forEach((c) => c.onStart());
+//    if (children != null) children.forEach((c) => c.initialize());
+//  }
 
   update(GameTime time) {
     components.forEach((c) => c.update(time));

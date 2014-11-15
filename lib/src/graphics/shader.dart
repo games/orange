@@ -37,14 +37,19 @@ class Shader {
 
   
   static Shader defaultShader() {
-    var technique = new Technique("technique");
-    var pass = new Pass();
     var effect = new Effect.load("packages/orange/src/shaders/default");
     var attributes = effect.attributes;
-    attributes["a_position"].semantic = VertexFormat.POSITION;
+    attributes["a_position"] = new EffectParameter.semantics(VertexFormat.POSITION);
     var uniforms = effect.uniforms;
-    uniforms["u_worldViewProjectionMatrix"].semantic = VertexFormat.WORLD_VIEW_PROJECTION;
+    uniforms["u_worldViewProjectionMatrix"] = new EffectParameter.semantics(VertexFormat.WORLD_VIEW_PROJECTION);
+    
+    var pass = new Pass();
+    pass.effect = effect;
+    pass.renderState = new RenderState();
+    
+    var technique = new Technique("technique");
     technique.passes.add(pass);
+    
     var shader = new Shader("default");
     shader.techniques.add(technique);
     return shader;

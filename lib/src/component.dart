@@ -30,9 +30,20 @@ part of orange;
 
 abstract class Component {
   Node _target;
+  bool _started = false;
   
-  void start();
-  void update(GameTime time);
+  void start() {
+    if(!_started) onStart();
+    _started = true;
+  }
+  
+  void update(GameTime time) {
+    start();
+    onUpdate(time);
+  }
+  
+  void onStart();
+  void onUpdate(GameTime time);
   
   void attached(Node target) {
     _target = target;

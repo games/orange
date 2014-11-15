@@ -20,6 +20,8 @@ void main() {
       ..addComponent(new MeshFilter(mesh))
       ..addComponent(new MeshRenderer()..materials = [Material.defaultMaterial()]));
     });
+    
+    orange.mainCamera.transform.translate(0.0, 1.0, 5.0);
   };
   
   orange.enterFrame = (GameTime gameTime) {

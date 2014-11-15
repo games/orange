@@ -45,15 +45,15 @@ class Orange {
   Callback initialize;
   Callback1<GameTime> enterFrame;
   Callback exitFrame;
-  
+
   Node _root;
   Node get root => _root;
-  
+
   Node _mainCamera;
-  Camera get mainCamera => _mainCamera.camera;
-  
+  Node get mainCamera => _mainCamera;
+
   Color backgroundColor;
-  
+
   int get width => _graphicsDevice._renderingCanvas.width;
   int get height => _graphicsDevice._renderingCanvas.height;
 
@@ -61,19 +61,19 @@ class Orange {
     _graphicsDevice = new GraphicsDevice(canvas);
     _gameTime = new GameTime();
     _root = new Node("Root");
-    
+
     _mainCamera = new Node("MainCamera");
     _mainCamera.addComponent(new PerspectiveCamera(canvas.width / canvas.height));
     _root.addChild(_mainCamera);
-    
-    backgroundColor = new Color(100.0, 149.0, 237.0, 255.0);
-    
-    canvas.onResize.listen((e) => mainCamera.stageResized());
+
+    backgroundColor = new Color(100.0 / 255.0, 149.0 / 255.0, 237.0 / 255.0, 1.0);
+
+    canvas.onResize.listen((e) => _mainCamera.camera.stageResized());
   }
 
   run() {
-    if(initialize != null) initialize();
-    _root.initialize();
+    if (initialize != null) initialize();
+    //_root.initialize();
     html.window.requestAnimationFrame(_animate);
   }
 
@@ -85,12 +85,12 @@ class Orange {
     _gameTime.elapsed = delta;
 
     if (enterFrame != null) enterFrame(_gameTime);
-    
+
     _root.update(_gameTime);
-    
+
     _graphicsDevice.clear(backgroundColor);
     _root.render();
-    
+
     // physics
     // shadows
     // octree

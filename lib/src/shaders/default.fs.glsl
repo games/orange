@@ -1,7 +1,6 @@
 precision highp float;
 
 varying vec4 vPosition;
-//varying vec2 vTexcoords;
 varying vec3 vNormal;
 varying vec3 vLighting;
 

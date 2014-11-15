@@ -25,7 +25,9 @@ void main() {
   };
   
   orange.enterFrame = (GameTime gameTime) {
-    
+    var head = orange.root.findChild("head");
+    if(head != null)
+      head.transform.rotateY(gameTime.elapsed / 1000.0);
   };
   
   orange.exitFrame = () {

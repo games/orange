@@ -67,8 +67,8 @@ class Node {
   }
 
   render() {
-    if(!visible) return;
-    if(_renderer != null) renderer.render();
+    if (!visible) return;
+    if (_renderer != null) renderer.render();
     if (children != null) children.forEach((c) => c.render());
   }
 
@@ -103,6 +103,11 @@ class Node {
   void _removeChild(Node child) {
     child.root = null;
     child.parent = null;
+  }
+
+  Node findChild(String name) {
+    if (children == null) return null;
+    return children.firstWhere((c) => c.name == name, orElse: () => null);
   }
 
   bool contains(Node child) {
@@ -140,5 +145,6 @@ class Node {
   Component findComponent(Type t) => components.firstWhere((c) => c.runtimeType == t, orElse: () => null);
 
   bool hasComponent(Component component) => components.contains(component);
+
 
 }

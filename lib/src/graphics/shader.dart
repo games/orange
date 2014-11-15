@@ -38,10 +38,15 @@ class Shader {
   
   static Shader defaultShader() {
     var effect = new Effect.load("packages/orange/src/shaders/default");
+    
     var attributes = effect.attributes;
-    attributes["a_position"] = new EffectParameter.semantics(Semantices.POSITION);
+    attributes["aPosition"] = new EffectParameter.semantics(Semantices.POSITION);
+    attributes["aNormal"] = new EffectParameter.semantics(Semantices.NORMAL);
+    
     var uniforms = effect.uniforms;
-    uniforms["u_worldViewProjectionMatrix"] = new EffectParameter.semantics(Semantices.WORLD_VIEW_PROJECTION);
+    uniforms["uViewMat"] = new EffectParameter.semantics(Semantices.VIEW);
+    uniforms["uModelMat"] = new EffectParameter.semantics(Semantices.MODEL);
+    uniforms["uProjectionMat"] = new EffectParameter.semantics(Semantices.PROJECTION);
     
     var pass = new Pass();
     pass.effect = effect;

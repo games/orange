@@ -47,6 +47,11 @@ part 'src/mesh.dart';
 part 'src/resources/resource_manager.dart';
 part 'src/resources/texture_loader.dart';
 part 'src/resources/obj_loader.dart';
+part 'src/resources/cube_generator.dart';
+part 'src/resources/circle_generator.dart';
+part 'src/resources/cylinder_generator.dart';
+part 'src/resources/ring_generator.dart';
+part 'src/resources/sphere_generator.dart';
 
 part 'src/graphics/graphics_device.dart';
 part 'src/graphics/vertex_buffer.dart';
@@ -87,7 +92,7 @@ typedef void Callback();
 typedef void Callback1<T>(T t);
 
 
-
+const double PI2 = Math.PI * 2.0;
 const double degrees2radians = Math.PI / 180.0;
 const double radians2degrees = 180.0 / Math.PI;
 

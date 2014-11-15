@@ -1,6 +1,27 @@
-// Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+  Orange : Simplified BSD License
+
+  Copyright (c) 2014, Valor Zhong
+  All rights reserved.
+  
+  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+  following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+     disclaimer.
+    
+  2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+     following disclaimer in the documentation and/or other materials provided with the distribution.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+ */
 
 part of orange;
 
@@ -17,6 +38,16 @@ class Vector3 {
   Vector3.zero() : _elements = new Float32List(3);
 
   Vector3.all(double d) : this(d, d, d);
+
+  /// Performs a linear interpolation between two vec3's
+  Vector3.lerp(Vector3 a, Vector3 b, double t) : _elements = new Float32List(3) {
+    var ax = a[0],
+        ay = a[1],
+        az = a[2];
+    _elements[0] = ax + t * (b[0] - ax);
+    _elements[1] = ay + t * (b[1] - ay);
+    _elements[2] = az + t * (b[2] - az);
+  }
 
   void setValues(double x, double y, double z) {
     _elements[0] = x;
@@ -94,9 +125,11 @@ class Vector3 {
 
   Vector3 operator -() => new Vector3(-_elements[0], -_elements[1], -_elements[2]);
 
-  Vector3 operator -(Vector3 other) => new Vector3(_elements[0] - other._elements[0], _elements[1] - other._elements[1], _elements[2] - other._elements[2]);
+  Vector3 operator -(Vector3 other) =>
+      new Vector3(_elements[0] - other._elements[0], _elements[1] - other._elements[1], _elements[2] - other._elements[2]);
 
-  Vector3 operator +(Vector3 other) => new Vector3(_elements[0] + other._elements[0], _elements[1] + other._elements[1], _elements[2] + other._elements[2]);
+  Vector3 operator +(Vector3 other) =>
+      new Vector3(_elements[0] + other._elements[0], _elements[1] + other._elements[1], _elements[2] + other._elements[2]);
 
   Vector3 operator /(double scale) {
     var o = 1.0 / scale;

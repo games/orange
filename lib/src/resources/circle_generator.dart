@@ -23,70 +23,53 @@
   
  */
 
+
 part of orange;
 
+/// from https://github.com/johnmccutchan/vector_math/tree/master/lib/src/vector_math_geometry/generators
+/// thanks John McCutchan
+class CircleGenerator {
 
+  static Mesh create(double radius, {segments: 64, thetaStart: 0.0, thetaLength: PI2}) {
+    var vertices = [],
+        indices = [],
+        texCoords = [];
 
-
-class Vector4 {
-  final Float32List _elements;
-
-  Vector4(double x, double y, double z, double w) : _elements = new Float32List(4) {
-    setValues(x, y, z, w);
-  }
-
-  Vector4.fromList(List<num> list) : _elements = new Float32List(4) {
-    for (var i = 0; i < list.length && i < 4; i++) {
-      _elements[i] = list[i].toDouble();
+    var v = new Vector3.zero();
+    vertices.addAll([0.0, 0.0, 0.0]);
+    
+    for (int i = 0; i <= segments; i++) {
+      double percent = i / segments;
+      v.x = radius * Math.cos(thetaStart + percent * thetaLength);
+      v.z = radius * Math.sin(thetaStart + percent * thetaLength);
+      vertices.addAll([v.x, v.y, v.z]);
     }
+
+    var v2 = new Vector2(0.5, 0.5);
+    texCoords.addAll([0.5, 0.5]);
+    int index = 1;
+    for (int i = 0; i <= segments; i++) {
+      var px = vertices[index * 3];
+      var py = vertices[index * 3 + 1];
+      var pz = vertices[index * 3 + 2];
+      double x = (px / (radius + 1.0)) * 0.5;
+      double y = (pz / (radius + 1.0)) * 0.5;
+      v2.x = x + 0.5;
+      v2.y = y + 0.5;
+      texCoords.addAll([v2.x, v2.y]);
+      index++;
+    }
+
+    for (int i = 1; i <= segments; i++) {
+      indices.addAll([i, i + 1, 0]);
+    }
+
+    var mesh = new Mesh();
+    mesh.vertices = vertices;
+    mesh.texCoords = texCoords;
+    mesh.indices = indices;
+    mesh.computeNormals();
+    return mesh;
   }
 
-  Vector4.zero() : _elements = new Float32List(4);
-
-  Vector4 setValues(double x, double y, double z, double w) {
-    _elements[0] = x;
-    _elements[1] = y;
-    _elements[2] = z;
-    _elements[3] = w;
-    return this;
-  }
-  
-  Vector4 scale(double s) {
-    _elements[0] *= s;
-    _elements[1] *= s;
-    _elements[2] *= s;
-    _elements[3] *= s;
-    return this;
-  }
-
-  double operator [](int i) => _elements[i];
-
-  void operator []=(int i, double v) {
-    _elements[i] = v;
-  }
-
-  double get x => _elements[0];
-  void set x(num val) {
-    _elements[0] = val.toDouble();
-  }
-
-  double get y => _elements[1];
-  void set y(num val) {
-    _elements[1] = val.toDouble();
-  }
-
-  double get z => _elements[2];
-  void set z(num val) {
-    _elements[2] = val.toDouble();
-  }
-
-  double get w => _elements[3];
-  void set w(num val) {
-    _elements[3] = val.toDouble();
-  }
-  
-  Vector4 clone() => new Vector4(_elements[0], _elements[1], _elements[2], _elements[3]);
-  
-  String toString() => '[${_elements[0]},${_elements[1]},${_elements[2]},${_elements[3]}]';
-  
 }

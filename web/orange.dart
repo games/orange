@@ -23,10 +23,13 @@ void main() {
     material2.mainTexture = orange.resources.loadTexture("textures/mosaic.jpg");
     material2.wireframe = true;
 
+    var material3 = Material.texturedMaterial();
+    material3.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
+
     new OBJLoader().load("models/obj/head.obj").then((mesh) {
       orange.root.addChild(new Node("head")
           ..addComponent(new MeshFilter(mesh))
-          ..addComponent(new MeshRenderer()..materials = [material]));
+          ..addComponent(new MeshRenderer()..materials = [material3]));
     });
 
     orange.root.addChild(new Node("cube")
@@ -97,6 +100,5 @@ void main() {
   orange.run();
 
 }
-
 
 

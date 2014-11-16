@@ -23,32 +23,53 @@
   
  */
 
-
 part of orange;
 
 
-class Material {
+/// from https://github.com/BabylonJS/Babylon.js
+/// thanks David Catuhe
+class TexturedEffect extends Effect {
 
-  String name;
-  Color color;
-  bool wireframe = false;
-  Texture mainTexture;
-  Vector2 mainTextureOffset;
-  Vector2 mainTextureScale;
-  Shader shader;
+  TexturedEffect() : super.load("packages/orange/src/shaders/textured");
 
-  Material(this.name);
+  @override
+  bool prepare(EffectContext context) {
+    if (_ready) return false;
 
-  static Material defaultMaterial() {
-    var material = new Material("default");
-    material.shader = Shader.defaultShader();
-    return material;
+    attributes["position"] = new EffectParameter(Semantices.POSITION);
+    attributes["normal"] = new EffectParameter(Semantices.NORMAL);
+    attributes["uv"] = new EffectParameter(Semantices.TEXCOORD_0);
+
+    uniforms["view"] = new EffectParameter(Semantices.VIEW);
+    uniforms["viewProjection"] = new EffectParameter(Semantices.VIEW_PROJECTION);
+    uniforms["world"] = new EffectParameter(Semantices.MODEL);
+    
+    // diffuse 
+    uniforms["diffuseMatrix"] = new EffectParameter(Semantices.MATRIX4_IDENTITY);
+    uniforms["vDiffuseInfos"] = new EffectParameter(_diffuseInfoBinding);
+    uniforms["diffuseSampler"] = new EffectParameter(Semantices.DIFFUSE_TEXTURE);
+    
+    uniforms["vEyePosition"] = new EffectParameter(Semantices.EYE_POSITION);
+
+    var defines = [];
+    if(context.material.mainTexture != null) {
+      defines.add("DIFFUSE");
+      defines.add("UV1");
+    }
+    
+    _commonSrc = Effect.jointAsDefines(defines);
+    
+    return true;
   }
-
-  static Material texturedMaterial() {
-    var material = new Material("textured");
-    material.shader = Shader.texturedShader();
-    return material;
-  }
-
 }
+
+void _diffuseInfoBinding(GraphicsDevice graphics, EffectContext context) {
+  graphics.setFloat2(context.parameter.location, 0, 0);
+}
+
+
+
+
+
+
+

@@ -28,38 +28,60 @@ part of orange;
 
 
 class Shader {
-  
+
   String name;
   List<Technique> techniques;
   Technique get technique => techniques.first;
-  
-  Shader(this.name): techniques = [];
 
-  
+  Shader(this.name) : techniques = [];
+
+
   static Shader defaultShader() {
     var effect = new Effect.load("packages/orange/src/shaders/default");
-    
+
     var attributes = effect.attributes;
-    attributes["aPosition"] = new EffectParameter.semantics(Semantices.POSITION);
-    attributes["aNormal"] = new EffectParameter.semantics(Semantices.NORMAL);
-    attributes["aUV"] = new EffectParameter.semantics(Semantices.TEXCOORD_0);
-    
+    attributes["aPosition"] = new EffectParameter(Semantices.POSITION);
+    attributes["aNormal"] = new EffectParameter(Semantices.NORMAL);
+    attributes["aUV"] = new EffectParameter(Semantices.TEXCOORD_0);
+
     var uniforms = effect.uniforms;
-    uniforms["uViewMat"] = new EffectParameter.semantics(Semantices.VIEW);
-    uniforms["uModelMat"] = new EffectParameter.semantics(Semantices.MODEL);
-    uniforms["uProjectionMat"] = new EffectParameter.semantics(Semantices.PROJECTION);
-    uniforms["uNormalMat"] = new EffectParameter.semantics(Semantices.MODEL_INVERSE_TRANSPOSE);
-    uniforms["uDiffuseTexture"] = new EffectParameter.semantics(Semantices.DIFFUSE_TEXTURE);
-    
+    uniforms["uViewMat"] = new EffectParameter(Semantices.VIEW);
+    uniforms["uModelMat"] = new EffectParameter(Semantices.MODEL);
+    uniforms["uProjectionMat"] = new EffectParameter(Semantices.PROJECTION);
+    uniforms["uNormalMat"] = new EffectParameter(Semantices.MODEL_INVERSE_TRANSPOSE);
+    uniforms["uDiffuseTexture"] = new EffectParameter(Semantices.DIFFUSE_TEXTURE);
+
     var pass = new Pass();
     pass.effect = effect;
     pass.renderState = new RenderState();
-    
+
     var technique = new Technique("technique");
     technique.passes.add(pass);
-    
+
     var shader = new Shader("default");
     shader.techniques.add(technique);
     return shader;
   }
+
+  static Shader texturedShader() {
+    var effect = new TexturedEffect();
+
+    var pass = new Pass();
+    pass.effect = effect;
+    pass.renderState = new RenderState();
+
+    var technique = new Technique("technique");
+    technique.passes.add(pass);
+
+    var shader = new Shader("textured");
+    shader.techniques.add(technique);
+    return shader;
+  }
+
+
+
 }
+
+
+
+

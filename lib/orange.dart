@@ -65,6 +65,7 @@ part 'src/graphics/render_state.dart';
 part 'src/graphics/pass.dart';
 part 'src/graphics/effect.dart';
 part 'src/graphics/effect_parameters.dart';
+part 'src/graphics/textured_effect.dart';
 
 
 part 'src/components/transform.dart';

@@ -772,6 +772,13 @@ class Matrix4 {
     return this;
   }
 
+  Vector3 getTranslation() {
+    double x = _elements[12];
+    double y = _elements[13];
+    double z = _elements[14];
+    return new Vector3(x, y, z);
+  }
+
   void multiply(Matrix4 m) {
     final double m00 = _elements[0];
     final double m01 = _elements[4];

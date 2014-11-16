@@ -29,9 +29,7 @@ part of orange;
 
 
 
-/**
- * effect contain code that defines what kind of properties and assets to use.
- */
+/// effect contain code that defines what kind of properties and assets to use.
 class Effect implements Disposable {
 
   gl.Program program;
@@ -45,18 +43,23 @@ class Effect implements Disposable {
   bool get ready => _ready;
 
   String _vertSrc, _fragSrc, _commonSrc;
+  set commonSrc(String value) => _commonSrc = value;
 
-  Effect(this._vertSrc, this._fragSrc, {String common: ""})
+  Effect()
+      : attributes = new EffectParameters(),
+        uniforms = new EffectParameters(),
+        samplers = [],
+        _commonSrc = "";
+
+  Effect.source(this._vertSrc, this._fragSrc, {String common: ""})
       : attributes = new EffectParameters(),
         uniforms = new EffectParameters(),
         samplers = [] {
     _commonSrc = common;
   }
 
-  /**
-   * vertex source file:   [url].vs.glsl
-   * fragment source file: [url].fs.glsl
-   **/
+  /// vertex source file:   [url].vs.glsl
+  /// fragment source file: [url].fs.glsl
   Effect.load(String url, {String common: ""})
       : attributes = new EffectParameters(),
         uniforms = new EffectParameters(),
@@ -68,16 +71,11 @@ class Effect implements Disposable {
     });
   }
 
-  void prepare() {
-    if (_ready || _vertSrc == null || _fragSrc == null) return;
-    _compile();
-    // TODO: clean
-    _vertSrc = null;
-    _fragSrc = null;
-    _commonSrc = null;
-  }
+  bool prepare(EffectContext context) => !_ready && _vertSrc != null && _fragSrc != null;
 
-  _compile() {
+  compile(EffectContext context) {
+
+    if (!prepare(context)) return;
 
     var graphics = Orange.instance.graphicsDevice;
     var ctx = graphics._ctx;
@@ -100,7 +98,7 @@ class Effect implements Disposable {
     var attribCount = ctx.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < attribCount; i++) {
       var info = ctx.getActiveAttrib(program, i);
-      attributes.set(info.name, ctx.getAttribLocation(program, info.name), info.type);
+      attributes.update(info.name, ctx.getAttribLocation(program, info.name), info.type);
     }
 
     var uniformCount = ctx.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
@@ -111,12 +109,16 @@ class Effect implements Disposable {
       if (ii != -1) {
         name = name.substring(0, ii);
       }
-      uniforms.set(name, ctx.getUniformLocation(program, name), uniform.type);
+      uniforms.update(name, ctx.getUniformLocation(program, name), uniform.type);
       if (uniform.type == gl.SAMPLER_2D || uniform.type == gl.SAMPLER_CUBE) {
         samplers.add(name);
       }
     }
+
     _ready = true;
+    _vertSrc = null;
+    _fragSrc = null;
+    _commonSrc = null;
   }
 
   gl.Shader _compileShader(gl.RenderingContext ctx, String source, int type) {
@@ -141,4 +143,6 @@ class Effect implements Disposable {
       ctx.deleteShader(fragmentShader);
     }
   }
+  
+  static String jointAsDefines(List<String> defines) => defines.fold("", (r, e) => r += "#define " + e + "\n");
 }

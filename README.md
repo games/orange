@@ -7,7 +7,7 @@ New version, in progress...
 
 
 ### TODO ###
-- Basic primitives (Cube, Cylinder, Plane, Sphere, Coordinate)
+<del>- Basic primitives (Cube, Cylinder, Plane, Sphere)</del>
 - Skybox
 - Lighting (Direct, Point, Spotlight, Hemispherics)
 - Skinning Animation

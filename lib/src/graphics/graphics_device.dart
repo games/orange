@@ -180,9 +180,11 @@ class GraphicsDevice {
 
 
   /// ========== set uniforms ===============
-  setMatrix4(gl.UniformLocation location, Matrix4 value) => _ctx.uniformMatrix4fv(location, false, value._elements);
-
+  setFloat2(gl.UniformLocation location, num x, num y) => _ctx.uniform2f(location, x, y);
+  setFloat4(gl.UniformLocation location, num x, num y, num z, num w) => _ctx.uniform4f(location, x, y, z, w);
+  setVector3(gl.UniformLocation location, Vector3 value) => _ctx.uniform3fv(location, value._elements);
   setMatrix3(gl.UniformLocation location, Matrix3 value) => _ctx.uniformMatrix3fv(location, false, value._elements);
+  setMatrix4(gl.UniformLocation location, Matrix4 value) => _ctx.uniformMatrix4fv(location, false, value._elements);
 
 
   /// ========== textures ===============

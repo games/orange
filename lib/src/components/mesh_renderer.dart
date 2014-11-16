@@ -29,11 +29,11 @@ part of orange;
 class MeshRenderer extends Component {
   
   List<Material> materials;
-  DataProvider _provider;
+  EffectContext _effectContext;
 
   @override
   void onStart() {
-    _provider = new DataProvider();
+    _effectContext = new EffectContext();
   }
 
   @override
@@ -54,25 +54,14 @@ class MeshRenderer extends Component {
     var orange = Orange.instance;
     var graphics = orange.graphicsDevice;
     var camera = orange.mainCamera.camera;
-
-    if (!pass.bind(graphics)) return;
     
-    _provider.camera = camera;
-    _provider.material = material;
-    _provider.mesh = mesh;
-    _provider.pass = pass;
-    _provider.target = _target;
+    _effectContext.camera = camera;
+    _effectContext.target = _target;
+    _effectContext.mesh = mesh;
+    _effectContext.material = material;
+    _effectContext.pass = pass;
 
-    var effect = pass.effect;
-    // set uniforms
-    effect.uniforms.forEach((String name, EffectParameter parameter) {
-      parameter.bind(graphics, _provider);
-    });
-
-    // set attributes
-    effect.attributes.forEach((String name, EffectParameter parameter) {
-      parameter.bind(graphics, _provider);
-    });
+    if (!pass.bind(graphics, _effectContext)) return;
 
     // bind indices
     mesh.indexBuffer.upload(graphics);

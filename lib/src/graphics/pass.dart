@@ -31,12 +31,24 @@ class Pass {
   Effect effect;
   RenderState renderState;
 
-  bool bind(GraphicsDevice graphicsDevice) {
-    effect.prepare();
-    if (!effect.ready) return false;
+  bool bind(GraphicsDevice device, EffectContext context) {
+    effect.compile(context);
     
-    graphicsDevice.useEffect(effect);
-    graphicsDevice.setRenderState(renderState);
+    if (!effect.ready) return false;
+
+    device.useEffect(effect);
+    device.setRenderState(renderState);
+
+    // set uniforms
+    effect.uniforms.forEach((String name, EffectParameter parameter) {
+      parameter.bind(device, context);
+    });
+
+    // set attributes
+    effect.attributes.forEach((String name, EffectParameter parameter) {
+      parameter.bind(device, context);
+    });
+
     return true;
   }
 

@@ -178,12 +178,12 @@ class GraphicsDevice {
     _ctx.drawElements(gl.TRIANGLES, numTriangles * 3, gl.UNSIGNED_SHORT, offset);
   }
 
-  
+
   /// ========== set uniforms ===============
-  setMatrix4(gl.UniformLocation location, Matrix4 value) {
-    _ctx.uniformMatrix4fv(location, false, value._elements);
-  }
-  
+  setMatrix4(gl.UniformLocation location, Matrix4 value) => _ctx.uniformMatrix4fv(location, false, value._elements);
+
+  setMatrix3(gl.UniformLocation location, Matrix3 value) => _ctx.uniformMatrix3fv(location, false, value._elements);
+
 
   /// ========== textures ===============
   void createTexture(Texture texture, data) {

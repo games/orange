@@ -91,6 +91,7 @@ class Semantices {
   static const Semantices PROJECTION = const Semantices(_projectionBinding);
   static const Semantices VIEW_PROJECTION = const Semantices(_viewProjectionBinding);
   static const Semantices WORLD_VIEW_PROJECTION = const Semantices(_worldViewProjectionBinding);
+  static const Semantices MODEL_INVERSE_TRANSPOSE = const Semantices(_modelInverseTranspose);
   
   static const Semantices DIFFUSE_TEXTURE = const Semantices(_diffuseTextureBinding);
 
@@ -159,6 +160,14 @@ _viewProjectionBinding(GraphicsDevice graphics, EffectParameter parameter, DataP
 
 _worldViewProjectionBinding(GraphicsDevice graphics, EffectParameter parameter, DataProvider provider) =>
     graphics.setMatrix4(parameter.location, provider.camera.viewProjection * provider.target.transform.worldMatrix);
+
+_modelInverseTranspose(GraphicsDevice graphics, EffectParameter parameter, DataProvider provider) {
+    var mat3 = provider.target.transform.worldMatrix.inverseMatrix3(); 
+    if(mat3 != null)
+      graphics.setMatrix3(parameter.location, mat3.transpose());
+}
+    
+    
 
 _diffuseTextureBinding(GraphicsDevice graphics, EffectParameter parameter, DataProvider provider) {
     var channel = provider.pass.effect.samplers.indexOf(parameter.name);

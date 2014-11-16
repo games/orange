@@ -75,6 +75,7 @@ part 'src/components/mesh_renderer.dart';
 part 'src/components/light.dart';
 
 part 'src/math/matrix4.dart';
+part 'src/math/matrix3.dart';
 part 'src/math/quaternion.dart';
 part 'src/math/vector2.dart';
 part 'src/math/vector3.dart';

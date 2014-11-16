@@ -33,7 +33,8 @@ const double GLMAT_EPSILON = 0.000001;
 class Matrix4 {
   final Float32List _elements = new Float32List(16);
 
-  Matrix4(double arg0, double arg1, double arg2, double arg3, double arg4, double arg5, double arg6, double arg7, double arg8, double arg9, double arg10, double arg11, double arg12, double arg13, double arg14, double arg15) {
+  Matrix4(double arg0, double arg1, double arg2, double arg3, double arg4, double arg5, double arg6, double arg7,
+      double arg8, double arg9, double arg10, double arg11, double arg12, double arg13, double arg14, double arg15) {
     setValues(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
   }
 
@@ -114,7 +115,9 @@ class Matrix4 {
     _elements[15] = 0.0;
   }
 
-  Matrix4 setValues(double arg0, double arg1, double arg2, double arg3, double arg4, double arg5, double arg6, double arg7, double arg8, double arg9, double arg10, double arg11, double arg12, double arg13, double arg14, double arg15) {
+  Matrix4 setValues(double arg0, double arg1, double arg2, double arg3, double arg4, double arg5, double arg6,
+      double arg7, double arg8, double arg9, double arg10, double arg11, double arg12, double arg13, double arg14,
+      double arg15) {
     _elements[15] = arg15;
     _elements[14] = arg14;
     _elements[13] = arg13;
@@ -297,7 +300,9 @@ class Matrix4 {
     return this;
   }
 
-  setEntry(int row, int col, double v) { _elements[index(row, col)] = v; }
+  setEntry(int row, int col, double v) {
+    _elements[index(row, col)] = v;
+  }
 
   /**
      * Generates a look-at matrix with the given eye position, focal point, and up axis
@@ -326,7 +331,9 @@ class Matrix4 {
         centery = center._elements[1],
         centerz = center._elements[2];
 
-    if ((eyex - centerx).abs() < GLMAT_EPSILON && (eyey - centery).abs() < GLMAT_EPSILON && (eyez - centerz).abs() < GLMAT_EPSILON) {
+    if ((eyex - centerx).abs() < GLMAT_EPSILON &&
+        (eyey - centery).abs() < GLMAT_EPSILON &&
+        (eyez - centerz).abs() < GLMAT_EPSILON) {
       return setIdentity();
     }
 
@@ -600,39 +607,108 @@ class Matrix4 {
 
   Matrix4 _mul_matrix(Matrix4 arg) {
     var r = new Matrix4.zero();
-    r._elements[0] = (_elements[0] * arg._elements[0]) + (_elements[4] * arg._elements[1]) + (_elements[8] * arg._elements[2]) + (_elements[12] * arg._elements[3]);
-    r._elements[4] = (_elements[0] * arg._elements[4]) + (_elements[4] * arg._elements[5]) + (_elements[8] * arg._elements[6]) + (_elements[12] * arg._elements[7]);
-    r._elements[8] = (_elements[0] * arg._elements[8]) + (_elements[4] * arg._elements[9]) + (_elements[8] * arg._elements[10]) + (_elements[12] * arg._elements[11]);
-    r._elements[12] = (_elements[0] * arg._elements[12]) + (_elements[4] * arg._elements[13]) + (_elements[8] * arg._elements[14]) + (_elements[12] * arg._elements[15]);
-    r._elements[1] = (_elements[1] * arg._elements[0]) + (_elements[5] * arg._elements[1]) + (_elements[9] * arg._elements[2]) + (_elements[13] * arg._elements[3]);
-    r._elements[5] = (_elements[1] * arg._elements[4]) + (_elements[5] * arg._elements[5]) + (_elements[9] * arg._elements[6]) + (_elements[13] * arg._elements[7]);
-    r._elements[9] = (_elements[1] * arg._elements[8]) + (_elements[5] * arg._elements[9]) + (_elements[9] * arg._elements[10]) + (_elements[13] * arg._elements[11]);
-    r._elements[13] = (_elements[1] * arg._elements[12]) + (_elements[5] * arg._elements[13]) + (_elements[9] * arg._elements[14]) + (_elements[13] * arg._elements[15]);
-    r._elements[2] = (_elements[2] * arg._elements[0]) + (_elements[6] * arg._elements[1]) + (_elements[10] * arg._elements[2]) + (_elements[14] * arg._elements[3]);
-    r._elements[6] = (_elements[2] * arg._elements[4]) + (_elements[6] * arg._elements[5]) + (_elements[10] * arg._elements[6]) + (_elements[14] * arg._elements[7]);
-    r._elements[10] = (_elements[2] * arg._elements[8]) + (_elements[6] * arg._elements[9]) + (_elements[10] * arg._elements[10]) + (_elements[14] * arg._elements[11]);
-    r._elements[14] = (_elements[2] * arg._elements[12]) + (_elements[6] * arg._elements[13]) + (_elements[10] * arg._elements[14]) + (_elements[14] * arg._elements[15]);
-    r._elements[3] = (_elements[3] * arg._elements[0]) + (_elements[7] * arg._elements[1]) + (_elements[11] * arg._elements[2]) + (_elements[15] * arg._elements[3]);
-    r._elements[7] = (_elements[3] * arg._elements[4]) + (_elements[7] * arg._elements[5]) + (_elements[11] * arg._elements[6]) + (_elements[15] * arg._elements[7]);
-    r._elements[11] = (_elements[3] * arg._elements[8]) + (_elements[7] * arg._elements[9]) + (_elements[11] * arg._elements[10]) + (_elements[15] * arg._elements[11]);
-    r._elements[15] = (_elements[3] * arg._elements[12]) + (_elements[7] * arg._elements[13]) + (_elements[11] * arg._elements[14]) + (_elements[15] * arg._elements[15]);
+    r._elements[0] = (_elements[0] * arg._elements[0]) +
+        (_elements[4] * arg._elements[1]) +
+        (_elements[8] * arg._elements[2]) +
+        (_elements[12] * arg._elements[3]);
+    r._elements[4] = (_elements[0] * arg._elements[4]) +
+        (_elements[4] * arg._elements[5]) +
+        (_elements[8] * arg._elements[6]) +
+        (_elements[12] * arg._elements[7]);
+    r._elements[8] = (_elements[0] * arg._elements[8]) +
+        (_elements[4] * arg._elements[9]) +
+        (_elements[8] * arg._elements[10]) +
+        (_elements[12] * arg._elements[11]);
+    r._elements[12] = (_elements[0] * arg._elements[12]) +
+        (_elements[4] * arg._elements[13]) +
+        (_elements[8] * arg._elements[14]) +
+        (_elements[12] * arg._elements[15]);
+    r._elements[1] = (_elements[1] * arg._elements[0]) +
+        (_elements[5] * arg._elements[1]) +
+        (_elements[9] * arg._elements[2]) +
+        (_elements[13] * arg._elements[3]);
+    r._elements[5] = (_elements[1] * arg._elements[4]) +
+        (_elements[5] * arg._elements[5]) +
+        (_elements[9] * arg._elements[6]) +
+        (_elements[13] * arg._elements[7]);
+    r._elements[9] = (_elements[1] * arg._elements[8]) +
+        (_elements[5] * arg._elements[9]) +
+        (_elements[9] * arg._elements[10]) +
+        (_elements[13] * arg._elements[11]);
+    r._elements[13] = (_elements[1] * arg._elements[12]) +
+        (_elements[5] * arg._elements[13]) +
+        (_elements[9] * arg._elements[14]) +
+        (_elements[13] * arg._elements[15]);
+    r._elements[2] = (_elements[2] * arg._elements[0]) +
+        (_elements[6] * arg._elements[1]) +
+        (_elements[10] * arg._elements[2]) +
+        (_elements[14] * arg._elements[3]);
+    r._elements[6] = (_elements[2] * arg._elements[4]) +
+        (_elements[6] * arg._elements[5]) +
+        (_elements[10] * arg._elements[6]) +
+        (_elements[14] * arg._elements[7]);
+    r._elements[10] = (_elements[2] * arg._elements[8]) +
+        (_elements[6] * arg._elements[9]) +
+        (_elements[10] * arg._elements[10]) +
+        (_elements[14] * arg._elements[11]);
+    r._elements[14] = (_elements[2] * arg._elements[12]) +
+        (_elements[6] * arg._elements[13]) +
+        (_elements[10] * arg._elements[14]) +
+        (_elements[14] * arg._elements[15]);
+    r._elements[3] = (_elements[3] * arg._elements[0]) +
+        (_elements[7] * arg._elements[1]) +
+        (_elements[11] * arg._elements[2]) +
+        (_elements[15] * arg._elements[3]);
+    r._elements[7] = (_elements[3] * arg._elements[4]) +
+        (_elements[7] * arg._elements[5]) +
+        (_elements[11] * arg._elements[6]) +
+        (_elements[15] * arg._elements[7]);
+    r._elements[11] = (_elements[3] * arg._elements[8]) +
+        (_elements[7] * arg._elements[9]) +
+        (_elements[11] * arg._elements[10]) +
+        (_elements[15] * arg._elements[11]);
+    r._elements[15] = (_elements[3] * arg._elements[12]) +
+        (_elements[7] * arg._elements[13]) +
+        (_elements[11] * arg._elements[14]) +
+        (_elements[15] * arg._elements[15]);
     return r;
   }
 
   Vector4 _mul_vector(Vector4 arg) {
     Vector4 r = new Vector4.zero();
-    r._elements[3] = (_elements[3] * arg._elements[0]) + (_elements[7] * arg._elements[1]) + (_elements[11] * arg._elements[2]) + (_elements[15] * arg._elements[3]);
-    r._elements[2] = (_elements[2] * arg._elements[0]) + (_elements[6] * arg._elements[1]) + (_elements[10] * arg._elements[2]) + (_elements[14] * arg._elements[3]);
-    r._elements[1] = (_elements[1] * arg._elements[0]) + (_elements[5] * arg._elements[1]) + (_elements[9] * arg._elements[2]) + (_elements[13] * arg._elements[3]);
-    r._elements[0] = (_elements[0] * arg._elements[0]) + (_elements[4] * arg._elements[1]) + (_elements[8] * arg._elements[2]) + (_elements[12] * arg._elements[3]);
+    r._elements[3] = (_elements[3] * arg._elements[0]) +
+        (_elements[7] * arg._elements[1]) +
+        (_elements[11] * arg._elements[2]) +
+        (_elements[15] * arg._elements[3]);
+    r._elements[2] = (_elements[2] * arg._elements[0]) +
+        (_elements[6] * arg._elements[1]) +
+        (_elements[10] * arg._elements[2]) +
+        (_elements[14] * arg._elements[3]);
+    r._elements[1] = (_elements[1] * arg._elements[0]) +
+        (_elements[5] * arg._elements[1]) +
+        (_elements[9] * arg._elements[2]) +
+        (_elements[13] * arg._elements[3]);
+    r._elements[0] = (_elements[0] * arg._elements[0]) +
+        (_elements[4] * arg._elements[1]) +
+        (_elements[8] * arg._elements[2]) +
+        (_elements[12] * arg._elements[3]);
     return r;
   }
 
   Vector3 _mul_vector3(Vector3 arg) {
     Vector3 r = new Vector3.zero();
-    r._elements[0] = (_elements[0] * arg._elements[0]) + (_elements[4] * arg._elements[1]) + (_elements[8] * arg._elements[2]) + _elements[12];
-    r._elements[1] = (_elements[1] * arg._elements[0]) + (_elements[5] * arg._elements[1]) + (_elements[9] * arg._elements[2]) + _elements[13];
-    r._elements[2] = (_elements[2] * arg._elements[0]) + (_elements[6] * arg._elements[1]) + (_elements[10] * arg._elements[2]) + _elements[14];
+    r._elements[0] = (_elements[0] * arg._elements[0]) +
+        (_elements[4] * arg._elements[1]) +
+        (_elements[8] * arg._elements[2]) +
+        _elements[12];
+    r._elements[1] = (_elements[1] * arg._elements[0]) +
+        (_elements[5] * arg._elements[1]) +
+        (_elements[9] * arg._elements[2]) +
+        _elements[13];
+    r._elements[2] = (_elements[2] * arg._elements[0]) +
+        (_elements[6] * arg._elements[1]) +
+        (_elements[10] * arg._elements[2]) +
+        _elements[14];
     return r;
   }
 
@@ -776,9 +852,12 @@ class Matrix4 {
       scaling = new Vector3.zero();
     }
 
-    scaling[0] = xs * Math.sqrt(_elements[0] * _elements[0] + _elements[1] * _elements[1] + _elements[2] * _elements[2]);
-    scaling[1] = ys * Math.sqrt(_elements[4] * _elements[4] + _elements[5] * _elements[5] + _elements[6] * _elements[6]);
-    scaling[2] = zs * Math.sqrt(_elements[8] * _elements[8] + _elements[9] * _elements[9] + _elements[10] * _elements[10]);
+    scaling[0] =
+        xs * Math.sqrt(_elements[0] * _elements[0] + _elements[1] * _elements[1] + _elements[2] * _elements[2]);
+    scaling[1] =
+        ys * Math.sqrt(_elements[4] * _elements[4] + _elements[5] * _elements[5] + _elements[6] * _elements[6]);
+    scaling[2] =
+        zs * Math.sqrt(_elements[8] * _elements[8] + _elements[9] * _elements[9] + _elements[10] * _elements[10]);
 
     if (scaling.x == 0.0 || scaling.y == 0.0 || scaling.z == 0.0) {
       rotation._elements[0] = 0.0;
@@ -786,14 +865,72 @@ class Matrix4 {
       rotation._elements[2] = 0.0;
       rotation._elements[3] = 1.0;
     } else {
-      rotation.setFromRotation(new Matrix4(_elements[0] / scaling.x, _elements[1] / scaling.x, _elements[2] / scaling.x, 0.0, _elements[4] / scaling.y, _elements[5] / scaling.y, _elements[6] / scaling.y, 0.0, _elements[8] / scaling.z, _elements[9] / scaling.z, _elements[10] / scaling.z, 0.0, 0.0, 0.0, 0.0, 1.0));
+      rotation.setFromRotation(
+          new Matrix4(
+              _elements[0] / scaling.x,
+              _elements[1] / scaling.x,
+              _elements[2] / scaling.x,
+              0.0,
+              _elements[4] / scaling.y,
+              _elements[5] / scaling.y,
+              _elements[6] / scaling.y,
+              0.0,
+              _elements[8] / scaling.z,
+              _elements[9] / scaling.z,
+              _elements[10] / scaling.z,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0));
     }
   }
 
-  Matrix4 recompose(Vector3 position, Quaternion rotation, Vector3 scaling) => fromQuaternion(rotation).scale(scaling).setTranslation(position);
-  
+  Matrix4 recompose(Vector3 position, Quaternion rotation, Vector3 scaling) =>
+      fromQuaternion(rotation).scale(scaling).setTranslation(position);
+
+  /// Calculates the inverse of the upper 3x3 elements of a mat4 and copies the result into a mat3
+  /// The resulting matrix is useful for calculating transformed normals
+  /// from: https://code.google.com/p/glmatrix/source/browse/glMatrix.js
+  Matrix3 inverseMatrix3() {
+    // Cache the matrix values (makes for huge speed increases!)
+    var a00 = _elements[0],
+        a01 = _elements[1],
+        a02 = _elements[2];
+    var a10 = _elements[4],
+        a11 = _elements[5],
+        a12 = _elements[6];
+    var a20 = _elements[8],
+        a21 = _elements[9],
+        a22 = _elements[10];
+
+    var b01 = a22 * a11 - a12 * a21;
+    var b11 = -a22 * a10 + a12 * a20;
+    var b21 = a21 * a10 - a11 * a20;
+
+    var d = a00 * b01 + a01 * b11 + a02 * b21;
+    if (d == 0) {
+      return null;
+    }
+    var id = 1 / d;
+
+    var dest = new Matrix3.zero();
+
+    dest[0] = b01 * id;
+    dest[1] = (-a22 * a01 + a02 * a21) * id;
+    dest[2] = (a12 * a01 - a02 * a11) * id;
+    dest[3] = b11 * id;
+    dest[4] = (a22 * a00 - a02 * a20) * id;
+    dest[5] = (-a12 * a00 + a02 * a10) * id;
+    dest[6] = b21 * id;
+    dest[7] = (-a21 * a00 + a01 * a20) * id;
+    dest[8] = (a11 * a00 - a01 * a10) * id;
+
+    return dest;
+  }
+
   int index(int row, int col) => (col * 4) + row;
-  
+
   Vector4 getRow(int row) {
     Vector4 r = new Vector4.zero();
     r._elements[0] = _elements[index(row, 0)];
@@ -802,7 +939,7 @@ class Matrix4 {
     r._elements[3] = _elements[index(row, 3)];
     return r;
   }
-  
+
   String toString() {
     String s = '';
     s = '$s[0] ${getRow(0)}\n';

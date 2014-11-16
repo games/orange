@@ -26,40 +26,28 @@
 part of orange;
 
 
+class Matrix3 {
+  final Float32List _elements = new Float32List(9);
 
-class Shader {
-  
-  String name;
-  List<Technique> techniques;
-  Technique get technique => techniques.first;
-  
-  Shader(this.name): techniques = [];
+  Matrix3.zero();
 
-  
-  static Shader defaultShader() {
-    var effect = new Effect.load("packages/orange/src/shaders/default");
-    
-    var attributes = effect.attributes;
-    attributes["aPosition"] = new EffectParameter.semantics(Semantices.POSITION);
-    attributes["aNormal"] = new EffectParameter.semantics(Semantices.NORMAL);
-    attributes["aUV"] = new EffectParameter.semantics(Semantices.TEXCOORD_0);
-    
-    var uniforms = effect.uniforms;
-    uniforms["uViewMat"] = new EffectParameter.semantics(Semantices.VIEW);
-    uniforms["uModelMat"] = new EffectParameter.semantics(Semantices.MODEL);
-    uniforms["uProjectionMat"] = new EffectParameter.semantics(Semantices.PROJECTION);
-    uniforms["uNormalMat"] = new EffectParameter.semantics(Semantices.MODEL_INVERSE_TRANSPOSE);
-    uniforms["uDiffuseTexture"] = new EffectParameter.semantics(Semantices.DIFFUSE_TEXTURE);
-    
-    var pass = new Pass();
-    pass.effect = effect;
-    pass.renderState = new RenderState();
-    
-    var technique = new Technique("technique");
-    technique.passes.add(pass);
-    
-    var shader = new Shader("default");
-    shader.techniques.add(technique);
-    return shader;
+  double operator [](int i) => _elements[i];
+
+  void operator []=(int i, double v) {
+    _elements[i] = v;
+  }
+
+  Matrix3 transpose() {
+    double temp;
+    temp = _elements[3];
+    _elements[3] = _elements[1];
+    _elements[1] = temp;
+    temp = _elements[6];
+    _elements[6] = _elements[2];
+    _elements[2] = temp;
+    temp = _elements[7];
+    _elements[7] = _elements[5];
+    _elements[5] = temp;
+    return this;
   }
 }

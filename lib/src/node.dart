@@ -56,11 +56,6 @@ class Node {
     addComponent(new Transform());
   }
 
-//  initialize() {
-//    components.forEach((c) => c.onStart());
-//    if (children != null) children.forEach((c) => c.initialize());
-//  }
-
   update(GameTime time) {
     components.forEach((c) => c.update(time));
     if (children != null) children.forEach((c) => c.update(time));

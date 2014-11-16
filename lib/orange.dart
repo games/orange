@@ -84,6 +84,7 @@ part 'src/math/vector4.dart';
 part 'src/math/color.dart';
 part 'src/math/ray.dart';
 part 'src/math/bounding_info.dart';
+part 'src/graphics/effect_context.dart';
 
 
 

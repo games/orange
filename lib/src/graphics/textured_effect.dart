@@ -50,17 +50,17 @@ class TexturedEffect extends Effect {
   bool prepare(EffectContext context) {
     if (_ready) return false;
 
-    attributes["position"] = new EffectParameter(Semantices.POSITION);
-    attributes["normal"] = new EffectParameter(Semantices.NORMAL);
-    attributes["uv"] = new EffectParameter(Semantices.TEXCOORD_0);
+    attributes["position"] = new EffectParameter(EffectBindings.POSITION);
+    attributes["normal"] = new EffectParameter(EffectBindings.NORMAL);
+    attributes["uv"] = new EffectParameter(EffectBindings.TEXCOORD_0);
 
-    uniforms["view"] = new EffectParameter(Semantices.VIEW);
-    uniforms["viewProjection"] = new EffectParameter(Semantices.VIEW_PROJECTION);
-    uniforms["world"] = new EffectParameter(Semantices.MODEL);
+    uniforms["view"] = new EffectParameter(EffectBindings.VIEW);
+    uniforms["viewProjection"] = new EffectParameter(EffectBindings.VIEW_PROJECTION);
+    uniforms["world"] = new EffectParameter(EffectBindings.MODEL);
 
     // diffuse
-    uniforms["diffuseMatrix"] = new EffectParameter(Semantices.MATRIX4_IDENTITY);
-    uniforms["diffuseSampler"] = new EffectParameter(Semantices.DIFFUSE_TEXTURE);
+    uniforms["diffuseMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+    uniforms["diffuseSampler"] = new EffectParameter(EffectBindings.DIFFUSE_TEXTURE);
     uniforms["vDiffuseInfos"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
       graphics.setFloat2(context.parameter.location, 0.0, 1.0);
     });
@@ -79,7 +79,7 @@ class TexturedEffect extends Effect {
       if(emissiveColor != null) graphics.setColor3(context.parameter.location, emissiveColor);
     });
 
-    uniforms["vEyePosition"] = new EffectParameter(Semantices.EYE_POSITION);
+    uniforms["vEyePosition"] = new EffectParameter(EffectBindings.EYE_POSITION);
 
     var defines = [];
     if (context.material.mainTexture != null) {

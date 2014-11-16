@@ -33,7 +33,7 @@ class EffectParameters {
   EffectParameters() : _parameters = {};
 
   update(String name, dynamic location, int type, [EffectBinding binding = null]) {
-    EffectParameter param = _parameters.containsKey(name) ? _parameters[name] : new EffectParameter(Semantices.NONE);
+    var param = _parameters.containsKey(name) ? _parameters[name] : new EffectParameter(EffectBindings.NONE);
     param.name = name;
     param.location = location;
     param.type = type;
@@ -71,7 +71,7 @@ class EffectParameter {
 }
 
 
-class Semantices {
+class EffectBindings {
   static const EffectBinding NONE = _noneBinding;
   static const EffectBinding MATRIX4_IDENTITY = _matrix4IdentityBinding;
 
@@ -98,14 +98,6 @@ class Semantices {
 }
 
 
-class EffectContext {
-  Camera camera;
-  Node target;
-  Mesh mesh;
-  Material material;
-  Pass pass;
-  EffectParameter parameter;
-}
 
 typedef void EffectBinding(GraphicsDevice graphics, EffectContext context);
 

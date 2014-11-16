@@ -40,16 +40,16 @@ class Shader {
     var effect = new Effect.load("packages/orange/src/shaders/default");
 
     var attributes = effect.attributes;
-    attributes["aPosition"] = new EffectParameter(Semantices.POSITION);
-    attributes["aNormal"] = new EffectParameter(Semantices.NORMAL);
-    attributes["aUV"] = new EffectParameter(Semantices.TEXCOORD_0);
+    attributes["aPosition"] = new EffectParameter(EffectBindings.POSITION);
+    attributes["aNormal"] = new EffectParameter(EffectBindings.NORMAL);
+    attributes["aUV"] = new EffectParameter(EffectBindings.TEXCOORD_0);
 
     var uniforms = effect.uniforms;
-    uniforms["uViewMat"] = new EffectParameter(Semantices.VIEW);
-    uniforms["uModelMat"] = new EffectParameter(Semantices.MODEL);
-    uniforms["uProjectionMat"] = new EffectParameter(Semantices.PROJECTION);
-    uniforms["uNormalMat"] = new EffectParameter(Semantices.MODEL_INVERSE_TRANSPOSE);
-    uniforms["uDiffuseTexture"] = new EffectParameter(Semantices.DIFFUSE_TEXTURE);
+    uniforms["uViewMat"] = new EffectParameter(EffectBindings.VIEW);
+    uniforms["uModelMat"] = new EffectParameter(EffectBindings.MODEL);
+    uniforms["uProjectionMat"] = new EffectParameter(EffectBindings.PROJECTION);
+    uniforms["uNormalMat"] = new EffectParameter(EffectBindings.MODEL_INVERSE_TRANSPOSE);
+    uniforms["uDiffuseTexture"] = new EffectParameter(EffectBindings.DIFFUSE_TEXTURE);
 
     var pass = new Pass();
     pass.effect = effect;

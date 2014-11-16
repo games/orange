@@ -27,7 +27,7 @@
 part of orange;
 
 /// from https://github.com/johnmccutchan/vector_math/tree/master/lib/src/vector_math_geometry/generators
-/// thanks John McCutchan
+/// thanks to John McCutchan
 class CircleGenerator {
 
   static Mesh create(double radius, {segments: 64, thetaStart: 0.0, thetaLength: PI2}) {

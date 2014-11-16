@@ -27,7 +27,7 @@
 part of orange;
 
 /// from https://github.com/johnmccutchan/vector_math/tree/master/lib/src/vector_math_geometry/generators
-/// thanks John McCutchan
+/// thanks to John McCutchan
 class RingGenerator {
 
   static Mesh create(double innerRadius, double outerRadius, {filters: null, segments: 64, thetaStart: 0.0,

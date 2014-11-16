@@ -27,45 +27,23 @@ part of orange;
 
 
 
+class Color3 extends Vector3 {
+  Color3.all(double d) : super.all(d);
+  Color3(double x, double y, double z) : super(x, y, z);
+  Color3.zero() : super.zero();
+}
 
-class Color {
+class Color4 extends Vector4 {
+  Color4.all(double d) : super.all(d);
+  Color4.fromList(List<num> list) : super.fromList(list);
+  Color4(double r, double g, double b, double a) : super(r, g, b, a);
+  Color4.zero() : super.zero();
 
-  final Float32List _elements;
-
-  Color.zero() : _elements = new Float32List(4);
-
-  Color(double r, double g, double b, [double alpha = 1.0]) : _elements = new Float32List(4) {
-    setValues(r, g, b, alpha);
-  }
-
-  Color.fromHex(num hex) : _elements = new Float32List(4) {
-    hexColor = hex;
-  }
-
-  Color.fromList(List<num> list) : _elements = new Float32List(4) {
-    _elements[3] = 1.0;
-    for (var i = 0; i < list.length && i < 4; i++) {
-      _elements[i] = list[i].toDouble();
-    }
-  }
-
-  Color setValues(double r, double g, double b, double alpha) {
-    _elements[0] = r;
-    _elements[1] = g;
-    _elements[2] = b;
-    _elements[3] = alpha;
-    return this;
-  }
-
-  Color scale(double s) {
+  Color4 scale(double s) {
     _elements[0] *= s;
     _elements[1] *= s;
     _elements[2] *= s;
     return this;
-  }
-
-  Color operator *(Color other) {
-    return new Color(_elements[0] * other.red, _elements[1] * other.green, _elements[2] * other.blue, _elements[3] * other.alpha);
   }
   
   set hexColor(num hexColor) {
@@ -76,26 +54,10 @@ class Color {
     _elements[3] = 1.0;
   }
 
-  void set red(double val) {
-    _elements[0] = val;
-  }
-
-  void set green(double val) {
-    _elements[1] = val;
-  }
-
-  void set blue(double val) {
-    _elements[2] = val;
-  }
-
-  void set alpha(double val) {
-    _elements[3] = val;
-  }
-
-  Color clone() {
-    return new Color(_elements[0], _elements[1], _elements[2], _elements[3]);
-  }
-
+  set red(double val) => _elements[0] = val;
+  set green(double val) => _elements[1] = val;
+  set blue(double val) => _elements[2] = val;
+  set alpha(double val) => _elements[3] = val;
   double get red => _elements[0];
   double get green => _elements[1];
   double get blue => _elements[2];
@@ -103,6 +65,6 @@ class Color {
   
   String toString() => 'R:${_elements[0]},G:${_elements[1]},B:${_elements[2]},A:${_elements[3]}';
 
-  static Color white() => new Color(1.0, 1.0, 1.0);
-  static Color black() => new Color(0.0, 0.0, 0.0);
+  static Color4 white() => new Color4(1.0, 1.0, 1.0, 1.0);
+  static Color4 black() => new Color4(0.0, 0.0, 0.0, 1.0);
 }

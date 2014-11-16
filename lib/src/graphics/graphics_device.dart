@@ -62,7 +62,7 @@ class GraphicsDevice {
     }
   }
 
-  void clear(Color color, {double depth: 1.0, int stencil: 1, int mask: gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT}) {
+  void clear(Color4 color, {double depth: 1.0, int stencil: 1, int mask: gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT}) {
     _ctx.clearColor(color.red, color.green, color.blue, color.alpha);
     _ctx.clearDepth(depth);
     _ctx.clearStencil(stencil);
@@ -125,7 +125,7 @@ class GraphicsDevice {
     // TODO more
   }
 
-  void _setBlendMode(bool enabled, {Color blendColor: null, List<int> blendEquationSeparate: null,
+  void _setBlendMode(bool enabled, {Color4 blendColor: null, List<int> blendEquationSeparate: null,
       List<int> blendFuncSeparate: null}) {
     if (enabled) {
       _ctx.enable(gl.BLEND);
@@ -181,8 +181,13 @@ class GraphicsDevice {
 
   /// ========== set uniforms ===============
   setFloat2(gl.UniformLocation location, num x, num y) => _ctx.uniform2f(location, x, y);
+  setFloat3(gl.UniformLocation location, num x, num y, num z) => _ctx.uniform3f(location, x, y, z);
   setFloat4(gl.UniformLocation location, num x, num y, num z, num w) => _ctx.uniform4f(location, x, y, z, w);
+  setVector2(gl.UniformLocation location, Vector2 value) => _ctx.uniform2fv(location, value._elements);
   setVector3(gl.UniformLocation location, Vector3 value) => _ctx.uniform3fv(location, value._elements);
+  setVector4(gl.UniformLocation location, Vector4 value) => _ctx.uniform4fv(location, value._elements);
+  setColor3(gl.UniformLocation location, Color3 value) => _ctx.uniform3fv(location, value._elements);
+  setColor4(gl.UniformLocation location, Color4 value) => _ctx.uniform4fv(location, value._elements);
   setMatrix3(gl.UniformLocation location, Matrix3 value) => _ctx.uniformMatrix3fv(location, false, value._elements);
   setMatrix4(gl.UniformLocation location, Matrix4 value) => _ctx.uniformMatrix4fv(location, false, value._elements);
 
@@ -220,6 +225,8 @@ class GraphicsDevice {
     _ctx.activeTexture(gl.TEXTURE0 + channel);
     _ctx.bindTexture(texture.target, null);
   }
+
+
 
 
 

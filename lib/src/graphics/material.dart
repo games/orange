@@ -30,7 +30,7 @@ part of orange;
 class Material {
 
   String name;
-  Color color;
+  Color4 color;
   bool wireframe = false;
   Texture mainTexture;
   Vector2 mainTextureOffset;

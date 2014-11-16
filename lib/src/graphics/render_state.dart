@@ -38,7 +38,7 @@ class RenderState {
   bool scissorTest = false;
   
   
-  Color blendColor = Color.black();
+  Color4 blendColor = Color4.black();
   
   /// Integer values passed to blendEquationSeparate(). [rgb, alpha]. 
   /// Valid values are (32774) FUNC_ADD, (32778) FUNC_SUBTRACT, and (32779) FUNC_REVERSE_SUBTRACT.",

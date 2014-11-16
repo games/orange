@@ -27,8 +27,22 @@ part of orange;
 
 
 /// from https://github.com/BabylonJS/Babylon.js
-/// thanks David Catuhe
+/// thanks to David Catuhe
 class TexturedEffect extends Effect {
+
+  Color3 ambientColor;
+  Color4 diffuseColor = new Color4.all(1.0);
+  Color4 specularColor;
+  Color3 emissiveColor;
+  double shininess;
+  double alpha = 1.0;
+  double specularPower = 1.0;
+
+  Texture bumpTexture;
+  Texture ambientTexture;
+  Texture opacityTexture;
+  Texture emissiveTexture;
+  Texture specularTexture;
 
   TexturedEffect() : super.load("packages/orange/src/shaders/textured");
 
@@ -43,32 +57,41 @@ class TexturedEffect extends Effect {
     uniforms["view"] = new EffectParameter(Semantices.VIEW);
     uniforms["viewProjection"] = new EffectParameter(Semantices.VIEW_PROJECTION);
     uniforms["world"] = new EffectParameter(Semantices.MODEL);
-    
-    // diffuse 
+
+    // diffuse
     uniforms["diffuseMatrix"] = new EffectParameter(Semantices.MATRIX4_IDENTITY);
-    uniforms["vDiffuseInfos"] = new EffectParameter(_diffuseInfoBinding);
     uniforms["diffuseSampler"] = new EffectParameter(Semantices.DIFFUSE_TEXTURE);
-    
+    uniforms["vDiffuseInfos"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+      graphics.setFloat2(context.parameter.location, 0.0, 1.0);
+    });
+
+    // colors
+    uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+        if(ambientColor != null) graphics.setColor3(context.parameter.location, ambientColor);
+    });
+    uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+      if(diffuseColor != null) graphics.setColor4(context.parameter.location, diffuseColor);
+    });
+    uniforms["vSpecularColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+      if(specularColor != null) graphics.setColor4(context.parameter.location, specularColor);
+    });
+    uniforms["vEmissiveColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+      if(emissiveColor != null) graphics.setColor3(context.parameter.location, emissiveColor);
+    });
+
     uniforms["vEyePosition"] = new EffectParameter(Semantices.EYE_POSITION);
 
     var defines = [];
-    if(context.material.mainTexture != null) {
+    if (context.material.mainTexture != null) {
       defines.add("DIFFUSE");
       defines.add("UV1");
     }
-    
+
     _commonSrc = Effect.jointAsDefines(defines);
-    
+
     return true;
   }
 }
-
-void _diffuseInfoBinding(GraphicsDevice graphics, EffectContext context) {
-  graphics.setFloat2(context.parameter.location, 0, 0);
-}
-
-
-
 
 
 

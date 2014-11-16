@@ -19,7 +19,6 @@ void main() {
     material.mainTexture = orange.resources.loadTexture("textures/firefox.png");
     material.wireframe = false;
 
-
     var material2 = Material.defaultMaterial();
     material2.mainTexture = orange.resources.loadTexture("textures/mosaic.jpg");
     material2.wireframe = true;
@@ -33,6 +32,7 @@ void main() {
     orange.root.addChild(new Node("cube")
         ..addComponent(new MeshFilter(CubeGenerator.create()))
         ..addComponent(new MeshRenderer()..materials = [material]));
+    orange.root.findChild("cube").transform.translate(0.0, -0.5, 0.0);
 
     orange.root.addChild(new Node("circle")
         ..addComponent(new MeshFilter(CircleGenerator.create(2.0)))
@@ -55,6 +55,12 @@ void main() {
         ..addComponent(new MeshRenderer()..materials = [material]));
     orange.root.findChild("sphere").transform.translate(-2.0, 2.0, -5.0);
 
+    orange.root.addChild(new Node("plane")
+        ..addComponent(new MeshFilter(PlaneGenerator.create()))
+        ..addComponent(new MeshRenderer()..materials = [material]));
+    orange.root.findChild("plane").transform.translate(0.0, 2.0, -5.0);
+    orange.root.findChild("plane").transform.scale = new Vector3.all(5.0);
+
     orange.mainCamera.transform.translate(0.0, 1.0, 5.0);
   };
 
@@ -62,16 +68,26 @@ void main() {
     var head = orange.root.findChild("head");
     if (head != null) head.transform.rotateY(gameTime.elapsed / 1000.0);
 
-    orange.root.findChild("cube").transform.rotateY(gameTime.elapsed / 1000.0);
+    var cube = orange.root.findChild("cube");
+    if (cube != null) cube.transform.rotateY(gameTime.elapsed / 1000.0);
 
-    orange.root.findChild("ring").transform.rotateY(gameTime.elapsed / 1000.0);
-    orange.root.findChild("ring").transform.rotateX(gameTime.elapsed / 1000.0);
+    var ring = orange.root.findChild("ring");
+    if (ring != null) {
+      ring.transform.rotateY(gameTime.elapsed / 1000.0);
+      ring.transform.rotateX(gameTime.elapsed / 1000.0);
+    }
 
-    orange.root.findChild("cylinder").transform.rotateY(gameTime.elapsed / 1000.0);
-    orange.root.findChild("cylinder").transform.rotateX(gameTime.elapsed / 1000.0);
-    
-    orange.root.findChild("sphere").transform.rotateY(gameTime.elapsed / 1000.0);
-    orange.root.findChild("sphere").transform.rotateX(gameTime.elapsed / 1000.0);
+    var cylinder = orange.root.findChild("cylinder");
+    if (cylinder != null) {
+      cylinder.transform.rotateY(gameTime.elapsed / 1000.0);
+      cylinder.transform.rotateX(gameTime.elapsed / 1000.0);
+    }
+
+    var sphere = orange.root.findChild("sphere");
+    if (sphere != null) {
+      sphere.transform.rotateY(gameTime.elapsed / 1000.0);
+      sphere.transform.rotateX(gameTime.elapsed / 1000.0);
+    }
   };
 
   orange.exitFrame = () {
@@ -81,9 +97,6 @@ void main() {
   orange.run();
 
 }
-
-
-
 
 
 

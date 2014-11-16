@@ -52,6 +52,7 @@ part 'src/resources/circle_generator.dart';
 part 'src/resources/cylinder_generator.dart';
 part 'src/resources/ring_generator.dart';
 part 'src/resources/sphere_generator.dart';
+part 'src/resources/plane_generator.dart';
 
 part 'src/graphics/graphics_device.dart';
 part 'src/graphics/vertex_buffer.dart';

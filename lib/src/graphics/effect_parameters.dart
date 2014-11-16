@@ -159,7 +159,7 @@ _modelInverseTranspose(GraphicsDevice graphics, EffectContext context) {
 }
 
 _eyePositionBinding(GraphicsDevice graphics, EffectContext context) =>
-    graphics.setVector3(context.parameter.location, context.camera._target.transform.worldMatrix.getTranslation());
+    graphics.setVector3(context.parameter.location, context.camera._target.transform.worldPosition);
 
 _diffuseTextureBinding(GraphicsDevice graphics, EffectContext context) {
   var channel = context.pass.effect.samplers.indexOf(context.parameter.name);

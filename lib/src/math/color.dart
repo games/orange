@@ -31,6 +31,8 @@ class Color3 extends Vector3 {
   Color3.all(double d) : super.all(d);
   Color3(double x, double y, double z) : super(x, y, z);
   Color3.zero() : super.zero();
+
+  Color3 scaled(double s) => new Color3(x * s, y * s, z * s);
 }
 
 class Color4 extends Vector4 {
@@ -45,7 +47,9 @@ class Color4 extends Vector4 {
     _elements[2] *= s;
     return this;
   }
-  
+
+  Color4 scaled(double s) => new Color4(r * s, g * s, b * s, a);
+
   set hexColor(num hexColor) {
     var h = hexColor.floor().toInt();
     _elements[0] = ((h & 0xFF0000) >> 16) / 255;
@@ -54,17 +58,20 @@ class Color4 extends Vector4 {
     _elements[3] = 1.0;
   }
 
-  set red(double val) => _elements[0] = val;
-  set green(double val) => _elements[1] = val;
-  set blue(double val) => _elements[2] = val;
-  set alpha(double val) => _elements[3] = val;
-  double get red => _elements[0];
-  double get green => _elements[1];
-  double get blue => _elements[2];
-  double get alpha => _elements[3];
-  
+  set r(double val) => _elements[0] = val;
+  set g(double val) => _elements[1] = val;
+  set b(double val) => _elements[2] = val;
+  set a(double val) => _elements[3] = val;
+  double get r => _elements[0];
+  double get g => _elements[1];
+  double get b => _elements[2];
+  double get a => _elements[3];
+
   String toString() => 'R:${_elements[0]},G:${_elements[1]},B:${_elements[2]},A:${_elements[3]}';
 
   static Color4 white() => new Color4(1.0, 1.0, 1.0, 1.0);
   static Color4 black() => new Color4(0.0, 0.0, 0.0, 1.0);
+  static Color4 red() => new Color4(1.0, 0.0, 0.0, 1.0);
+  static Color4 green() => new Color4(0.0, 1.0, 0.0, 1.0);
+  static Color4 blue() => new Color4(0.0, 0.0, 1.0, 1.0);
 }

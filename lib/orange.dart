@@ -65,6 +65,7 @@ part 'src/graphics/render_state.dart';
 part 'src/graphics/pass.dart';
 part 'src/graphics/effect.dart';
 part 'src/graphics/effect_parameters.dart';
+part 'src/graphics/effect_context.dart';
 part 'src/graphics/textured_effect.dart';
 
 
@@ -84,7 +85,6 @@ part 'src/math/vector4.dart';
 part 'src/math/color.dart';
 part 'src/math/ray.dart';
 part 'src/math/bounding_info.dart';
-part 'src/graphics/effect_context.dart';
 
 
 

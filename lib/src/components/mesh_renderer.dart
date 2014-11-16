@@ -29,6 +29,9 @@ part of orange;
 class MeshRenderer extends Component {
   
   List<Material> materials;
+  bool castShadows = false;
+  bool receiveShadows = false;
+  
   EffectContext _effectContext;
 
   @override

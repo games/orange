@@ -34,6 +34,7 @@ class Transform extends Component {
   Quaternion _rotation;
   Matrix4 _localMatrix;
   Matrix4 _worldMatrix;
+  Vector3 _worldPosition;
   bool _dirty;
 
   Transform() {
@@ -41,10 +42,12 @@ class Transform extends Component {
     _scale = new Vector3.all(1.0);
     _rotation = new Quaternion.identity();
     _localMatrix = new Matrix4.identity();
+    _worldPosition = new Vector3.zero();
     _dirty = true;
   }
 
   Matrix4 get worldMatrix => _worldMatrix;
+  Vector3 get worldPosition => _worldPosition;
 
   Vector3 get scale => _scale;
 
@@ -115,9 +118,9 @@ class Transform extends Component {
     } else {
       _worldMatrix = _localMatrix;
     }
+    _worldPosition.setValues(_worldMatrix[12], _worldMatrix[13], _worldMatrix[14]);
   }
 }
-
 
 
 

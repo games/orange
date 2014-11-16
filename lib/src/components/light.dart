@@ -28,14 +28,45 @@ part of orange;
 
 
 class Light extends Component {
-  
+  static const int DIRECTIONAL = 1;
+  static const int POINT = 2;
+  static const int SPOT = 3;
+  static const int HEMISPHERIC = 4;
+
+  /// The current type of light object: 1=Directional, 2=Point, 3=Spot, 4=Hemispheric
+  int type = 0;
+  /// Brightness of the light.
+  double intensity = 1.0;
+  bool enabled = true;
+  /// The color of the light emitted.
+  Color4 diffuse = new Color4.all(1.0);
+  Color3 specular = new Color3.all(1.0);
+
+  /// How far light is emitted from the center of the object. Point/Spot light only.
+  double range = double.MAX_FINITE;
+
+  /// Directional & Spot & Hemispheric
+  /// TODO calculate from transform
+  Vector3 direction = new Vector3(-0.8, -1.0, -0.4).normalize();
+
+  /// Spot Light
+  double exponent = 3.0;
+  /// Determines the angle of the cone in degrees. Spot light only.
+  double angle = 0.8;
+
+  /// Hemispheric light only
+  Color4 groundColor = new Color4.zero();
+
+  Light.directional() : type = DIRECTIONAL;
+  Light.point() : type = POINT;
+  Light.spot() : type = SPOT;
+  Light.hemispheric() : type = HEMISPHERIC;
+
   @override
   void onStart() {
-    // TODO: implement start
   }
 
   @override
   void onUpdate(GameTime time) {
-    // TODO: implement update
   }
 }

@@ -1,7 +1,7 @@
 library orange_examples;
 
 import 'dart:html' as Html;
-import 'dart:math';
+import 'dart:math' as Math;
 import 'dart:async';
 import 'dart:web_gl' as gl;
 import 'package:orange/orange.dart';
@@ -100,5 +100,3 @@ void main() {
   orange.run();
 
 }
-
-

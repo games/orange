@@ -26,7 +26,7 @@
 part of orange;
 
 
-/// from https://github.com/BabylonJS/Babylon.js
+/// shader code is from https://github.com/BabylonJS/Babylon.js
 /// thanks to David Catuhe
 class TexturedEffect extends Effect {
 
@@ -48,7 +48,7 @@ class TexturedEffect extends Effect {
 
   @override
   bool prepare(EffectContext context) {
-    if (_ready) return false;
+    if (_ready || _vertSrc == null || _fragSrc == null) return false;
 
     attributes["position"] = new EffectParameter(EffectBindings.POSITION);
     attributes["normal"] = new EffectParameter(EffectBindings.NORMAL);
@@ -67,16 +67,16 @@ class TexturedEffect extends Effect {
 
     // colors
     uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
-        if(ambientColor != null) graphics.setColor3(context.parameter.location, ambientColor);
+      if (ambientColor != null) graphics.setColor3(context.parameter.location, ambientColor);
     });
     uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
-      if(diffuseColor != null) graphics.setColor4(context.parameter.location, diffuseColor);
+      if (diffuseColor != null) graphics.setColor4(context.parameter.location, diffuseColor);
     });
     uniforms["vSpecularColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
-      if(specularColor != null) graphics.setColor4(context.parameter.location, specularColor);
+      if (specularColor != null) graphics.setColor4(context.parameter.location, specularColor);
     });
     uniforms["vEmissiveColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
-      if(emissiveColor != null) graphics.setColor3(context.parameter.location, emissiveColor);
+      if (emissiveColor != null) graphics.setColor3(context.parameter.location, emissiveColor);
     });
 
     uniforms["vEyePosition"] = new EffectParameter(EffectBindings.EYE_POSITION);
@@ -86,13 +86,118 @@ class TexturedEffect extends Effect {
       defines.add("DIFFUSE");
       defines.add("UV1");
     }
+    var lights = context.getLights();
+    for (var i = 0; i < lights.length; i++) {
+      defines.add("LIGHT$i");
+      var light = lights[i];
+      switch (light.light.type) {
+        case Light.DIRECTIONAL:
+          defines.add("POINTDIRLIGHT$i");
+          uniforms["vLightData$i"] = new EffectParameter(_directionalLightDataBinding(light, i));
+          break;
+        case Light.POINT:
+          defines.add("POINTDIRLIGHT$i");
+          uniforms["vLightData$i"] = new EffectParameter(_pointLightDataBinding(light, i));
+          break;
+        case Light.SPOT:
+          defines.add("SPOTLIGHT$i");
+          uniforms["vLightData$i"] = new EffectParameter(_spotLightDataBinding(light, i));
+          uniforms["vLightDirection$i"] = new EffectParameter(_spotLightDirectionBinding(light, i));
+          break;
+        case Light.HEMISPHERIC:
+          defines.add("HEMILIGHT$i");
+          uniforms["vLightData$i"] = new EffectParameter(_hemisphericLightDataBinding(light, i));
+          uniforms["vLightGround$i"] = new EffectParameter(_lightGroundBinding(light, i));
+          break;
+        default:
+          break;
+      }
+      uniforms["vLightDiffuse$i"] = new EffectParameter(_lightDiffuseBinding(light, i));
+      uniforms["vLightSpecular$i"] = new EffectParameter(_lightSpecularBinding(light, i));
+
+      //uniforms["lightMatrix$i"] = new EffectParameter(_lightMatrixBinding(light));
+    }
 
     _commonSrc = Effect.jointAsDefines(defines);
 
     return true;
   }
+
+  EffectBinding _lightSpecularBinding(Node node, int i) {
+    return (GraphicsDevice graphics, EffectContext context) {
+      var light = node.light;
+      graphics.setColor3(context.parameter.location, light.specular.scaled(light.intensity));
+    };
+  }
+
+  EffectBinding _lightDiffuseBinding(Node node, int i) {
+    return (GraphicsDevice graphics, EffectContext context) {
+      var light = node.light;
+      var diffuse = light.diffuse.scaled(light.intensity);
+      graphics.setFloat4(context.parameter.location, diffuse.r, diffuse.g, diffuse.b, light.range);
+    };
+  }
+
+  EffectBinding _lightGroundBinding(Node node, int i) {
+    return (GraphicsDevice graphics, EffectContext context) {
+      var light = node.light;
+      var color = light.groundColor.scaled(light.intensity);
+      graphics.setFloat3(context.parameter.location, color.r, color.g, color.b);
+    };
+  }
+
+  EffectBinding _spotLightDirectionBinding(Node node, int i) {
+    return (GraphicsDevice graphics, EffectContext context) {
+      var light = node.light;
+      var direction = light.direction.normalize();
+      graphics.setFloat4(
+          context.parameter.location,
+          direction.x,
+          direction.y,
+          direction.z,
+          Math.cos(light.angle * 0.5));
+    };
+  }
+
+  EffectBinding _directionalLightDataBinding(Node node, int i) {
+    var light = node.light;
+    return (GraphicsDevice graphics, EffectContext context) {
+      var direction = light.direction.normalize();
+      graphics.setFloat4(context.parameter.location, direction.x, direction.y, direction.z, 1.0);
+    };
+  }
+
+  EffectBinding _pointLightDataBinding(Node node, int i) {
+    var light = node.light;
+    return (GraphicsDevice graphics, EffectContext context) {
+      var position = node.transform.worldPosition;
+      graphics.setFloat4(context.parameter.location, position.x, position.y, position.z, 0.0);
+    };
+  }
+
+  EffectBinding _spotLightDataBinding(Node node, int i) {
+    var light = node.light;
+    return (GraphicsDevice graphics, EffectContext context) {
+      var position = node.transform.worldPosition;
+      graphics.setFloat4(context.parameter.location, position.x, position.y, position.z, light.exponent);
+    };
+  }
+
+  EffectBinding _hemisphericLightDataBinding(Node node, int i) {
+    var light = node.light;
+    return (GraphicsDevice graphics, EffectContext context) {
+      var direction = light.direction.normalize();
+      graphics.setFloat4(context.parameter.location, direction.x, direction.y, direction.z, 0.0);
+    };
+  }
+
+  EffectBinding _lightMatrixBinding(Node light) => (GraphicsDevice graphics, EffectContext context) {
+    var lightPos = light.transform.worldPosition;
+    var lightDir = light.light.direction;
+    var view = new Matrix4.identity().lookAt(lightPos, lightPos + lightDir, Vector3.up);
+    var camera = context.camera as PerspectiveCamera;
+    var projection = new Matrix4.perspective(radians(90.0), 1.0, camera.near, camera.far);
+    var transform = projection * view;
+    graphics.setMatrix4(context.parameter.location, transform);
+  };
 }
-
-
-
-

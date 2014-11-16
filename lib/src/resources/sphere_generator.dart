@@ -28,7 +28,7 @@ part of orange;
 
 class SphereGenerator {
 
-  static Mesh create({String name, int widthSegments: 20, int heightSegments: 20, num phiStart: 0, num phiLength: PI2,
+  static Mesh create({int widthSegments: 20, int heightSegments: 20, num phiStart: 0, num phiLength: PI2,
       num thetaStart: 0, thetaLength: Math.PI, radius: 1}) {
 
     var vertices = [];

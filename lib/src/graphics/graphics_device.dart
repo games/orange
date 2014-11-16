@@ -63,7 +63,7 @@ class GraphicsDevice {
   }
 
   void clear(Color4 color, {double depth: 1.0, int stencil: 1, int mask: gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT}) {
-    _ctx.clearColor(color.red, color.green, color.blue, color.alpha);
+    _ctx.clearColor(color.r, color.g, color.b, color.a);
     _ctx.clearDepth(depth);
     _ctx.clearStencil(stencil);
     mask = (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT) & mask;
@@ -130,7 +130,7 @@ class GraphicsDevice {
     if (enabled) {
       _ctx.enable(gl.BLEND);
       if (blendColor != null) {
-        _ctx.blendColor(blendColor.red, blendColor.green, blendColor.blue, blendColor.alpha);
+        _ctx.blendColor(blendColor.r, blendColor.g, blendColor.b, blendColor.a);
       }
       if (blendEquationSeparate != null) {
         _ctx.blendEquationSeparate(blendEquationSeparate[0], blendEquationSeparate[1]);

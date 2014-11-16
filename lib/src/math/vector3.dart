@@ -172,4 +172,11 @@ class Vector3 {
   Vector3 clone() => new Vector3(_elements[0], _elements[1], _elements[2]);
 
   String toString() => '[${_elements[0]},${_elements[1]},${_elements[2]}]';
+
+  static final Vector3 forward = new Vector3(0.0, 0.0, 1.0);
+  static final Vector3 back = new Vector3(0.0, 0.0, -1.0);
+  static final Vector3 left = new Vector3(-1.0, 0.0, 0.0);
+  static final Vector3 right = new Vector3(1.0, 0.0, 0.0);
+  static final Vector3 up = new Vector3(0.0, 1.0, 0.0);
+  static final Vector3 down = new Vector3(0.0, -1.0, 0.0);
 }

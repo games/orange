@@ -34,13 +34,13 @@ class EffectContext {
   EffectParameter parameter;
 
   // TODO fix me!!!
-  GetLights getLights() {
+  GetLights getLights = () {
     var lights = [];
     _findLights(Orange.instance.root, lights);
     return lights;
-  }
+  };
 
-  _findLights(Node node, List<Node> lights) {
+  static void _findLights(Node node, List<Node> lights) {
     if (node.children != null) {
       node.children.forEach((c) {
         if (c.light != null) lights.add(c);

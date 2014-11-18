@@ -123,45 +123,45 @@ _normalBinding(GraphicsDevice graphics, RenderData renderData) =>
 _indexBinding(GraphicsDevice graphics, RenderData renderData) =>
     _uploadEnableBuffer(graphics, renderData.parameter, renderData.mesh.indexBuffer);
 
-_joinWeightsBinding(GraphicsDevice graphics, RenderData context) {
+_joinWeightsBinding(GraphicsDevice graphics, RenderData renderData) {
   // TODO
 }
 
-_joinsBinding(GraphicsDevice graphics, RenderData context) {
+_joinsBinding(GraphicsDevice graphics, RenderData renderData) {
   // TODO
 }
 
-_joinsMatricesBinding(GraphicsDevice graphics, RenderData context) {
+_joinsMatricesBinding(GraphicsDevice graphics, RenderData renderData) {
   // TODO
 }
 
-_matrix4IdentityBinding(GraphicsDevice graphics, RenderData context) =>
-    graphics.setMatrix4(context.parameter.location, new Matrix4.identity());
+_matrix4IdentityBinding(GraphicsDevice graphics, RenderData renderData) =>
+    graphics.setMatrix4(renderData.parameter.location, new Matrix4.identity());
 
-_modelBinding(GraphicsDevice graphics, RenderData context) =>
-    graphics.setMatrix4(context.parameter.location, context.target.transform.worldMatrix);
+_modelBinding(GraphicsDevice graphics, RenderData renderData) =>
+    graphics.setMatrix4(renderData.parameter.location, renderData.target.transform.worldMatrix);
 
-_viewBinding(GraphicsDevice graphics, RenderData context) =>
-    graphics.setMatrix4(context.parameter.location, context.camera.view);
+_viewBinding(GraphicsDevice graphics, RenderData renderData) =>
+    graphics.setMatrix4(renderData.parameter.location, renderData.camera.view);
 
-_projectionBinding(GraphicsDevice graphics, RenderData context) =>
-    graphics.setMatrix4(context.parameter.location, context.camera.projection);
+_projectionBinding(GraphicsDevice graphics, RenderData renderData) =>
+    graphics.setMatrix4(renderData.parameter.location, renderData.camera.projection);
 
-_viewProjectionBinding(GraphicsDevice graphics, RenderData context) =>
-    graphics.setMatrix4(context.parameter.location, context.camera.viewProjection);
+_viewProjectionBinding(GraphicsDevice graphics, RenderData renderData) =>
+    graphics.setMatrix4(renderData.parameter.location, renderData.camera.viewProjection);
 
-_worldViewProjectionBinding(GraphicsDevice graphics, RenderData context) =>
-    graphics.setMatrix4(context.parameter.location, context.camera.viewProjection * context.target.transform.worldMatrix);
+_worldViewProjectionBinding(GraphicsDevice graphics, RenderData renderData) =>
+    graphics.setMatrix4(renderData.parameter.location, renderData.camera.viewProjection * renderData.target.transform.worldMatrix);
 
-_modelInverseTranspose(GraphicsDevice graphics, RenderData context) {
-  var mat3 = context.target.transform.worldMatrix.inverseMatrix3();
-  if (mat3 != null) graphics.setMatrix3(context.parameter.location, mat3.transpose());
+_modelInverseTranspose(GraphicsDevice graphics, RenderData renderData) {
+  var mat3 = renderData.target.transform.worldMatrix.inverseMatrix3();
+  if (mat3 != null) graphics.setMatrix3(renderData.parameter.location, mat3.transpose());
 }
 
-_eyePositionBinding(GraphicsDevice graphics, RenderData context) =>
-    graphics.setVector3(context.parameter.location, context.camera._target.transform.worldPosition);
+_eyePositionBinding(GraphicsDevice graphics, RenderData renderData) =>
+    graphics.setVector3(renderData.parameter.location, renderData.camera._target.transform.worldPosition);
 
-_diffuseTextureBinding(GraphicsDevice graphics, RenderData context) {
-  var channel = context.pass.effect.samplers.indexOf(context.parameter.name);
-  if (channel >= 0) graphics.bindTexture(context.material.mainTexture, channel);
+_diffuseTextureBinding(GraphicsDevice graphics, RenderData renderData) {
+  var channel = renderData.pass.effect.samplers.indexOf(renderData.parameter.name);
+  if (channel >= 0) graphics.bindTexture(renderData.material.mainTexture, channel);
 }

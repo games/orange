@@ -21,9 +21,7 @@ void main() {
     material.mainTexture = orange.resources.loadTexture("textures/firefox.png");
     material.wireframe = false;
 
-    var material2 = Material.defaultMaterial();
-    material2.mainTexture = orange.resources.loadTexture("textures/mosaic.jpg");
-    material2.wireframe = true;
+    var material2 = Material.texturedMaterial();
 
     var material3 = Material.texturedMaterial();
     material3.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
@@ -31,7 +29,7 @@ void main() {
     new OBJLoader().load("models/obj/head.obj").then((mesh) {
       orange.root.addChild(new Node("head")
           ..addComponent(new MeshFilter(mesh))
-          ..addComponent(new MeshRenderer()..materials = [material3]));
+          ..addComponent(new MeshRenderer()..materials = [material2]));
     });
 
     orange.root.addChild(new Node("cube")

@@ -52,7 +52,6 @@ class TexturedEffect extends Effect {
 
     attributes["position"] = new EffectParameter(EffectBindings.POSITION);
     attributes["normal"] = new EffectParameter(EffectBindings.NORMAL);
-    attributes["uv"] = new EffectParameter(EffectBindings.TEXCOORD_0);
 
     uniforms["view"] = new EffectParameter(EffectBindings.VIEW);
     uniforms["viewProjection"] = new EffectParameter(EffectBindings.VIEW_PROJECTION);
@@ -85,6 +84,7 @@ class TexturedEffect extends Effect {
     if (context.material.mainTexture != null) {
       defines.add("DIFFUSE");
       defines.add("UV1");
+      attributes["uv"] = new EffectParameter(EffectBindings.TEXCOORD_0);
     }
     var lights = context.getLights();
     for (var i = 0; i < lights.length; i++) {

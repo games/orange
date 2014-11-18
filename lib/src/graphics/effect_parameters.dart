@@ -163,5 +163,5 @@ _eyePositionBinding(GraphicsDevice graphics, EffectContext context) =>
 
 _diffuseTextureBinding(GraphicsDevice graphics, EffectContext context) {
   var channel = context.pass.effect.samplers.indexOf(context.parameter.name);
-  graphics.bindTexture(context.material.mainTexture, channel);
+  if (channel >= 0) graphics.bindTexture(context.material.mainTexture, channel);
 }

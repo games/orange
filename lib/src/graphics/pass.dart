@@ -31,7 +31,7 @@ class Pass {
   Effect effect;
   RenderState renderState;
 
-  bool bind(GraphicsDevice device, EffectContext context) {
+  bool bind(GraphicsDevice device, RenderData context) {
     effect.compile(context);
 
     if (!effect.ready) return false;

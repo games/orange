@@ -25,7 +25,7 @@
 
 part of orange;
 
-class EffectContext {
+class RenderData {
   Camera camera;
   Node target;
   Mesh mesh;

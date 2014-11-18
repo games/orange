@@ -47,7 +47,7 @@ class TexturedEffect extends Effect {
   TexturedEffect() : super.load("packages/orange/src/shaders/textured");
 
   @override
-  bool prepare(EffectContext context) {
+  bool prepare(RenderData context) {
     if (_ready || _vertSrc == null || _fragSrc == null) return false;
 
     attributes["position"] = new EffectParameter(EffectBindings.POSITION);
@@ -60,21 +60,21 @@ class TexturedEffect extends Effect {
     // diffuse
     uniforms["diffuseMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
     uniforms["diffuseSampler"] = new EffectParameter(EffectBindings.DIFFUSE_TEXTURE);
-    uniforms["vDiffuseInfos"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+    uniforms["vDiffuseInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
       graphics.setFloat2(context.parameter.location, 0.0, 1.0);
     });
 
     // colors
-    uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+    uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
       if (ambientColor != null) graphics.setColor3(context.parameter.location, ambientColor);
     });
-    uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+    uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
       if (diffuseColor != null) graphics.setColor4(context.parameter.location, diffuseColor);
     });
-    uniforms["vSpecularColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+    uniforms["vSpecularColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
       if (specularColor != null) graphics.setColor4(context.parameter.location, specularColor);
     });
-    uniforms["vEmissiveColor"] = new EffectParameter((GraphicsDevice graphics, EffectContext context) {
+    uniforms["vEmissiveColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
       if (emissiveColor != null) graphics.setColor3(context.parameter.location, emissiveColor);
     });
 
@@ -124,14 +124,14 @@ class TexturedEffect extends Effect {
   }
 
   EffectBinding _lightSpecularBinding(Node node, int i) {
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var light = node.light;
       graphics.setColor3(context.parameter.location, light.specular.scaled(light.intensity));
     };
   }
 
   EffectBinding _lightDiffuseBinding(Node node, int i) {
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var light = node.light;
       var diffuse = light.diffuse.scaled(light.intensity);
       graphics.setFloat4(context.parameter.location, diffuse.r, diffuse.g, diffuse.b, light.range);
@@ -139,7 +139,7 @@ class TexturedEffect extends Effect {
   }
 
   EffectBinding _lightGroundBinding(Node node, int i) {
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var light = node.light;
       var color = light.groundColor.scaled(light.intensity);
       graphics.setFloat3(context.parameter.location, color.r, color.g, color.b);
@@ -147,7 +147,7 @@ class TexturedEffect extends Effect {
   }
 
   EffectBinding _spotLightDirectionBinding(Node node, int i) {
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var light = node.light;
       var direction = light.direction.normalize();
       graphics.setFloat4(
@@ -161,7 +161,7 @@ class TexturedEffect extends Effect {
 
   EffectBinding _directionalLightDataBinding(Node node, int i) {
     var light = node.light;
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var direction = light.direction.normalize();
       graphics.setFloat4(context.parameter.location, direction.x, direction.y, direction.z, 1.0);
     };
@@ -169,7 +169,7 @@ class TexturedEffect extends Effect {
 
   EffectBinding _pointLightDataBinding(Node node, int i) {
     var light = node.light;
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var position = node.transform.worldPosition;
       graphics.setFloat4(context.parameter.location, position.x, position.y, position.z, 0.0);
     };
@@ -177,7 +177,7 @@ class TexturedEffect extends Effect {
 
   EffectBinding _spotLightDataBinding(Node node, int i) {
     var light = node.light;
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var position = node.transform.worldPosition;
       graphics.setFloat4(context.parameter.location, position.x, position.y, position.z, light.exponent);
     };
@@ -185,13 +185,13 @@ class TexturedEffect extends Effect {
 
   EffectBinding _hemisphericLightDataBinding(Node node, int i) {
     var light = node.light;
-    return (GraphicsDevice graphics, EffectContext context) {
+    return (GraphicsDevice graphics, RenderData context) {
       var direction = light.direction.normalize();
       graphics.setFloat4(context.parameter.location, direction.x, direction.y, direction.z, 0.0);
     };
   }
 
-  EffectBinding _lightMatrixBinding(Node light) => (GraphicsDevice graphics, EffectContext context) {
+  EffectBinding _lightMatrixBinding(Node light) => (GraphicsDevice graphics, RenderData context) {
     var lightPos = light.transform.worldPosition;
     var lightDir = light.light.direction;
     var view = new Matrix4.identity().lookAt(lightPos, lightPos + lightDir, Vector3.up);

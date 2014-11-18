@@ -32,11 +32,11 @@ class MeshRenderer extends Component {
   bool castShadows = false;
   bool receiveShadows = false;
   
-  EffectContext _effectContext;
+  RenderData _renderData;
 
   @override
   void onStart() {
-    _effectContext = new EffectContext();
+    _renderData = new RenderData();
   }
 
   @override
@@ -58,13 +58,13 @@ class MeshRenderer extends Component {
     var graphics = orange.graphicsDevice;
     var camera = orange.mainCamera.camera;
     
-    _effectContext.camera = camera;
-    _effectContext.target = _target;
-    _effectContext.mesh = mesh;
-    _effectContext.material = material;
-    _effectContext.pass = pass;
+    _renderData.camera = camera;
+    _renderData.target = _target;
+    _renderData.mesh = mesh;
+    _renderData.material = material;
+    _renderData.pass = pass;
 
-    if (!pass.bind(graphics, _effectContext)) return;
+    if (!pass.bind(graphics, _renderData)) return;
 
     // bind indices
     mesh.indexBuffer.upload(graphics);

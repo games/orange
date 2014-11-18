@@ -71,11 +71,11 @@ class Effect implements Disposable {
     });
   }
 
-  bool prepare(EffectContext context) => !_ready && _vertSrc != null && _fragSrc != null;
+  bool prepare(RenderData renderData) => !_ready && _vertSrc != null && _fragSrc != null;
 
-  compile(EffectContext context) {
+  compile(RenderData renderData) {
 
-    if (!prepare(context)) return;
+    if (!prepare(renderData)) return;
 
     var graphics = Orange.instance.graphicsDevice;
     var ctx = graphics._ctx;

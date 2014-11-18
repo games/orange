@@ -61,9 +61,9 @@ class EffectParameter {
 
   EffectParameter(this.binding);
 
-  bind(GraphicsDevice graphics, EffectContext context) {
-    context.parameter = this;
-    binding(graphics, context);
+  bind(GraphicsDevice graphics, RenderData renderData) {
+    renderData.parameter = this;
+    binding(graphics, renderData);
   }
 
   @override
@@ -99,69 +99,69 @@ class EffectBindings {
 
 
 
-typedef void EffectBinding(GraphicsDevice graphics, EffectContext context);
+typedef void EffectBinding(GraphicsDevice graphics, RenderData renderData);
 
 void _uploadEnableBuffer(GraphicsDevice graphics, EffectParameter parameter, VertexBuffer buffer) {
   buffer.upload(graphics);
   buffer.enable(graphics, parameter);
 }
 
-_noneBinding(GraphicsDevice graphics, EffectContext context) {}
+_noneBinding(GraphicsDevice graphics, RenderData renderData) {}
 
-_positionBinding(GraphicsDevice graphics, EffectContext context) =>
-    _uploadEnableBuffer(graphics, context.parameter, context.mesh.vertexBuffer);
+_positionBinding(GraphicsDevice graphics, RenderData renderData) =>
+    _uploadEnableBuffer(graphics, renderData.parameter, renderData.mesh.vertexBuffer);
 
-_texCoordBinding(GraphicsDevice graphics, EffectContext context) =>
-    _uploadEnableBuffer(graphics, context.parameter, context.mesh.texCoordsBuffer);
+_texCoordBinding(GraphicsDevice graphics, RenderData renderData) =>
+    _uploadEnableBuffer(graphics, renderData.parameter, renderData.mesh.texCoordsBuffer);
 
-_texCoord2Binding(GraphicsDevice graphics, EffectContext context) =>
-    _uploadEnableBuffer(graphics, context.parameter, context.mesh.texCoords2Buffer);
+_texCoord2Binding(GraphicsDevice graphics, RenderData renderData) =>
+    _uploadEnableBuffer(graphics, renderData.parameter, renderData.mesh.texCoords2Buffer);
 
-_normalBinding(GraphicsDevice graphics, EffectContext context) =>
-    _uploadEnableBuffer(graphics, context.parameter, context.mesh.normalBuffer);
+_normalBinding(GraphicsDevice graphics, RenderData renderData) =>
+    _uploadEnableBuffer(graphics, renderData.parameter, renderData.mesh.normalBuffer);
 
-_indexBinding(GraphicsDevice graphics, EffectContext context) =>
-    _uploadEnableBuffer(graphics, context.parameter, context.mesh.indexBuffer);
+_indexBinding(GraphicsDevice graphics, RenderData renderData) =>
+    _uploadEnableBuffer(graphics, renderData.parameter, renderData.mesh.indexBuffer);
 
-_joinWeightsBinding(GraphicsDevice graphics, EffectContext context) {
+_joinWeightsBinding(GraphicsDevice graphics, RenderData context) {
   // TODO
 }
 
-_joinsBinding(GraphicsDevice graphics, EffectContext context) {
+_joinsBinding(GraphicsDevice graphics, RenderData context) {
   // TODO
 }
 
-_joinsMatricesBinding(GraphicsDevice graphics, EffectContext context) {
+_joinsMatricesBinding(GraphicsDevice graphics, RenderData context) {
   // TODO
 }
 
-_matrix4IdentityBinding(GraphicsDevice graphics, EffectContext context) =>
+_matrix4IdentityBinding(GraphicsDevice graphics, RenderData context) =>
     graphics.setMatrix4(context.parameter.location, new Matrix4.identity());
 
-_modelBinding(GraphicsDevice graphics, EffectContext context) =>
+_modelBinding(GraphicsDevice graphics, RenderData context) =>
     graphics.setMatrix4(context.parameter.location, context.target.transform.worldMatrix);
 
-_viewBinding(GraphicsDevice graphics, EffectContext context) =>
+_viewBinding(GraphicsDevice graphics, RenderData context) =>
     graphics.setMatrix4(context.parameter.location, context.camera.view);
 
-_projectionBinding(GraphicsDevice graphics, EffectContext context) =>
+_projectionBinding(GraphicsDevice graphics, RenderData context) =>
     graphics.setMatrix4(context.parameter.location, context.camera.projection);
 
-_viewProjectionBinding(GraphicsDevice graphics, EffectContext context) =>
+_viewProjectionBinding(GraphicsDevice graphics, RenderData context) =>
     graphics.setMatrix4(context.parameter.location, context.camera.viewProjection);
 
-_worldViewProjectionBinding(GraphicsDevice graphics, EffectContext context) =>
+_worldViewProjectionBinding(GraphicsDevice graphics, RenderData context) =>
     graphics.setMatrix4(context.parameter.location, context.camera.viewProjection * context.target.transform.worldMatrix);
 
-_modelInverseTranspose(GraphicsDevice graphics, EffectContext context) {
+_modelInverseTranspose(GraphicsDevice graphics, RenderData context) {
   var mat3 = context.target.transform.worldMatrix.inverseMatrix3();
   if (mat3 != null) graphics.setMatrix3(context.parameter.location, mat3.transpose());
 }
 
-_eyePositionBinding(GraphicsDevice graphics, EffectContext context) =>
+_eyePositionBinding(GraphicsDevice graphics, RenderData context) =>
     graphics.setVector3(context.parameter.location, context.camera._target.transform.worldPosition);
 
-_diffuseTextureBinding(GraphicsDevice graphics, EffectContext context) {
+_diffuseTextureBinding(GraphicsDevice graphics, RenderData context) {
   var channel = context.pass.effect.samplers.indexOf(context.parameter.name);
   if (channel >= 0) graphics.bindTexture(context.material.mainTexture, channel);
 }

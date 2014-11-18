@@ -33,11 +33,16 @@ class Pass {
 
   bool bind(GraphicsDevice device, EffectContext context) {
     effect.compile(context);
-    
+
     if (!effect.ready) return false;
 
     device.useEffect(effect);
     device.setRenderState(renderState);
+
+    for (var i = 0; i < effect.samplers.length; i++) {
+      var parameter = effect.uniforms[effect.samplers[i]];
+      device.setInt(parameter.location, i);
+    }
 
     // set uniforms
     effect.uniforms.forEach((String name, EffectParameter parameter) {
@@ -52,7 +57,9 @@ class Pass {
     return true;
   }
 
-  void unbind() {
-    // TODO
+  void unbind(GraphicsDevice device) {
+    effect.attributes.forEach((String name, EffectParameter parameter) {
+      device.disableVertexAttribute(parameter.location);
+    });
   }
 }

@@ -75,6 +75,6 @@ class MeshRenderer extends Component {
       graphics.drawTriangles(mesh.indexBuffer);
     }
 
-    pass.unbind();
+    pass.unbind(graphics);
   }
 }

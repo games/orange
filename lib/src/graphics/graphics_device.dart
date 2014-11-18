@@ -103,6 +103,8 @@ class GraphicsDevice {
         attribute.stride,
         attribute.offset);
   }
+  
+  void disableVertexAttribute(dynamic location) => _ctx.disableVertexAttribArray(location);
 
   void deleteTexture(gl.Texture texture) {
     _ctx.deleteTexture(texture);
@@ -180,6 +182,8 @@ class GraphicsDevice {
 
 
   /// ========== set uniforms ===============
+  setInt(gl.UniformLocation location, int i) => _ctx.uniform1i(location, i);
+  setBool(gl.UniformLocation location, bool value) => _ctx.uniform1i(location, value ? 1 : 0);
   setFloat2(gl.UniformLocation location, num x, num y) => _ctx.uniform2f(location, x, y);
   setFloat3(gl.UniformLocation location, num x, num y, num z) => _ctx.uniform3f(location, x, y, z);
   setFloat4(gl.UniformLocation location, num x, num y, num z, num w) => _ctx.uniform4f(location, x, y, z, w);
@@ -231,6 +235,9 @@ class GraphicsDevice {
 
 
 
+  
+ 
+  
 }
 
 

@@ -58,6 +58,7 @@ class MeshRenderer extends Component {
     var graphics = orange.graphicsDevice;
     var camera = orange.mainCamera.camera;
     
+    _renderData.renderSettings = orange.renderSettings;
     _renderData.camera = camera;
     _renderData.target = _target;
     _renderData.mesh = mesh;

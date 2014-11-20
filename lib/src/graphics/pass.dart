@@ -27,7 +27,7 @@ part of orange;
 
 
 
-class Pass {
+class Pass extends Disposable {
   Effect effect;
   RenderState renderState;
 
@@ -61,5 +61,10 @@ class Pass {
     effect.attributes.forEach((String name, EffectParameter parameter) {
       device.disableVertexAttribute(parameter.location);
     });
+  }
+
+  @override
+  void dispose() {
+    if(effect != null) effect.dispose();
   }
 }

@@ -1,20 +1,14 @@
 library orange_examples;
 
-import 'dart:html' as Html;
 import 'dart:math' as Math;
-import 'dart:async';
-import 'dart:web_gl' as gl;
 import 'package:orange/orange.dart';
-import 'package:stats/stats.dart';
+import 'common.dart';
 
 
 
 void main() {
-  var canvas = Html.querySelector("#container");
-  canvas.width = Html.window.innerWidth;
-  canvas.height = Html.window.innerHeight;
 
-  var orange = new Orange(canvas);
+  var orange = createOrange();
 
   orange.initialize = () {
     var material = Material.defaultMaterial();

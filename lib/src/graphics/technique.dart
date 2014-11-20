@@ -26,10 +26,14 @@
 part of orange;
 
 
-
-class Technique {
+class Technique extends Disposable {
   String name;
   List<Pass> passes;
 
   Technique(this.name) : passes = [];
+
+  @override
+  void dispose() {
+    passes.forEach((p) => p.dispose());
+  }
 }

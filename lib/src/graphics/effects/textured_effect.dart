@@ -29,6 +29,13 @@ part of orange;
 /// shader code is from https://github.com/BabylonJS/Babylon.js
 /// thanks to David Catuhe
 class TexturedEffect extends Effect {
+  
+  static int EXPLICIT_MODE = 0;
+  static int SPHERICAL_MODE = 1;
+  static int PLANAR_MODE = 2;
+  static int CUBIC_MODE = 3;
+  static int PROJECTION_MODE = 4;
+  static int SKYBOX_MODE = 5;
 
   Color3 ambientColor;
   Color4 diffuseColor = new Color4.all(1.0);
@@ -43,6 +50,9 @@ class TexturedEffect extends Effect {
   Texture opacityTexture;
   Texture emissiveTexture;
   Texture specularTexture;
+  Texture reflectionTexture;
+  
+  int reflectionMode;
 
   TexturedEffect() : super.load("packages/orange/src/shaders/textured");
 
@@ -66,7 +76,7 @@ class TexturedEffect extends Effect {
 
     // colors
     uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
-      if (ambientColor != null) graphics.setColor3(context.parameter.location, ambientColor);
+      if (ambientColor != null) graphics.setColor3(context.parameter.location, context.renderSettings.ambientLight * ambientColor);
     });
     uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
       if (diffuseColor != null) graphics.setColor4(context.parameter.location, diffuseColor);

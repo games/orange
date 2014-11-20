@@ -33,21 +33,26 @@ class ResourceManager extends Disposable {
 
   Texture getTexture(String id) => _textures[id];
 
-  Texture loadTexture(String url, {String id, int target: gl.TEXTURE_2D, int type: gl.UNSIGNED_BYTE, int format:
-      gl.RGBA, Sampler sampler, bool mipMaps: false, bool flip: false}) {
+  Texture loadTexture(String url, {String id, int type: gl.UNSIGNED_BYTE, int format: gl.RGBA, Sampler sampler,
+      bool mipMaps: false, bool flip: false}) {
 
     id = or(id, url);
     if (_textures.containsKey(id)) return _textures[id];
 
-    var texture = new TextureLoader().load(
-        url,
-        id: id,
-        target: target,
-        type: type,
-        format: format,
-        sampler: sampler,
-        mipMaps: mipMaps,
-        flip: flip);
+    var texture =
+        new TextureLoader().load(url, id: id, type: type, format: format, sampler: sampler, mipMaps: mipMaps, flip: flip);
+    _textures[texture.id] = texture;
+
+    return texture;
+  }
+
+  Texture loadCubemapTexture(String url, {String id, int type: gl.UNSIGNED_BYTE, int format: gl.RGBA, Sampler sampler,
+      bool mipMaps: false}) {
+    id = or(id, url);
+    if (_textures.containsKey(id)) return _textures[id];
+
+    var texture =
+        new TextureLoader().loadCubemap(url, id: id, type: type, format: format, sampler: sampler, mipMaps: mipMaps);
     _textures[texture.id] = texture;
 
     return texture;

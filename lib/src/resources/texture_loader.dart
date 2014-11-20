@@ -27,32 +27,74 @@ part of orange;
 
 class TextureLoader {
 
-  Texture load(String url, {String id, int target: gl.TEXTURE_2D, int type: gl.UNSIGNED_BYTE, int format: gl.RGBA,
-      Sampler sampler, bool mipMaps: false, bool flip: false}) {
+  static const extensions = const ["_px.jpg", "_py.jpg", "_pz.jpg", "_nx.jpg", "_ny.jpg", "_nz.jpg"];
 
-    id = or(id, url);
+  Texture load(String url, {String id, int type: gl.UNSIGNED_BYTE, int format: gl.RGBA, Sampler sampler, bool mipMaps:
+      false, bool flip: false}) {
+    return _loadInternal(url, or(id, url), gl.TEXTURE_2D, type, format, sampler, mipMaps, flip);
+  }
+
+  //TODO check max cubemap size
+  Texture loadCubemap(String url, {String id, int type: gl.UNSIGNED_BYTE, int format: gl.RGBA, Sampler sampler,
+      bool mipMaps: false}) {
+    return _loadInternal(url, or(id, url), gl.TEXTURE_CUBE_MAP, type, format, sampler, mipMaps, false);
+  }
+
+  Texture _loadInternal(String url, String id, int target, int type, int format, Sampler sampler, bool mipMaps,
+      bool flip) {
 
     var texture = new Texture._(id);
     texture.source = url;
     texture.target = target;
     texture.type = type;
     texture.format = format;
-    texture.sampler = or(sampler, Sampler.defaultSampler);
     texture.flip = flip;
     texture.mipMapping = mipMaps;
-    var image = new html.ImageElement(src: url);
-    image.onLoad.listen((_) {
-      texture.width = image.width;
-      texture.height = image.height;
-      var sampler = texture.sampler;
-      if (texture.mipMapping || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
-        image = _ensureImage(image);
-      }
-      Orange.instance.graphicsDevice.createTexture(texture, image);
-      texture._ready = true;
-    });
 
+    if (target == gl.TEXTURE_2D) {
+      texture.sampler = or(sampler, Sampler.defaultSampler);
+      var image = new html.ImageElement(src: url);
+      image.onLoad.listen((_) {
+        var sampler = texture.sampler;
+        if (texture.mipMapping || sampler.wrapS == gl.REPEAT || sampler.wrapT == gl.REPEAT) {
+          image = _ensureImage(image);
+        }
+        _createTexture(texture, [image]);
+      });
+    } else if (target == gl.TEXTURE_CUBE_MAP) {
+      if (texture.sampler == null) {
+        texture.sampler = new Sampler()
+            ..wrapS = gl.CLAMP_TO_EDGE
+            ..wrapT = gl.CLAMP_TO_EDGE
+            ..minFilter = texture.mipMapping ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR;
+      }
+      List<Future> futures = [];
+      extensions.forEach((String ext) => futures.add(_loadImage(url + ext)));
+      Future.wait(futures).then((List<html.ImageElement> images) {
+        _createTexture(texture, images);
+      });
+    }
     return texture;
+  }
+
+  void _createTexture(Texture texture, List<html.ImageElement> images) {
+    var img = images.first;
+    texture.width = img.width;
+    texture.height = img.height;
+    Orange.instance.graphicsDevice.createTexture(texture, images);
+    texture._ready = true;
+  }
+
+  Future _loadImage(String url) {
+    var completer = new Completer<html.ImageElement>();
+    var img = new html.ImageElement(src: url);
+    img.onLoad.listen((_) {
+      completer.complete(img);
+    });
+    img.onError.listen((e){
+      print(e);
+    });
+    return completer.future;
   }
 
   _ensureImage(html.ImageElement source) {

@@ -25,30 +25,45 @@
 
 part of orange;
 
-class RenderData {
-  Camera camera;
-  Node target;
-  Mesh mesh;
-  Material material;
-  Pass pass;
-  EffectParameter parameter;
 
-  // TODO fix me!!!
-  GetLights getLights = () {
-    var lights = [];
-    _findLights(Orange.instance.root, lights);
-    return lights;
-  };
-
-  static void _findLights(Node node, List<Node> lights) {
-    if (node.children != null) {
-      node.children.forEach((c) {
-        if (c.light != null) lights.add(c);
-        _findLights(c, lights);
-      });
-    }
-  }
+/// refer: http://docs.unity3d.com/Manual/class-RenderSettings.html
+class RenderSettings {
+  static int FOGMODE_NONE = 0;
+  static int FOGMODE_EXP = 1;
+  static int FOGMODE_EXP2 = 2;
+  static int FOGMODE_LINEAR = 3;
+  
+  /// If enabled, fog will be drawn throughout your scene.
+  bool fog = false;
+  /// Color of the fog.
+  Color4 fogColor;
+  /// Fog mode: Linear, Exponential (Exp) or Exponential Squared (Exp2). 
+  /// This controls the way fog fades in with distance.
+  int fogMode;
+  /// Density of the fog; only used by Exp and Exp2 fog modes.
+  num fogDensity = 0.1;
+  /// Start and End distances of the fog; only used by Linear fog mode.
+  num fogStart = 0.0;
+  num fogEnd = 1000.0;
+  /// Color of the scene’s ambient light.
+  Color3 ambientLight = new Color3.all(0.0);
+  /// Default skybox that will be rendered for cameras that have no skybox attached.
+  Texture skyboxTexture;
+  
+  // TODO
+  num haloStrength = 0.5;
+  num flareStrength = 1;
+  num flareFadeSpeed = 3;
+  Texture haloTexture;
+  Texture spotCookie;
 }
 
 
-typedef List<Node> GetLights();
+
+
+
+
+
+
+
+

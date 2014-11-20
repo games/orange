@@ -31,6 +31,14 @@ const int SIZE_FLOAT = 4;
 
 class GraphicsDevice {
 
+  static const CUBE_TEXTURE_FACES = const [
+      gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Z];
+
   html.CanvasElement _renderingCanvas;
   html.CanvasElement get renderingCanvas => _renderingCanvas;
   gl.RenderingContext _ctx;
@@ -103,7 +111,7 @@ class GraphicsDevice {
         attribute.stride,
         attribute.offset);
   }
-  
+
   void disableVertexAttribute(dynamic location) => _ctx.disableVertexAttribArray(location);
 
   void deleteTexture(gl.Texture texture) {
@@ -197,7 +205,7 @@ class GraphicsDevice {
 
 
   /// ========== textures ===============
-  void createTexture(Texture texture, data) {
+  void createTexture(Texture texture, List<html.ImageElement> images) {
     texture._texture = _ctx.createTexture();
     _ctx.bindTexture(texture.target, texture._texture);
     if (texture.flip) {
@@ -210,10 +218,14 @@ class GraphicsDevice {
     _ctx.texParameteri(texture.target, gl.TEXTURE_WRAP_T, sampler.wrapT);
     _ctx.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, sampler.minFilter);
     _ctx.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, sampler.magFilter);
-    _ctx.texImage2D(texture.target, 0, texture.format, texture.format, texture.type, data);
-    if (texture.mipMapping) {
-      _ctx.generateMipmap(texture.target);
+    if (texture.target == gl.TEXTURE_2D) {
+      _ctx.texImage2D(texture.target, 0, texture.format, texture.format, texture.type, images.first);
+    } else {
+      for (var i = 0; i < CUBE_TEXTURE_FACES.length; i++) {
+        _ctx.texImage2D(CUBE_TEXTURE_FACES[i], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images[i]);
+      }
     }
+    if (texture.mipMapping) _ctx.generateMipmap(texture.target);
     _ctx.bindTexture(texture.target, null);
   }
 
@@ -235,9 +247,11 @@ class GraphicsDevice {
 
 
 
-  
- 
-  
+
+
+
+
+
 }
 
 

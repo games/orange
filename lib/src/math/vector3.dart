@@ -135,10 +135,15 @@ class Vector3 {
     var o = 1.0 / scale;
     return new Vector3(_elements[0] * o, _elements[1] * o, _elements[2] * o);
   }
+  
+  Vector3 _mulVector3(Vector3 other) => new Vector3(_elements[0] * other.x, _elements[1] * other.y, _elements[2] * other.z);
 
-  Vector3 operator *(double scale) {
-    var o = scale;
-    return new Vector3(_elements[0] * o, _elements[1] * o, _elements[2] * o);
+  Vector3 _mulNumber(num scale) => new Vector3(_elements[0] * scale, _elements[1] * scale, _elements[2] * scale);
+  
+  Vector3 operator *(other) {
+    if (other is Vector3) return _mulVector3(other);
+    else if(other is num) return _mulNumber(other);
+    return null;
   }
 
   double get x => _elements[0];

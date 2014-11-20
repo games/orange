@@ -23,51 +23,33 @@
   
  */
 
-
 part of orange;
 
+class RenderData {
+  RenderSettings renderSettings;
+  Camera camera;
+  Node target;
+  Mesh mesh;
+  Material material;
+  Pass pass;
+  EffectParameter parameter;
 
-class Material extends Disposable {
+  // TODO fix me!!!
+  GetLights getLights = () {
+    var lights = [];
+    _findLights(Orange.instance.root, lights);
+    return lights;
+  };
 
-  String name;
-  Color4 color;
-  bool wireframe = false;
-  Texture mainTexture;
-  Vector2 mainTextureOffset;
-  Vector2 mainTextureScale;
-  Shader shader;
-
-  Material(this.name);
-
-  @override
-  void dispose() {
-    if (mainTexture != null) mainTexture.dispose();
-    if (shader != null) shader.dispose();
-    mainTexture = null;
-    shader = null;
+  static void _findLights(Node node, List<Node> lights) {
+    if (node.children != null) {
+      node.children.forEach((c) {
+        if (c.light != null) lights.add(c);
+        _findLights(c, lights);
+      });
+    }
   }
-
-  static Material defaultMaterial() {
-    var material = new Material("default");
-    material.shader = Shader.defaultShader();
-    return material;
-  }
-
-  static Material texturedMaterial() {
-    var material = new Material("textured");
-    material.shader = Shader.texturedShader();
-    return material;
-  }
-
-  static Material skyboxMaterial() {
-    var material = new Material("skybox");
-    material.shader = Shader.skybox();
-    return material;
-  }
-
 }
 
 
-
-
-
+typedef List<Node> GetLights();

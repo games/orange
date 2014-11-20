@@ -43,6 +43,7 @@ part 'src/node.dart';
 part 'src/component.dart';
 part 'src/game_time.dart';
 part 'src/mesh.dart';
+part 'src/render_settings.dart';
 
 part 'src/resources/resource_manager.dart';
 part 'src/resources/texture_loader.dart';
@@ -63,10 +64,12 @@ part 'src/graphics/shader.dart';
 part 'src/graphics/technique.dart';
 part 'src/graphics/render_state.dart';
 part 'src/graphics/pass.dart';
-part 'src/graphics/effect.dart';
-part 'src/graphics/effect_parameters.dart';
-part 'src/graphics/render_data.dart';
-part 'src/graphics/textured_effect.dart';
+
+part 'src/graphics/effects/effect.dart';
+part 'src/graphics/effects/effect_parameters.dart';
+part 'src/graphics/effects/render_data.dart';
+part 'src/graphics/effects/textured_effect.dart';
+part 'src/graphics/effects/skybox_effect.dart';
 
 
 part 'src/components/transform.dart';

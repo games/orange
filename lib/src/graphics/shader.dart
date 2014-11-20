@@ -27,7 +27,7 @@ part of orange;
 
 
 
-class Shader {
+class Shader extends Disposable {
 
   String name;
   List<Technique> techniques;
@@ -35,7 +35,12 @@ class Shader {
 
   Shader(this.name) : techniques = [];
 
+  @override
+  void dispose() {
+    techniques.forEach((t) => t.dispose());
+  }
 
+  // TODO remove
   static Shader defaultShader() {
     var effect = new Effect.load("packages/orange/src/shaders/default");
 
@@ -78,10 +83,18 @@ class Shader {
     return shader;
   }
 
+  static Shader skybox() {
+    var pass = new Pass();
+    pass.effect = new SkyboxEffect();
+    pass.renderState = new RenderState();
+    pass.renderState.cullFaceEnabled = false;
+    
+    var technique = new Technique("skybox");
+    technique.passes.add(pass);
 
-
+    var shader = new Shader("skybox");
+    shader.techniques.add(technique);
+    return shader;
+  }
 }
-
-
-
 

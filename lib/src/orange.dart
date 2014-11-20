@@ -35,6 +35,8 @@ class Orange {
     if (_instance == null) _instance = new Orange._(canvas);
     return _instance;
   }
+  
+  RenderSettings renderSettings;
 
   GraphicsDevice _graphicsDevice;
   GraphicsDevice get graphicsDevice => _graphicsDevice;
@@ -59,8 +61,11 @@ class Orange {
 
   int get width => _graphicsDevice._renderingCanvas.width;
   int get height => _graphicsDevice._renderingCanvas.height;
+  
+  Node _skybox;
 
   Orange._(html.CanvasElement canvas) {
+    renderSettings = new RenderSettings();
     _graphicsDevice = new GraphicsDevice(canvas);
     _resources = new ResourceManager();
     _gameTime = new GameTime();
@@ -93,6 +98,9 @@ class Orange {
     _root.update(_gameTime);
 
     _graphicsDevice.clear(backgroundColor);
+    
+    _renderSkybox();
+    
     _root.render();
 
     // physics
@@ -107,4 +115,39 @@ class Orange {
 
     if (exitFrame != null) exitFrame();
   }
+  
+  void _renderSkybox() {
+    if(renderSettings.skyboxTexture == null) return;
+    if(_skybox == null || _skybox.renderer.materials.first.mainTexture != renderSettings.skyboxTexture) {
+      if(_skybox != null) {
+        _skybox.renderer.materials.first.dispose();
+      }
+      
+      var material = Material.skyboxMaterial();
+      material.mainTexture = renderSettings.skyboxTexture;
+      
+      _skybox = new Node("sky")
+      ..addComponent(new MeshFilter(CubeGenerator.create(width: 1000, height: 1000, depth: 1000)))
+      ..addComponent(new MeshRenderer()..materials = [material]);
+    }
+    _skybox.update(_gameTime);
+    _skybox.render();
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

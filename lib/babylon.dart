@@ -25,6 +25,7 @@
 
 library orange.effects.babylon;
 
+import 'dart:web_gl' as gl;
 import 'dart:math' as Math;
 import 'package:orange/orange.dart';
 

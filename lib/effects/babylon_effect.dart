@@ -52,7 +52,8 @@ class BabylonEffect extends Effect {
   Texture specularTexture;
   Texture reflectionTexture;
 
-  int reflectionMode;
+  int coordinatesMode = SPHERICAL_MODE;
+  bool opacityFromRGB = false;
 
   BabylonEffect() : super.load("packages/orange/effects/babylon");
 
@@ -61,22 +62,89 @@ class BabylonEffect extends Effect {
     if (!super.prepare(renderData)) return false;
 
     var defines = [];
-    
+
+    // diffuse
     if (renderData.material.mainTexture != null) {
       defines.add("DIFFUSE");
       defines.add("UV1");
       attributes["uv"] = new EffectParameter(EffectBindings.TEXCOORD_0);
+      uniforms["diffuseMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+      uniforms["diffuseSampler"] = new EffectParameter(EffectBindings.DIFFUSE_TEXTURE);
+      uniforms["vDiffuseInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setFloat2(context.parameter.location, 0.0, 1.0);
+      });
     }
     // ambient
     if (ambientTexture != null) {
       if (!ambientTexture.ready) return false;
       defines.add("AMBIENT");
+      uniforms["ambientMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+      uniforms["ambientSampler"] = new EffectParameter(_textureBinding(ambientTexture));
+      uniforms["vAmbientInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setFloat2(context.parameter.location, 0.0, 1.0);
+      });
     }
     // opacity
-    if(opacityTexture != null) {
-      if(!opacityTexture.ready) return false;
+    if (opacityTexture != null) {
+      if (!opacityTexture.ready) return false;
       defines.add("OPACITY");
+      if (opacityFromRGB) defines.add("OPACITYRGB");
+      uniforms["opacityMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+      uniforms["opacitySampler"] = new EffectParameter(_textureBinding(opacityTexture));
+      uniforms["vOpacityInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setFloat2(context.parameter.location, 0.0, 1.0);
+      });
     }
+    // reflection
+    if (reflectionTexture != null) {
+      if (!reflectionTexture.ready) return false;
+      defines.add("REFLECTION");
+      uniforms["reflectionMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+      var isCube = reflectionTexture.target == gl.TEXTURE_CUBE_MAP;
+      if (isCube) {
+        uniforms["reflectionCubeSampler"] = new EffectParameter(_textureBinding(reflectionTexture));
+      } else {
+        uniforms["reflection2DSampler"] = new EffectParameter(_textureBinding(reflectionTexture));
+      }
+      uniforms["vReflectionInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setFloat3(context.parameter.location, coordinatesMode, 1.0, isCube ? 1.0 : 0.0);
+      });
+    }
+    // emissive
+    if (emissiveTexture != null) {
+      if (!emissiveTexture.ready) return false;
+      defines.add("EMISSIVE");
+      uniforms["emissiveMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+      uniforms["emissiveSampler"] = new EffectParameter(_textureBinding(emissiveTexture));
+      uniforms["vEmissiveInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setFloat2(context.parameter.location, 0.0, 1.0);
+      });
+    }
+    // specular
+    if (specularTexture != null) {
+      if (!specularTexture.ready) return false;
+      defines.add("SPECULAR");
+      uniforms["specularMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+      uniforms["specularSampler"] = new EffectParameter(_textureBinding(specularTexture));
+      uniforms["vSpecularInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setFloat2(context.parameter.location, 0.0, 1.0);
+      });
+    }
+    // bump
+    if (Orange.instance.graphicsDevice.caps.standardDerivatives && bumpTexture != null) {
+      if (!bumpTexture.ready) return false;
+      defines.add("BUMP");
+      uniforms["bumpMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
+      uniforms["bumpSampler"] = new EffectParameter(_textureBinding(bumpTexture));
+      uniforms["vBumpInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setFloat2(context.parameter.location, 0.0, 1.0);
+      });
+    }
+    // fog
+    if (renderData.renderSettings.fog) {
+      defines.add("FOG");
+    }
+    // TODO UV2 & Skeleton
 
     attributes["position"] = new EffectParameter(EffectBindings.POSITION);
     attributes["normal"] = new EffectParameter(EffectBindings.NORMAL);
@@ -85,27 +153,27 @@ class BabylonEffect extends Effect {
     uniforms["viewProjection"] = new EffectParameter(EffectBindings.VIEW_PROJECTION);
     uniforms["world"] = new EffectParameter(EffectBindings.MODEL);
 
-    // diffuse
-    uniforms["diffuseMatrix"] = new EffectParameter(EffectBindings.MATRIX4_IDENTITY);
-    uniforms["diffuseSampler"] = new EffectParameter(EffectBindings.DIFFUSE_TEXTURE);
-    uniforms["vDiffuseInfos"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
-      graphics.setFloat2(context.parameter.location, 0.0, 1.0);
-    });
-
     // colors
-    uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
-      if (ambientColor !=
-          null) graphics.setColor3(context.parameter.location, context.renderSettings.ambientLight * ambientColor);
-    });
-    uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
-      if (diffuseColor != null) graphics.setColor4(context.parameter.location, diffuseColor);
-    });
-    uniforms["vSpecularColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
-      if (specularColor != null) graphics.setColor4(context.parameter.location, specularColor);
-    });
-    uniforms["vEmissiveColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
-      if (emissiveColor != null) graphics.setColor3(context.parameter.location, emissiveColor);
-    });
+    if (ambientColor != null) {
+      uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setVector3(context.parameter.location, context.renderSettings.ambientLight * ambientColor);
+      });
+    }
+    if (diffuseColor != null) {
+      uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setVector4(context.parameter.location, diffuseColor);
+      });
+    }
+    if (specularColor != null) {
+      uniforms["vSpecularColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setVector4(context.parameter.location, specularColor);
+      });
+    }
+    if (emissiveColor != null) {
+      uniforms["vEmissiveColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
+        graphics.setVector3(context.parameter.location, emissiveColor);
+      });
+    }
 
     uniforms["vEyePosition"] = new EffectParameter(EffectBindings.EYE_POSITION);
 
@@ -151,7 +219,7 @@ class BabylonEffect extends Effect {
   EffectBinding _lightSpecularBinding(Node node, int i) {
     return (GraphicsDevice graphics, RenderData context) {
       var light = node.light;
-      graphics.setColor3(context.parameter.location, light.specular.scaled(light.intensity));
+      graphics.setVector3(context.parameter.location, light.specular.scaled(light.intensity));
     };
   }
 
@@ -225,4 +293,11 @@ class BabylonEffect extends Effect {
     var transform = projection * view;
     graphics.setMatrix4(context.parameter.location, transform);
   };
+
+  EffectBinding _textureBinding(Texture texture) {
+    return (GraphicsDevice graphics, RenderData context) {
+      var channel = samplers.indexOf(context.parameter.name);
+      if (channel >= 0) graphics.bindTexture(texture, channel);
+    };
+  }
 }

@@ -30,8 +30,8 @@ class SkyboxEffect extends Effect {
   SkyboxEffect() : super.load("packages/orange/src/shaders/skybox");
 
   @override
-  bool prepare(RenderData context) {
-    if (_ready || _vertSrc == null || _fragSrc == null) return false;
+  bool prepare(RenderData renderData) {
+    if(!super.prepare(renderData)) return false;
 
     attributes["position"] = new EffectParameter(EffectBindings.POSITION);
     uniforms["viewProjection"] = new EffectParameter(EffectBindings.VIEW_PROJECTION);

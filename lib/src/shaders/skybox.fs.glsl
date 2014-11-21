@@ -4,10 +4,10 @@ precision highp float;
 
 
 uniform samplerCube cubeSampler;
-varying vec3 vPositionUVW;
+varying vec3 vPosition;
 
 void main(void) {
-    vec3 color = textureCube(cubeSampler, vPositionUVW).rgb;
+    vec3 color = textureCube(cubeSampler, vPosition).rgb;
     gl_FragColor = vec4(color, 1.0);
 }
 

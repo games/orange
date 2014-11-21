@@ -57,8 +57,8 @@ class TexturedEffect extends Effect {
   TexturedEffect() : super.load("packages/orange/src/shaders/textured");
 
   @override
-  bool prepare(RenderData context) {
-    if (_ready || _vertSrc == null || _fragSrc == null) return false;
+  bool prepare(RenderData renderData) {
+    if(!super.prepare(renderData)) return false;
 
     attributes["position"] = new EffectParameter(EffectBindings.POSITION);
     attributes["normal"] = new EffectParameter(EffectBindings.NORMAL);
@@ -91,12 +91,12 @@ class TexturedEffect extends Effect {
     uniforms["vEyePosition"] = new EffectParameter(EffectBindings.EYE_POSITION);
 
     var defines = [];
-    if (context.material.mainTexture != null) {
+    if (renderData.material.mainTexture != null) {
       defines.add("DIFFUSE");
       defines.add("UV1");
       attributes["uv"] = new EffectParameter(EffectBindings.TEXCOORD_0);
     }
-    var lights = context.getLights();
+    var lights = renderData.getLights();
     for (var i = 0; i < lights.length; i++) {
       defines.add("LIGHT$i");
       var light = lights[i];

@@ -14,6 +14,7 @@ void main() {
   orange.initialize = () {
 
     orange.renderSettings.ambientLight = new Color3.all(0.5);
+    orange.renderSettings.skyboxTexture = orange.resources.loadCubemapTexture("textures/cube/Bridge2/bridge");
 
     var ambientMaterial = Babylon.createMaterial();
     ambientMaterial.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
@@ -22,14 +23,16 @@ void main() {
 
     var opacity = Babylon.createMaterial();
     opacity.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
-    effect = opacity.shader.technique.passes.first.effect as BabylonEffect;
+    var pass = opacity.shader.technique.passes.first;
+    pass.renderState.sampleAlphaToCoverage = true;
+    effect = pass.effect as BabylonEffect;
     effect.opacityTexture = orange.resources.loadTexture("textures/ani2.jpg");
     effect.opacityFromRGB = true;
 
     var reflection = Babylon.createMaterial();
     reflection.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
     effect = reflection.shader.technique.passes.first.effect as BabylonEffect;
-    effect.reflectionTexture = orange.resources.loadTexture("textures/reflectiontexture.jpg");
+    effect.reflectionTexture = orange.resources.loadCubemapTexture("textures/cube/Bridge2/bridge");
     effect.coordinatesMode = BabylonEffect.SPHERICAL_MODE;
 
     var emissive = Babylon.createMaterial();
@@ -40,7 +43,7 @@ void main() {
     var specular = Babylon.createMaterial();
     specular.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
     effect = specular.shader.technique.passes.first.effect as BabylonEffect;
-    effect.specularTexture = orange.resources.loadTexture("textures/firefox.png");
+    effect.specularTexture = orange.resources.loadTexture("textures/ani2.jpg");
 
     var bump = Babylon.createMaterial();
     bump.mainTexture = orange.resources.loadTexture("textures/wood.jpg");

@@ -34,7 +34,7 @@ class RenderState {
   bool cullFaceEnabled = true;
   bool depthTest = true;
   bool polygonOffsetFill = false;
-  bool sampleAlpahToCoverage = false;
+  bool sampleAlphaToCoverage = false;
   bool scissorTest = false;
   
   

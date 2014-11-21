@@ -132,6 +132,7 @@ class GraphicsDevice {
     _setCullingState(renderState.cullFaceEnabled, renderState.cullFace);
     _setDepthBuffer(renderState.depthTest, renderState.depthFunc);
     _setDepthWrite(renderState.depthMask);
+    _setAlphaToCoverage(renderState.sampleAlphaToCoverage);
     // TODO more
   }
 
@@ -173,6 +174,14 @@ class GraphicsDevice {
 
   void _setDepthWrite(bool enabled) {
     _ctx.depthMask(enabled);
+  }
+
+  void _setAlphaToCoverage(bool sampleAlpahToCoverage) {
+    if (sampleAlpahToCoverage) {
+      _ctx.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);
+    } else {
+      _ctx.disable(gl.SAMPLE_ALPHA_TO_COVERAGE);
+    }
   }
 
   void drawLines(int numVertices) {

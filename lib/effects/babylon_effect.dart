@@ -300,4 +300,28 @@ class BabylonEffect extends Effect {
       if (channel >= 0) graphics.bindTexture(texture, channel);
     };
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (ambientTexture != null) ambientTexture.dispose();
+    if (opacityTexture != null) opacityTexture.dispose();
+    if (reflectionTexture != null) reflectionTexture.dispose();
+    if (emissiveTexture != null) emissiveTexture.dispose();
+    if (specularTexture != null) specularTexture.dispose();
+    if (bumpTexture != null) bumpTexture.dispose();
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

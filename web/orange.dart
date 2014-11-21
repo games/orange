@@ -5,6 +5,7 @@ import 'dart:math' as Math;
 import 'dart:async';
 import 'dart:web_gl' as gl;
 import 'package:orange/orange.dart';
+import 'package:orange/babylon.dart';
 import 'package:stats/stats.dart';
 
 
@@ -23,7 +24,7 @@ void main() {
     material2.mainTexture = orange.resources.loadTexture("textures/mosaic.jpg");
     material2.wireframe = true;
 
-    var material3 = Material.texturedMaterial();
+    var material3 = Babylon.createMaterial();
     material3.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
 
     new OBJLoader().load("models/obj/head.obj").then((mesh) {

@@ -23,49 +23,43 @@
   
  */
 
-
 part of orange;
 
 
-class Material extends Disposable {
-
-  String name;
-  Color4 color;
-  bool wireframe = false;
-  Texture mainTexture;
-  Vector2 mainTextureOffset;
-  Vector2 mainTextureScale;
-  Shader shader;
-
-  Material(this.name);
+class SkyboxEffect extends Effect {
+  SkyboxEffect() : super.load("packages/orange/engine/shaders/skybox");
 
   @override
-  void dispose() {
-    if (mainTexture != null) mainTexture.dispose();
-    if (shader != null) shader.dispose();
-    mainTexture = null;
-    shader = null;
-  }
+  bool prepare(RenderData renderData) {
+    if(!super.prepare(renderData)) return false;
 
-  static Material defaultMaterial() {
-    var material = new Material("default");
-    material.shader = Shader.defaultShader();
-    return material;
+    attributes["position"] = new EffectParameter(EffectBindings.POSITION);
+    uniforms["viewProjection"] = new EffectParameter(EffectBindings.VIEW_PROJECTION);
+    uniforms["world"] = new EffectParameter(EffectBindings.MODEL);
+    uniforms["cubeSampler"] = new EffectParameter(EffectBindings.DIFFUSE_TEXTURE);
+    
+    return true;
   }
-
-  static Material texturedMaterial() {
-    var material = new Material("textured");
-    material.shader = Shader.texturedShader();
-    return material;
-  }
-
-  static Material skyboxMaterial() {
-    var material = new Material("skybox");
-    material.shader = Shader.skybox();
-    return material;
-  }
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

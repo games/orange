@@ -37,57 +37,56 @@ import 'dart:js' as JS;
 
 
 
-part 'src/disposable.dart';
-part 'src/orange.dart';
-part 'src/node.dart';
-part 'src/component.dart';
-part 'src/game_time.dart';
-part 'src/mesh.dart';
-part 'src/render_settings.dart';
+part 'engine/disposable.dart';
+part 'engine/orange.dart';
+part 'engine/node.dart';
+part 'engine/component.dart';
+part 'engine/game_time.dart';
+part 'engine/mesh.dart';
+part 'engine/render_settings.dart';
 
-part 'src/resources/resource_manager.dart';
-part 'src/resources/texture_loader.dart';
-part 'src/resources/obj_loader.dart';
-part 'src/resources/cube_generator.dart';
-part 'src/resources/circle_generator.dart';
-part 'src/resources/cylinder_generator.dart';
-part 'src/resources/ring_generator.dart';
-part 'src/resources/sphere_generator.dart';
-part 'src/resources/plane_generator.dart';
+part 'engine/resources/resource_manager.dart';
+part 'engine/resources/texture_loader.dart';
+part 'engine/resources/obj_loader.dart';
+part 'engine/resources/cube_generator.dart';
+part 'engine/resources/circle_generator.dart';
+part 'engine/resources/cylinder_generator.dart';
+part 'engine/resources/ring_generator.dart';
+part 'engine/resources/sphere_generator.dart';
+part 'engine/resources/plane_generator.dart';
 
-part 'src/graphics/graphics_device.dart';
-part 'src/graphics/vertex_buffer.dart';
-part 'src/graphics/material.dart';
-part 'src/graphics/texture.dart';
-part 'src/graphics/sampler.dart';
-part 'src/graphics/shader.dart';
-part 'src/graphics/technique.dart';
-part 'src/graphics/render_state.dart';
-part 'src/graphics/pass.dart';
+part 'engine/graphics/graphics_device.dart';
+part 'engine/graphics/vertex_buffer.dart';
+part 'engine/graphics/material.dart';
+part 'engine/graphics/texture.dart';
+part 'engine/graphics/sampler.dart';
+part 'engine/graphics/shader.dart';
+part 'engine/graphics/technique.dart';
+part 'engine/graphics/render_state.dart';
+part 'engine/graphics/pass.dart';
 
-part 'src/graphics/effects/effect.dart';
-part 'src/graphics/effects/effect_parameters.dart';
-part 'src/graphics/effects/render_data.dart';
-part 'src/graphics/effects/textured_effect.dart';
-part 'src/graphics/effects/skybox_effect.dart';
+part 'engine/graphics/effects/effect.dart';
+part 'engine/graphics/effects/effect_parameters.dart';
+part 'engine/graphics/effects/render_data.dart';
+part 'engine/graphics/effects/skybox_effect.dart';
 
 
-part 'src/components/transform.dart';
-part 'src/components/camera.dart';
-part 'src/components/perspective_camera.dart';
-part 'src/components/mesh_filter.dart';
-part 'src/components/mesh_renderer.dart';
-part 'src/components/light.dart';
+part 'engine/components/transform.dart';
+part 'engine/components/camera.dart';
+part 'engine/components/perspective_camera.dart';
+part 'engine/components/mesh_filter.dart';
+part 'engine/components/mesh_renderer.dart';
+part 'engine/components/light.dart';
 
-part 'src/math/matrix4.dart';
-part 'src/math/matrix3.dart';
-part 'src/math/quaternion.dart';
-part 'src/math/vector2.dart';
-part 'src/math/vector3.dart';
-part 'src/math/vector4.dart';
-part 'src/math/color.dart';
-part 'src/math/ray.dart';
-part 'src/math/bounding_info.dart';
+part 'engine/math/matrix4.dart';
+part 'engine/math/matrix3.dart';
+part 'engine/math/quaternion.dart';
+part 'engine/math/vector2.dart';
+part 'engine/math/vector3.dart';
+part 'engine/math/vector4.dart';
+part 'engine/math/color.dart';
+part 'engine/math/ray.dart';
+part 'engine/math/bounding_info.dart';
 
 
 

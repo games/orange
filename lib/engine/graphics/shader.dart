@@ -42,7 +42,7 @@ class Shader extends Disposable {
 
   // TODO remove
   static Shader defaultShader() {
-    var effect = new Effect.load("packages/orange/src/shaders/default");
+    var effect = new Effect.load("packages/orange/engine/shaders/default");
 
     var attributes = effect.attributes;
     attributes["aPosition"] = new EffectParameter(EffectBindings.POSITION);
@@ -64,21 +64,6 @@ class Shader extends Disposable {
     technique.passes.add(pass);
 
     var shader = new Shader("default");
-    shader.techniques.add(technique);
-    return shader;
-  }
-
-  static Shader texturedShader() {
-    var effect = new TexturedEffect();
-
-    var pass = new Pass();
-    pass.effect = effect;
-    pass.renderState = new RenderState();
-
-    var technique = new Technique("technique");
-    technique.passes.add(pass);
-
-    var shader = new Shader("textured");
     shader.techniques.add(technique);
     return shader;
   }

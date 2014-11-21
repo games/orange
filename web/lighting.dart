@@ -2,6 +2,7 @@ library orange_examples;
 
 import 'dart:math' as Math;
 import 'package:orange/orange.dart';
+import 'package:orange/babylon.dart';
 import 'common.dart';
 
 
@@ -15,9 +16,9 @@ void main() {
     material.mainTexture = orange.resources.loadTexture("textures/firefox.png");
     material.wireframe = false;
 
-    var material2 = Material.texturedMaterial();
+    var material2 = Babylon.createMaterial();
 
-    var material3 = Material.texturedMaterial();
+    var material3 = Babylon.createMaterial();
     material3.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
 
     new OBJLoader().load("models/obj/head.obj").then((mesh) {

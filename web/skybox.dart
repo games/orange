@@ -13,7 +13,7 @@ void main() {
   orange.renderSettings.skyboxTexture = orange.resources.loadCubemapTexture("textures/cube/Bridge2/bridge");
 
   orange.initialize = () {
-    var material = Material.texturedMaterial();
+    var material = Material.defaultMaterial();
     material.mainTexture = orange.resources.loadTexture("textures/wood.jpg");
 
     orange.root.addChild(new Node("cube")

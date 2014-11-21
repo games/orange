@@ -23,13 +23,13 @@
   
  */
 
-part of orange;
+part of orange.effects.babylon;
 
 
 /// shader code is from https://github.com/BabylonJS/Babylon.js
 /// thanks to David Catuhe
-class TexturedEffect extends Effect {
-  
+class BabylonEffect extends Effect {
+
   static int EXPLICIT_MODE = 0;
   static int SPHERICAL_MODE = 1;
   static int PLANAR_MODE = 2;
@@ -51,14 +51,32 @@ class TexturedEffect extends Effect {
   Texture emissiveTexture;
   Texture specularTexture;
   Texture reflectionTexture;
-  
+
   int reflectionMode;
 
-  TexturedEffect() : super.load("packages/orange/src/shaders/textured");
+  BabylonEffect() : super.load("packages/orange/effects/babylon");
 
   @override
   bool prepare(RenderData renderData) {
-    if(!super.prepare(renderData)) return false;
+    if (!super.prepare(renderData)) return false;
+
+    var defines = [];
+    
+    if (renderData.material.mainTexture != null) {
+      defines.add("DIFFUSE");
+      defines.add("UV1");
+      attributes["uv"] = new EffectParameter(EffectBindings.TEXCOORD_0);
+    }
+    // ambient
+    if (ambientTexture != null) {
+      if (!ambientTexture.ready) return false;
+      defines.add("AMBIENT");
+    }
+    // opacity
+    if(opacityTexture != null) {
+      if(!opacityTexture.ready) return false;
+      defines.add("OPACITY");
+    }
 
     attributes["position"] = new EffectParameter(EffectBindings.POSITION);
     attributes["normal"] = new EffectParameter(EffectBindings.NORMAL);
@@ -76,7 +94,8 @@ class TexturedEffect extends Effect {
 
     // colors
     uniforms["vAmbientColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
-      if (ambientColor != null) graphics.setColor3(context.parameter.location, context.renderSettings.ambientLight * ambientColor);
+      if (ambientColor !=
+          null) graphics.setColor3(context.parameter.location, context.renderSettings.ambientLight * ambientColor);
     });
     uniforms["vDiffuseColor"] = new EffectParameter((GraphicsDevice graphics, RenderData context) {
       if (diffuseColor != null) graphics.setColor4(context.parameter.location, diffuseColor);
@@ -90,12 +109,8 @@ class TexturedEffect extends Effect {
 
     uniforms["vEyePosition"] = new EffectParameter(EffectBindings.EYE_POSITION);
 
-    var defines = [];
-    if (renderData.material.mainTexture != null) {
-      defines.add("DIFFUSE");
-      defines.add("UV1");
-      attributes["uv"] = new EffectParameter(EffectBindings.TEXCOORD_0);
-    }
+
+
     var lights = renderData.getLights();
     for (var i = 0; i < lights.length; i++) {
       defines.add("LIGHT$i");
@@ -128,7 +143,7 @@ class TexturedEffect extends Effect {
       //uniforms["lightMatrix$i"] = new EffectParameter(_lightMatrixBinding(light));
     }
 
-    _commonSrc = Effect.jointAsDefines(defines);
+    commonSrc = Effect.jointAsDefines(defines);
 
     return true;
   }

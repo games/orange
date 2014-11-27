@@ -33,6 +33,13 @@ class Color3 extends Vector3 {
   Color3.zero() : super.zero();
 
   Color3 scaled(double s) => new Color3(x * s, y * s, z * s);
+  
+  set r(double val) => _elements[0] = val;
+  set g(double val) => _elements[1] = val;
+  set b(double val) => _elements[2] = val;
+  double get r => _elements[0];
+  double get g => _elements[1];
+  double get b => _elements[2];
 }
 
 class Color4 extends Vector4 {

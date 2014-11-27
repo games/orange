@@ -40,7 +40,7 @@ class Vector4 {
       _elements[i] = list[i].toDouble();
     }
   }
-  
+
   Vector4.all(double d) : this(d, d, d, d);
 
   Vector4.zero() : _elements = new Float32List(4);
@@ -61,12 +61,16 @@ class Vector4 {
     return this;
   }
 
+  Vector4 sub(Vector4 other) {
+    _elements[0] = _elements[0] - other._elements[0];
+    _elements[1] = _elements[1] - other._elements[1];
+    _elements[2] = _elements[2] - other._elements[2];
+    _elements[3] = _elements[3] - other._elements[3];
+    return this;
+  }
+
   Vector4 operator *(Vector4 other) {
-    return new Vector4(
-        _elements[0] * other.x,
-        _elements[1] * other.y,
-        _elements[2] * other.z,
-        _elements[3] * other.w);
+    return new Vector4(_elements[0] * other.x, _elements[1] * other.y, _elements[2] * other.z, _elements[3] * other.w);
   }
 
   double operator [](int i) => _elements[i];
@@ -95,8 +99,16 @@ class Vector4 {
     _elements[3] = val.toDouble();
   }
 
+  void copyFrom(Vector4 src) {
+    _elements[0] = src._elements[0];
+    _elements[1] = src._elements[1];
+    _elements[2] = src._elements[2];
+    _elements[3] = src._elements[3];
+  }
+
   Vector4 clone() => new Vector4(_elements[0], _elements[1], _elements[2], _elements[3]);
 
   String toString() => '[${_elements[0]},${_elements[1]},${_elements[2]},${_elements[3]}]';
+
 
 }

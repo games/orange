@@ -36,6 +36,22 @@ class Quaternion {
     _elements[3] = w;
   }
 
+  Quaternion.yawPitchRoll(num yaw, num pitch, num roll) : _elements = new Float32List(4) {
+    var halfRoll = roll * 0.5;
+    var halfPitch = pitch * 0.5;
+    var halfYaw = yaw * 0.5;
+    var sinRoll = Math.sin(halfRoll);
+    var cosRoll = Math.cos(halfRoll);
+    var sinPitch = Math.sin(halfPitch);
+    var cosPitch = Math.cos(halfPitch);
+    var sinYaw = Math.sin(halfYaw);
+    var cosYaw = Math.cos(halfYaw);
+    _elements[0] = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);
+    _elements[1] = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);
+    _elements[2] = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);
+    _elements[3] = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
+  }
+
   Quaternion.identity() : _elements = new Float32List(4) {
     _elements[3] = 1.0;
   }
@@ -91,7 +107,12 @@ class Quaternion {
 
   void rotateX(double rad) {
     rad *= 0.5;
-    var ax = _elements[0], ay = _elements[1], az = _elements[2], aw = _elements[3], bx = Math.sin(rad), bw = Math.cos(rad);
+    var ax = _elements[0],
+        ay = _elements[1],
+        az = _elements[2],
+        aw = _elements[3],
+        bx = Math.sin(rad),
+        bw = Math.cos(rad);
     _elements[0] = ax * bw + aw * bx;
     _elements[1] = ay * bw + az * bx;
     _elements[2] = az * bw - ay * bx;
@@ -100,7 +121,12 @@ class Quaternion {
 
   void rotateY(double rad) {
     rad *= 0.5;
-    var ax = _elements[0], ay = _elements[1], az = _elements[2], aw = _elements[3], by = Math.sin(rad), bw = Math.cos(rad);
+    var ax = _elements[0],
+        ay = _elements[1],
+        az = _elements[2],
+        aw = _elements[3],
+        by = Math.sin(rad),
+        bw = Math.cos(rad);
     _elements[0] = ax * bw - az * by;
     _elements[1] = ay * bw + aw * by;
     _elements[2] = az * bw + ax * by;
@@ -109,7 +135,12 @@ class Quaternion {
 
   void rotateZ(double rad) {
     rad *= 0.5;
-    var ax = _elements[0], ay = _elements[1], az = _elements[2], aw = _elements[3], bz = Math.sin(rad), bw = Math.cos(rad);
+    var ax = _elements[0],
+        ay = _elements[1],
+        az = _elements[2],
+        aw = _elements[3],
+        bz = Math.sin(rad),
+        bw = Math.cos(rad);
     _elements[0] = ax * bw + ay * bz;
     _elements[1] = ay * bw - ax * bz;
     _elements[2] = az * bw + aw * bz;
@@ -144,7 +175,18 @@ class Quaternion {
   void setFromRotation(Matrix4 m) {
     // http://www.euclideanspace.com/Maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
-    var te = m._elements, m11 = te[0], m12 = te[4], m13 = te[8], m21 = te[1], m22 = te[5], m23 = te[9], m31 = te[2], m32 = te[6], m33 = te[10], trace = m11 + m22 + m33, s;
+    var te = m._elements,
+        m11 = te[0],
+        m12 = te[4],
+        m13 = te[8],
+        m21 = te[1],
+        m22 = te[5],
+        m23 = te[9],
+        m31 = te[2],
+        m32 = te[6],
+        m33 = te[10],
+        trace = m11 + m22 + m33,
+        s;
 
     if (trace > 0) {
       s = 0.5 / Math.sqrt(trace + 1.0);

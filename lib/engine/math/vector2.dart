@@ -79,4 +79,9 @@ class Vector2 {
   Vector2 clone() => new Vector2(_elements[0], _elements[1]);
 
   String toString() => '[${_elements[0]},${_elements[1]}}]';
+  
+  bool equals(Vector2 other) {
+    if(other == null) return false;
+    return x == other.x && y == other.y;
+  }
 }

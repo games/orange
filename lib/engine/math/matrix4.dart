@@ -946,6 +946,14 @@ class Matrix4 {
     r._elements[3] = _elements[index(row, 3)];
     return r;
   }
+  
+  void setColumn(int column, Vector4 value) {
+    int entry = column * 4;
+    _elements[entry + 0] = value._elements[0];
+    _elements[entry + 1] = value._elements[1];
+    _elements[entry + 2] = value._elements[2];
+    _elements[entry + 3] = value._elements[3];
+  }
 
   String toString() {
     String s = '';

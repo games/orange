@@ -95,6 +95,12 @@ class EffectBindings {
   static const EffectBinding EYE_POSITION = _eyePositionBinding;
 
   static const EffectBinding DIFFUSE_TEXTURE = _diffuseTextureBinding;
+
+  static EffectBinding textureMatrixBinding(Texture texture) {
+    return (GraphicsDevice graphics, RenderData context) {
+      graphics.setMatrix4(context.parameter.location, texture.matrix);
+    };
+  }
 }
 
 
@@ -151,7 +157,9 @@ _viewProjectionBinding(GraphicsDevice graphics, RenderData renderData) =>
     graphics.setMatrix4(renderData.parameter.location, renderData.camera.viewProjection);
 
 _worldViewProjectionBinding(GraphicsDevice graphics, RenderData renderData) =>
-    graphics.setMatrix4(renderData.parameter.location, renderData.camera.viewProjection * renderData.target.transform.worldMatrix);
+    graphics.setMatrix4(
+        renderData.parameter.location,
+        renderData.camera.viewProjection * renderData.target.transform.worldMatrix);
 
 _modelInverseTranspose(GraphicsDevice graphics, RenderData renderData) {
   var mat3 = renderData.target.transform.worldMatrix.inverseMatrix3();

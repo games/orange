@@ -2,55 +2,20 @@
 
 Is a WebGL based 3D engine for my personal experiments.
 
-### Features ###
-- Skinning Animation
-- Lighting (Direct, Point, Spotlight, Hemispherics)
-- Shadow mapping (VSM)
-- Bump mapping
-- Basic primitives (Cube, Cylinder, Plane, Sphere, Coordinate)
-- Camera (Orbit control, First person control)
-- Bounding box
-- Loaders  
- - Ogre loader ([Script](https://github.com/games/OgreToJson))
- - [GLTF](https://github.com/KhronosGroup/glTF)(based spec0.6, Meshes+Textures+Skin+Animation) 
- - OBJ Loader(Only support vertices & indices)
- - [BabylonJS](https://github.com/BabylonJS/) loader (Basic)
-- Physics engine (Use [Cannon.js](https://github.com/schteppe/cannon.js))
-- Fog
-- Skybox
-- Reflection texture (Spheric, planar, cubic and projection)
-- Create mesh from height map
-- Water
-- Particle System
-- Physically based render (not finish yet)
-- Selection octrees
-- Billboarding
-- Scene graph
-
 
 ### TODO ###
-- Code refactoring
-- Picking
-- Post-processes
-- Lens flares
-- Morph targets
-- LOD system
-- Sub Mesh
-- New physics plugin [ammo.js](https://github.com/kripken/ammo.js)
-- Add BabylonJS License
+- Directional, point and spot lights
+- Shadow Maps and Variance Shadow Maps
+- Morph target animation / Skeletal animation
+- Particle engine
+- Physically based rendering (PBR)
+- PostFX library: bloom, edge detect, FXAA, vignette, etc
+- Full integration with 3D rigid-body physics engine [ammo.js](https://github.com/kripken/ammo.js)
+- 3D Positional audio via Web Audio API
+- Entity System
 
-
-### Thanks ###
-- [BabylonJS](https://github.com/BabylonJS/)
-- [Cannon.js](https://github.com/schteppe/cannon.js)
-- [vector_math](http://pub.dartlang.org/packages/vector_math)
-- [GLTF](https://github.com/KhronosGroup/glTF)
-
-
+### DEMO ###
 
 ### About ###
 
 * [Blog](http://valorzhong.blogspot.com/)
-
-
- 

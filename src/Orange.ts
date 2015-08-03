@@ -33,6 +33,85 @@ module orange {
     TEXTURECUBE
   }
 
+  export enum BlendMode {
+    ZERO,
+    ONE,
+    SRC_COLOR,
+    ONE_MINUS_SRC_COLOR,
+    DST_COLOR,
+    ONE_MINUS_DST_COLOR,
+    SRC_ALPHA,
+    SRC_ALPHA_SATURATE,
+    ONE_MINUS_SRC_ALPHA,
+    DST_ALPHA,
+    ONE_MINUS_DST_ALPHA
+  }
+
+  export enum BlendEquation {
+    ADD,
+    SUBTRACT,
+    REVERSE_SUBTRACT
+  }
+
+  export enum BufferUsage {
+    STATIC,
+    DYNAMIC,
+    STREAM
+  }
+
+  export enum ElementType {
+    INT8,
+    UINT8,
+    INT16,
+    UINT16,
+    INT32,
+    UINT32,
+    FLOAT32
+  }
+
+  export enum Filter {
+    NEAREST,
+    LINEAR,
+    NEAREST_MIPMAP_NEAREST,
+    LINEAR_MIPMAP_NEAREST,
+    LINEAR_MIPMAP_LINEAR
+  }
+
+  export enum IndexFormat {
+    UINT8,
+    UINT16,
+    UINT32
+  }
+
+  export enum PixelFormat {
+    A8,
+    L8,
+    L8_A8,
+    R5_G6_B5,
+    R5_G5_B5_A1,
+    R4_G4_B4_A4,
+    R8_G8_B8,
+    R8_G8_B8_A8,
+    DXT1,
+    DXT3,
+    DXT5,
+    RGB16F,
+    RGBA16F,
+    RGB32F,
+    RGBA32F,
+    ETC1
+  }
+
+  export enum Primitive {
+    POINTS,
+    LINES,
+    LINELOOP,
+    LINESTRIP,
+    TRIANGLES,
+    TRISTRIP,
+    TRIFAN
+  }
+
   export const SEMANTIC_POSITION = "POSITION";
   export const SEMANTIC_NORMAL = "NORMAL";
   export const SEMANTIC_TANGENT = "TANGENT";

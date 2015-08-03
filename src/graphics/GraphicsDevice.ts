@@ -24,9 +24,9 @@ module orange {
     width: number;
     height: number;
     blending: boolean;
-    blendSrc: number;
-    blendDst: number;
-    blendEquation: number;
+    blendSrc: BlendMode;
+    blendDst: BlendMode;
+    blendEquation: BlendEquation;
     cullMode: CullMode;
     writeRed: boolean;
     writeBlue: boolean;
@@ -47,14 +47,14 @@ module orange {
       this.gl = gl;
 
       glClearFlag = [
-        0,
-        gl.COLOR_BUFFER_BIT,
-        gl.DEPTH_BUFFER_BIT,
-        gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT,
-        gl.STENCIL_BUFFER_BIT,
-        gl.STENCIL_BUFFER_BIT | gl.COLOR_BUFFER_BIT,
-        gl.STENCIL_BUFFER_BIT | gl.DEPTH_BUFFER_BIT,
-        gl.STENCIL_BUFFER_BIT | gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
+          0,
+          gl.COLOR_BUFFER_BIT,
+          gl.DEPTH_BUFFER_BIT,
+          gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT,
+          gl.STENCIL_BUFFER_BIT,
+          gl.STENCIL_BUFFER_BIT | gl.COLOR_BUFFER_BIT,
+          gl.STENCIL_BUFFER_BIT | gl.DEPTH_BUFFER_BIT,
+          gl.STENCIL_BUFFER_BIT | gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
       ];
 
       glAddress = [
@@ -148,18 +148,18 @@ module orange {
       }
     }
 
-    setBlendFunction(blendSrc: number, blendDst: number) {
+    setBlendFunction(blendSrc: BlendMode, blendDst: BlendMode) {
       if (this.blendSrc !== blendSrc ||
          this.blendDst !== blendDst) {
-           this.gl.blendFunc(blendSrc, blendDst);
+           this.gl.blendFunc(glBlendFunction[blendSrc], glBlendFunction[blendDst]);
            this.blendSrc = blendSrc;
            this.blendDst = blendDst;
          }
     }
 
-    setBlendEquation(blendEquation) {
+    setBlendEquation(blendEquation: BlendEquation) {
       if (this.blendEquation !== blendEquation) {
-        this.gl.blendEquation(blendEquation);
+        this.gl.blendEquation(glBlendEquation[blendEquation]);
         this.blendEquation = blendEquation;
       }
     }
@@ -320,7 +320,7 @@ module orange {
       var defaultOptions = this.defaultClearOptions;
       options = options || defaultOptions;
 
-      var flags = (options.flags === undefined) ? defaultOptions.flags : options.flags;
+      var flags:ClearFlags = (options.flags === undefined) ? defaultOptions.flags : options.flags;
       if (flags !== 0) {
           var gl = this.gl;
 

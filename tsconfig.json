@@ -25,6 +25,14 @@
         "./src/graphics/Engine.ts",
         "./src/graphics/GraphicsDevice.ts",
         "./src/graphics/Shader.ts",
-        "./src/graphics/Texture.ts"
+        "./src/graphics/Texture.ts",
+        "./src/math/Mat3.ts",
+        "./src/math/Mat4.ts",
+        "./src/math/Math.ts",
+        "./src/math/Vec2.ts",
+        "./src/math/Vec3.ts",
+        "./src/math/Vec4.ts",
+        "./src/scene/Mesh.ts",
+        "./src/scene/Scene.ts"
     ]
 }

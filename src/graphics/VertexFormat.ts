@@ -29,7 +29,7 @@ module orange {
     hasColor: boolean;
     size: number;
 
-    constructor(graphicsDevice, description: any[]) {
+    constructor(graphicsDevice: GraphicsDevice, description: any[]) {
       this.elements = [];
       this.hasUv1 = false;
       this.hasColor = false;
@@ -42,7 +42,7 @@ module orange {
                               0,
                               0,
                               -1,
-                              "",
+                              graphicsDevice.scope.resolve(elementDesc.semantic),
                               elementDesc.type,
                               elementDesc.components,
                               (elementDesc.normalize === undefined) ? false : elementDesc.normalize,

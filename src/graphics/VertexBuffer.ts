@@ -1,8 +1,7 @@
 module orange {
   export class  VertexBuffer {
     bufferId: WebGLBuffer;
-    glFormat: number;
-    bytesPerIndex: number;
+    numBytes: number;
     storage: ArrayBuffer;
 
     constructor(public graphicsDevice: GraphicsDevice,
@@ -10,24 +9,12 @@ module orange {
                 public numVertices:number,
                 public usage:BufferUsage = BufferUsage.STATIC,
                 initialData?:ArrayBuffer) {
-
-      var gl = graphicsDevice.gl;
-
-      this.bufferId = gl.createBuffer();
-
-      var bytesPerIndex;
-      if (format == IndexFormat.UINT8) {
-        bytesPerIndex = 1;
-        this.glFormat = gl.UNSIGNED_BYTE;
-      } else if (format == IndexFormat.UINT16) {
-        bytesPerIndex = 2;
-        this.glFormat = gl.UNSIGNED_SHORT;
-      } else if (format == IndexFormat.UINT32) {
-        bytesPerIndex = 4;
-        this.glFormat = gl.UNSIGNED_INT;
+      this.numBytes = format.size * numVertices;
+      this.bufferId = graphicsDevice.gl.createBuffer();
+      if (initialData && this.setData(initialData)) {
+      } else {
+        this.storage = new ArrayBuffer(this.numBytes);
       }
-      this.bytesPerIndex = bytesPerIndex;
-      this.storage = new ArrayBuffer(this.numIndices * bytesPerIndex);
     }
 
     destory() {
@@ -52,8 +39,18 @@ module orange {
           glUsage = gl.STREAM_DRAW;
           break;
       }
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bufferId);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.storage, glUsage);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferId);
+      gl.bufferData(gl.ARRAY_BUFFER, this.storage, glUsage);
+    }
+
+    setData(data: ArrayBuffer) {
+      if (data.byteLength !== this.numBytes) {
+        console.error("VertexBuffer: wrong initial data size: expected " + this.numBytes + ", got " + data.byteLength);
+        return false;
+      }
+      this.storage = data;
+      this.unlock();
+      return true;
     }
   }
 }

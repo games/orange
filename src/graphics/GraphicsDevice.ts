@@ -19,6 +19,7 @@ module orange {
     vertexBuffers;
     textureUnits: Texture[];
     renderTarget;
+    scope: ScopeSpace;
     defaultClearOptions;
 
     width: number;
@@ -113,6 +114,9 @@ module orange {
       ];
 
       this.capabilities = new DeviceCapabilities(gl);
+
+      this.renderTarget = null;
+      this.scope = new ScopeSpace("Device");
 
       this.defaultClearOptions = {
           color: [0, 0, 0, 1],

@@ -25,8 +25,12 @@
         "./src/graphics/Engine.ts",
         "./src/graphics/GraphicsDevice.ts",
         "./src/graphics/IndexBuffer.ts",
+        "./src/graphics/ScopeId.ts",
+        "./src/graphics/ScopeSpace.ts",
         "./src/graphics/Shader.ts",
         "./src/graphics/Texture.ts",
+        "./src/graphics/Version.ts",
+        "./src/graphics/VersionedObject.ts",
         "./src/graphics/VertexBuffer.ts",
         "./src/graphics/VertexFormat.ts",
         "./src/math/Mat3.ts",
@@ -35,6 +39,8 @@
         "./src/math/Vec2.ts",
         "./src/math/Vec3.ts",
         "./src/math/Vec4.ts",
+        "./src/scene/Camera.ts",
+        "./src/scene/ForwardRenderer.ts",
         "./src/scene/Mesh.ts",
         "./src/scene/Scene.ts"
     ]
